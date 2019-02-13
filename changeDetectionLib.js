@@ -76,7 +76,7 @@ function getExistingChangeData(changeThresh,showLayers){
 //########################################################################################################
 
 // ----- FUNCTION TO EXTRACT VERTICES FROM LT RESULTS AND STACK BANDS -----
-function getLTvertStack(LTresult,run_params) {
+var getLTvertStack = function(LTresult,run_params) {
   var emptyArray = [];                              // make empty array to hold another array whose length will vary depending on maxSegments parameter    
   var vertLabels = [];                              // make empty array to hold band names whose length will vary depending on maxSegments parameter 
   var iString;                                      // initialize variable to hold vertex number
