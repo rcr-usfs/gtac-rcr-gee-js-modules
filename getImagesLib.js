@@ -710,7 +710,7 @@ function simpleTDOM2(collection,zScoreThresh,shadowSumThresh,contractPixels,
   collection = collection.map(function(img){
     var zScore = img.select(shadowSumBands).subtract(irMean).divide(irStdDev);
     var irSum = img.select(shadowSumBands).reduce(ee.Reducer.sum());
-    var TDOMMask = zScore.lt(zScoreThresh).reduce(ee.Reducer.sum()).eq(2)
+    var TDOMMask = zScore.lt(zScoreThresh).reduce(ee.Reducer.sum()).eq(shadowSumBands.length)
       .and(irSum.lt(shadowSumThresh));
     TDOMMask = TDOMMask.focal_min(contractPixels).focal_max(dilatePixels);
     return img.updateMask(TDOMMask.not());
