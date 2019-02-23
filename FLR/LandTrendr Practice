@@ -20,7 +20,7 @@ var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var medoidCollection = dryCool.filter(ee.Filter.stringContains({leftField: 'compositingMethod', rightValue: 'Medoid'}));
 
 // define the sign of spectral delta for vegetation loss for the segmentation index - 
-// NBR delta is negetive for vegetation loss, so -1 for NBR, 1 for band 5, -1 for NDVI, etc
+// NBR delta is negative for vegetation loss, so -1 for NBR, 1 for band 5, -1 for NDVI, etc
 var dist_dir = -1;
 
 //Bands or indexs used to fit LANDTRENDR
