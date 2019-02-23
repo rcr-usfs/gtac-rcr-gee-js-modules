@@ -137,9 +137,9 @@ Map.addLayer(yor, {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF',
 //var recovMask = yor.where(yod, yor);
 var mask = yod.gt(1986);
 var tempMask = yod.updateMask(mask);
-var recovMask = yor.gt(tempMask)
+var recovMask = yor.gt(tempMask);
 var test = yor.updateMask(recovMask);
-Map.addLayer(test,{min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']},'test', false)
+Map.addLayer(test,{min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']},'test', false);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set parameters for stand age outputs
