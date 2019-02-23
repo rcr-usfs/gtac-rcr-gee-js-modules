@@ -3,7 +3,8 @@ var dryCool = ee.ImageCollection("projects/servir-mekong/usgs_sr_composites/dryc
     cambodia = ee.FeatureCollection("users/thinkbetween/cambodia_update"),
     canopy = ee.ImageCollection("projects/servir-mekong/yearly_primitives_smoothed/tree_canopy"),
     treeHeight = ee.ImageCollection("projects/servir-mekong/yearly_primitives_smoothed/tree_height"),
-    provinces = ee.FeatureCollection("projects/servir-mekong/CambodiaFireEmissions/KHM_Provinces");
+    provinces = ee.FeatureCollection("projects/servir-mekong/CambodiaFireEmissions/KHM_Provinces"),
+    PreyLang_KTH = ee.FeatureCollection("users/thinkbetween/PreyLang_KTH");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Import necessary libraries 
@@ -40,17 +41,17 @@ var medoidIndex = medoidCollection.map(normalizedDifference)
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // User parameters to set
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
+Map.setCenter(105.49021789662868, 13.197978572450443, 9);
 // Indicate the province name - now set to export for all of Cambodia
-var provinceName = 'cambodia';
+var provinceName = 'PreyLang_KTH';
 //var studyArea = buildArea();
-var studyArea = cambodia;
-
+var studyArea = PreyLang_KTH;
+Map.addLayer(studyArea, {}, provinceName, true);
 // Location for Google Drive exports
 var exportDriveFolder =  'DriveFolderHere';
 
 // Location for Asset exports, can be '' if exporting to root of your assets. 
-var exportCollection =  'stand_age_data';
+var exportCollection =  'stand_age';
 
 //Indicate the start and end years of the annual composites
 var start_year = 1986;
@@ -119,7 +120,7 @@ Map.addLayer(segInfoMasked, {}, 'segment info masked', false);
 
 //get the most recent year of disturbance that met the magnitude threshold
 var yod = segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayReduce(ee.Reducer.max(),[0]).arrayFlatten([['yod']]);
-Map.addLayer(yod.updateMask(yod.neq(0)), {min:1986, max:2018, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'year of most recent disturbance');
+Map.addLayer(yod.updateMask(yod.neq(0)), {min:1986, max:2018, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'year of most recent disturbance', false);
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Map regrowth
@@ -127,18 +128,18 @@ Map.addLayer(yod.updateMask(yod.neq(0)), {min:1986, max:2018, palette:['#9400D3'
 var regrowthThresh = 0.2;
 var regrowthMask = segInfo.arraySlice(0,4,5).gte(regrowthThresh);
 var regrowthSegs = segInfo.toArray(0).arrayMask(regrowthMask);
-Map.addLayer(regrowthSegs,{},'regrowth segments');
+Map.addLayer(regrowthSegs,{},'regrowth segments', false);
 
 // get the most recent year of recovery
 var yor = regrowthSegs.arraySlice(0,1,2).arrayProject([1]).arrayReduce(ee.Reducer.max(),[0]).arrayFlatten([['yor']]);
-Map.addLayer(yor, {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'yor');
+Map.addLayer(yor, {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'yor', false);
 
 //var recovMask = yor.where(yod, yor);
 var mask = yod.gt(1986);
 var tempMask = yod.updateMask(mask);
 var recovMask = yor.gt(tempMask)
 var test = yor.updateMask(recovMask);
-Map.addLayer(test,{min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']},'test')
+Map.addLayer(test,{min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']},'test', false)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set parameters for stand age outputs
