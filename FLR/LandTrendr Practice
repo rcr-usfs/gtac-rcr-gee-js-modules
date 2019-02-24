@@ -125,8 +125,8 @@ Map.addLayer(yod.updateMask(yod.neq(0)), {min:1986, max:2018, palette:['#9400D3'
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Map regrowth
 ////////////////////////////////////////////////////////////////////////////////////////////
-var regrowthThresh = 0.2;
-var regrowthMask = segInfo.arraySlice(0,4,5).gte(regrowthThresh);
+var regrowthThresh = 0.0;
+var regrowthMask = segInfo.arraySlice(0,4,5).gt(regrowthThresh);
 var regrowthSegs = segInfo.toArray(0).arrayMask(regrowthMask);
 Map.addLayer(regrowthSegs,{},'regrowth segments', false);
 
@@ -134,12 +134,12 @@ Map.addLayer(regrowthSegs,{},'regrowth segments', false);
 var yor = regrowthSegs.arraySlice(0,1,2).arrayProject([1]).arrayReduce(ee.Reducer.max(),[0]).arrayFlatten([['yor']]);
 Map.addLayer(yor, {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'yor', false);
 
-function year(image){
-  return ee.Image(ee.Algorithms.If(image.gt(yod),image, 0));
-}
-var test = year(yor)
 
 Map.addLayer(test,{min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']},'test', false);
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set parameters for stand age outputs
