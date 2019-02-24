@@ -125,17 +125,17 @@ Map.addLayer(yod.updateMask(yod.neq(0)), {min:1986, max:2018, palette:['#9400D3'
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Map regrowth
 ////////////////////////////////////////////////////////////////////////////////////////////
-var regrowthThresh = 0.0;
-var regrowthMask = segInfo.arraySlice(0,4,5).gt(regrowthThresh);
+var regrowthMask = segInfo.arraySlice(0,4,5).gt(0.05);
 var regrowthSegs = segInfo.toArray(0).arrayMask(regrowthMask);
+var yrMask = regrowthSegs.arraySlice(0,1,2).gt(yod);
+regrowthSegs = regrowthSegs.toArray(0).arrayMask(yrMask);
 Map.addLayer(regrowthSegs,{},'regrowth segments', false);
 
+
 // get the most recent year of recovery
-var yor = regrowthSegs.arraySlice(0,1,2).arrayProject([1]).arrayReduce(ee.Reducer.max(),[0]).arrayFlatten([['yor']]);
-Map.addLayer(yor, {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'yor', false);
+var yor = regrowthSegs.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reducer.min(),[0]).arrayFlatten([['yor']]);
+Map.addLayer(yor.updateMask(yor.neq(0)), {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'year of recovery', false);
 
-
-Map.addLayer(test,{min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']},'test', false);
 
 
 
