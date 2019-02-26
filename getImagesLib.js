@@ -222,7 +222,14 @@ function addYearJulianDayBand(img){
   
   return img.addBands(yj).float();
 }
-
+function addFullYearJulianDayBand(img){
+  var d = ee.Date(img.get('system:time_start'));
+  var julian = ee.Number(d.getRelative('day','year')).add(1).format('%03d');
+  var y = ee.String(d.get('year'));
+  var yj = ee.Image(ee.Number.parse(y.cat(julian))).rename(['yearJulian']).int64();
+  
+  return img.addBands(yj).float();
+}
 
 ////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -2631,6 +2638,7 @@ exports.addJulianDayBand = addJulianDayBand;
 exports.addYearBand = addYearBand;
 exports.addDateBand = addDateBand;
 exports.addYearJulianDayBand = addYearJulianDayBand;
+exports.addFullYearJulianDayBand = addFullYearJulianDayBand;
 exports.collectionToImage = collectionToImage;
 exports.getImageCollection = getImageCollection;
 exports.getS2 = getS2;
