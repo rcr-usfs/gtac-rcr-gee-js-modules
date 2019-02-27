@@ -11,7 +11,7 @@ var vizParamsFalse = {
 var vizParamsTrue = {
   'min': 0, 
   'max': [0.2,0.2,0.2], 
-  'bands': 'red,green,blue', m
+  'bands': 'red,green,blue', 
 };
 
 //Direction of  a decrease in photosynthetic vegetation- add any that are missing
