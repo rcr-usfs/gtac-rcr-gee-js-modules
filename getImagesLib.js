@@ -1284,8 +1284,7 @@ var maskCloudsWQA = function(image) {
 //Source: code.earthengine.google.com
 // Compute a cloud score.  This expects the input image to have the common
 // band names: ["red", "blue", etc], so it can work across sensors.
-function modisCloudScore(img,includeBlue) {
-  if(includeBlue === undefined || includeBlue === null){includeBlue = true}
+function modisCloudScore(img) {
   var useTempInCloudMask = true;
   // A helper to apply an expression and linearly rescale the output.
   var rescale = function(img, exp, thresholds) {
@@ -1297,8 +1296,7 @@ function modisCloudScore(img,includeBlue) {
   var score = ee.Image(1.0);
   
   // Clouds are reasonably bright in the blue band.
-  if(includeBlue){score = score.min(rescale(img, 'img.blue', [0.1, 0.3]));}
-  
+  score = score.min(rescale(img, 'img.blue', [0.1, 0.3]));
   // Map.addLayer(score,{min:0,max:1},'blue')
   // Clouds are reasonably bright in all visible bands.
   var vizSum = rescale(img, 'img.red + img.green + img.blue', [0.2, 0.8]);
