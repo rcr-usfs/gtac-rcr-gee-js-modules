@@ -1284,7 +1284,8 @@ var maskCloudsWQA = function(image) {
 //Source: code.earthengine.google.com
 // Compute a cloud score.  This expects the input image to have the common
 // band names: ["red", "blue", etc], so it can work across sensors.
-function modisCloudScore(img) {
+function modisCloudScore(img,includeBlue) {
+  if(includeBlue === undefined || includBlue === null){includeBlue = true}
   var useTempInCloudMask = true;
   // A helper to apply an expression and linearly rescale the output.
   var rescale = function(img, exp, thresholds) {
@@ -1296,7 +1297,8 @@ function modisCloudScore(img) {
   var score = ee.Image(1.0);
   
   // Clouds are reasonably bright in the blue band.
-  score = score.min(rescale(img, 'img.blue', [0.1, 0.3]));
+  if(includeBlue){score = score.min(rescale(img, 'img.blue', [0.1, 0.3]));}
+  
   // Map.addLayer(score,{min:0,max:1},'blue')
   // Clouds are reasonably bright in all visible bands.
   var vizSum = rescale(img, 'img.red + img.green + img.blue', [0.2, 0.8]);
@@ -1331,53 +1333,7 @@ function modisCloudScore(img) {
   // Map.addLayer(masked,vizParamsFalse,'imgMasked',false)
   return score.rename(['cloudScore']);
 }
-function modisCloudScore2(img) {
-  var useTempInCloudMask = true;
-  // A helper to apply an expression and linearly rescale the output.
-  var rescale = function(img, exp, thresholds) {
-    return img.expression(exp, {img: img})
-        .subtract(thresholds[0]).divide(thresholds[1] - thresholds[0]);
-  };
-  // Map.addLayer(img,vizParamsFalse,'img',false)
-  // Compute several indicators of cloudyness and take the minimum of them.
-  var score = ee.Image(1.0);
-  
-  // Clouds are reasonably bright in the blue band.
-  // score = score.min(rescale(img, 'img.blue', [0.1, 0.3]));
-  // Map.addLayer(score,{min:0,max:1},'blue')
-  // Clouds are reasonably bright in all visible bands.
-  var vizSum = rescale(img, 'img.red + img.green + img.blue', [0.2, 0.8]);
-  score = score.min(vizSum);
-  // Map.addLayer(score,{min:0,max:1},'blue+viz',false)
-  // Clouds are reasonably bright in all infrared bands.
-  var irSum =rescale(img, 'img.nir  + img.swir2 + img.swir2', [0.3, 0.8]);
-  score = score.min(irSum);
-  
-  // Map.addLayer(score,{min:0,max:1},'blue+viz+ir',false)
-  
-  // However, clouds are not snow.
-  var ndsi = img.normalizedDifference(['green', 'swir2']);
-  var snowScore = rescale(ndsi, 'img', [0.8, 0.6]);
-  score =score.min(snowScore);
-  // Map.addLayer(score,{min:0,max:1},'blue+viz+ir+ndsi',false)
-  //For MODIS, provide the option of not using thermal since it introduces
-  //a precomputed mask that may or may not be wanted
-  if(useTempInCloudMask === true){
-    // Clouds are reasonably cool in temperature.
-    // var maskMax = img.select(['temp']).mask().focal_min(5)
-    // var tempScore = rescale(img, 'img.temp', [320, 300]);
-    // tempScore = ee.Image(1).where(maskMax,tempScore)
-    // score = score.min(tempScore);
-    
-    score = score.where(img.select(['temp']).mask().not(),1);
-  }
-  // Map.addLayer(score,{min:0,max:1},'blue+viz+ir+ndsi+temp',false)
-  score = score.multiply(100);
-  score = score.clamp(0,100).byte();
-  // var masked = img.updateMask(score.lt(5))
-  // Map.addLayer(masked,vizParamsFalse,'imgMasked',false)
-  return score.rename(['cloudScore']);
-}
+
 ////////////////////////////////////////
 // Cloud masking algorithm for Sentinel2
 //Built on ideas from Landsat cloudScore algorithm
@@ -2717,7 +2673,6 @@ exports.getProcessedSentinel2Scenes = getProcessedSentinel2Scenes;
 exports.getSentinel2Wrapper =getSentinel2Wrapper;
 exports.getModisData = getModisData;
 exports.modisCloudScore = modisCloudScore;
-exports.modisCloudScore2 = modisCloudScore2;
 exports.despikeCollection = despikeCollection;
 exports.exportToAssetWrapper = exportToAssetWrapper;
 exports.exportToAssetWrapper2 = exportToAssetWrapper2;
