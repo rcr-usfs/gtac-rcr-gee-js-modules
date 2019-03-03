@@ -136,7 +136,7 @@ var yor = regrowthSegs.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reduce
 Map.addLayer(yor.updateMask(yor.neq(0)), {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'magnitude based year of recovery', false);
 
 // use the rate of recovery to determine the recovery year
-var rateMask = segInfo.arraySlice(0,6,null).gt(0.01);           // slice off the rates and create a binary mask
+var rateMask = segInfo.arraySlice(0,6,null).gt(0.07);           // slice off the rates and create a binary mask
 var regrowthRateSegs = segInfo.toArray(0).arrayMask(rateMask); // mask out the rest of the attributes
 var yrRateMask = regrowthRateSegs.arraySlice(0,1,2).gt(yod);
 regrowthRateSegs = regrowthRateSegs.toArray(0).arrayMask(yrRateMask);
