@@ -137,7 +137,7 @@ var longTermDisturbance = disturbanceImage.select(['dur']).gte(15);
 var longTermThreshold = disturbanceImage.select(['mag']).gte(-0.25).and(longTermDisturbance);
 var threshold = disturbanceImage.select(['mag']).gte(-0.2);
 var finalDistImg = disturbanceImage.updateMask(threshold.or(longTermThreshold));
-Map.addLayer(finalDistImg, {min:1986, max:2018, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'finalDistImg');
+Map.addLayer(finalDistImg, {}, 'finalDistImg');
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Map regrowth
 ////////////////////////////////////////////////////////////////////////////////////////////
