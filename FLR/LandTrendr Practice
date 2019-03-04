@@ -125,18 +125,19 @@ Map.addLayer(yod.updateMask(yod.neq(0)), {min:1986, max:2018, palette:['#9400D3'
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Map regrowth
 ////////////////////////////////////////////////////////////////////////////////////////////
-var regrowthMask = segInfo.arraySlice(0,4,5).gt(0.05);
-var regrowthSegs = segInfo.toArray(0).arrayMask(regrowthMask);
-var yrMask = regrowthSegs.arraySlice(0,1,2).gt(yod);
-regrowthSegs = regrowthSegs.toArray(0).arrayMask(yrMask);
-Map.addLayer(regrowthSegs,{},'regrowth segments', false);
+var regrowthMagThresh = 0.2;
+var regrowthMagMask = segInfo.arraySlice(0,4,5).gt(regrowthMagThresh);
+var regrowthMagSegs = segInfo.toArray(0).arrayMask(regrowthMagMask);
+var yrMask = regrowthMagSegs.arraySlice(0,1,2).gt(yod);
+regrowthMagSegs = regrowthMagSegs.toArray(0).arrayMask(yrMask);
+Map.addLayer(regrowthMagSegs,{},'regrowth magnitude segments', false);
 
 // make sure there is a disurbance prior to a recovery?
-var yor = regrowthSegs.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reducer.min(),[0]).arrayFlatten([['yor']]);
+var yor = regrowthMagSegs.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reducer.min(),[0]).arrayFlatten([['yor']]);
 Map.addLayer(yor.updateMask(yor.neq(0)), {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'magnitude based year of recovery', false);
 
 // use the rate of recovery to determine the recovery year
-var rateMask = segInfo.arraySlice(0,6,null).gt(0.07);           // slice off the rates and create a binary mask
+var rateMask = segInfo.arraySlice(0,6,null).gt(0.02);           // slice off the rates and create a binary mask
 var regrowthRateSegs = segInfo.toArray(0).arrayMask(rateMask); // mask out the rest of the attributes
 var yrRateMask = regrowthRateSegs.arraySlice(0,1,2).gt(yod);
 regrowthRateSegs = regrowthRateSegs.toArray(0).arrayMask(yrRateMask);
