@@ -123,21 +123,21 @@ var yod = segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayReduce(ee.Reduc
 Map.addLayer(yod.updateMask(yod.neq(0)), {min:1986, max:2018, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'year of most recent disturbance', false);
 
 
-var disturbanceImage = ee.Image.cat(segInfoMasked.arraySlice(0,0,1).arrayProject([0]).arrayFlatten([['startYr']]),
-                               segInfoMasked.arraySlice(0,1,2).arrayProject([0]).arrayFlatten([['endYr']]),
-                               segInfoMasked.arraySlice(0,2,3).arrayProject([0]).arrayFlatten([['startVal']]),
-                               segInfoMasked.arraySlice(0,3,4).arrayProject([0]).arrayFlatten([['endVal']]),
-                               segInfoMasked.arraySlice(0,4,5).arrayProject([0]).arrayFlatten([['mag']]),
-                               segInfoMasked.arraySlice(0,5,6).arrayProject([0]).arrayFlatten([['dur']]),
-                               segInfoMasked.arraySlice(0,6,7).arrayProject([0]).arrayFlatten([['rate']]));
+// var disturbanceImage = ee.Image.cat(segInfoMasked.arraySlice(0,0,1).arrayProject([0]).arrayFlatten([['startYr']]),
+//                               segInfoMasked.arraySlice(0,1,2).arrayProject([0]).arrayFlatten([['endYr']]),
+//                               segInfoMasked.arraySlice(0,2,3).arrayProject([0]).arrayFlatten([['startVal']]),
+//                               segInfoMasked.arraySlice(0,3,4).arrayProject([0]).arrayFlatten([['endVal']]),
+//                               segInfoMasked.arraySlice(0,4,5).arrayProject([0]).arrayFlatten([['mag']]),
+//                               segInfoMasked.arraySlice(0,5,6).arrayProject([0]).arrayFlatten([['dur']]),
+//                               segInfoMasked.arraySlice(0,6,7).arrayProject([0]).arrayFlatten([['rate']]));
                                
-Map.addLayer(disturbanceImage, {}, 'disturbanceImage', false);
+// Map.addLayer(disturbanceImage, {}, 'disturbanceImage', false);
 
-var longTermDisturbance = disturbanceImage.select(['dur']).gte(15);
-var longTermThreshold = disturbanceImage.select(['mag']).gte(-0.25).and(longTermDisturbance);
-var threshold = disturbanceImage.select(['mag']).gte(-0.2);
-var finalDistImg = disturbanceImage.updateMask(threshold.or(longTermThreshold));
-Map.addLayer(finalDistImg, {}, 'finalDistImg');
+// var longTermDisturbance = disturbanceImage.select(['dur']).gte(15);
+// var longTermThreshold = disturbanceImage.select(['mag']).gte(-0.25).and(longTermDisturbance);
+// var threshold = disturbanceImage.select(['mag']).gte(-0.2);
+// var finalDistImg = disturbanceImage.updateMask(threshold.or(longTermThreshold));
+// Map.addLayer(finalDistImg, {}, 'finalDistImg');
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Map regrowth
 ////////////////////////////////////////////////////////////////////////////////////////////
