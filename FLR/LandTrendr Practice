@@ -113,7 +113,7 @@ var segInfo = ee.Image.cat([startYear.add(1), endYear, startVal, endVal, mag, du
 Map.addLayer(segInfo, {}, 'segment info', false);
 
 // filter by magnitude
-var mag_size = 0.0;
+var mag_size = -0.2;
 var mag_mask = segInfo.arraySlice(0,4,5).lte(mag_size);
 var segInfoMasked = segInfo.toArray(0).arrayMask(mag_mask);
 Map.addLayer(segInfoMasked, {}, 'segment info masked', false);
@@ -123,13 +123,13 @@ var yod = segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayReduce(ee.Reduc
 Map.addLayer(yod.updateMask(yod.neq(0)), {min:1986, max:2018, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'year of most recent disturbance', false);
 
 
-var disturbanceImage = ee.Image.cat(segInfoMasked.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['startYr','2', '3']]),
-                               segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['endYr','2', '3']]),
-                               segInfoMasked.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['startVal','2', '3']]),
-                               segInfoMasked.arraySlice(0,3,4).arrayProject([1]).arrayFlatten([['endVal','2', '3']]),
-                               segInfoMasked.arraySlice(0,4,5).arrayProject([1]).arrayFlatten([['mag','2', '3']]),
-                               segInfoMasked.arraySlice(0,5,6).arrayProject([1]).arrayFlatten([['dur','2', '3']]),
-                               segInfoMasked.arraySlice(0,6,7).arrayProject([1]).arrayFlatten([['rate','2', '3']]));
+var disturbanceImage = ee.Image.cat(segInfoMasked.arraySlice(0,0,1).arrayProject([0]).arrayFlatten([['startYr']]),
+                               segInfoMasked.arraySlice(0,1,2).arrayProject([0]).arrayFlatten([['endYr']]),
+                               segInfoMasked.arraySlice(0,2,3).arrayProject([0]).arrayFlatten([['startVal']]),
+                               segInfoMasked.arraySlice(0,3,4).arrayProject([0]).arrayFlatten([['endVal']]),
+                               segInfoMasked.arraySlice(0,4,5).arrayProject([0]).arrayFlatten([['mag']]),
+                               segInfoMasked.arraySlice(0,5,6).arrayProject([0]).arrayFlatten([['dur']]),
+                               segInfoMasked.arraySlice(0,6,7).arrayProject([0]).arrayFlatten([['rate']]));
                                
 Map.addLayer(disturbanceImage, {}, 'disturbanceImage', false);
 
@@ -141,38 +141,25 @@ Map.addLayer(finalDistImg, {}, 'finalDistImg');
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Map regrowth
 ////////////////////////////////////////////////////////////////////////////////////////////
-// use the magnitude of recovery to determine the recovery year
-var regrowthMagThresh = 0.2;
-var regrowthMagMask = segInfo.arraySlice(0,4,5).gt(regrowthMagThresh);
-var regrowthMagSegs = segInfo.toArray(0).arrayMask(regrowthMagMask);
-var yrMask = regrowthMagSegs.arraySlice(0,1,2).gt(yod);
-regrowthMagSegs = regrowthMagSegs.toArray(0).arrayMask(yrMask);
-Map.addLayer(regrowthMagSegs,{},'regrowth magnitude segments', false);
+var regrowthMagThresh = 0.2;        //set the threshold to determine recovery year by magnitude
+var regrowthRateThresh = 0.02;      //set the threshold to determine recovery year by rate
 
-// make sure there is a disurbance prior to a recovery?
+// use the magnitude of recovery to determine the recovery year
+var regrowthMagMask = segInfo.arraySlice(0,4,5).gt(regrowthMagThresh); //slice off the magnitudes and create a binary mask
+var regrowthMagSegs = segInfo.toArray(0).arrayMask(regrowthMagMask);   //mask attributes using the magnitude mask
+var yrMask = regrowthMagSegs.arraySlice(0,1,2).gt(yod);                //slice off the years and create mask of years greater than  
+regrowthMagSegs = regrowthMagSegs.toArray(0).arrayMask(yrMask);
 var yor = regrowthMagSegs.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reducer.min(),[0]).arrayFlatten([['yor']]);
 Map.addLayer(yor.updateMask(yor.neq(0)), {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'magnitude based year of recovery', false);
 
 // use the rate of recovery to determine the recovery year
-var rateMask = segInfo.arraySlice(0,6,null).gt(0.02);           // slice off the rates and create a binary mask
-var regrowthRateSegs = segInfo.toArray(0).arrayMask(rateMask); // mask out the rest of the attributes
+var rateMask = segInfo.arraySlice(0,6,null).gt(regrowthRateThresh);           //slice off the rates and create a binary mask
+var regrowthRateSegs = segInfo.toArray(0).arrayMask(rateMask);                //mask attributes using the rate mask
 var yrRateMask = regrowthRateSegs.arraySlice(0,1,2).gt(yod);
 regrowthRateSegs = regrowthRateSegs.toArray(0).arrayMask(yrRateMask);
 var rates = regrowthRateSegs.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reducer.min(),[0]).arrayFlatten([['yor']]);
 Map.addLayer(rates.updateMask(rates.neq(0)), {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'rate based year of recovery', false);
 
-// set multiple criteria for recovery
-var durThresh = 20;
-var magThresh = 0.2;
-
-var durationSlice = segInfo.arraySlice(0,5,6).gte(durThresh);
-//var dsm = segInfo.toArray(0).arrayMask(durationSlice).arrayMask();
-
-
-//var longTermDisturbance = finalDistImg.select(['dur']).gte(15);
-//var longTermThreshold = finalDistImg.select(['mag']).gte(params.tree_loss20).and(longTermDisturbance);
-//var threshold = finalDistImg.select(['mag']).gte(params.tree_loss1);
-//return finalDistImg.updateMask(threshold.or(longTermThreshold));
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set parameters for stand age outputs
 var year = 2010;                      // year should be between 2000 and 2017
