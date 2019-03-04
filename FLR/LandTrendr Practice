@@ -122,9 +122,20 @@ Map.addLayer(segInfoMasked, {}, 'segment info masked', false);
 var yod = segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayReduce(ee.Reducer.max(),[0]).arrayFlatten([['yod']]);
 Map.addLayer(yod.updateMask(yod.neq(0)), {min:1986, max:2018, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'year of most recent disturbance', false);
 
+
+var test = ee.Image.cat(segInfoMasked.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['startYr']]),
+                               segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['endYr']]),
+                               segInfoMasked.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['startVal']]),
+                               segInfoMasked.arraySlice(0,3,4).arrayProject([1]).arrayFlatten([['endVal']]),
+                               segInfoMasked.arraySlice(0,4,5).arrayProject([1]).arrayFlatten([['mag']]),
+                               segInfoMasked.arraySlice(0,5,6).arrayProject([1]).arrayFlatten([['dur']]),
+                               segInfoMasked.arraySlice(0,6,7).arrayProject([1]).arrayFlatten([['rate']]));
+                               
+Map.addLayer(test, {}, 'test')
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Map regrowth
 ////////////////////////////////////////////////////////////////////////////////////////////
+// use the magnitude of recovery to determine the recovery year
 var regrowthMagThresh = 0.2;
 var regrowthMagMask = segInfo.arraySlice(0,4,5).gt(regrowthMagThresh);
 var regrowthMagSegs = segInfo.toArray(0).arrayMask(regrowthMagMask);
@@ -144,6 +155,18 @@ regrowthRateSegs = regrowthRateSegs.toArray(0).arrayMask(yrRateMask);
 var rates = regrowthRateSegs.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reducer.min(),[0]).arrayFlatten([['yor']]);
 Map.addLayer(rates.updateMask(rates.neq(0)), {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'rate based year of recovery', false);
 
+// set multiple criteria for recovery
+var durThresh = 20;
+var magThresh = 0.2;
+
+var durationSlice = segInfo.arraySlice(0,5,6).gte(durThresh);
+//var dsm = segInfo.toArray(0).arrayMask(durationSlice).arrayMask();
+
+
+//var longTermDisturbance = finalDistImg.select(['dur']).gte(15);
+//var longTermThreshold = finalDistImg.select(['mag']).gte(params.tree_loss20).and(longTermDisturbance);
+//var threshold = finalDistImg.select(['mag']).gte(params.tree_loss1);
+//return finalDistImg.updateMask(threshold.or(longTermThreshold));
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set parameters for stand age outputs
 var year = 2010;                      // year should be between 2000 and 2017
