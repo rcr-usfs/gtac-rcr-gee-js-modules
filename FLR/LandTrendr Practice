@@ -113,7 +113,7 @@ var segInfo = ee.Image.cat([startYear.add(1), endYear, startVal, endVal, mag, du
 Map.addLayer(segInfo, {}, 'segment info', false);
 
 // filter by magnitude
-var mag_size = -0.2;
+var mag_size = 0.0;
 var mag_mask = segInfo.arraySlice(0,4,5).lte(mag_size);
 var segInfoMasked = segInfo.toArray(0).arrayMask(mag_mask);
 Map.addLayer(segInfoMasked, {}, 'segment info masked', false);
@@ -123,7 +123,7 @@ var yod = segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayReduce(ee.Reduc
 Map.addLayer(yod.updateMask(yod.neq(0)), {min:1986, max:2018, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'year of most recent disturbance', false);
 
 
-var test = ee.Image.cat(segInfoMasked.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['startYr']]),
+var disturbanceImage = ee.Image.cat(segInfoMasked.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['startYr']]),
                                segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['endYr']]),
                                segInfoMasked.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['startVal']]),
                                segInfoMasked.arraySlice(0,3,4).arrayProject([1]).arrayFlatten([['endVal']]),
@@ -131,7 +131,13 @@ var test = ee.Image.cat(segInfoMasked.arraySlice(0,0,1).arrayProject([1]).arrayF
                                segInfoMasked.arraySlice(0,5,6).arrayProject([1]).arrayFlatten([['dur']]),
                                segInfoMasked.arraySlice(0,6,7).arrayProject([1]).arrayFlatten([['rate']]));
                                
-Map.addLayer(test, {}, 'test')
+Map.addLayer(disturbanceImage, {}, 'disturbanceImage', false);
+
+var longTermDisturbance = disturbanceImage.select(['dur']).gte(15);
+var longTermThreshold = disturbanceImage.select(['mag']).gte(-0.25).and(longTermDisturbance);
+var threshold = disturbanceImage.select(['mag']).gte(-0.2);
+var finalDistImg = disturbanceImage.updateMask(threshold.or(longTermThreshold));
+Map.addLayer(finalDistImg, {min:1986, max:2018, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'finalDistImg');
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Map regrowth
 ////////////////////////////////////////////////////////////////////////////////////////////
