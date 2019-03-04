@@ -123,13 +123,13 @@ var yod = segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayReduce(ee.Reduc
 Map.addLayer(yod.updateMask(yod.neq(0)), {min:1986, max:2018, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'year of most recent disturbance', false);
 
 
-var disturbanceImage = ee.Image.cat(segInfoMasked.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['startYr']]),
-                               segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['endYr']]),
-                               segInfoMasked.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['startVal']]),
-                               segInfoMasked.arraySlice(0,3,4).arrayProject([1]).arrayFlatten([['endVal']]),
-                               segInfoMasked.arraySlice(0,4,5).arrayProject([1]).arrayFlatten([['mag']]),
-                               segInfoMasked.arraySlice(0,5,6).arrayProject([1]).arrayFlatten([['dur']]),
-                               segInfoMasked.arraySlice(0,6,7).arrayProject([1]).arrayFlatten([['rate']]));
+var disturbanceImage = ee.Image.cat(segInfoMasked.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['startYr','2', '3']]),
+                               segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['endYr','2', '3']]),
+                               segInfoMasked.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['startVal','2', '3']]),
+                               segInfoMasked.arraySlice(0,3,4).arrayProject([1]).arrayFlatten([['endVal','2', '3']]),
+                               segInfoMasked.arraySlice(0,4,5).arrayProject([1]).arrayFlatten([['mag','2', '3']]),
+                               segInfoMasked.arraySlice(0,5,6).arrayProject([1]).arrayFlatten([['dur','2', '3']]),
+                               segInfoMasked.arraySlice(0,6,7).arrayProject([1]).arrayFlatten([['rate','2', '3']]));
                                
 Map.addLayer(disturbanceImage, {}, 'disturbanceImage', false);
 
