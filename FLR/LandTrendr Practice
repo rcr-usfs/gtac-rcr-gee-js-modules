@@ -147,13 +147,13 @@ Map.addLayer(rates.updateMask(rates.neq(0)), {min:1986, max:2016, palette:['#940
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set parameters for stand age outputs
 var year = 2010;                      // year should be between 2000 and 2017
-var treeHeightThreshold = 5;         // set a tree height threshold to determine the extent of forest 
+var treeHeightThreshold = 5;          // set a tree height threshold to determine the extent of forest 
 var canopyThreshold = 10;             // set a canopy cover threshold to determine the extent of forest
 var homogenizeStandAge = false;       // if true a focal mode will be applied to stand age pixels
-var minimumMappingUnit = true;       // if true a minimum mapping unit will be applied to filter patches less than the mmu
+var minimumMappingUnit = true;        // if true a minimum mapping unit will be applied to filter patches less than the mmu
 var minMapUnitSize = 11;              // the number of pixels to be considered a patch, if applied
 var scale = 30;                       // set the scale of the raster output
-var outName = 'Stand_Age';     // choose an output name, note that the year and province will be automatically added to this name.
+var outName = 'Stand_Age';            // choose an output name, note that the year and province will be automatically added to this name.
 var crs = 'EPSG:32648';               // choose an output projection
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
