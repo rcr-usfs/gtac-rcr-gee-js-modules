@@ -154,17 +154,17 @@ var regrowthRateThresh = 0.02;      //set the threshold to determine recovery ye
 // use the magnitude of recovery to determine the recovery year
 var regrowthMagMask = segInfo.arraySlice(0,4,5).gt(regrowthMagThresh); //slice off the magnitudes and create a binary mask
 var regrowthMagSegs = segInfo.toArray(0).arrayMask(regrowthMagMask);   //mask attributes using the magnitude mask
-var yrMask = regrowthMagSegs.arraySlice(0,1,2).gt(yod);                //slice off the years and create mask of years greater than  
-regrowthMagSegs = regrowthMagSegs.toArray(0).arrayMask(yrMask);
-var yor = regrowthMagSegs.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reducer.min(),[0]).arrayFlatten([['yor']]);
+var yrMask = regrowthMagSegs.arraySlice(0,1,2).gt(yod);                //slice off the years and create mask of years greater than  the yod
+regrowthMagSegs = regrowthMagSegs.toArray(0).arrayMask(yrMask);        //apply the mask
+var yor = regrowthMagSegs.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reducer.min(),[0]).arrayFlatten([['yor']]); // convert to an image
 Map.addLayer(yor.updateMask(yor.neq(0)), {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'magnitude based year of recovery', false);
 
 // use the rate of recovery to determine the recovery year
 var rateMask = segInfo.arraySlice(0,6,null).gt(regrowthRateThresh);           //slice off the rates and create a binary mask
 var regrowthRateSegs = segInfo.toArray(0).arrayMask(rateMask);                //mask attributes using the rate mask
-var yrRateMask = regrowthRateSegs.arraySlice(0,1,2).gt(yod);
-regrowthRateSegs = regrowthRateSegs.toArray(0).arrayMask(yrRateMask);
-var rates = regrowthRateSegs.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reducer.min(),[0]).arrayFlatten([['yor']]);
+var yrRateMask = regrowthRateSegs.arraySlice(0,1,2).gt(yod);                  //slice off the years and create mask of years greater than  the yod
+regrowthRateSegs = regrowthRateSegs.toArray(0).arrayMask(yrRateMask);         //apply the mask
+var rates = regrowthRateSegs.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reducer.min(),[0]).arrayFlatten([['yor']]); //convert to an image
 Map.addLayer(rates.updateMask(rates.neq(0)), {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'rate based year of recovery', false);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -181,8 +181,9 @@ var crs = 'EPSG:32648';               // choose an output projection
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // ///////////////////////////////////////////////////////////////////////////////////
-// // Get stand age - assumes forest begins regenerating immediately after loss year
+// // Get stand age 
 // ///////////////////////////////////////////////////////////////////////////////////
+
 // var standAgeMap = getStandAge(year, treeHeightThreshold, canopyThreshold, minMapUnitSize);
 // //Map.addLayer(standAgeMap.select(0), {min:0, max:20, palette:'F00,0F0'}, 'Stand Age ' + year);
 
