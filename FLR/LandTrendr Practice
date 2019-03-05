@@ -42,7 +42,7 @@ var medoidIndex = medoidCollection.map(normalizedDifference)
 // User parameters to set
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // the map is set to center on Prey Lang
-//Map.setCenter(105.49021789662868, 13.197978572450443, 9);
+Map.setCenter(105.49021789662868, 13.197978572450443, 9);
 
 // Indicate the province name - now set to export for all of Cambodia
 // Provinces are: Banteay Meanchey, Battambang, Kampot, Kampong Cham, Kampong Chhnang, Kampong Speu, Kampong Thom,
