@@ -127,7 +127,7 @@ var rate = mag.divide(dur);                  // calculate the rate of spectral c
 
 // make an array that contains all the segment attributes
 var segInfo = ee.Image.cat([startYear.add(1), endYear, startVal, endVal, mag, dur, rate]).toArray(0).mask(vertex_mask.mask());
-Map.addLayer(segInfo, {}, 'segment info', false);
+//Map.addLayer(segInfo, {}, 'segment info', false);
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Map disturbnace (vegetation loss)
@@ -139,7 +139,7 @@ var mag_size = -0.2;
 // slice off the magnitudes and mask
 var mag_mask = segInfo.arraySlice(0,4,5).lte(mag_size);
 var segInfoMasked = segInfo.toArray(0).arrayMask(mag_mask);
-Map.addLayer(segInfoMasked, {}, 'segment info masked', false);
+//Map.addLayer(segInfoMasked, {}, 'segment info masked', false);
 
 //get the most recent year of disturbance that met the magnitude threshold
 var yod = segInfoMasked.arraySlice(0,1,2).arrayProject([1]).arrayReduce(ee.Reducer.max(),[0]).arrayFlatten([['yod']]);
@@ -184,105 +184,105 @@ var crs = 'EPSG:32648';               // choose an output projection
 // // Get stand age 
 // ///////////////////////////////////////////////////////////////////////////////////
 
-// var standAgeMap = getStandAge(year, treeHeightThreshold, canopyThreshold, minMapUnitSize);
-// //Map.addLayer(standAgeMap.select(0), {min:0, max:20, palette:'F00,0F0'}, 'Stand Age ' + year);
+var standAgeMap = getStandAge(year, treeHeightThreshold, canopyThreshold, minMapUnitSize);
+//Map.addLayer(standAgeMap.select(0), {min:0, max:20, palette:'F00,0F0'}, 'Stand Age ' + year);
 
-// if(minimumMappingUnit === true){
-//   //Map.addLayer(standAgeMap.select('mmuStandAge'), {min:0, max:20, palette:'F00,0F0'}, 'MMU Stand Age ' + year);
-// }
+if(minimumMappingUnit === true){
+  //Map.addLayer(standAgeMap.select('mmuStandAge'), {min:0, max:20, palette:'F00,0F0'}, 'MMU Stand Age ' + year);
+}
 
-// if (homogenizeStandAge === true){
-//   //Map.addLayer(standAgeMap.select('hmStandAge'), {min:0, max:20, palette:'F00,0F0'}, 'Homogenized Stand Age ' + year);
-// }
+if (homogenizeStandAge === true){
+  //Map.addLayer(standAgeMap.select('hmStandAge'), {min:0, max:20, palette:'F00,0F0'}, 'Homogenized Stand Age ' + year);
+}
 
-// // Create stand age map
-// // this function works specifically with the canopy and tree height primatives
-// // it is also assumed that year of disturbance from Landtrendr is used to identify forest change
-// function getStandAge(year, treeHeightThreshold, canopyThreshold, minMapUnitSize){
-//   year = ee.Number(year);
-//   // filter the canopy and height layers to the year of interest
-//   var canopyYear = canopy.filter(ee.Filter.calendarRange(year, year, 'year')).first();
-//   var heightYear = treeHeight.filter(ee.Filter.calendarRange(year, year, 'year')).first();
-//   // get only the canopy and height pixels that meet the thresholds and assign them a value of 1
-//   var can = canopyYear.gte(canopyThreshold);
-//   var height = heightYear.gte(treeHeightThreshold);
-//   // add the canopy and height pixels together - only values of 2 are considered forested
-//   var forest = ee.Image(can).add(ee.Image(height)).remap([0,1,2], [0,0,1]).rename('forest');
-//   // create a year of disturbance variable locally
-//   var yorLocal = yor;
-//   // get the forested disturbances
-//   var forestDisturbance = yorLocal.updateMask(forest);
-//   // get the disturbances for all years prior to the analysis year to be used to mask the disturbances
-//   var yorLocalLTYear = yorLocal.lt(year);
-//   // mask the forested disturbances to those occuring before the year of interest
-//   var priorForestDisturbance = forestDisturbance.updateMask(yorLocalLTYear);
-//   // create a constant raster set equal to the analysis year and mask it to the extent of forest disturbance 
-//   var yearConstant = ee.Image.constant(year).updateMask(forest);
-//   // subtract the year of disturbances that occured prior to year of interest from the year of interest 
-//   var standAge = yearConstant.subtract(priorForestDisturbance).rename('standAge');
-//   // combine stand age with a forest age constant
-//   standAge = standAge.unmask(ee.Image.constant(20), true).updateMask(forest);
-//   standAge = standAge.where(standAge.gt(20), 20);
+// Create stand age map
+// this function works specifically with the canopy and tree height primatives
+// it is also assumed that year of disturbance from Landtrendr is used to identify forest change
+function getStandAge(year, treeHeightThreshold, canopyThreshold, minMapUnitSize){
+  year = ee.Number(year);
+  // filter the canopy and height layers to the year of interest
+  var canopyYear = canopy.filter(ee.Filter.calendarRange(year, year, 'year')).first();
+  var heightYear = treeHeight.filter(ee.Filter.calendarRange(year, year, 'year')).first();
+  // get only the canopy and height pixels that meet the thresholds and assign them a value of 1
+  var can = canopyYear.gte(canopyThreshold);
+  var height = heightYear.gte(treeHeightThreshold);
+  // add the canopy and height pixels together - only values of 2 are considered forested
+  var forest = ee.Image(can).add(ee.Image(height)).remap([0,1,2], [0,0,1]).rename('forest');
+  // create a year of disturbance variable locally
+  var yorLocal = yor;
+  // get the forested disturbances
+  var forestDisturbance = yorLocal.updateMask(forest);
+  // get the disturbances for all years prior to the analysis year to be used to mask the disturbances
+  var yorLocalLTYear = yorLocal.lt(year);
+  // mask the forested disturbances to those occuring before the year of interest
+  var priorForestDisturbance = forestDisturbance.updateMask(yorLocalLTYear);
+  // create a constant raster set equal to the analysis year and mask it to the extent of forest disturbance 
+  var yearConstant = ee.Image.constant(year).updateMask(forest);
+  // subtract the year of disturbances that occured prior to year of interest from the year of interest 
+  var standAge = yearConstant.subtract(priorForestDisturbance).rename('standAge');
+  // combine stand age with a forest age constant
+  standAge = standAge.unmask(ee.Image.constant(20), true).updateMask(forest);
+  standAge = standAge.where(standAge.gt(20), 20);
 
-//   var transform = [30,0,0,0,30,0];
-//   standAge = standAge.clip(studyArea).reproject(crs, transform);
+  var transform = [30,0,0,0,30,0];
+  standAge = standAge.clip(studyArea).reproject(crs, transform);
 
-//   // set image metadata
-//   var timeStart = ee.Date.fromYMD(year, 6, 1).millis();
-//   standAge = standAge.set('system:time_start', timeStart).set('canopy', canopyThreshold).set('tree_height', treeHeightThreshold);
+  // set image metadata
+  var timeStart = ee.Date.fromYMD(year, 6, 1).millis();
+  standAge = standAge.set('system:time_start', timeStart).set('canopy', canopyThreshold).set('tree_height', treeHeightThreshold);
   
-//   // Generate forest mask for optional steps
-//   var mask = forest.connectedPixelCount(minMapUnitSize+1, true).gte(minMapUnitSize).reproject(crs,transform);  
+  // Generate forest mask for optional steps
+  var mask = forest.connectedPixelCount(minMapUnitSize+1, true).gte(minMapUnitSize).reproject(crs,transform);  
   
-//   // homogenize stand age
-//   if (homogenizeStandAge === true){
-//   var clumpSize = standAge.connectedPixelCount(minMapUnitSize+1, true).reproject(crs,transform);
-//   var elimMask = clumpSize.gte(minMapUnitSize);
-//   var mode  = standAge.focal_mode(minMapUnitSize/2,'circle');
-//   var hmStandAge = standAge.where(elimMask.not(),mode).reproject(crs,transform);
-//   if (minimumMappingUnit === true){hmStandAge = hmStandAge.updateMask(mask);}
-//   hmStandAge = hmStandAge.rename("hmStandAge");
-//   hmStandAge = hmStandAge.set('system:time_start', timeStart).set('canopy', canopyThreshold).set('tree_height', treeHeightThreshold);
-//   standAge = standAge.addBands(hmStandAge);
-//   }
+  // homogenize stand age
+  if (homogenizeStandAge === true){
+  var clumpSize = standAge.connectedPixelCount(minMapUnitSize+1, true).reproject(crs,transform);
+  var elimMask = clumpSize.gte(minMapUnitSize);
+  var mode  = standAge.focal_mode(minMapUnitSize/2,'circle');
+  var hmStandAge = standAge.where(elimMask.not(),mode).reproject(crs,transform);
+  if (minimumMappingUnit === true){hmStandAge = hmStandAge.updateMask(mask);}
+  hmStandAge = hmStandAge.rename("hmStandAge");
+  hmStandAge = hmStandAge.set('system:time_start', timeStart).set('canopy', canopyThreshold).set('tree_height', treeHeightThreshold);
+  standAge = standAge.addBands(hmStandAge);
+  }
   
-//   // apply a minimum mapping unit
-//   if(minimumMappingUnit === true){
-//     var mmuStandAge = standAge.select(0).updateMask(mask).reproject(crs,transform);
-//     mmuStandAge = mmuStandAge.rename("mmuStandAge");
-//     mmuStandAge = mmuStandAge.set('system:time_start', timeStart).set('canopy', canopyThreshold).set('tree_height', treeHeightThreshold);
-//     standAge = standAge.addBands(mmuStandAge);
-//   } 
+  // apply a minimum mapping unit
+  if(minimumMappingUnit === true){
+    var mmuStandAge = standAge.select(0).updateMask(mask).reproject(crs,transform);
+    mmuStandAge = mmuStandAge.rename("mmuStandAge");
+    mmuStandAge = mmuStandAge.set('system:time_start', timeStart).set('canopy', canopyThreshold).set('tree_height', treeHeightThreshold);
+    standAge = standAge.addBands(mmuStandAge);
+  } 
   
-//   //return stand age
-//   return standAge.toByte();
-// }
+  //return stand age
+  return standAge.toByte();
+}
 
-// ///////////////////////////////////////////////////////////////////////////////////
-// // Export Data to Drive and as an Asset
-// ///////////////////////////////////////////////////////////////////////////////////
-// print('stand age', standAgeMap);
+///////////////////////////////////////////////////////////////////////////////////
+// Export Data to Drive and as an Asset
+///////////////////////////////////////////////////////////////////////////////////
+print('stand age', standAgeMap);
 
-// Export.image.toDrive({
-//   image: standAgeMap, 
-//   description: 'Drive_' + provinceName + '_' + outName+ '_' +year, 
-//   folder: exportDriveFolder,
-//   fileNamePrefix: provinceName + '_' + outName+'_'+year+'_updated',
-//   region: studyArea, 
-//   scale: scale, 
-//   crs: crs, 
-//   maxPixels: 1e13
-// });
+Export.image.toDrive({
+  image: standAgeMap, 
+  description: 'Drive_' + provinceName + '_' + outName+ '_' +year, 
+  folder: exportDriveFolder,
+  fileNamePrefix: provinceName + '_' + outName+'_'+year+'_updated',
+  region: studyArea, 
+  scale: scale, 
+  crs: crs, 
+  maxPixels: 1e13
+});
 
-// Export.image.toAsset({
-//   image: standAgeMap,
-//   description: 'Asset_' + provinceName + '_' + outName+'_'+year, 
-//   assetId: exportCollection + '/' + provinceName + '_' + outName+'_'+year+'_updated',
-//   region: studyArea, 
-//   scale: scale, 
-//   crs: crs,
-//   maxPixels: 1e13
-// });
+Export.image.toAsset({
+  image: standAgeMap,
+  description: 'Asset_' + provinceName + '_' + outName+'_'+year, 
+  assetId: exportCollection + '/' + provinceName + '_' + outName+'_'+year+'_updated',
+  region: studyArea, 
+  scale: scale, 
+  crs: crs,
+  maxPixels: 1e13
+});
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //Function to convert an image array object to collection
