@@ -209,13 +209,13 @@ var crs = 'EPSG:32648';               // choose an output projection
 //   // add the canopy and height pixels together - only values of 2 are considered forested
 //   var forest = ee.Image(can).add(ee.Image(height)).remap([0,1,2], [0,0,1]).rename('forest');
 //   // create a year of disturbance variable locally
-//   var yodLocal = yod;
+//   var yorLocal = yor;
 //   // get the forested disturbances
-//   var forestDisturbance = yodLocal.updateMask(forest);
+//   var forestDisturbance = yorLocal.updateMask(forest);
 //   // get the disturbances for all years prior to the analysis year to be used to mask the disturbances
-//   var yodLocalLTYear = yodLocal.lt(year);
+//   var yorLocalLTYear = yorLocal.lt(year);
 //   // mask the forested disturbances to those occuring before the year of interest
-//   var priorForestDisturbance = forestDisturbance.updateMask(yodLocalLTYear);
+//   var priorForestDisturbance = forestDisturbance.updateMask(yorLocalLTYear);
 //   // create a constant raster set equal to the analysis year and mask it to the extent of forest disturbance 
 //   var yearConstant = ee.Image.constant(year).updateMask(forest);
 //   // subtract the year of disturbances that occured prior to year of interest from the year of interest 
