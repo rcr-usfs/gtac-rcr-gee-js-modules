@@ -20,14 +20,14 @@ var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 // Filter the dry cool image collection to get only the medoid images
 var medoidCollection = dryCool.filter(ee.Filter.stringContains({leftField: 'compositingMethod', rightValue: 'Medoid'}));
 
-// define the sign of spectral delta for vegetation loss for the segmentation index - 
-// NBR delta is negative for vegetation loss, so -1 for NBR, 1 for band 5, -1 for NDVI, etc
-var dist_dir = -1;
-
 //Bands or indexs used to fit LANDTRENDR
 //Can include: 'blue','green','red','nir','swir1','swir2'
 //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
 var indexName = 'nbr';
+
+// define the sign of spectral delta for vegetation loss for the segmentation index - 
+// NBR delta is negative for vegetation loss, so -1 for NBR, 1 for band 5, -1 for NDVI, etc
+var dist_dir = -1;
 
 // Generate medoid-based collection
 var medoidIndex = medoidCollection.map(normalizedDifference)
@@ -41,12 +41,21 @@ var medoidIndex = medoidCollection.map(normalizedDifference)
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // User parameters to set
 ////////////////////////////////////////////////////////////////////////////////////////////////
+// the map is set to center on Prey Lang
 Map.setCenter(105.49021789662868, 13.197978572450443, 9);
+
 // Indicate the province name - now set to export for all of Cambodia
+// Provinces are: Banteay Meanchey, Battambang, Kampot, Kampong Cham, Kampong Chhnang, Kampong Speu, Kampong Thom,
+// Kandal, Koh Kong, Kep, Kratie, Pailin, Preah Sihanouk, Pursat, Mondulkiri, Oddarr Meanchey, Phnom Penh, Preah Vihear,
+// Prey Veng, Ratanakiri, Siem Reap, Stung Treng, Svay Rieng, Takeo, Tbong Khmum
 var provinceName = 'PreyLang_KTH';
-//var studyArea = buildArea();
 var studyArea = PreyLang_KTH;
+
+// UNCOMMENT THE buildArea() FUNCTION TO USE THE provinceName VARIABLE
+// the buildArea function will filter the province of interest and center the map there
+//var studyArea = buildArea();
 Map.addLayer(studyArea, {}, provinceName, true);
+
 // Location for Google Drive exports
 var exportDriveFolder =  'DriveFolderHere';
 
@@ -85,9 +94,17 @@ var lt_array = lt_result.select([0]);
 var lt_year = lt_array.arraySlice(0,0,1).arrayProject([1]);
 var lt_fitted = lt_array.arraySlice(0,2,3).arrayProject([1]);
 
+// create a collection that is not inverted
+var medoidJoinIndex = medoidCollection.map(normalizedDifference)
+                  .select(indexName)
+                  .map(function(img){
+                    var t = ee.Date(img.get('system:time_start'));
+                    return img.set('system:time_start',ee.Date.fromYMD(t.get('year'),6,1).millis());
+                  });
+                  
 //Join the fitted values to the raw values and add it to the map
-var fittedCollection = arrayToTimeSeries(lt_fitted,lt_year,ee.List.sequence(start_year,end_year),'LT_Fitted_NBR');
-var jc = getImageLib.joinCollections(medoidIndex, ee.ImageCollection(fittedCollection), false);
+var fittedCollection = arrayToTimeSeries(lt_fitted.multiply(-1),lt_year,ee.List.sequence(start_year,end_year),'LT_Fitted_NBR');
+var jc = getImageLib.joinCollections(medoidJoinIndex, ee.ImageCollection(fittedCollection), false);
 Map.addLayer(jc, {}, 'joined collection', false);
 
 // slice out the vertices
