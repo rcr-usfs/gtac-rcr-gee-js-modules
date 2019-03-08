@@ -41,8 +41,6 @@ var medoidIndex = medoidCollection.map(normalizedDifference)
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // User parameters to set
 ////////////////////////////////////////////////////////////////////////////////////////////////
-// the map is set to center on Prey Lang
-Map.setCenter(105.49021789662868, 13.197978572450443, 9);
 
 // Indicate the province name - now set to export for all of Cambodia
 // Provinces are: Banteay Meanchey, Battambang, Kampot, Kampong Cham, Kampong Chhnang, Kampong Speu, Kampong Thom,
@@ -172,7 +170,7 @@ Map.addLayer(yor.updateMask(yor.neq(0)), {min:1986, max:2016, palette:['#9400D3'
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set parameters for stand age outputs
-var year = 2010;                      // year should be between 2000 and 2017
+var year = 2017;                      // year should be between 2000 and 2017
 var treeHeightThreshold = 5;          // set a tree height threshold to determine the extent of forest 
 var canopyThreshold = 10;             // set a canopy cover threshold to determine the extent of forest
 var homogenizeStandAge = false;       // if true a focal mode will be applied to stand age pixels
@@ -188,7 +186,7 @@ var crs = 'EPSG:32648';               // choose an output projection
 // ///////////////////////////////////////////////////////////////////////////////////
 
 var standAgeMap = getStandAge(year, treeHeightThreshold, canopyThreshold, minMapUnitSize);
-//Map.addLayer(standAgeMap.select(0), {min:0, max:20, palette:'F00,0F0'}, 'Stand Age ' + year);
+Map.addLayer(standAgeMap.select(0), {min:0, max:20, palette:'F00,0F0'}, 'Stand Age ' + year);
 
 if(minimumMappingUnit === true){
   //Map.addLayer(standAgeMap.select('mmuStandAge'), {min:0, max:20, palette:'F00,0F0'}, 'MMU Stand Age ' + year);
