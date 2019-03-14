@@ -759,6 +759,7 @@ function thresholdZAndTrendSubtle(zAndTrendCollection,zThreshLow,zThreshHigh,slo
 // // }); 
 // }
 //////////////////////////////////////////////////////////////////////////
+exports.getR2 = getR2;
 exports.extractDisturbance = extractDisturbance;
 exports.landtrendrWrapper = landtrendrWrapper;
 exports.multBands = multBands;
