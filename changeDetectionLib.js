@@ -1,7 +1,44 @@
 //Module imports
 var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// Function to compute R^2 (Coefficient of Determination) for a linear model.
+// Written by Joshua Goldstein (joshuagoldstein@fs.fed.us) on 21-Sept-2016
+// Adapted from code by Ian Housman and the following reference:
+// (http://blog.minitab.com/blog/statistics-and-quality-data-analysis/
+// r-squared-sometimes-a-square-is-just-a-square)
+// Last update: 21-Sept-2016 by Joshua Goldstein
 
+function getR2(collection,coefficients,dependent,independents) {
+  // Calculate mean
+  var meanImage = collection.select(dependent).mean();
+  // For each image in original collection
+  var squaredErrors = collection.map(function(image) {
+    // Evalute predicted linear model
+    var prediction = image.select(independents)
+        .multiply(coefficients)
+        .reduce('sum');
+    var actual = image.select(dependent);
+    // Find squared residual error, (actual-predict)^2
+    // Find squared total error, (actual-mean)^2
+    var diffPrediction = actual.subtract(prediction);
+    var diffMean = actual.subtract(meanImage);
+    var sqError = diffPrediction.multiply(diffPrediction)
+        .rename('sqError');
+    var sqTotal = diffMean.multiply(diffMean)
+        .rename('sqTotal');
+    // Add squared errors as new bands
+    return image.addBands(sqError).addBands(sqTotal);
+  });
+  // Calculate sum of squared errors
+  var ssError = squaredErrors.select('sqError').sum();
+  var ssTotal = squaredErrors.select('sqTotal').sum();
+  // R^2 = 1 - (ssError/ssTotal)
+  var R2 = ee.Image(1).subtract(ssError.divide(ssTotal));
+  return R2;
+}
+
+//////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////
 function thresholdChange(changeCollection,changeThresh,changeDir){
   if(changeDir === undefined || changeDir === null){changeDir = 1}
