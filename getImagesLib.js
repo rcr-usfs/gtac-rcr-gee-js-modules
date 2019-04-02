@@ -1347,7 +1347,7 @@ function sentinel2CloudScore(img) {
   //Use .max as a pseudo OR conditional
   blueCirrusScore = blueCirrusScore.max(rescale(img, 'img.blue', [0.1, 0.5]));
   blueCirrusScore = blueCirrusScore.max(rescale(img, 'img.cb', [0.1, 0.5]));
-  blueCirrusScore = blueCirrusScore.max(rescale(img, 'img.cirrus', [0.1, 0.3]));
+  // blueCirrusScore = blueCirrusScore.max(rescale(img, 'img.cirrus', [0.1, 0.3]));
   
   // var reSum = rescale(img,'(img.re1+img.re2+img.re3)/3',[0.5, 0.7])
   // Map.addLayer(blueCirrusScore,{'min':0,'max':1})
