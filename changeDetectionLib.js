@@ -367,11 +367,11 @@ function landtrendrWrapper(processedComposites,startYear,endYear,indexName,distD
 //////////////////////////////////////////////////////////////////////////
 //Wrapper for applying VERDET slightly more simply
 //Returns annual collection of verdet slope
-function verdetAnnualSlope(tsIndex,indexName,startYear,endYear,alpha){
+function verdetAnnualSlope(tsIndex,indexName,startYear,endYear, alpha, tolerance){
   //Apply VERDET
   var verdet =   ee.Algorithms.TemporalSegmentation.Verdet({timeSeries: tsIndex,
-                                        tolerance: 0.0001,
-                                        alpha: alpha}).arraySlice(0,1,null);
+                                        tolerance: tolerance, //default tolerance = 0.0001
+                                        alpha: alpha}).arraySlice(0,1,null); //default alpha = 0.03333
   print('indexName',indexName)
   print('verdet',verdet) 
   Map.addLayer(verdet,{},'verdet '+indexName)
