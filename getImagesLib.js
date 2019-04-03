@@ -1703,7 +1703,7 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
         .copyProperties(img);
       });
   if(resampleMethod !== 'near'){
-    print('Setting resampling method')
+    print('Setting resampling method',resampleMethod)
     joined = ee.ImageCollection(joined).map(function(img){return img.resample(resampleMethod) });
   }
   return joined;
