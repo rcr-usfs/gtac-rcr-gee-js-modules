@@ -374,7 +374,7 @@ function verdetAnnualSlope(tsIndex,indexName,startYear,endYear, alpha, tolerance
                                         alpha: alpha}).arraySlice(0,1,null); //default alpha = 0.03333
   print('indexName',indexName)
   print('verdet',verdet) 
-  Map.addLayer(verdet,{},'verdet '+indexName)
+  //Map.addLayer(verdet,{},'verdet '+indexName)
   var tsYear = tsIndex.map(getImageLib.addYearBand).select([1]).toArray().arraySlice(0,1,null).arrayProject([0]);
   
   //Find possible years to convert back to collection with
