@@ -130,6 +130,8 @@ var contractPixels = 0;
 // (2.5 or 3.5 generally is sufficient)
 var dilatePixels = 0;
 
+//Choose the resampling method: 'near', 'bilinear', or 'bicubic'
+var resampleMethod = 'bicubic';
 
 //15. Export params
 var crs = 'EPSG:5070';
@@ -154,7 +156,7 @@ if(applyCloudScore){var useTempInCloudMask = true}else{var useTempInCloudMask = 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Get MODIS image collection
-var modisImages = getImageLib.getModisData(startYear,endYear,startJulian,endJulian,daily,applyQACloudMask,zenithThresh,useTempInCloudMask);
+var modisImages = getImageLib.getModisData(startYear,endYear,startJulian,endJulian,daily,applyQACloudMask,zenithThresh,useTempInCloudMask,true,'bicubic');
 print(modisImages.first())
 // Map.addLayer(modisImages.select(['nir']),{},'original',false); 
 Map.addLayer(modisImages.median(),{min:0.05,max:0.7,bands:'swir1,nir,red'},'Before Masking',false);
