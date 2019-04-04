@@ -1095,6 +1095,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
     }).flatten();
     // print('Weighted composite years for year:',year,yearsTT);
     //Iterate across each year in list
+    // LSC 4/4/19: Does this need to be yearsTT.getInfo()??
     var images = yearsTT.map(function(yr){
       // Set up dates
       
