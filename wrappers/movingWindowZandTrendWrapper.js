@@ -1,9 +1,9 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = /* color: #d63000 */ee.Geometry.Polygon(
-        [[[-114.64614410458967, 46.78379503331787],
-          [-114.71206207333967, 45.605104594235314],
-          [-111.82265777646467, 45.55127657199464],
-          [-111.98745269833967, 46.72357800019127]]]);
+        [[[117.00570463407223, -3.3078246108261187],
+          [118.10433744657223, 5.33981602506325],
+          [111.07308744657223, 3.455817212666339],
+          [110.23812650907223, -3.483297193685357]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running z-score and linear trend across a moving window of years
 
@@ -24,8 +24,8 @@ var studyArea =geometry;
 // constraints. This supports wrapping for tropics and southern hemisphere.
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-var startJulian = 190;
-var endJulian = 270
+var startJulian = 1;
+var endJulian = 90
 
 // 3. Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
@@ -152,14 +152,14 @@ var exportImages = false;
 
 //Number of years in baseline
 //Generally 5 years works best in the Western CONUS and 3 in the Eastern CONUS
-var baselineLength = 5;
+var baselineLength = 4;
 
 //Number of years between the analysis year and the last year of the baseline
 //This helps ensure the z-test is being performed data that are less likely to be 
 //temporally auto-correlated
 //E.g. if the analysis year is 1990, the last year of the baseline would be 1987
 //Set to 0 if the last year of the baseline needs to be the year just before the analysis year
-var baselineGap = 5;
+var baselineGap = 1;
 
 //Number of cloud/cloud shadow free observations necessary to have in the baseline for a 
 //pixel to run the analysis for a given year
@@ -183,7 +183,7 @@ var useAnnualMedianForTrend = true;
 //Number of years in a given trend analysis inclusive of the analysis year
 //E.g. if the analysis year was 1990 and the epochLength was 5, 
 //the years included in the trend analysis would be 1986,1987,1988,1989, and 1990
-var epochLength =10;
+var epochLength =5;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -210,5 +210,5 @@ dLib.zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,start
           exportImages,exportPathRoot,studyArea,scale,crs,transform,minBaselineObservationsNeeded);
 
 Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);         
-dLib.thresholdZAndTrend(zAndTrendCollection,-5*10,-0.05*10000,startYear,endYear);
+dLib.thresholdZAndTrend(zAndTrendCollection,-5*10,-0.1*10000,startYear,endYear);
 
