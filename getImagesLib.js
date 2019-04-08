@@ -1214,9 +1214,10 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     var countAll = lsT.select('pixel_qa').count().rename('count'); // The number per pixel of good data points 
     var countNonL7 = lsTNonL7.select('pixel_qa').count().rename('count'); // The number per pixel of good data points
     compositeAll = compositeAll.updateMask(countAll.gte(minObs))
-    compositeNonL7 = compositeNonL7.updateMask(countNonL7.gte(minObs))
+    //compositeNonL7 = compositeNonL7.updateMask(countNonL7.gte(minObs))
     
-    var compositeMerged = compositeNonL7.where(compositeNonL7.mask(),compositeAll)
+    var compositeMerged = compositeNonL7.where(countNonL7.gte(minObs),compositeAll);
+    //var compositeMerged = compositeNonL7.where(compositeNonL7.mask(),compositeAll)
 
     compositeMerged = compositeMerged.set({'system:time_start':ee.Date.fromYMD(year+ yearWithMajority,6,1).millis(),
                           'startDate':startDateT.millis(),
