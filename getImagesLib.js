@@ -1168,7 +1168,7 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     }).flatten();
     // print('Weighted composite years for year:',year,yearsTT);
     //Iterate across each year in list
-    var [imagesAll,imagesNonL7] = yearsTT.map(function(yr){
+    var images = yearsTT.map(function(yr){
       // Set up dates
       
       var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
@@ -1181,6 +1181,8 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
       lsTNonL7 = fillEmptyCollections(lsTNonL7,dummyImage);
       return [lsT,lsTNonL7];
     });
+    var imagesAll = images[0];
+    var imagesNonL7 = images[1];
     //var imagesAll = yearsTT.getInfo().map(filterDates(ls, year));
     var lsT = ee.ImageCollection(ee.FeatureCollection(imagesAll).flatten());
     //var imagesNonL7 = yearsTT.getInfo().map(filterDates(lsNonL7, year));
