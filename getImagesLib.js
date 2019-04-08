@@ -1136,6 +1136,95 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
   return ee.ImageCollection(ts);
 }
 
+// Create composites for each year within startYear and endYear range
+// Integrates in L7 with SLC off data, but only if there isn't enough other data at each pixel....LSC 4/8/19
+function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulian,timebuffer,weights,minObs,compositingMethod,compositingReducer){
+  var dummyImage = ee.Image(ls.first());
+  
+  var dateWrapping = wrapDates(startJulian,endJulian);
+  var wrapOffset = dateWrapping[0];
+  var yearWithMajority = dateWrapping[1];
+  
+  //Iterate across each year
+  var ts = ee.List.sequence(startYear+timebuffer,endYear-timebuffer).getInfo()
+    .map(function(year){
+   
+    // Set up dates
+    var startYearT = year-timebuffer;
+    var endYearT = year+timebuffer;
+    var startDateT = ee.Date.fromYMD(startYearT,1,1).advance(startJulian-1,'day');
+    var endDateT = ee.Date.fromYMD(endYearT,1,1).advance(endJulian-1+wrapOffset,'day');
+    
+  
+    // print(year,startDateT,endDateT);
+    
+    //Set up weighted moving widow
+    var yearsT = ee.List.sequence(startYearT,endYearT);
+    
+    var z = yearsT.zip(weights);
+    var yearsTT = z.map(function(i){
+      i = ee.List(i);
+      return ee.List.repeat(i.get(0),i.get(1));
+    }).flatten();
+    // print('Weighted composite years for year:',year,yearsTT);
+    //Iterate across each year in list
+    function filterDates(inCollection, yr){
+      // Set up dates      
+      var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
+      var endDateT = ee.Date.fromYMD(yr,1,1).advance(endJulian-1+wrapOffset,'day');
+      
+      // Filter images for given date range (with image collection that does not include L7)
+      var lsT = inCollection.filterDate(startDateT,endDateT);
+      lsT = fillEmptyCollections(lsT,dummyImage);
+      return lsT;
+    }
+    var imagesAll = yearsTT.getInfo().map(filterDates(ls, yr));
+    var lsT = ee.ImageCollection(ee.FeatureCollection(imagesAll).flatten());
+    var imagesNonL7 = yearsTT.getInfo().map(filterDates(lsNonL7, yr));
+    var lsTNonL7 = ee.ImageCollection(ee.FeatureCollection(imagesNonL7).flatten());
+     
+    
+    // Compute median or medoid or apply reducer
+    var composite;
+    if(compositingReducer !== undefined && compositingReducer !== null){
+      composite = lsT.reduce(compositingReducer);
+      compositeNonL7 = lsTNonL7.reduce(compositingReducer);
+    }
+    else if (compositingMethod.toLowerCase() === 'median') {
+      composite = lsT.median();
+      compositeNonL7 = lsTNonL7.median();
+    }
+    else {
+      compositeAll = medoidMosaicMSD(lsT,['blue','green','red','nir','swir1','swir2']);
+      compositeNonL7 = medoidMosaicMSD(lsTNonL7,['blue','green','red','nir','swir1','swir2']);
+    }
+
+    Map.addLayer(compositeAll,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeAll')
+    Map.addLayer(compositeNonL7,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeNonL7')
+    
+    // Merge the two composites here//
+    var countAll = lsT.select('pixel_qa').count().rename('count'); // The number per pixel of good data points 
+    var countNonL7 = lsTNonL7.select('pixel_qa').count().rename('count'); // The number per pixel of good data points
+    compositeAll = compositeAll.updateMask(countAll.gte(minObs))
+    compositeNonL7 = compositeNonL7.updateMask(countNonL7.gte(minObs))
+    compositeMerged = compositeAll.where(compositeAll.mask().not(),compositeNonL7)
+
+    compositeMerged = compositeMerged.set({'system:time_start':ee.Date.fromYMD(year+ yearWithMajority,6,1).millis(),
+                          'startDate':startDateT.millis(),
+                          'endDate':endDateT.millis(),
+                          'startJulian':startJulian,
+                          'endJulian':endJulian,
+                          'yearBuffer':timebuffer,
+                          'yearWeights': ee.List(weights).map(function(thisweight){return ee.String(thisweight)}),
+                          'yrOriginal':year,
+                          'yrUsed': year + yearWithMajority
+                          });
+    Map.addLayer(compositeMerged,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeMerged')
+    return compositeMerged
+  });
+  return ee.ImageCollection(ts);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Function to calculate illumination condition (IC). Function by Patrick Burns 
 // (pb463@nau.edu) and Matt Macander 
