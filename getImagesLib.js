@@ -1233,7 +1233,7 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
                           'yrOriginal':year,
                           'yrUsed': year + yearWithMajority
                           });
-    Map.addLayer(compositeMerged,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeMerged '+year)
+    Map.addLayer(compositeMerged.clip(studyArea),{min:0,max:0.35,bands:'swir1,nir,red'},'compositeMerged '+year)
     return compositeMerged
   });
   return ee.ImageCollection(ts);
