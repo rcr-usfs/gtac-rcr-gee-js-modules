@@ -1190,7 +1190,10 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     var lsT = ee.ImageCollection(ee.FeatureCollection(imagesAll).flatten());
     //var imagesNonL7 = yearsTT.getInfo().map(filterDates(lsNonL7, year));
     var lsTNonL7 = ee.ImageCollection(ee.FeatureCollection(imagesNonL7).flatten());
-     
+    var lsTHist = lsT.aggregate_histogram('LANDSAT_ID')
+    print('lsTHist', lsTHist)
+    var lsTNonL7Hist = lsTNonL7.aggregate_histogram('LANDSAT_ID')
+    print('lsTNonL7Hist', lsTNonL7Hist)
     
     // Compute median or medoid or apply reducer
     var compositeAll; var compositeNonL7;
