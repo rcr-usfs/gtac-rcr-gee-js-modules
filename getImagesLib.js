@@ -1169,7 +1169,7 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     print('yearsTT',yearsTT)
     // print('Weighted composite years for year:',year,yearsTT);
     //Iterate across each year in list
-    var images = yearsTT.map(function(yr){
+    var images = yearsTT.getInfo().map(function(yr){
       // Set up dates
       
       var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
@@ -2090,11 +2090,9 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   // Get Landsat image collection
   var ls = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,includeSLCOffL7,defringeL5,addPixelQA);
-    print('ls',ls)
   if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){
     var lsNonL7 = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,false,defringeL5,addPixelQA);
-    print('lsNonL7',lsNonL7);
   }
   
   // Apply relevant cloud masking methods
