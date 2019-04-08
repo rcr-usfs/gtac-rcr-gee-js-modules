@@ -1179,7 +1179,7 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
       return lsT;
     }
     var imagesAll = yearsTT.getInfo().map(function(year){return weightedImages(ls, year)});
-    var imagesNonL7 = yearsTT.getInfo().map(function(year){return weightedImages(lsNonL7, yr)});
+    var imagesNonL7 = yearsTT.getInfo().map(function(year){return weightedImages(lsNonL7, year)});
     // var images = yearsTT.getInfo().map(function(yr){
     //   // Set up dates
       
