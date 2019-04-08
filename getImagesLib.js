@@ -1169,22 +1169,32 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     print('yearsTT',yearsTT)
     // print('Weighted composite years for year:',year,yearsTT);
     //Iterate across each year in list
-    var images = yearsTT.getInfo().map(function(yr){
-      // Set up dates
-      
+    function weightedImages(inCollection, yr){
       var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
       var endDateT = ee.Date.fromYMD(yr,1,1).advance(endJulian-1+wrapOffset,'day');
       
       // Filter images for given date range
       var lsT = ls.filterDate(startDateT,endDateT);
       lsT = fillEmptyCollections(lsT,dummyImage);
-      var lsTNonL7 = lsNonL7.filterDate(startDateT,endDateT);
-      lsTNonL7 = fillEmptyCollections(lsTNonL7,dummyImage);
+    }
+    var imagesAll = yearsTT.getInfo().map(weightedImages(ls, yr));
+    var imagesNonL7 = yearsTT.getInfo().map(weightedImages(lsNonL7, yr));
+    // var images = yearsTT.getInfo().map(function(yr){
+    //   // Set up dates
+      
+    //   var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
+    //   var endDateT = ee.Date.fromYMD(yr,1,1).advance(endJulian-1+wrapOffset,'day');
+      
+    //   // Filter images for given date range
+    //   var lsT = ls.filterDate(startDateT,endDateT);
+    //   lsT = fillEmptyCollections(lsT,dummyImage);
+    //   var lsTNonL7 = lsNonL7.filterDate(startDateT,endDateT);
+    //   lsTNonL7 = fillEmptyCollections(lsTNonL7,dummyImage);
 
-      return [lsT,lsTNonL7];
-    });
-    var imagesAll = images[0];
-    var imagesNonL7 = images[1];
+    //   return [lsT,lsTNonL7];
+    // });
+    //var imagesAll = images[0];
+    //var imagesNonL7 = images[1];
     print('imagesAll',imagesAll)
     print('imagesNonL7',imagesNonL7)
 
