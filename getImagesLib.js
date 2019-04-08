@@ -1212,8 +1212,8 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
       compositeNonL7 = medoidMosaicMSD(lsTNonL7,['blue','green','red','nir','swir1','swir2']);
     }
 
-    Map.addLayer(compositeAll,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeAll '+year)
-    Map.addLayer(compositeNonL7,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeNonL7 '+year)
+    Map.addLayer(compositeAll.clip(studyArea),{min:0,max:0.35,bands:'swir1,nir,red'},'compositeAll '+year)
+    Map.addLayer(compositeNonL7.clip(studyArea),{min:0,max:0.35,bands:'swir1,nir,red'},'compositeNonL7 '+year)
     
     // Merge the two composites here//
     var countAll = lsT.select('pixel_qa').count().rename('count'); // The number per pixel of good data points 
