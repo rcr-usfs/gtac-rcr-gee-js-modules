@@ -2090,9 +2090,11 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   // Get Landsat image collection
   var ls = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,includeSLCOffL7,defringeL5,addPixelQA);
+    print('ls',ls)
   if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){
     var lsNonL7 = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,false,defringeL5,addPixelQA);
+    print('lsNonL7',lsNonL7);
   }
   
   // Apply relevant cloud masking methods
@@ -2170,7 +2172,9 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
           .map(getTasseledCap)
           .map(simpleAddTCAngles);
   }
-          
+  
+  print('ls post cloud',ls)
+  print('lsNonL7 post cloud',lsNonL7)
   //Set to appropriate resampling method for any reprojection
   // ls = ls.map(function(img){return img.resample('bicubic') })    
   // Create composite time series
