@@ -1206,17 +1206,23 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     }
 
     var studyArea = ee.Geometry.Polygon(
-        [[[-148.7363922812442, 61.33338424376924],
-          [-148.7363922812442, 59.65647857114134],
-          [-144.0122711874942, 59.65647857114134],
-          [-144.0122711874942, 61.33338424376924]]], null, false);
+        [[[-147.6542389609317, 61.33338424376927],
+          [-147.6542389609317, 60.13040225311189],
+          [-144.6714508749942, 60.13040225311189],
+          [-144.6714508749942, 61.33338424376927]]], null, false);
     Map.addLayer(compositeAll.clip(studyArea),{min:0,max:0.35,bands:'swir1,nir,red'},'compositeAll '+year)
     Map.addLayer(compositeNonL7.clip(studyArea),{min:0,max:0.35,bands:'swir1,nir,red'},'compositeNonL7 '+year)
     
     // Merge the two composites here//
     var countAll = lsT.select('pixel_qa').count().rename('count'); // The number per pixel of good data points 
     var countNonL7 = lsTNonL7.select('pixel_qa').count().rename('count'); // The number per pixel of good data points
-    compositeAll = compositeAll.updateMask(countAll.gte(minObs))
+    var maskAll = countAll.gte(minObs);
+    var maskNonL7 = countNonL7.gte(minObs);
+    Map.addLayer(countAll,{},'countAll',false);
+    Map.addLayer(maskAll,{},'maskAll',false);
+    Map.addLayer(countNonL7,{},'countAll',false);
+    Map.addLayer(countAll,{},'countAll',false);
+    compositeAll = compositeAll.updateMask(countAll.gte(minObs));
     //compositeNonL7 = compositeNonL7.updateMask(countNonL7.gte(minObs))
     
     var compositeMerged = compositeNonL7;
