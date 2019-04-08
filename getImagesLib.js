@@ -1137,114 +1137,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
   return ee.ImageCollection(ts);
 }
 
-// Create composites for each year within startYear and endYear range
-// Integrates in L7 with SLC off data, but only if there isn't enough other data at each pixel....LSC 4/8/19
-function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulian,timebuffer,weights,minObs,compositingMethod,compositingReducer){
-  var dummyImage = ee.Image(ls.first());
-  
-  var dateWrapping = wrapDates(startJulian,endJulian);
-  var wrapOffset = dateWrapping[0];
-  var yearWithMajority = dateWrapping[1];
-  
-  //Iterate across each year
-  var ts = ee.List.sequence(startYear+timebuffer,endYear-timebuffer).getInfo()
-    .map(function(year){
-   
-    // Set up dates
-    var startYearT = year-timebuffer;
-    var endYearT = year+timebuffer;
-    var startDateT = ee.Date.fromYMD(startYearT,1,1).advance(startJulian-1,'day');
-    var endDateT = ee.Date.fromYMD(endYearT,1,1).advance(endJulian-1+wrapOffset,'day');
-    
-  
-    // print(year,startDateT,endDateT);
-    
-    //Set up weighted moving widow
-    var yearsT = ee.List.sequence(startYearT,endYearT);
-    
-    var z = yearsT.zip(weights);
-    var yearsTT = z.map(function(i){
-      i = ee.List(i);
-      return ee.List.repeat(i.get(0),i.get(1));
-    }).flatten();
-    print('Weighted composite years for year:',year,yearsTT);
-    
-    //Iterate across each year in list
-    function weightedImages(inCollection, yr){
-      var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
-      var endDateT = ee.Date.fromYMD(yr,1,1).advance(endJulian-1+wrapOffset,'day');
-      
-      // Filter images for given date range
-      var lsT = inCollection.filterDate(startDateT,endDateT);
-      lsT = fillEmptyCollections(lsT,dummyImage);
-      return lsT;
-    }
-    var imagesAll = yearsTT.getInfo().map(function(year){return weightedImages(ls, year)});
-    var imagesNonL7 = yearsTT.getInfo().map(function(year){return weightedImages(lsNonL7, year)});
-    print('imagesAll',imagesAll)
-    print('imagesNonL7',imagesNonL7)
 
-    var lsT = ee.ImageCollection(ee.FeatureCollection(imagesAll).flatten());
-    var lsTNonL7 = ee.ImageCollection(ee.FeatureCollection(imagesNonL7).flatten());
-    var lsTHist = lsT.aggregate_histogram('LANDSAT_ID')
-    print('lsTHist', lsTHist)
-    var lsTNonL7Hist = lsTNonL7.aggregate_histogram('LANDSAT_ID')
-    print('lsTNonL7Hist', lsTNonL7Hist)
-    
-    // Compute median or medoid or apply reducer
-    var compositeAll; var compositeNonL7;
-    if(compositingReducer !== undefined && compositingReducer !== null){
-      compositeAll = lsT.reduce(compositingReducer);
-      compositeNonL7 = lsTNonL7.reduce(compositingReducer);
-    }
-    else if (compositingMethod.toLowerCase() === 'median') {
-      compositeAll = lsT.median();
-      compositeNonL7 = lsTNonL7.median();
-    }
-    else {
-      compositeAll = medoidMosaicMSD(lsT,['blue','green','red','nir','swir1','swir2']);
-      compositeNonL7 = medoidMosaicMSD(lsTNonL7,['blue','green','red','nir','swir1','swir2']);
-    }
-
-    // var studyArea = ee.Geometry.Polygon(
-    //     [[[-147.6542389609317, 61.33338424376927],
-    //       [-147.6542389609317, 60.13040225311189],
-    //       [-144.6714508749942, 60.13040225311189],
-    //       [-144.6714508749942, 61.33338424376927]]], null, false);
-    Map.addLayer(compositeAll,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeAll '+year)
-    Map.addLayer(compositeNonL7,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeNonL7 '+year)
-    
-    // Merge the two composites here//
-    var countAll = lsT.select('pixel_qa').count().rename('count'); // The number per pixel of good data points 
-    var countNonL7 = lsTNonL7.select('pixel_qa').count().rename('count'); // The number per pixel of good data points
-    var maskAll = countAll.gt(minObs);
-    var maskNonL7 = countNonL7.gt(minObs);
-    Map.addLayer(countAll,{},'countAll',false);
-    Map.addLayer(maskAll,{},'maskAll',false);
-    Map.addLayer(countNonL7,{},'countNonL7',false);
-    Map.addLayer(maskNonL7,{},'maskNonL7',false);
-    var compositeAllMasked = compositeAll.updateMask(countAll.gt(minObs));
-    var compositeNonL7Masked = compositeNonL7.updateMask(countNonL7.gt(minObs))
-    
-    var compositeMerged = compositeAll;
-    compositeMerged = compositeMerged.where(compositeNonL7Masked.mask().not(),compositeNonL7);
-    //var compositeMerged = compositeNonL7.where(compositeNonL7.mask(),compositeAll)
-
-    compositeMerged = compositeMerged.set({'system:time_start':ee.Date.fromYMD(year+ yearWithMajority,6,1).millis(),
-                          'startDate':startDateT.millis(),
-                          'endDate':endDateT.millis(),
-                          'startJulian':startJulian,
-                          'endJulian':endJulian,
-                          'yearBuffer':timebuffer,
-                          'yearWeights': ee.List(weights).map(function(thisweight){return ee.String(thisweight)}),
-                          'yrOriginal':year,
-                          'yrUsed': year + yearWithMajority
-                          });
-    Map.addLayer(compositeMerged,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeMerged '+year)
-    return compositeMerged
-  });
-  return ee.ImageCollection(ts);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Function to calculate illumination condition (IC). Function by Patrick Burns 
@@ -1947,127 +1840,9 @@ applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFm
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 //Wrapper function for getting Landsat imagery
-// function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
-//   timebuffer,weights,compositingMethod,
-//   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
-//   applyFmaskCloudShadowMask,applyFmaskSnowMask,
-//   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-//   zScoreThresh,shadowSumThresh,
-//   contractPixels,dilatePixels,
-//   correctIllumination,correctScale,
-//   exportComposites,outputName,exportPathRoot,crs,transform,scale){
-  
-//   // Prepare dates
-//   //Wrap the dates if needed
-//   var wrapOffset = 0;
-//   if (startJulian > endJulian) {
-//     wrapOffset = 365;
-//   }
-   
-//   var startDate = ee.Date.fromYMD(startYear,1,1).advance(startJulian-1,'day');
-//   var endDate = ee.Date.fromYMD(endYear,1,1).advance(endJulian-1+wrapOffset,'day');
-//   print('Start and end dates:', startDate, endDate);
-
-//   //Do some error checking
-//   toaOrSR = toaOrSR.toUpperCase();
-//   var addPixelQA;
-//   if(toaOrSR === 'TOA' && (applyFmaskCloudMask === true ||  applyFmaskCloudShadowMask === true || applyFmaskSnowMask === true)){
-//       addPixelQA = true;
-//       // applyFmaskCloudMask = false;
-  
-//       // applyFmaskCloudShadowMask = false;
-  
-//       // applyFmaskSnowMask = false;
-//     }else{addPixelQA = false;}
-//   // Get Landsat image collection
-//   var ls = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
-//     toaOrSR,includeSLCOffL7,defringeL5,addPixelQA);
-  
-//   // Apply relevant cloud masking methods
-//   if(applyCloudScore){
-//     print('Applying cloudScore');
-//     ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset); 
-//   }
-  
-//   if(applyFmaskCloudMask){
-//     print('Applying Fmask cloud mask');
-//     ls = ls.map(function(img){return cFmask(img,'cloud')});
-//     //Experimenting on how to reduce commission errors over bright cool areas
-//     // var preCount = ls.count();
-//     // var cloudFreeCount = ls.map(function(img){return cFmask(img,'cloud')}).count().unmask();
-//     // // var ls = ls.map(function(img){return cFmask(img,'cloud')})
-//     // var fmaskCloudFreeProp = cloudFreeCount.divide(preCount);
-//     // var alwaysCloud = fmaskCloudFreeProp.lte(0.1);
-//     // var ls = ls.map(function(img){
-//     //   var m = img.select('pixel_qa').bitwiseAnd(fmaskBitDict['cloud']).neq(0).and(alwaysCloud.not());
-//     //   return img.updateMask(m.not());
-//     // })
-   
-//     // Map.addLayer(alwaysCloud,{min:0,max:1},'Fmask cloud prop',false);
-//   }
-  
-//   if(applyTDOM){
-//     print('Applying TDOM');
-//     //Find and mask out dark outliers
-//     ls = simpleTDOM2(ls,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
-//   }
-//   if(applyFmaskCloudShadowMask){
-//     print('Applying Fmask shadow mask');
-//     ls = ls.map(function(img){return cFmask(img,'shadow')});
-//   }
-//   if(applyFmaskSnowMask){
-//     print('Applying Fmask snow mask');
-//     ls = ls.map(function(img){return cFmask(img,'snow')});
-//   }
-  
-  
-//   // Add zenith and azimuth
-//   if (correctIllumination){
-//     ls = ls.map(function(img){
-//       return addZenithAzimuth(img,toaOrSR);
-//     });
-//   }
-  
-//   // Add common indices- can use addIndices for comprehensive indices 
-//   //or simpleAddIndices for only common indices
-//   ls = ls.map(simpleAddIndices)
-//           .map(getTasseledCap)
-//           .map(simpleAddTCAngles);
-          
-//   //Set to appropriate resampling method for any reprojection
-//   // ls = ls.map(function(img){return img.resample('bicubic') })    
-//   // Create composite time series
-//   var ts = compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
-  
-  
-//   // Correct illumination
-//   if (correctIllumination){
-//     var f = ee.Image(ts.first());
-//     Map.addLayer(f,vizParamsFalse,'First-non-illuminated',false);
-  
-//     print('Correcting illumination');
-//     ts = ts.map(illuminationCondition)
-//       .map(function(img){
-//         return illuminationCorrection(img, correctScale,studyArea);
-//       });
-//     var f = ee.Image(ts.first());
-//     Map.addLayer(f,vizParamsFalse,'First-illuminated',false);
-//   }
-  
-//   //Export composites
-//   if(exportComposites){// Export composite collection
-//     var exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp'];
-//     exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
-//     ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-//                   applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination);
-//   }
-  
-//   return [ls,ts];
-// }
-//Wrapper function for getting Landsat imagery
 function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   timebuffer,weights,compositingMethod,
-  toaOrSR,includeSLCOffL7,prioritizeNonSLCOffL7,minObsForL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
+  toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
@@ -2097,22 +1872,14 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   
       // applyFmaskSnowMask = false;
     }else{addPixelQA = false;}
-    
   // Get Landsat image collection
   var ls = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,includeSLCOffL7,defringeL5,addPixelQA);
-  if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){
-    var lsNonL7 = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
-    toaOrSR,false,defringeL5,addPixelQA);
-  }
   
   // Apply relevant cloud masking methods
   if(applyCloudScore){
     print('Applying cloudScore');
     ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset); 
-    if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){
-      lsNonL7 = applyCloudScoreAlgorithm(lsNonL7,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset);
-    }
   }
   
   if(applyFmaskCloudMask){
@@ -2130,32 +1897,20 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
     // })
    
     // Map.addLayer(alwaysCloud,{min:0,max:1},'Fmask cloud prop',false);
-    if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){
-      lsNonL7 = lsNonL7.map(function(img){return cFmask(img,'cloud')});
-    }
   }
   
   if(applyTDOM){
     print('Applying TDOM');
     //Find and mask out dark outliers
     ls = simpleTDOM2(ls,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
-    if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){
-      lsNonL7 = simpleTDOM2(lsNonL7,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
-    }
   }
   if(applyFmaskCloudShadowMask){
     print('Applying Fmask shadow mask');
     ls = ls.map(function(img){return cFmask(img,'shadow')});
-    if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){
-      lsNonL7 = lsNonL7.map(function(img){return cFmask(img,'shadow')});
-    }
   }
   if(applyFmaskSnowMask){
     print('Applying Fmask snow mask');
     ls = ls.map(function(img){return cFmask(img,'snow')});
-    if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){
-      lsNonL7 = lsNonL7.map(function(img){return cFmask(img,'snow')});
-    }
   }
   
   
@@ -2164,11 +1919,6 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
     ls = ls.map(function(img){
       return addZenithAzimuth(img,toaOrSR);
     });
-    if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){
-      lsNonL7 = lsNonL7.map(function(img){
-        return addZenithAzimuth(img,toaOrSR);
-      });
-    }
   }
   
   // Add common indices- can use addIndices for comprehensive indices 
@@ -2176,21 +1926,12 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   ls = ls.map(simpleAddIndices)
           .map(getTasseledCap)
           .map(simpleAddTCAngles);
-  if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){
-    lsNonL7 = lsNonL7.map(simpleAddIndices)
-          .map(getTasseledCap)
-          .map(simpleAddTCAngles);
-  }
-  
+          
   //Set to appropriate resampling method for any reprojection
   // ls = ls.map(function(img){return img.resample('bicubic') })    
   // Create composite time series
-  var ts;
-  if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){ // Special compositing process to de-prioritize L7 w/ SLC off
-    ts = compositeTimeSeriesL7(ls, lsNonL7, startYear,endYear,startJulian,endJulian,timebuffer,weights,minObsForL7,compositingMethod);
-  }else{
-    ts = compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
-  }
+  var ts = compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
+  
   
   // Correct illumination
   if (correctIllumination){
@@ -2216,7 +1957,6 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   
   return [ls,ts];
 }
-
 
 //Wrapper function for getting Landsat imagery
 function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
@@ -2910,6 +2650,7 @@ exports.addYearBand = addYearBand;
 exports.addDateBand = addDateBand;
 exports.addYearJulianDayBand = addYearJulianDayBand;
 exports.addFullYearJulianDayBand = addFullYearJulianDayBand;
+exports.wrapDates = wrapDates;
 exports.collectionToImage = collectionToImage;
 exports.getImageCollection = getImageCollection;
 exports.getS2 = getS2;
