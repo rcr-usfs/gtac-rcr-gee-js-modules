@@ -1212,6 +1212,11 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
       compositeNonL7 = medoidMosaicMSD(lsTNonL7,['blue','green','red','nir','swir1','swir2']);
     }
 
+    var studyArea = ee.Geometry.Polygon(
+        [[[-148.7363922812442, 61.33338424376924],
+          [-148.7363922812442, 59.65647857114134],
+          [-144.0122711874942, 59.65647857114134],
+          [-144.0122711874942, 61.33338424376924]]], null, false);
     Map.addLayer(compositeAll.clip(studyArea),{min:0,max:0.35,bands:'swir1,nir,red'},'compositeAll '+year)
     Map.addLayer(compositeNonL7.clip(studyArea),{min:0,max:0.35,bands:'swir1,nir,red'},'compositeNonL7 '+year)
     
