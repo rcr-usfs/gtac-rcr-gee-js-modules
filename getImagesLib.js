@@ -1178,10 +1178,9 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
       // Filter images for given date range
       var lsT = ls.filterDate(startDateT,endDateT);
       lsT = fillEmptyCollections(lsT,dummyImage);
-      print('lsT',lsT)
       var lsTNonL7 = lsNonL7.filterDate(startDateT,endDateT);
       lsTNonL7 = fillEmptyCollections(lsTNonL7,dummyImage);
-      print('lsTNonL7',lsTNonL7)
+
       return [lsT,lsTNonL7];
     });
     var imagesAll = images[0];
@@ -1195,7 +1194,7 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
      
     
     // Compute median or medoid or apply reducer
-    var composite;
+    var composite; var compositeNonL7;
     if(compositingReducer !== undefined && compositingReducer !== null){
       composite = lsT.reduce(compositingReducer);
       compositeNonL7 = lsTNonL7.reduce(compositingReducer);
