@@ -1185,6 +1185,8 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     });
     var imagesAll = images[0];
     var imagesNonL7 = images[1];
+    print('imagesAll',imagesAll)
+    print('imagesNonL7',imagesNonL7)
 
     //var imagesAll = yearsTT.getInfo().map(filterDates(ls, year));
     var lsT = ee.ImageCollection(ee.FeatureCollection(imagesAll).flatten());
