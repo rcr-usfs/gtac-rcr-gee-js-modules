@@ -1206,13 +1206,13 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
       compositeNonL7 = medoidMosaicMSD(lsTNonL7,['blue','green','red','nir','swir1','swir2']);
     }
 
-    var studyArea = ee.Geometry.Polygon(
-        [[[-147.6542389609317, 61.33338424376927],
-          [-147.6542389609317, 60.13040225311189],
-          [-144.6714508749942, 60.13040225311189],
-          [-144.6714508749942, 61.33338424376927]]], null, false);
-    Map.addLayer(compositeAll.clip(studyArea),{min:0,max:0.35,bands:'swir1,nir,red'},'compositeAll '+year)
-    Map.addLayer(compositeNonL7.clip(studyArea),{min:0,max:0.35,bands:'swir1,nir,red'},'compositeNonL7 '+year)
+    // var studyArea = ee.Geometry.Polygon(
+    //     [[[-147.6542389609317, 61.33338424376927],
+    //       [-147.6542389609317, 60.13040225311189],
+    //       [-144.6714508749942, 60.13040225311189],
+    //       [-144.6714508749942, 61.33338424376927]]], null, false);
+    Map.addLayer(compositeAll,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeAll '+year)
+    Map.addLayer(compositeNonL7,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeNonL7 '+year)
     
     // Merge the two composites here//
     var countAll = lsT.select('pixel_qa').count().rename('count'); // The number per pixel of good data points 
@@ -1240,7 +1240,7 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
                           'yrOriginal':year,
                           'yrUsed': year + yearWithMajority
                           });
-    Map.addLayer(compositeMerged.clip(studyArea),{min:0,max:0.35,bands:'swir1,nir,red'},'compositeMerged '+year)
+    Map.addLayer(compositeMerged,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeMerged '+year)
     return compositeMerged
   });
   return ee.ImageCollection(ts);
