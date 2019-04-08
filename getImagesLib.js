@@ -1174,8 +1174,9 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
       var endDateT = ee.Date.fromYMD(yr,1,1).advance(endJulian-1+wrapOffset,'day');
       
       // Filter images for given date range
-      var lsT = ls.filterDate(startDateT,endDateT);
+      var lsT = inCollection.filterDate(startDateT,endDateT);
       lsT = fillEmptyCollections(lsT,dummyImage);
+      return lsT;
     }
     var imagesAll = yearsTT.getInfo().map(weightedImages(ls, yr));
     var imagesNonL7 = yearsTT.getInfo().map(weightedImages(lsNonL7, yr));
