@@ -1166,8 +1166,8 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
       i = ee.List(i);
       return ee.List.repeat(i.get(0),i.get(1));
     }).flatten();
-    print('yearsTT',yearsTT)
-    // print('Weighted composite years for year:',year,yearsTT);
+    print('Weighted composite years for year:',year,yearsTT);
+    
     //Iterate across each year in list
     function weightedImages(inCollection, yr){
       var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
@@ -1180,28 +1180,10 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     }
     var imagesAll = yearsTT.getInfo().map(function(year){return weightedImages(ls, year)});
     var imagesNonL7 = yearsTT.getInfo().map(function(year){return weightedImages(lsNonL7, year)});
-    // var images = yearsTT.getInfo().map(function(yr){
-    //   // Set up dates
-      
-    //   var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
-    //   var endDateT = ee.Date.fromYMD(yr,1,1).advance(endJulian-1+wrapOffset,'day');
-      
-    //   // Filter images for given date range
-    //   var lsT = ls.filterDate(startDateT,endDateT);
-    //   lsT = fillEmptyCollections(lsT,dummyImage);
-    //   var lsTNonL7 = lsNonL7.filterDate(startDateT,endDateT);
-    //   lsTNonL7 = fillEmptyCollections(lsTNonL7,dummyImage);
-
-    //   return [lsT,lsTNonL7];
-    // });
-    //var imagesAll = images[0];
-    //var imagesNonL7 = images[1];
     print('imagesAll',imagesAll)
     print('imagesNonL7',imagesNonL7)
 
-    //var imagesAll = yearsTT.getInfo().map(filterDates(ls, year));
     var lsT = ee.ImageCollection(ee.FeatureCollection(imagesAll).flatten());
-    //var imagesNonL7 = yearsTT.getInfo().map(filterDates(lsNonL7, year));
     var lsTNonL7 = ee.ImageCollection(ee.FeatureCollection(imagesNonL7).flatten());
     var lsTHist = lsT.aggregate_histogram('LANDSAT_ID')
     print('lsTHist', lsTHist)
@@ -1238,7 +1220,7 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     //compositeNonL7 = compositeNonL7.updateMask(countNonL7.gte(minObs))
     
     var compositeMerged = compositeNonL7;
-    var compositeMerged = compositeMerged.where(countNonL7.gte(minObs),compositeAll);
+    var compositeMerged = compositeMerged.where(countNonL7.lt(minObs),compositeAll);
     //var compositeMerged = compositeNonL7.where(compositeNonL7.mask(),compositeAll)
 
     compositeMerged = compositeMerged.set({'system:time_start':ee.Date.fromYMD(year+ yearWithMajority,6,1).millis(),
