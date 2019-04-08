@@ -2653,6 +2653,7 @@ exports.addFullYearJulianDayBand = addFullYearJulianDayBand;
 exports.wrapDates = wrapDates;
 exports.collectionToImage = collectionToImage;
 exports.getImageCollection = getImageCollection;
+exports.fillEmptyCollections = fillEmptyCollections;
 exports.getS2 = getS2;
 exports.vizParamsFalse = vizParamsFalse;
 exports.vizParamsTrue = vizParamsTrue;
