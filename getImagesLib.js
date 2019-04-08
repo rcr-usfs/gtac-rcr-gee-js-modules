@@ -1226,8 +1226,8 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     compositeAll = compositeAll.updateMask(countAll.gte(minObs));
     //compositeNonL7 = compositeNonL7.updateMask(countNonL7.gte(minObs))
     
-    var compositeMerged = compositeNonL7;
-    var compositeMerged = compositeMerged.where(compositeMerged.mask(),compositeAll);
+    var compositeMerged = compositeAll;
+    compositeMerged = compositeMerged.where(compositeNonL7.mask().not(),compositeNonL7);
     //var compositeMerged = compositeNonL7.where(compositeNonL7.mask(),compositeAll)
 
     compositeMerged = compositeMerged.set({'system:time_start':ee.Date.fromYMD(year+ yearWithMajority,6,1).millis(),
