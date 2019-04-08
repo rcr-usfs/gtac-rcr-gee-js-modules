@@ -1227,7 +1227,7 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     //compositeNonL7 = compositeNonL7.updateMask(countNonL7.gte(minObs))
     
     var compositeMerged = compositeNonL7;
-    var compositeMerged = compositeMerged.where(compositeMerged.mask().not(),compositeAll);
+    var compositeMerged = compositeMerged.where(compositeMerged.mask(),compositeAll);
     //var compositeMerged = compositeNonL7.where(compositeNonL7.mask(),compositeAll)
 
     compositeMerged = compositeMerged.set({'system:time_start':ee.Date.fromYMD(year+ yearWithMajority,6,1).millis(),
@@ -2182,8 +2182,6 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
           .map(simpleAddTCAngles);
   }
   
-  print('ls post cloud',ls)
-  print('lsNonL7 post cloud',lsNonL7)
   //Set to appropriate resampling method for any reprojection
   // ls = ls.map(function(img){return img.resample('bicubic') })    
   // Create composite time series
