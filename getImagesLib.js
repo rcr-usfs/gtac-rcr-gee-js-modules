@@ -1019,12 +1019,13 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
       .pow(ee.Image.constant(2));
     return diff.reduce('sum').addBands(img);
   });
+  Map.addLayer(medoid,{},'Medoid Image Collection Pre-Reduce')
   
   // Minimize the distance across all bands
   medoid = ee.ImageCollection(medoid)
     .reduce(ee.Reducer.min(bandNames.length().add(1)))
     .select(bandNumbers,bandNames);
-  Map.addLayer(medoid.clip(geometry),{min:0,max:0.35,bands:'swir1,nir,red'},'medoid '+year,false)
+  
   return medoid;
 }
 
