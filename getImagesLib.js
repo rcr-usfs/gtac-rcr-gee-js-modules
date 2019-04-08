@@ -1168,19 +1168,22 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     }).flatten();
     // print('Weighted composite years for year:',year,yearsTT);
     //Iterate across each year in list
-    function filterDates(inCollection, yr){
-      // Set up dates      
+    var [imagesAll,imagesNonL7] = yearsTT.map(function(yr){
+      // Set up dates
+      
       var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
       var endDateT = ee.Date.fromYMD(yr,1,1).advance(endJulian-1+wrapOffset,'day');
       
-      // Filter images for given date range (with image collection that does not include L7)
-      var lsT = inCollection.filterDate(startDateT,endDateT);
+      // Filter images for given date range
+      var lsT = ls.filterDate(startDateT,endDateT);
       lsT = fillEmptyCollections(lsT,dummyImage);
-      return lsT;
-    }
-    var imagesAll = yearsTT.getInfo().map(filterDates(ls, year));
+      var lsTNonL7 = lsNonL7.filterDate(startDateT,endDateT);
+      lsTNonL7 = fillEmptyCollections(lsTNonL7,dummyImage);
+      return [lsT,lsTNonL7];
+    });
+    //var imagesAll = yearsTT.getInfo().map(filterDates(ls, year));
     var lsT = ee.ImageCollection(ee.FeatureCollection(imagesAll).flatten());
-    var imagesNonL7 = yearsTT.getInfo().map(filterDates(lsNonL7, year));
+    //var imagesNonL7 = yearsTT.getInfo().map(filterDates(lsNonL7, year));
     var lsTNonL7 = ee.ImageCollection(ee.FeatureCollection(imagesNonL7).flatten());
      
     
