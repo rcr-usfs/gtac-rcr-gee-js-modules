@@ -2081,7 +2081,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   var ls = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,includeSLCOffL7,defringeL5,addPixelQA);
   if ((includeSLCOffL7===true) && (prioritizeNonSLCOffL7===true)){
-    var lsNoL7 = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
+    var lsNonL7 = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,false,defringeL5,addPixelQA);
   }
   
