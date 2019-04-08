@@ -1207,15 +1207,15 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
       compositeNonL7 = medoidMosaicMSD(lsTNonL7,['blue','green','red','nir','swir1','swir2']);
     }
 
-    Map.addLayer(compositeAll,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeAll')
-    Map.addLayer(compositeNonL7,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeNonL7')
+    Map.addLayer(compositeAll,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeAll '+year)
+    Map.addLayer(compositeNonL7,{min:0,max:0.35,bands:'swir1,nir,red'},'compositeNonL7 '+year)
     
     // Merge the two composites here//
     var countAll = lsT.select('pixel_qa').count().rename('count'); // The number per pixel of good data points 
     var countNonL7 = lsTNonL7.select('pixel_qa').count().rename('count'); // The number per pixel of good data points
     compositeAll = compositeAll.updateMask(countAll.gte(minObs))
     compositeNonL7 = compositeNonL7.updateMask(countNonL7.gte(minObs))
-    var compositeMerged = compositeAll.where(compositeAll.mask().not(),compositeNonL7)
+    var compositeMerged = compositeAll.where(compositeAll.mask(),compositeNonL7)
 
     compositeMerged = compositeMerged.set({'system:time_start':ee.Date.fromYMD(year+ yearWithMajority,6,1).millis(),
                           'startDate':startDateT.millis(),
