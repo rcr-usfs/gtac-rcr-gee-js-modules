@@ -1217,14 +1217,14 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     // Merge the two composites here//
     var countAll = lsT.select('pixel_qa').count().rename('count'); // The number per pixel of good data points 
     var countNonL7 = lsTNonL7.select('pixel_qa').count().rename('count'); // The number per pixel of good data points
-    var maskAll = countAll.gte(minObs);
-    var maskNonL7 = countNonL7.gte(minObs);
+    var maskAll = countAll.gt(minObs);
+    var maskNonL7 = countNonL7.gt(minObs);
     Map.addLayer(countAll,{},'countAll',false);
     Map.addLayer(maskAll,{},'maskAll',false);
     Map.addLayer(countNonL7,{},'countNonL7',false);
     Map.addLayer(maskNonL7,{},'maskNonL7',false);
-    var compositeAllMasked = compositeAll.updateMask(countAll.gte(minObs));
-    var compositeNonL7Masked = compositeNonL7.updateMask(countNonL7.gte(minObs))
+    var compositeAllMasked = compositeAll.updateMask(countAll.gt(minObs));
+    var compositeNonL7Masked = compositeNonL7.updateMask(countNonL7.gt(minObs))
     
     var compositeMerged = compositeAll;
     compositeMerged = compositeMerged.where(compositeNonL7Masked.mask().not(),compositeNonL7);
