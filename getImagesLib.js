@@ -1193,13 +1193,13 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
      
     
     // Compute median or medoid or apply reducer
-    var composite; var compositeNonL7;
+    var compositeAll; var compositeNonL7;
     if(compositingReducer !== undefined && compositingReducer !== null){
-      composite = lsT.reduce(compositingReducer);
+      compositeAll = lsT.reduce(compositingReducer);
       compositeNonL7 = lsTNonL7.reduce(compositingReducer);
     }
     else if (compositingMethod.toLowerCase() === 'median') {
-      composite = lsT.median();
+      compositeAll = lsT.median();
       compositeNonL7 = lsTNonL7.median();
     }
     else {
