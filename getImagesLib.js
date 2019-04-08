@@ -1220,8 +1220,8 @@ function compositeTimeSeriesL7(ls,lsNonL7,startYear,endYear,startJulian,endJulia
     var maskNonL7 = countNonL7.gte(minObs);
     Map.addLayer(countAll,{},'countAll',false);
     Map.addLayer(maskAll,{},'maskAll',false);
-    Map.addLayer(countNonL7,{},'countAll',false);
-    Map.addLayer(countAll,{},'countAll',false);
+    Map.addLayer(countNonL7,{},'countNonL7',false);
+    Map.addLayer(maskNonL7,{},'maskNonL7',false);
     compositeAll = compositeAll.updateMask(countAll.gte(minObs));
     //compositeNonL7 = compositeNonL7.updateMask(countNonL7.gte(minObs))
     
