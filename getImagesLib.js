@@ -1024,7 +1024,7 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
   medoid = ee.ImageCollection(medoid)
     .reduce(ee.Reducer.min(bandNames.length().add(1)))
     .select(bandNumbers,bandNames);
-
+  Map.addLayer(medoid.clip(geometry),{min:0,max:0.35,bands:'swir1,nir,red'},'medoid '+year,false)
   return medoid;
 }
 
