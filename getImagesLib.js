@@ -679,7 +679,9 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
 ////////////////////////////////////////////////////////////////////////////////
 // Functions for applying fmask to SR data
 var fmaskBitDict = {'cloud' : 32, 'shadow': 8,'snow':16};
-
+//96 = low (32 + 64)
+//160 = medium (32 + 128)
+//224 = high cloud confidence (32 + 192)
 function cFmask(img,fmaskClass){
   var m = img.select('pixel_qa').bitwiseAnd(fmaskBitDict[fmaskClass]).neq(0);
   return img.updateMask(m.not());
