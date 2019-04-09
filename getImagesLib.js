@@ -1020,7 +1020,7 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
     return diff.reduce('sum').addBands(img);
   });
   // When exported as CSV, this provides a weighted list of the scenes being included in the composite
-  //Map.addLayer(medoid,{},'Medoid Image Collection Scenes') 
+  Map.addLayer(medoid,{},'Medoid Image Collection Scenes') 
   
   // Minimize the distance across all bands
   medoid = ee.ImageCollection(medoid)
