@@ -2283,7 +2283,7 @@ var julianDay = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 //Function for getting the date of the peak of veg vigor- can handle bands negatively correlated to veg in
 //changeDirDict dictionary above
 function getPeakDate(coeffs,peakDirection){
-  if(peakDirection === null || peakDirection === undefined){peakDirection = -1};
+  if(peakDirection === null || peakDirection === undefined){peakDirection = 1}; 
   
   var sin = coeffs.select([0]);
   var cos = coeffs.select([1]);
