@@ -284,14 +284,15 @@ var k = ee.Kernel.fixed(41, 41,
 function defringeLandsat(img){
   //Find any pixel without sufficient non null pixels (fringes)
   var m = img.mask().reduce(ee.Reducer.min());
-  
+  print('m',m)
   //Apply kernel
   var sum = m.reduceNeighborhood(ee.Reducer.sum(), k, 'kernel');
   // Map.addLayer(img,vizParams,'with fringes')
   // Map.addLayer(sum,{'min':20,'max':241},'sum41',false)
-  
+  print('sum',sum)
   //Mask pixels w/o sufficient obs
   sum = sum.gte(fringeCountThreshold);
+  print('sum2',sum)
   img = img.mask(sum);
   // Map.addLayer(img,vizParams,'defringed')
   return img;
@@ -679,9 +680,7 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
 ////////////////////////////////////////////////////////////////////////////////
 // Functions for applying fmask to SR data
 var fmaskBitDict = {'cloud' : 32, 'shadow': 8,'snow':16};
-//96 = low (32 + 64)
-//160 = medium (32 + 128)
-//224 = high cloud confidence (32 + 192)
+
 function cFmask(img,fmaskClass){
   var m = img.select('pixel_qa').bitwiseAnd(fmaskBitDict[fmaskClass]).neq(0);
   return img.updateMask(m.not());
@@ -1022,7 +1021,7 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
     return diff.reduce('sum').addBands(img);
   });
   // When exported as CSV, this provides a weighted list of the scenes being included in the composite
-  Map.addLayer(medoid,{},'Medoid Image Collection Scenes');
+  Map.addLayer(medoid,{},'Medoid Image Collection Scenes') 
   
   // Minimize the distance across all bands
   medoid = ee.ImageCollection(medoid)
@@ -2283,7 +2282,7 @@ var julianDay = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 
 //Function for getting the date of the peak of veg vigor- can handle bands negatively correlated to veg in
 //changeDirDict dictionary above
 function getPeakDate(coeffs,peakDirection){
-  if(peakDirection === null || peakDirection === undefined){peakDirection = 1}; 
+  if(peakDirection === null || peakDirection === undefined){peakDirection = 1};
   
   var sin = coeffs.select([0]);
   var cos = coeffs.select([1]);
