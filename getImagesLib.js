@@ -2707,3 +2707,4 @@ exports.addSoilIndices = addSoilIndices;
 exports.addAbsDiff = addAbsDiff;
 exports.customQualityMosaic  = customQualityMosaic;
 exports.compositeDates = compositeDates;
+exports.defringeLandsat = defringeLandsat;
