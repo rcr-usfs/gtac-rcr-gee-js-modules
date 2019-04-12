@@ -284,15 +284,15 @@ var k = ee.Kernel.fixed(41, 41,
 function defringeLandsat(img){
   //Find any pixel without sufficient non null pixels (fringes)
   var m = img.mask().reduce(ee.Reducer.min());
-  print('m',m)
+
   //Apply kernel
   var sum = m.reduceNeighborhood(ee.Reducer.sum(), k, 'kernel');
   // Map.addLayer(img,vizParams,'with fringes')
   // Map.addLayer(sum,{'min':20,'max':241},'sum41',false)
-  print('sum',sum)
+
   //Mask pixels w/o sufficient obs
   sum = sum.gte(fringeCountThreshold);
-  print('sum2',sum)
+
   img = img.mask(sum);
   // Map.addLayer(img,vizParams,'defringed')
   return img;
