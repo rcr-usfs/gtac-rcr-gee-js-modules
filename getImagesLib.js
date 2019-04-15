@@ -681,7 +681,7 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
 // Functions for applying fmask to SR data
 var fmaskBitDict = {'cloud' : 32, 'shadow': 8,'snow':16};
 
-// LSC updated 4/15 to add medium and high confidence cloud masks
+// LSC updated 4/15/19 to add medium and high confidence cloud masks
 // Supported fmaskClass options: 'cloud', 'shadow', 'snow', 'high_confidence_cloud', 'med_confidence_cloud'
 function cFmask(img,fmaskClass){
   var m;
