@@ -681,8 +681,18 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
 // Functions for applying fmask to SR data
 var fmaskBitDict = {'cloud' : 32, 'shadow': 8,'snow':16};
 
+// LSC updated 4/15 to add medium and high confidence cloud masks
+// Supported fmaskClass options: 'cloud', 'shadow', 'snow', 'high_confidence_cloud', 'med_confidence_cloud'
 function cFmask(img,fmaskClass){
-  var m = img.select('pixel_qa').bitwiseAnd(fmaskBitDict[fmaskClass]).neq(0);
+  var m;
+  var qa = img.select('pixel_qa');
+  if (fmaskClass == 'high_confidence_cloud'){
+    m = qa.bitwiseAnd(1 << 6).neq(0).and(qa.bitwiseAnd(1 << 7).neq(0))
+  }else if (fmaskClass == 'med_confidence_cloud'){
+    m = qa.bitwiseAnd(1 << 7).neq(0)
+  }else{
+    m = qa.bitwiseAnd(fmaskBitDict[fmaskClass]).neq(0);
+  }
   return img.updateMask(m.not());
 }
 
