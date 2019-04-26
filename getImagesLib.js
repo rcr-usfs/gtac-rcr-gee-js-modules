@@ -1056,7 +1056,7 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
     return diff.reduce('sum').addBands(img);
   });
   // When exported as CSV, this provides a weighted list of the scenes being included in the composite
-  Map.addLayer(medoid,{},'Medoid Image Collection Scenes') 
+  // Map.addLayer(medoid,{},'Medoid Image Collection Scenes') 
   
   // Minimize the distance across all bands
   medoid = ee.ImageCollection(medoid)
@@ -2021,7 +2021,8 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   
   return [ls,ts];
 }
-
+var out = getLandsatWrapper(geometry,2010,2018,190,250);
+print(out)
 //Wrapper function for getting Landsat imagery
 function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
