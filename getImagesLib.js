@@ -2021,9 +2021,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   
   return [ls,ts];
 }
-var out = getLandsatWrapper(geometry,2010,2018,190,250);
-var ts = ee.ImageCollection(out[1]);
-Map.addLayer(ee.Image(ts.first()),vizParamsFalse)
+
 //Wrapper function for getting Landsat imagery
 function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
@@ -2115,6 +2113,9 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   
   return ls;
 }
+var ts = getProcessedLandsatScenes(geometry,2010,2018,190,250);
+
+Map.addLayer(ee.Image(ts.first()),vizParamsFalse)
 ///////////////////////////////////////////////////////////////////
 //Wrapper function for getting Sentinel2 imagery
 function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
