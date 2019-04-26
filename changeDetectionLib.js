@@ -707,7 +707,7 @@ function thresholdZAndTrend(zAndTrendCollection,zThresh,slopeThresh,startYear,en
   var trendChange = thresholdChange(trendCollection,-slopeThresh,dir).select('.*_change');
   
   
-  Map.addLayer(zChange.max().select([0]),{'min':startYear,'max':endYear,'palette':'FF0,F00'},'Z Most Recent Change Year '+negativeOrPositiveChange,false);
+  Map.addLayer(zChange.max().select([0]),{'min':startYear,'max':endYear,'palette':'FF0,F00'},'Z Most Recent Change Year '+negativeOrPositiveChange,true);
   Map.addLayer(trendChange.max().select([0]),{'min':startYear,'max':endYear,'palette':'FF0,F00'},'Trend Most Recent Change Year '+negativeOrPositiveChange,false);
   
 }
