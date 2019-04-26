@@ -1885,7 +1885,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
   exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod){
-  
+  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   // Prepare dates
   //Wrap the dates if needed
   var wrapOffset = 0;
