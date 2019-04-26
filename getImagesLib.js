@@ -1750,7 +1750,6 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
   return joined;
     
   }
-  
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 function exportCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
@@ -1885,7 +1884,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale){
+  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod){
   
   // Prepare dates
   //Wrap the dates if needed
