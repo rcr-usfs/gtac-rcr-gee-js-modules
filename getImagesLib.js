@@ -375,8 +375,12 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod)
   s2s = dailyMosaics(s2s);
 return s2s;
 }
-var s2s = getS2(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250);
-Map.addLayer(s2s.median(),vizParamsFalse,'s2')
+var s2s = getS2(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'near');
+Map.addLayer(s2s.median().reproject('EPSG:5070',null,10),vizParamsFalse,'s2near')
+var s2s = getS2(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'bilinear');
+Map.addLayer(s2s.median().reproject('EPSG:5070',null,10),vizParamsFalse,'s2bilinear')
+var s2s = getS2(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'bicubic');
+Map.addLayer(s2s.median().reproject('EPSG:5070',null,10),vizParamsFalse,'s2bicubic')
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
 function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
