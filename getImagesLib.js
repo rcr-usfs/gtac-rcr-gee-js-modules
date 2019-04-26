@@ -1744,17 +1744,12 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
         .copyProperties(img);
       });
   if(['bilinear','bicubic'].indexOf(resampleMethod) > -1){
-    print('Setting resampling method',resampleMethod)
+    print('Setting resampling method',resampleMethod);
     joined = ee.ImageCollection(joined).map(function(img){return img.resample(resampleMethod) });
   }
   return joined;
     
   }
-  
-
-var ms = getModisData(2016,2017,190,200,true,false,90,false,false,'near')
-Map.addLayer(ms.median().reproject('EPSG:5070',null,30),vizParamsFalse,'msnear')
-
   
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
