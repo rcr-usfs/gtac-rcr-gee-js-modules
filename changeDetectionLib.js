@@ -600,7 +600,7 @@ function zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,s
   
   var years = ee.List.sequence(analysisStartYear,endYear,1).getInfo();
   var julians = ee.List.sequence(startJulian,endJulian-nDays,nDays).getInfo();
-  
+  print(years)
   //Iterate across each year and perform analysis
   var zAndTrendCollection = years.map(function(yr){
     yr = ee.Number(yr);
@@ -690,7 +690,7 @@ function zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,s
       }));
     });
     zAndTrendCollection = ee.ImageCollection(ee.FeatureCollection(zAndTrendCollection).flatten());
-    print(zAndTrendCollection)
+  
     return zAndTrendCollection;
 }
 
