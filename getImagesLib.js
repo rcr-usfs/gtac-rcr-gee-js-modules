@@ -1909,7 +1909,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(correctIllumination === undefined || correctIllumination === null){correctIllumination = false}
   if(correctScale === undefined || correctScale === null){correctScale = 250}
   if(exportComposites === undefined || exportComposites === null){exportComposites = false}
-  if(correctScale === undefined || correctScale === null){correctScale = 250}
+  if(outputName === undefined || outputName === null){outputName = 'Landsat-Composite'}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   // Prepare dates
   //Wrap the dates if needed
