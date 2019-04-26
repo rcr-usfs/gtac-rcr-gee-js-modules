@@ -159,6 +159,8 @@ var transform = [30,0,-2361915.0,0,-30,3177735.0];
 
 //Specify scale if transform is null
 var scale = null;
+
+
 //List of bands or indices to iterate across
 //Typically a list of spectral bands or computed indices
 //Can include: 'blue','green','red','nir','swir1','swir2'
