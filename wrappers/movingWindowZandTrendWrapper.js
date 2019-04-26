@@ -1,16 +1,17 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #d63000 */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[-76.47470682937461, 41.88856114410811],
-          [-76.47470682937461, 41.26808623156557],
-          [-72.06918925124961, 41.26808623156557],
-          [-72.06918925124961, 41.88856114410811]]], null, false);
+var geometry = /* color: #d63000 */ee.Geometry.Polygon(
+        [[[-78.74742459484082, 39.602597822337344],
+          [-78.32994412609082, 39.90665949107419],
+          [-76.91820096202832, 40.989310345801144],
+          [-74.48472928234082, 41.546698308711285],
+          [-71.40306424327832, 41.64939582091303],
+          [-71.22178982921582, 41.98917903064709],
+          [-71.65025662609082, 42.013671780185405],
+          [-72.86973904796582, 42.03815510147422],
+          [-75.03953885265332, 41.72323682309994],
+          [-77.24229764171582, 41.21283649167404],
+          [-78.40684842296582, 40.61507754935303],
+          [-78.97813748546582, 39.716778231067124]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running z-score and linear trend across a moving window of years
 
@@ -38,7 +39,7 @@ var endJulian = 200
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2000;
+var startYear = 1984;
 var endYear = 2018;
 
 
