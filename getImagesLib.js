@@ -2115,7 +2115,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
 }
 var ts = getProcessedLandsatScenes(geometry,2010,2018,190,250);
 
-Map.addLayer(ee.Image(ts.first()),vizParamsFalse)
+Map.addLayer(ts.median(),vizParamsFalse)
 ///////////////////////////////////////////////////////////////////
 //Wrapper function for getting Sentinel2 imagery
 function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
