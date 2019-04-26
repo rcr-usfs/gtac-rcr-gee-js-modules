@@ -2000,9 +2000,9 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels
+  contractPixels,dilatePixels,resampleMethod
   ){
-  
+  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   // Prepare dates
   //Wrap the dates if needed
   var wrapOffset = 0;
