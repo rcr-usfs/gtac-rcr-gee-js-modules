@@ -536,6 +536,10 @@ function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
       .copyProperties(img,['system:time_start']).copyProperties(img);
   });
   
+  if(['bilinear','bicubic'].indexOf(resampleMethod) > -1){
+    print('Setting resample method to ',resampleMethod);
+    ls = ls.map(function(img){return img.resample(resampleMethod)});
+  }
   return ls;
 }
 
