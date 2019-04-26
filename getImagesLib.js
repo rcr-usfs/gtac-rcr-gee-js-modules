@@ -375,17 +375,13 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod)
   s2s = dailyMosaics(s2s);
 return s2s;
 }
-var s2s = getS2(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'near');
-Map.addLayer(s2s.median().reproject('EPSG:5070',null,10),vizParamsFalse,'s2near')
-var s2s = getS2(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'bilinear');
-Map.addLayer(s2s.median().reproject('EPSG:5070',null,10),vizParamsFalse,'s2bilinear')
-var s2s = getS2(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'bicubic');
-Map.addLayer(s2s.median().reproject('EPSG:5070',null,10),vizParamsFalse,'s2bicubic')
+
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
 function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
-  toaOrSR,includeSLCOffL7,defringeL5,addPixelQA){
+  toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod){
   
+  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   if(defringeL5 === null || defringeL5 === undefined){defringeL5 = false}
   if(addPixelQA === null || addPixelQA === undefined){addPixelQA = false}
   
