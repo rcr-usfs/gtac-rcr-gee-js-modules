@@ -543,13 +543,6 @@ function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
   return ls;
 }
 
-var ls = getImageCollection(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'SR',false,false,true,'near')
-Map.addLayer(ls.median().reproject('EPSG:5070',null,30),vizParamsFalse,'lsnear')
-var ls = getImageCollection(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'SR',false,false,true,'bilinear')
-Map.addLayer(ls.median().reproject('EPSG:5070',null,30),vizParamsFalse,'lsbilinear')
-var ls = getImageCollection(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'SR',false,false,true,'bicubic')
-Map.addLayer(ls.median().reproject('EPSG:5070',null,30),vizParamsFalse,'lsbicubic')
-
 ////////////////////////////////////////////////////////////////////////////////
 // Helper function to apply an expression and linearly rescale the output.
 // Used in the landsatCloudScore function below.
@@ -1750,13 +1743,21 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
         .copyProperties(img,['system:time_start','system:time_end','system:index'])
         .copyProperties(img);
       });
-  if(resampleMethod !== 'near'){
+  if(['bilinear','bicubic'].indexOf(resampleMethod) > -1){
     print('Setting resampling method',resampleMethod)
     joined = ee.ImageCollection(joined).map(function(img){return img.resample(resampleMethod) });
   }
   return joined;
     
   }
+  
+
+var ls = getImageCollection(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'SR',false,false,true,'near')
+Map.addLayer(ls.median().reproject('EPSG:5070',null,30),vizParamsFalse,'lsnear')
+var ls = getImageCollection(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'SR',false,false,true,'bilinear')
+Map.addLayer(ls.median().reproject('EPSG:5070',null,30),vizParamsFalse,'lsbilinear')
+var ls = getImageCollection(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'SR',false,false,true,'bicubic')
+Map.addLayer(ls.median().reproject('EPSG:5070',null,30),vizParamsFalse,'lsbicubic')
   
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
