@@ -2113,9 +2113,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   
   return ls;
 }
-var ts = getProcessedLandsatScenes(geometry,2010,2018,190,250);
 
-Map.addLayer(ts.median(),vizParamsFalse)
 ///////////////////////////////////////////////////////////////////
 //Wrapper function for getting Sentinel2 imagery
 function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
