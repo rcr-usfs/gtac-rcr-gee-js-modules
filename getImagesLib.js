@@ -1885,6 +1885,13 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
   exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod){
+    
+    
+    
+  if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
+  if(weights === undefined || weights === null){weights = [1]}
+  if(compositingMethod === undefined || compositingMethod === null){compositingMethod = 'medoid'}
+  if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   // Prepare dates
   //Wrap the dates if needed
