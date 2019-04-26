@@ -1891,7 +1891,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
   if(weights === undefined || weights === null){weights = [1]}
   if(compositingMethod === undefined || compositingMethod === null){compositingMethod = 'medoid'}
-  if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
+  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'SR'}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   // Prepare dates
   //Wrap the dates if needed
