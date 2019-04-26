@@ -2282,9 +2282,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   
   return [s2s,ts];
 }
-var out = getSentinel2Wrapper(geometry,2015,2018,190,250);
-var ts = out[1];
-Map.addLayer(ee.Image(ts.first()),vizParamsFalse)
+
 //////////////////////////////////////////////////////////
 //Harmonic regression
 ////////////////////////////////////////////////////////////////////
