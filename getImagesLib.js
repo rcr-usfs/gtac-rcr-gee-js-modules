@@ -2121,8 +2121,26 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   cloudHeights,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels
+  contractPixels,dilatePixels,resampleMethod
   ){
+  
+  
+  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'SR'}
+  if(includeSLCOffL7 === undefined || includeSLCOffL7 === null){includeSLCOffL7 = false}
+  if(defringeL5 === undefined || defringeL5 === null){defringeL5 = false}
+  if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = false}
+  if(applyFmaskCloudMask === undefined || applyFmaskCloudMask === null){applyFmaskCloudMask = true}
+  if(applyTDOM === undefined || applyTDOM === null){applyTDOM = false}
+  if(applyFmaskCloudShadowMask === undefined || applyFmaskCloudShadowMask === null){applyFmaskCloudShadowMask = true}
+  if(applyFmaskSnowMask === undefined || applyFmaskSnowMask === null){applyFmaskSnowMask = false}
+  if(cloudScoreThresh === undefined || cloudScoreThresh === null){cloudScoreThresh = 10}
+  if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
+  if(cloudScorePctl === undefined || cloudScorePctl === null){cloudScorePctl = 10}
+  if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
+  if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
+  if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
+  if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
+  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   
   // Prepare dates
   //Wrap the dates if needed
