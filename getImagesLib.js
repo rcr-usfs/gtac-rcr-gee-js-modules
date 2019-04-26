@@ -2203,6 +2203,33 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   correctIllumination,correctScale,
   exportComposites,outputName,exportPathRoot,crs,transform,scale){
   
+  
+  if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
+  if(weights === undefined || weights === null){weights = [1]}
+  if(compositingMethod === undefined || compositingMethod === null){compositingMethod = 'medoid'}
+  if(applyQABand === undefined || applyQABand === null){applyQABand = false}
+  if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = true}
+  if(applyShadowShift === undefined || applyShadowShift === null){applyShadowShift = false}
+  if(applyTDOM === undefined || applyTDOM === null){applyTDOM = true}
+  if(cloudScoreThresh === undefined || cloudScoreThresh === null){cloudScoreThresh = 10}
+  if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
+  if(cloudScorePctl === undefined || cloudScorePctl === null){cloudScorePctl = 10}
+  if(cloudHeights === undefined || cloudHeights === null){cloudHeights = ee.List.sequence(500,10000,500)}
+  if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
+  if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
+  if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
+  if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
+  
+  if(correctIllumination === undefined || correctIllumination === null){correctIllumination = false}
+  if(correctScale === undefined || correctScale === null){correctScale = 250}
+  if(exportComposites === undefined || exportComposites === null){exportComposites = false}
+  if(outputName === undefined || outputName === null){outputName = 'Landsat-Composite'}
+  if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/ianhousman/test'}
+  if(crs === undefined || crs === null){crs = 'EPSG:5070'}
+  if(transform === undefined || transform === null){transform = null}
+  if(scale === undefined || scale === null){scale = 30}
+  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
+  
   var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
   applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
