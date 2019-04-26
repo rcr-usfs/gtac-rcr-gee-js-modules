@@ -1752,12 +1752,9 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
   }
   
 
-var ls = getImageCollection(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'SR',false,false,true,'near')
-Map.addLayer(ls.median().reproject('EPSG:5070',null,30),vizParamsFalse,'lsnear')
-var ls = getImageCollection(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'SR',false,false,true,'bilinear')
-Map.addLayer(ls.median().reproject('EPSG:5070',null,30),vizParamsFalse,'lsbilinear')
-var ls = getImageCollection(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250,'SR',false,false,true,'bicubic')
-Map.addLayer(ls.median().reproject('EPSG:5070',null,30),vizParamsFalse,'lsbicubic')
+var ms = getModisData(2016,2017,190,200,true,false,90,false,false,'near')
+Map.addLayer(ms.median().reproject('EPSG:5070',null,30),vizParamsFalse,'msnear')
+
   
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
