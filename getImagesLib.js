@@ -2022,15 +2022,34 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   return [ls,ts];
 }
 var out = getLandsatWrapper(geometry,2010,2018,190,250);
-print(out)
+var ts = ee.ImageCollection(out[1]);
+Map.addLayer(ee.Image(ts.first()),vizParamsFalse)
 //Wrapper function for getting Landsat imagery
 function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudScoreThresh,cloudScorePctl,
+  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,resampleMethod
   ){
+    
+    
+
+  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'SR'}
+  if(includeSLCOffL7 === undefined || includeSLCOffL7 === null){includeSLCOffL7 = false}
+  if(defringeL5 === undefined || defringeL5 === null){defringeL5 = false}
+  if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = false}
+  if(applyFmaskCloudMask === undefined || applyFmaskCloudMask === null){applyFmaskCloudMask = true}
+  if(applyTDOM === undefined || applyTDOM === null){applyTDOM = false}
+  if(applyFmaskCloudShadowMask === undefined || applyFmaskCloudShadowMask === null){applyFmaskCloudShadowMask = true}
+  if(applyFmaskSnowMask === undefined || applyFmaskSnowMask === null){applyFmaskSnowMask = false}
+  if(cloudScoreThresh === undefined || cloudScoreThresh === null){cloudScoreThresh = 10}
+  if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
+  if(cloudScorePctl === undefined || cloudScorePctl === null){cloudScorePctl = 10}
+  if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
+  if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
+  if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
+  if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   // Prepare dates
   //Wrap the dates if needed
