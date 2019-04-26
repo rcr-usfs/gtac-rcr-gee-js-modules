@@ -7,10 +7,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-80.02579527094014, 42.43362983723629],
-          [-80.02579527094014, 39.95400259135313],
-          [-69.58878355219014, 39.95400259135313],
-          [-69.58878355219014, 42.43362983723629]]], null, false);
+        [[[-76.47470682937461, 41.88856114410811],
+          [-76.47470682937461, 41.26808623156557],
+          [-72.06918925124961, 41.26808623156557],
+          [-72.06918925124961, 41.88856114410811]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running z-score and linear trend across a moving window of years
 
@@ -38,7 +38,7 @@ var endJulian = 200
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 1984;
+var startYear = 2000;
 var endYear = 2018;
 
 
@@ -152,7 +152,7 @@ var scale = null;
 //Number of julian days for each analysis
 //Generally want it to be >= 32 or the output will be noisy
 //Should almost never be less than 16
-var nDays = 80;
+var nDays = 50;
 
 //Which bands/indices to run the analysis with
 //Can be any of ['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','NDSI','tcAngleBG']
@@ -166,7 +166,7 @@ var exportImages = false;
 
 //Number of years in baseline
 //Generally 5 years works best in the Western CONUS and 3 in the Eastern CONUS
-var baselineLength = 4;
+var baselineLength = 5;
 
 //Number of years between the analysis year and the last year of the baseline
 //This helps ensure the z-test is being performed data that are less likely to be 
