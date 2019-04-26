@@ -1887,7 +1887,6 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod){
     
     
-    
   if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
   if(weights === undefined || weights === null){weights = [1]}
   if(compositingMethod === undefined || compositingMethod === null){compositingMethod = 'medoid'}
