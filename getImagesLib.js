@@ -354,8 +354,8 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod)
                       // .map(function(img){return img.resample('bicubic') }) ;
   
   if(['bilinear','bicubic'].indexOf(resampleMethod) > -1){
-    print('Setting resample method to ',resampleMethod)
-    s2s = s2s.map(function(img){return img.resample(resampleMethod)})
+    print('Setting resample method to ',resampleMethod);
+    s2s = s2s.map(function(img){return img.resample(resampleMethod)});
   }
   //Convert to daily mosaics to avoid redundent observations in MGRS overlap areas and edge artifacts for shadow masking
   s2s = dailyMosaics(s2s);
