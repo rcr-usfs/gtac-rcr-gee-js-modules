@@ -7,10 +7,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-113.66593920027896, 42.94643096019791],
-          [-113.66593920027896, 37.16694823882647],
-          [-104.34953295027896, 37.16694823882647],
-          [-104.34953295027896, 42.94643096019791]]], null, false);
+        [[[-112.08865964627057, 41.13958991663369],
+          [-112.08865964627057, 40.36560905472839],
+          [-111.33060300564557, 40.36560905472839],
+          [-111.33060300564557, 41.13958991663369]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
 var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -137,7 +137,7 @@ var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
 //13. Export params
 //Whether to export composites
-var exportComposites = false;
+var exportComposites = true;
 
 //Set up Names for the export
 var outputName = 'Landsat';
