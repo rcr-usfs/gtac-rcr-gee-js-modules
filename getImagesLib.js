@@ -1910,7 +1910,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
     }else{addPixelQA = false;}
   // Get Landsat image collection
   var ls = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
-    toaOrSR,includeSLCOffL7,defringeL5,addPixelQA);
+    toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod);
   
   // Apply relevant cloud masking methods
   if(applyCloudScore){
