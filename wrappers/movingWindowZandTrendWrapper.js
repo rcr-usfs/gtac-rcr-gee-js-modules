@@ -31,8 +31,8 @@ var studyArea =geometry;
 // constraints. This supports wrapping for tropics and southern hemisphere.
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-var startJulian = 1;
-var endJulian = 90
+var startJulian = 190;
+var endJulian = 270
 
 // 3. Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
@@ -50,7 +50,7 @@ var toaOrSR = 'SR';
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
-var includeSLCOffL7 = false;
+var includeSLCOffL7 = true;
 
 //9. Whether to defringe L5
 //Landsat 5 data has fringes on the edges that can introduce anomalies into 
