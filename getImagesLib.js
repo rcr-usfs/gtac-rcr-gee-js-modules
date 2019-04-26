@@ -2201,7 +2201,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale){
+  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod){
   
   
   if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
@@ -2235,7 +2235,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   cloudHeights,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels
+  contractPixels,dilatePixels,resampleMethod
   );
   
   
@@ -2282,6 +2282,9 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   
   return [s2s,ts];
 }
+var out = getSentinel2Wrapper(geometry,2015,2018,190,250);
+var ts = out[1];
+Map.addLayer(ee.Image(ts.first()),vizParamsFalse)
 //////////////////////////////////////////////////////////
 //Harmonic regression
 ////////////////////////////////////////////////////////////////////
