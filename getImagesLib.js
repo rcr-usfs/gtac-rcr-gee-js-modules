@@ -336,7 +336,8 @@ function dailyMosaics(imgs){
     return imgs;
 }
 //////////////////////////////////////////////////////
-function getS2(studyArea,startDate,endDate,startJulian,endJulian){
+function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod){
+  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   //Get some s2 data
   var s2s = ee.ImageCollection('COPERNICUS/S2')
                     .filterDate(startDate,endDate)
