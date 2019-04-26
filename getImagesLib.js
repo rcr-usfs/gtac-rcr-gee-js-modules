@@ -1897,7 +1897,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = false}
   if(applyFmaskCloudMask === undefined || applyFmaskCloudMask === null){applyFmaskCloudMask = true}
   if(applyTDOM === undefined || applyTDOM === null){applyTDOM = false}
-  if(applyFmaskCloudMask === undefined || applyFmaskCloudMask === null){applyFmaskCloudMask = true}
+  if(applyFmaskCloudShadowMask === undefined || applyFmaskCloudShadowMask === null){applyFmaskCloudShadowMask = true}
   if(applyFmaskCloudMask === undefined || applyFmaskCloudMask === null){applyFmaskCloudMask = true}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   // Prepare dates
