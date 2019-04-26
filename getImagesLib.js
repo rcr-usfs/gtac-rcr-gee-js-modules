@@ -1910,6 +1910,9 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(correctScale === undefined || correctScale === null){correctScale = 250}
   if(exportComposites === undefined || exportComposites === null){exportComposites = false}
   if(outputName === undefined || outputName === null){outputName = 'Landsat-Composite'}
+  if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/ianhousman/test'}
+  if(crs === undefined || crs === null){crs = 'EPSG:5070'}
+  if(outputName === undefined || outputName === null){outputName = 'Landsat-Composite'}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   // Prepare dates
   //Wrap the dates if needed
