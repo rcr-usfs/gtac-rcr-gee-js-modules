@@ -7,10 +7,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-115.65727911025022, 44.811524579263725],
-          [-115.65727911025022, 44.05055010105591],
-          [-114.18511114150022, 44.05055010105591],
-          [-114.18511114150022, 44.811524579263725]]], null, false);
+        [[[-80.02579527094014, 42.43362983723629],
+          [-80.02579527094014, 39.95400259135313],
+          [-69.58878355219014, 39.95400259135313],
+          [-69.58878355219014, 42.43362983723629]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running z-score and linear trend across a moving window of years
 
@@ -31,8 +31,8 @@ var studyArea =geometry;
 // constraints. This supports wrapping for tropics and southern hemisphere.
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-var startJulian = 190;
-var endJulian = 270
+var startJulian = 150;
+var endJulian = 200
 
 // 3. Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
