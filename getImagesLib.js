@@ -1893,7 +1893,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(compositingMethod === undefined || compositingMethod === null){compositingMethod = 'medoid'}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'SR'}
   if(includeSLCOffL7 === undefined || includeSLCOffL7 === null){includeSLCOffL7 = false}
-  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'SR'}
+  if(defringeL5 === undefined || defringeL5 === null){defringeL5 = false}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'SR'}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'SR'}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
