@@ -1,3 +1,17 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var geometry = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-112.55839843749999, 40.900807176085465],
+          [-112.55839843749999, 39.69425229061023],
+          [-110.62480468749999, 39.69425229061023],
+          [-110.62480468749999, 40.900807176085465]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 ////////////////////////////////////////////////////////////////////////////////
 //Module for getting Landsat, Sentinel 2 and MODIS images/composites
 // Define visualization parameters
@@ -361,6 +375,8 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod)
   s2s = dailyMosaics(s2s);
 return s2s;
 }
+var s2s = getS2(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2018,12,31),190,250);
+Map.addLayer(s2s.median(),vizParamsFalse,'s2')
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
 function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
