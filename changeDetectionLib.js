@@ -690,7 +690,7 @@ function zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,s
       }));
     });
     zAndTrendCollection = ee.ImageCollection(ee.FeatureCollection(zAndTrendCollection).flatten());
-    
+    print(zAndTrendCollection)
     return zAndTrendCollection;
 }
 
