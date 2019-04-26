@@ -2126,7 +2126,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   
   
   if(applyQABand === undefined || applyQABand === null){applyQABand = false}
-  if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = false}
+  if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = true}
   if(applyShadowShift === undefined || applyShadowShift === null){applyShadowShift = false}
   if(applyTDOM === undefined || applyTDOM === null){applyTDOM = true}
   if(applyFmaskCloudShadowMask === undefined || applyFmaskCloudShadowMask === null){applyFmaskCloudShadowMask = true}
