@@ -1,9 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.Polygon(
-        [[[117.00570463407223, -3.3078246108261187],
-          [118.10433744657223, 5.33981602506325],
-          [111.07308744657223, 3.455817212666339],
-          [110.23812650907223, -3.483297193685357]]]);
+var geometry = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-115.65727911025022, 44.811524579263725],
+          [-115.65727911025022, 44.05055010105591],
+          [-114.18511114150022, 44.05055010105591],
+          [-114.18511114150022, 44.811524579263725]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running z-score and linear trend across a moving window of years
 
