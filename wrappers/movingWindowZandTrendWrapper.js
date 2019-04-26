@@ -224,5 +224,5 @@ dLib.zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,start
           exportImages,exportPathRoot,studyArea,scale,crs,transform,minBaselineObservationsNeeded);
 
 Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);         
-dLib.thresholdZAndTrend(zAndTrendCollection,-5*10,-0.1*10000,startYear,endYear);
+dLib.thresholdZAndTrend(zAndTrendCollection,-2*10,-0.05*10000,startYear,endYear);
 
