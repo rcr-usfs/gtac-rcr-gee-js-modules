@@ -1912,7 +1912,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(outputName === undefined || outputName === null){outputName = 'Landsat-Composite'}
   if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/ianhousman/test'}
   if(crs === undefined || crs === null){crs = 'EPSG:5070'}
-  if(outputName === undefined || outputName === null){outputName = 'Landsat-Composite'}
+  if(transform === undefined || transform === null){transform = null}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   // Prepare dates
   //Wrap the dates if needed
