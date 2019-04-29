@@ -2026,7 +2026,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod
+  contractPixels,dilatePixels,resampleMethod,harmonizeOLI
   ){
     
     
@@ -2047,6 +2047,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
   if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
+  if(harmonizeOLI === undefined || harmonizeOLI === null){harmonizeOLI = false}
   // Prepare dates
   //Wrap the dates if needed
   var wrapOffset = 0;
@@ -2072,6 +2073,14 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   var ls = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod);
   
+  //Apply Roy 2016 harmonization if specified
+  if(harmonizeOLI){
+    print('Apply Roy 2016 harmonization to OLI');
+    var lsTMs = ls.filter(ee.Filter.equals('SATELLITE','LANDSAT_8').not());
+    var lsOLIs = ls.filter(ee.Filter.equals('SATELLITE','LANDSAT_8'));
+    lsOLIs = lsOLIs.map(getImagesLib.harmonizationRoy);
+    ls = ee.ImageCollection(lsTMs.merge(lsOLIs));
+  }
   // Apply relevant cloud masking methods
   if(applyCloudScore){
     print('Applying cloudScore');
