@@ -2078,7 +2078,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
     print('Apply Roy 2016 harmonization to OLI');
     var lsTMs = ls.filter(ee.Filter.equals('SATELLITE','LANDSAT_8').not());
     var lsOLIs = ls.filter(ee.Filter.equals('SATELLITE','LANDSAT_8'));
-    lsOLIs = lsOLIs.map(getImagesLib.harmonizationRoy);
+    lsOLIs = lsOLIs.map(harmonizationRoy);
     ls = ee.ImageCollection(lsTMs.merge(lsOLIs));
   }
   // Apply relevant cloud masking methods
