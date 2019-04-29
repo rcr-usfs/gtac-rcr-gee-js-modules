@@ -75,7 +75,7 @@ var harmonizationRoy = function(oli) {
             // .resample('bicubic')                                                          // ...resample the L8 bands using bicubic
              .subtract(itcp).divide(slopes)                                // ...multiply the y-intercept bands by 10000 to match the scale of the L7 bands then apply the line equation - subtract the intercept and divide by the slope
              .set('system:time_start', oli.get('system:time_start'));                      // ...set the output system:time_start metadata to the input image time_start otherwise it is null
-  return y;                                                                       // return the image as short to match the type of the other data
+  return y.merge(oli.select('pixel_qa'));                                                                       // return the image as short to match the type of the other data
 };
 
 /////////////////////////////////////////////////////////////////////////
