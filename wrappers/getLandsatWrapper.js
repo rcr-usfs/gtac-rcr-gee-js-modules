@@ -129,6 +129,13 @@ var contractPixels = 1.5;
 // (2.5 or 3.5 generally is sufficient)
 var dilatePixels = 2.5;
 
+//Choose the resampling method: 'near', 'bilinear', or 'bicubic'
+//Defaults to 'near'
+//If method other than 'near' is chosen, any map drawn on the fly that is not
+//reprojected, will appear blurred
+//Use .reproject to view the actual resulting image (this will slow it down)
+var resampleMethod = 'bicubic';
+
 // 12. correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
 // correction is calculated in meters.
@@ -175,7 +182,7 @@ var lsAndTs = getImageLib.getLandsatWrapper(studyArea,startYear,endYear,startJul
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale);
+  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod);
 
 //Separate into scenes and composites for subsequent analysis
 var processedScenes = lsAndTs[0];
