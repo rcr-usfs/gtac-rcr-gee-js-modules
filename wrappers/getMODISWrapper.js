@@ -131,6 +131,10 @@ var contractPixels = 0;
 var dilatePixels = 0;
 
 //Choose the resampling method: 'near', 'bilinear', or 'bicubic'
+//Defaults to 'near'
+//If method other than 'near' is chosen, any map drawn on the fly that is not
+//reprojected, will appear blurred
+//Use .reproject to view the actual resulting image (this will slow it down)
 var resampleMethod = 'bicubic';
 
 //15. Export params
