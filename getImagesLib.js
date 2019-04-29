@@ -2079,7 +2079,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
     var lsTMs = ls.filter(ee.Filter.equals('SATELLITE','LANDSAT_8').not());
     var lsOLIs = ls.filter(ee.Filter.equals('SATELLITE','LANDSAT_8'));
     temp = lsOLIs.map(harmonizationRoy);
-    lsOLIs = temp.merge(lsOLIs.select('pixel_qa'));
+    lsOLIs = ee.ImageCollection(temp.addBands(lsOLIs.select('pixel_qa')));
     ls = ee.ImageCollection(lsTMs.merge(lsOLIs));
   }
   // Apply relevant cloud masking methods
