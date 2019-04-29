@@ -2079,6 +2079,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
     var lsTMs = ls.filter(ee.Filter.equals('SATELLITE','LANDSAT_8').not());
     var lsOLIs = ls.filter(ee.Filter.equals('SATELLITE','LANDSAT_8'));
     var temp = lsOLIs.map(harmonizationRoy);
+    print (temp, 'is temp');
     lsOLIs = ee.ImageCollection(temp.addBands(lsOLIs.select('pixel_qa')));
     ls = ee.ImageCollection(lsTMs.merge(lsOLIs));
   }
