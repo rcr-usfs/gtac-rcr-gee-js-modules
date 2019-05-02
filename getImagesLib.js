@@ -63,14 +63,14 @@ var harmonizationRoy = function(oli) {
   var bns = oli.bandNames();
   var includeBns = ['blue','green','red','nir','swir1','swir2' ];
   var otherBns = bns.removeAll(includeBns);
-  print(bns,includeBns,otherBns)
+
   // create an image of y-intercepts per band for L8 TO L7 regression line - David Roy
   var y = oli.float().select(includeBns) // select OLI bands 2-7 and rename them to match L7 band names
             // .resample('bicubic')                                                          // ...resample the L8 bands using bicubic
              .subtract(itcp).divide(slopes)                                // ...multiply the y-intercept bands by 10000 to match the scale of the L7 bands then apply the line equation - subtract the intercept and divide by the slope
              .set('system:time_start', oli.get('system:time_start'));                      // ...set the output system:time_start metadata to the input image time_start otherwise it is null
   y = y.addBands(oli.select(otherBns)).select(bns);
-  print(y.bandNames())
+  
   return y;                                                                       // return the image as short to match the type of the other data
 };
 
