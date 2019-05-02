@@ -375,7 +375,8 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod)
   s2s = dailyMosaics(s2s);
 return s2s;
 }
-
+var s2s = getS2(geometry,ee.Date.fromYMD(2017,1,1),ee.Date.fromYMD(2019,1,1),190,250,null);
+Map.addLayer(s2s.median(),vizParamsFalse)
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
 function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
