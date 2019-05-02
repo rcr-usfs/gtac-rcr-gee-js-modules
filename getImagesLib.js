@@ -353,8 +353,10 @@ function dailyMosaics(imgs){
 function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR){
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'toa'}
+  
+  var s2CollectionDict = {'toa':'COPERNICUS/S2','sr':'COPERNICUS/S2_SR'}
   //Get some s2 data
-  var s2s = ee.ImageCollection('COPERNICUS/S2')
+  var s2s = ee.ImageCollection(s2CollectionDict[toaOrSR.toLowerCase()])
                     .filterDate(startDate,endDate)
                     .filter(ee.Filter.calendarRange(startJulian,endJulian))
                     .filterBounds(studyArea)
