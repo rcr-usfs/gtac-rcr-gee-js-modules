@@ -369,10 +369,7 @@ function landtrendrWrapper(processedComposites,startYear,endYear,indexName,distD
 //Returns annual collection of verdet slope
 function verdetAnnualSlope(tsIndex,indexName,startYear,endYear, alpha, tolerance){
   //Apply VERDET
-  var verdet =   ee.Algorithms.TemporalSegmentation.Verdet({timeSeries: tsIndex,
-                                        tolerance: 0.0001,
-  	 	                                  alpha: 1/3.0}).arraySlice(0,1,null);
-
+  var verdet =   ee.Algorithms.TemporalSegmentation.Verdet(tsIndex)//{timeSeries: tsIndex,
                                         //tolerance: tolerance, //default tolerance = 0.0001
                                         //alpha: alpha}).arraySlice(0,1,null); //default alpha = 0.03333
   print('indexName',indexName)
