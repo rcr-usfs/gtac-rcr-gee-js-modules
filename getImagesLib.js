@@ -2081,45 +2081,45 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
     
     ls = ee.ImageCollection(lsTMs.merge(lsOLIs));
   }
-print(ls)
-  // // Apply relevant cloud masking methods
-  // if(applyCloudScore){
-  //   print('Applying cloudScore');
-  //   ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset); 
+
+  // Apply relevant cloud masking methods
+  if(applyCloudScore){
+    print('Applying cloudScore');
+    ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset); 
     
-  // }
+  }
   
-  // if(applyFmaskCloudMask){
-  //   print('Applying Fmask cloud mask');
-  //   ls = ls.map(function(img){return cFmask(img,'cloud')});
-  // }
+  if(applyFmaskCloudMask){
+    print('Applying Fmask cloud mask');
+    ls = ls.map(function(img){return cFmask(img,'cloud')});
+  }
   
-  // if(applyTDOM){
-  //   print('Applying TDOM');
-  //   //Find and mask out dark outliers
-  //   ls = simpleTDOM2(ls,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
-  // }
-  // if(applyFmaskCloudShadowMask){
-  //   print('Applying Fmask shadow mask');
-  //   ls = ls.map(function(img){return cFmask(img,'shadow')});
-  // }
-  // if(applyFmaskSnowMask){
-  //   print('Applying Fmask snow mask');
-  //   ls = ls.map(function(img){return cFmask(img,'snow')});
-  // }
-  
-  
-  
-  
-  // // Add common indices- can use addIndices for comprehensive indices 
-  // //or simpleAddIndices for only common indices
-  // ls = ls.map(simpleAddIndices)
-  //         .map(getTasseledCap)
-  //         .map(simpleAddTCAngles);
+  if(applyTDOM){
+    print('Applying TDOM');
+    //Find and mask out dark outliers
+    ls = simpleTDOM2(ls,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
+  }
+  if(applyFmaskCloudShadowMask){
+    print('Applying Fmask shadow mask');
+    ls = ls.map(function(img){return cFmask(img,'shadow')});
+  }
+  if(applyFmaskSnowMask){
+    print('Applying Fmask snow mask');
+    ls = ls.map(function(img){return cFmask(img,'snow')});
+  }
   
   
   
-  // return ls;
+  
+  // Add common indices- can use addIndices for comprehensive indices 
+  //or simpleAddIndices for only common indices
+  ls = ls.map(simpleAddIndices)
+          .map(getTasseledCap)
+          .map(simpleAddTCAngles);
+  
+  
+  
+  return ls;
 }
 
 ///////////////////////////////////////////////////////////////////
