@@ -70,6 +70,7 @@ var harmonizationRoy = function(oli) {
              .subtract(itcp).divide(slopes)                                // ...multiply the y-intercept bands by 10000 to match the scale of the L7 bands then apply the line equation - subtract the intercept and divide by the slope
              .set('system:time_start', oli.get('system:time_start'));                      // ...set the output system:time_start metadata to the input image time_start otherwise it is null
   y = y.addBands(oli.select(otherBns)).select(bns);
+  print(y.bandNames())
   return y;                                                                       // return the image as short to match the type of the other data
 };
 
