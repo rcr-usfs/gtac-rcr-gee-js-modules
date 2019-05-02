@@ -63,6 +63,7 @@ var harmonizationRoy = function(oli) {
   var bns = oli.bandNames();
   var inludeBns = ['blue','green','red','nir','swir1','swir2' ];
   var otherBns = bns.removeAll(inludeBns);
+  print(bns,includeBns,otherBns)
   // create an image of y-intercepts per band for L8 TO L7 regression line - David Roy
   var y = oli.float().select() // select OLI bands 2-7 and rename them to match L7 band names
             // .resample('bicubic')                                                          // ...resample the L8 bands using bicubic
