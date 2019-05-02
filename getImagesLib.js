@@ -61,8 +61,8 @@ var harmonizationRoy = function(oli) {
   var slopes = ee.Image.constant([0.9785, 0.9542, 0.9825, 1.0073, 1.0171, 0.9949]);        // create an image of slopes per band for L8 TO L7 regression line - David Roy
   var itcp = ee.Image.constant([-0.0095, -0.0016, -0.0022, -0.0021, -0.0030, 0.0029]);
   var bns = oli.bandNames();
-  var inludeBns = ['blue','green','red','nir','swir1','swir2' ];
-  var otherBns = bns.removeAll(inludeBns);
+  var includeBns = ['blue','green','red','nir','swir1','swir2' ];
+  var otherBns = bns.removeAll(includeBns);
   print(bns,includeBns,otherBns)
   // create an image of y-intercepts per band for L8 TO L7 regression line - David Roy
   var y = oli.float().select() // select OLI bands 2-7 and rename them to match L7 band names
