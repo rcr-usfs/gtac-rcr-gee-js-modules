@@ -45,7 +45,7 @@ var studyArea = cambodia;
 // UNCOMMENT THE buildArea() FUNCTION TO USE THE provinceName VARIABLE
 // the buildArea function will filter the province of interest and center the map there
 //var studyArea = buildArea();
-Map.addLayer(studyArea, {}, provinceName, true);
+Map.addLayer(studyArea, {}, provinceName, false);
 
 // Location for Google Drive exports
 var exportDriveFolder =  'DriveFolderHere';
@@ -151,7 +151,7 @@ Map.addLayer(yrMask, {}, 'yrMask', false);
 var regrowthMagSegsYrMask = regrowthMagSegs.toArray(0).arrayMask(yrMask);        //apply the mask
 Map.addLayer(regrowthMagSegsYrMask, {}, 'regrowthMagSegsYrMask', false);
 var yor = regrowthMagSegsYrMask.arraySlice(0,0,1).arrayProject([1]).arrayReduce(ee.Reducer.min(),[0]).arrayFlatten([['yor']]); // convert to an image
-Map.addLayer(yor.updateMask(yor.neq(0)), {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'magnitude based year of recovery', false);
+Map.addLayer(yor.updateMask(yor.neq(0)), {min:1986, max:2016, palette:['#9400D3', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FF7F00', '#FF0000']}, 'magnitude based year of recovery', true);
 
 // use the rate of recovery to determine the recovery year
 // var rateMask = segInfo.arraySlice(0,6,null).gt(regrowthRateThresh);           //slice off the rates and create a binary mask
