@@ -7,13 +7,6 @@ var dryCool = ee.ImageCollection("projects/servir-mekong/usgs_sr_composites/dryc
     PreyLang_KTH = ee.FeatureCollection("users/thinkbetween/PreyLang_KTH");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ////////////////////////////////////////////////////////////////////////////////////////////////
-// Import necessary libraries 
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Import the GTAC get image library - this will be used to join image collections
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-
-////////////////////////////////////////////////////////////////////////////////////////////////
 // Prepare the image composites for LandTrendr
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -187,6 +180,7 @@ var crs = 'EPSG:32648';               // choose an output projection
 
 var standAgeMap = getStandAge(year, treeHeightThreshold, canopyThreshold, minMapUnitSize);
 Map.addLayer(standAgeMap.select(0), {min:0, max:20, palette:'F00,0F0'}, 'Stand Age ' + year);
+Map.setCenter(105.49404134712984,12.135352907374976, 11);
 
 if(minimumMappingUnit === true){
   //Map.addLayer(standAgeMap.select('mmuStandAge'), {min:0, max:20, palette:'F00,0F0'}, 'MMU Stand Age ' + year);
