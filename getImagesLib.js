@@ -1494,7 +1494,7 @@ var multModisDict = {
       var MergeBands = function(element) {
         // A function to merge the bands together.
         // After a join, results are in 'primary' and 'secondary' properties.
-        return ee.ImageCollection([element.get('primary'), element.get('secondary')]).mosaic();
+        return ee.Image.cat(element.get('primary'), element.get('secondary'));
       };
 
       var join = ee.Join.inner();
