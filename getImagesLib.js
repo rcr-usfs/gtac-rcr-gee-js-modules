@@ -531,7 +531,7 @@ function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
   // Make sure all bands have data
   ls = ls.map(function(img){
     img = img.updateMask(img.mask().reduce(ee.Reducer.min()));
-    return img.multiply(multImageDict[toaOrSR]).float()
+    return img.multiply(multImageDict[toaOrSR])
       .copyProperties(img,['system:time_start']).copyProperties(img);
   });
   
