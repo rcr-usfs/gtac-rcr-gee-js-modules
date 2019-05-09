@@ -531,7 +531,7 @@ function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
   // Make sure all bands have data
   ls = ls.map(function(img){
     img = img.updateMask(img.mask().reduce(ee.Reducer.min()));
-    return img.multiply(multImageDict[toaOrSR])
+    return img.multiply(multImageDict[toaOrSR]).float()
       .copyProperties(img,['system:time_start']).copyProperties(img);
   });
   
@@ -709,7 +709,7 @@ var fmaskBitDict = {'cloud' : 32, 'shadow': 8,'snow':16};
 // Supported fmaskClass options: 'cloud', 'shadow', 'snow', 'high_confidence_cloud', 'med_confidence_cloud'
 function cFmask(img,fmaskClass){
   var m;
-  var qa = img.select('pixel_qa');
+  var qa = img.select('pixel_qa').int16();
   if (fmaskClass == 'high_confidence_cloud'){
     m = qa.bitwiseAnd(1 << 6).neq(0).and(qa.bitwiseAnd(1 << 7).neq(0))
   }else if (fmaskClass == 'med_confidence_cloud'){
