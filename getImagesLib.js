@@ -531,7 +531,7 @@ function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
   // Make sure all bands have data
   ls = ls.map(function(img){
     img = img.updateMask(img.mask().reduce(ee.Reducer.min()));
-    return img.multiply(multImageDict[toaOrSR])
+    return img.multiply(multImageDict[toaOrSR]).float()
       .copyProperties(img,['system:time_start']).copyProperties(img);
   });
   
@@ -2071,7 +2071,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   // Get Landsat image collection
   var ls = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod);
-  print(ls)
+
   //Apply Roy 2016 harmonization if specified
   if(harmonizeOLI){
     print('Apply Roy 2016 harmonization to OLI');
