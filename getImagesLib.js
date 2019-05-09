@@ -2071,7 +2071,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   // Get Landsat image collection
   var ls = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod);
-  
+  print(ls)
   //Apply Roy 2016 harmonization if specified
   if(harmonizeOLI){
     print('Apply Roy 2016 harmonization to OLI');
