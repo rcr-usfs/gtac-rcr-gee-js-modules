@@ -71,7 +71,7 @@ var harmonizationRoy = function(oli) {
              .set('system:time_start', oli.get('system:time_start'));                      // ...set the output system:time_start metadata to the input image time_start otherwise it is null
   y = y.addBands(oli.select(otherBns)).select(bns);
   
-  return y;                                                                       // return the image as short to match the type of the other data
+  return y.float();                                                                       // return the image as short to match the type of the other data
 };
 
 /////////////////////////////////////////////////////////////////////////
