@@ -218,7 +218,8 @@ var allScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,endYea
 
 ////////////////////////////////////////////////////////////
 
-
+//The time series of both z scores (scaled by 10) and trend (scaled by 10000)
+//These can then be thresholded to find years of departure from "normal" and negative trends
 var zAndTrendCollection = 
 dLib.zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,startJulian,endJulian,
           baselineLength,baselineGap,epochLength,zReducer,useAnnualMedianForTrend,
