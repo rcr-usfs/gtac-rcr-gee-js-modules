@@ -176,7 +176,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   //Set up dates
   var startYearT = yr-timebuffer;
   var endYearT = yr+timebuffer;
-  
+  var nameStart = startYearT.toString() + '_'+endYearT.toString();
   //Get scenes for those dates
   var allScenesT = allScenes.filter(ee.Filter.calendarRange(startYearT,endYearT,'year'));
   
@@ -190,10 +190,10 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
             'startYearT':startYearT,
             'endYearT':endYearT,
             }).float();
-  Map.addLayer(coeffs,{},startYearT.toString() + '_'+endYearT.toString() + 'coeffs',false);
+  Map.addLayer(coeffs,{},nameStart+ '_coeffs',false);
   //Get predicted values for visualization
   var predicted = coeffsPredicted[1];
-  Map.addLayer(predicted,{},'predicted',false);
+  Map.addLayer(predicted,{},nameStart+ '_predicted',false);
   
   //Optionally simplify coeffs to phase, amplitude, and date of peak
   if(whichHarmonics.indexOf(2) > -1){
@@ -206,9 +206,9 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     var peakJulians = pap.select(['.*peakJulianDay']);
     var AUCs = pap.select(['.*AUC']);
     
-    Map.addLayer(amplitudes,{},'amplitudes',false);
-    Map.addLayer(AUCs,{},'AUCs',false);
-    Map.addLayer(peakJulians,{'min':0,'max':365},'peakJulians',false);
+    Map.addLayer(amplitudes,{},nameStart+ '_amplitudes',false);
+    Map.addLayer(AUCs,{},nameStart+ '_AUCs',false);
+    Map.addLayer(peakJulians,{'min':0,'max':365},nameStart+ '_peakJulians',false);
   
     
     // Turn the HSV data into an RGB image and add it to the map.
