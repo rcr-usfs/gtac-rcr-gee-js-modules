@@ -51,7 +51,7 @@ var includeSLCOffL7 = false;
 //9. Whether to defringe L5
 //Landsat 5 data has fringes on the edges that can introduce anomalies into 
 //the analysis.  This method removes them, but is somewhat computationally expensive
-var defringeL5 = true;
+var defringeL5 = false;
 
 // 10. Choose cloud/cloud shadow masking method
 // Choices are a series of booleans for cloudScore, TDOM, and elements of Fmask
@@ -190,7 +190,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
             'startYearT':startYearT,
             'endYearT':endYearT,
             }).float();
-  Map.addLayer(coeffs,{},'coeffs',false);
+  Map.addLayer(coeffs,{},startYearT.toString() + '_'+endYearT.toString() + 'coeffs',false);
   //Get predicted values for visualization
   var predicted = coeffsPredicted[1];
   Map.addLayer(predicted,{},'predicted',false);
