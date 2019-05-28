@@ -216,7 +216,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
                                     amplitudes.select([0]), 
                                     vals.select([0])).hsvToRgb();
   
-    Map.addLayer(seasonality, {'min':0,'max':1}, 'Seasonality',false);
+    Map.addLayer(seasonality, {'min':0,'max':1}, nameStart+ '_Seasonality',false);
     
   }
   
