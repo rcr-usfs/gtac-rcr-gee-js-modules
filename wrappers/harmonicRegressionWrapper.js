@@ -1,9 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.Polygon(
-        [[[-111.84507284221758, 41.07234859989189],
-          [-111.92197713909258, 40.19695544874679],
-          [-111.54844198284258, 39.98683877844594],
-          [-111.16392049846758, 40.723568905877514]]]);
+var geometry = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-121.37255235343139, 36.48315570998864],
+          [-121.37255235343139, 35.63499190784505],
+          [-119.98827500968139, 35.63499190784505],
+          [-119.98827500968139, 36.48315570998864]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -154,6 +161,7 @@ var whichHarmonics = [2];
 //Which bands/indices to run harmonic regression across
 var indexNames =['NDVI','NBR','swir1'];//,'NBR','NDMI','nir','swir1','swir2','tcAngleBG'];//['nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];//['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];
 
+//Whether to apply a linear detrending of data.  Can be useful if long-term change is not of interest
 var detrend = false;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
