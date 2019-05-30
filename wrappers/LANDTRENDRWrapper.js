@@ -129,9 +129,7 @@ var gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
 var fastLossYears = yearsRight.arrayMask(fastLoss).arrayGet([0,0]).rename(['fastLossYear']);
 var fastLossMag = mag.arrayMask(fastLoss).arrayGet([0,0]).rename(['fastLossMag']);
 var fastLossDuration = duration.arrayMask(fastLoss).arrayGet([0,0]).rename(['fastLossDuration']);
-  // fastLossMag = mag.arrayMask(fastLoss).arraySort(lossSortArray).arrayReduce(ee.Reducer.first(), [1]).arrayProject([0]).arrayFlatten([['fastLossMag']]).updateMask(fastLossYears.neq(0))
-  // fastLossDuration = duration.arrayMask(fastLoss).arraySort(lossSortArray).arrayReduce(ee.Reducer.first(), [1]).arrayProject([0]).arrayFlatten([['fastLossDuration']]).updateMask(fastLossYears.neq(0))
-  // fastLossYears = fastLossYears.updateMask(fastLossYears.neq(0))
+
 Map.addLayer(fastLoss)
 Map.addLayer(fastLossYears)
 
