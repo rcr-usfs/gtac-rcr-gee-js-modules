@@ -120,7 +120,7 @@ var getLTvertStack = function(LTresult,run_params) {
   for(var i=1;i<=run_params.maxSegments+1;i++){     // loop through the maximum number of vertices in segmentation and fill empty arrays
     iString = i.toString();                         // define vertex number as string 
     vertLabels.push("vert_"+iString);               // make a band name for given vertex
-    emptyArray.push(0);                             // fill in emptyArray
+    emptyArray.push(-32768);                             // fill in emptyArray
   }
   
   var zeros = ee.Image(ee.Array([emptyArray,        // make an image to fill holes in result 'LandTrendr' array where vertices found is not equal to maxSegments parameter plus 1
