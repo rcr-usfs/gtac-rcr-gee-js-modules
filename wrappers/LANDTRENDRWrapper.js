@@ -48,7 +48,7 @@ var lossSlopeThresh = -0.05;
 var gainMagThresh = 0.1;
 var gainSlopeThresh = 0.05;
 
-
+var slowLossDurationThresh = 3;
 
 
 //Define landtrendr params
@@ -101,9 +101,9 @@ var duration = diff.arraySlice(0,0,1);
 var slope = mag.divide(duration);
 
 //Pull out slow and fast loss and gain
-var slowLoss = (mag.lt(lossMagThresh).or(mag.lt(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
-var fastLoss = (mag.lt(lossMagThresh).or(mag.lt(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
-  gain = mag.lt(gainMagThresh)
+var slowLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
+var fastLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
+gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
 
 Map.addLayer(mag)
 
