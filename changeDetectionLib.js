@@ -369,7 +369,7 @@ function landtrendrWrapper(processedComposites,startYear,endYear,indexName,distD
 //Function to join raw time series with fitted time series from LANDTRENDR
 //Takes the rawTs as an imageCollection, lt is the first band of the output from LANDTRENDR, and the distDir
 //is the direction of change for a loss in vegeation for the chosen band/index
-function getRawAndFittedLT(rawTs,lt,distDir){
+function getRawAndFittedLT(rawTs,lt,startYear,endYear,distDir){
   if(distDir === undefined || distDir === null){distDir = -1}
   
   //Pop off years and fitted values
