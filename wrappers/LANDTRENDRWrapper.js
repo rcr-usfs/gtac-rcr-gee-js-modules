@@ -108,7 +108,7 @@ var sortBy = forSorting.arraySlice(0,sortByValue[0],sortByValue[0]+1).multiply(s
 var afterForSorting = forSorting.arraySort(sortBy);
 
 //Pop off the years, magnitude, and duration
-yearsRight = afterForSorting.arraySlice(0,0,1);
+var yearsRight = afterForSorting.arraySlice(0,0,1);
 var mag = afterForSorting.arraySlice(0,2,3);
 var duration = afterForSorting.arraySlice(0,0,1);
 var slope = mag.divide(duration);
