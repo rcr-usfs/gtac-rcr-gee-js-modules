@@ -1,5 +1,5 @@
 //Module imports
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 // Function to compute R^2 (Coefficient of Determination) for a linear model.
@@ -401,7 +401,7 @@ function verdetAnnualSlope(tsIndex,indexName,startYear,endYear){//, alpha, toler
   print('indexName',indexName)
   print('verdet',verdet) 
   Map.addLayer(verdet,{},'verdet '+indexName)
-  var tsYear = tsIndex.map(getImageLib.addYearBand).select([1]).toArray().arraySlice(0,1,null).arrayProject([0]);
+  var tsYear = tsIndex.map(getImagesLib.addYearBand).select([1]).toArray().arraySlice(0,1,null).arrayProject([0]);
   
   //Find possible years to convert back to collection with
   var possibleYears = ee.List.sequence(startYear,endYear);
@@ -503,7 +503,7 @@ function runEWMACD(lsIndex,indexName,startYear,endYear,trainingStartYear,trainin
   var ewma = getEWMA(lsIndex,trainingStartYear,trainingEndYear, harmonicCount);
   
   //Get dates for later reference
-  var lsYear = lsIndex.map(function(img){return getImageLib.addDateBand(img,true)}).select(['year']).toArray().arrayProject([0]);
+  var lsYear = lsIndex.map(function(img){return getImagesLib.addDateBand(img,true)}).select(['year']).toArray().arrayProject([0]);
 
   
   var annualEWMA = annualizeEWMA(ewma,indexName,lsYear,startYear,endYear,annualReducer,remove2012);
@@ -547,7 +547,7 @@ function toAnnualMedian(images,startYear,endYear){
       var dummyImmage = ee.Image(images.first());
       var out = ee.List.sequence(startYear,endYear).map(function(yr){
         var imagesT = images.filter(ee.Filter.calendarRange(yr,yr,'year'));
-        imagesT = getImageLib.fillEmptyCollections(imagesT,dummyImmage);
+        imagesT = getImagesLib.fillEmptyCollections(imagesT,dummyImmage);
         return imagesT.median().set('system:time_start',ee.Date.fromYMD(yr,6,1));
       });
       return ee.ImageCollection.fromImages(out);
@@ -593,7 +593,7 @@ function getLinearFit(c,bandNames){
   
   //Add date and constant independents
   c = c.map(function(img){return img.addBands(ee.Image(1))});
-  c = c.map(getImageLib.addDateBand);
+  c = c.map(getImagesLib.addDateBand);
   var selectOrder = ee.List([['constant','year'],bandNames]).flatten();
   
   //Fit model
@@ -650,7 +650,7 @@ function zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,s
       //Get the baseline images
       var blImages = allScenes.filter(ee.Filter.calendarRange(blStartYear,blEndYear,'year'))
                               .filter(ee.Filter.calendarRange(jdStart,jdEnd));
-      blImages = getImageLib.fillEmptyCollections(blImages,dummyScene);
+      blImages = getImagesLib.fillEmptyCollections(blImages,dummyScene);
       
       //Mask out where not enough observations
       var blCounts = blImages.count();
@@ -659,12 +659,12 @@ function zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,s
       //Get the z analysis images
       var analysisImages = allScenes.filter(ee.Filter.calendarRange(yr,yr,'year'))
                               .filter(ee.Filter.calendarRange(jdStart,jdEnd)); 
-      analysisImages = getImageLib.fillEmptyCollections(analysisImages,dummyScene);
+      analysisImages = getImagesLib.fillEmptyCollections(analysisImages,dummyScene);
       
       //Get the images for the trend analysis
       var trendImages = allScenes.filter(ee.Filter.calendarRange(trendStartYear,yr,'year'))
                               .filter(ee.Filter.calendarRange(jdStart,jdEnd));
-      trendImages = getImageLib.fillEmptyCollections(trendImages,dummyScene);
+      trendImages = getImagesLib.fillEmptyCollections(trendImages,dummyScene);
       
       
       //Convert to annual stack if selected
@@ -709,7 +709,7 @@ function zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,s
       if(exportImages){
         outName = outName.getInfo();
         var outPath = exportPathRoot + '/' + outName;
-          getImageLib.exportToAssetWrapper(out.clip(studyArea),outName,outPath,
+          getImagesLib.exportToAssetWrapper(out.clip(studyArea),outName,outPath,
           'mean',studyArea.bounds(),scale,crs,transform);
       }
       return out;
@@ -763,12 +763,12 @@ function thresholdZAndTrendSubtle(zAndTrendCollection,zThreshLow,zThreshHigh,slo
 //   var image = ee.Image(zAndTrendCollection.filterDate(d,d).first());
    
 //   var outPath = exportPathRoot + '/' + i;
-//   getImageLib.exportToAssetWrapper(image,i.toString(),outPath,
+//   getImagesLib.exportToAssetWrapper(image,i.toString(),outPath,
 //         'mean',studyArea,scale,crs,transform)
 //     i++;
 //   // image.id().evaluate(function(id){
 //   //     var outPath = exportPathRoot + '/' + id;
-//   //     getImageLib.exportToAssetWrapper(image,id,outPath,
+//   //     getImagesLib.exportToAssetWrapper(image,id,outPath,
 //   //       'mean',studyArea,scale,crs,transform);
 //   //   });
 // })
@@ -780,7 +780,7 @@ function thresholdZAndTrendSubtle(zAndTrendCollection,zThreshLow,zThreshHigh,slo
     
 // //     image.id().evaluate(function(id){
 // //       var outPath = exportPathRoot + '/' + id;
-// //       getImageLib.exportToAssetWrapper(image,id,outPath,
+// //       getImagesLib.exportToAssetWrapper(image,id,outPath,
 // //         'mean',studyArea,scale,crs,transform);
 // //     });
 // //   });
