@@ -117,7 +117,7 @@ var slope = mag.divide(duration).multiply(-1);
 Map.addLayer(forSorting,{},'forSorting',false);
 Map.addLayer(afterForSorting,{},'afterForSorting',false);
 Map.addLayer(sortBy,{},'sortBy',false);
-Map.addlayer(duration,{},'duration',false)
+Map.addLayer(duration,{},'duration',false)
 //Pull out slow and fast loss and gain
 var slowLoss = (mag.lte(lossMagThresh).or(slope.lte(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
 var fastLoss = (mag.lte(lossMagThresh).or(slope.lte(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
