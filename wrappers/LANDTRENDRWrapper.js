@@ -50,7 +50,7 @@ var gainSlopeThresh = 0.05;
 
 var slowLossDurationThresh = 3;
 
-
+var chooseWhichLoss = 'largest'; 
 //Define landtrendr params
 var run_params = { 
   maxSegments:            6,
@@ -97,15 +97,27 @@ var diff  = left.subtract(right);
 var yearsRight = right.arraySlice(0,0,1);
 var mag = diff.arraySlice(0,2,3);
 var duration = diff.arraySlice(0,0,1);
-
 var slope = mag.divide(duration);
 
-//Pull out slow and fast loss and gain
-var slowLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
-var fastLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
-var gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
+var forSorting = yearsRight.arrayCat(diff,0);
 
-Map.addLayer(gain)
+var columnDict = {'newest':[0,-1],
+                  'oldest':[0,1],
+                  'largest':[3,1],
+                  'smallest':[3,-1],
+                  'shortest':[1,-1],
+                  'longest':[1,1]
+                };
+var sortByValue = columnDict[chooseWhichLoss]
+var sortBy = forSorting.arraySlice(sortByValue[0])
+                  
+Map.addLayer(forSorting)
+// //Pull out slow and fast loss and gain
+// var slowLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
+// var fastLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
+// var gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
+
+// Map.addLayer(gain)
 
 // // Define user parameters:
 
