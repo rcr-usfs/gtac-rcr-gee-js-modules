@@ -116,11 +116,6 @@ var distImg = ee.Image.cat(afterForSorting.arraySlice(0,0,1).arrayProject([1]).a
                             );
 var slope = distImg.select(['mag']).divide(distImg.select(['dur'])).rename(['slope']);
 distImg = distImg.addBands(slope);
-//Pop off the years, magnitude, and duration
-// var yearsRight = afterForSorting.arraySlice(0,0,1);
-// var mag = afterForSorting.arraySlice(0,3,4);
-// var duration = afterForSorting.arraySlice(0,1,2).multiply(-1);
-// var slope = mag.divide(duration).multiply(-1);
 
 
 Map.addLayer(forSorting,{},'forSorting',false);
@@ -128,10 +123,10 @@ Map.addLayer(afterForSorting,{},'afterForSorting',false);
 Map.addLayer(distImg,{},'distImg',false);
 // Map.addLayer(sortBy,{},'sortBy',false);
 // Map.addLayer(duration,{},'duration',false)
-// //Pull out slow and fast loss and gain
-// var slowLoss = (mag.lte(lossMagThresh).or(slope.lte(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
-// var fastLoss = (mag.lte(lossMagThresh).or(slope.lte(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
-// var gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
+//Pull out slow and fast loss and gain
+var slowLoss = (distImg.select(['mag']).lte(lossMagThresh).or(distImg.select(['slope']).lte(lossSlopeThresh))).and(distImg.select(['dur']).gte(slowLossDurationThresh));
+var fastLoss = (distImg.select(['mag']).lte(lossMagThresh).or(distImg.select(['slope']).lte(lossSlopeThresh))).and(distImg.select(['dur']).lt(slowLossDurationThresh));
+var gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
 
 
 
