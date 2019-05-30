@@ -139,7 +139,7 @@ gain = distImg.updateMask(gain);
 
 //Set up viz params
 var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02'};
-var vizParamsLossMag = {'min':lossMagThresh,'max':0.8,'palette':'F5DEB3,D00'};
+var vizParamsLossMag = {'min':-0.8 ,'max':lossMagThresh,'palette':'D00,F5DEB3'};
 
 var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':'54A247,AFDEA8,80C476,308023,145B09'};
 var vizParamsGainMag = {'min':-0.8,'max':gainMagThresh,'palette':'F5DEB3,006400'};
