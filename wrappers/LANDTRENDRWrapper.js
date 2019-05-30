@@ -123,7 +123,7 @@ var distImg = ee.Image.cat(distArray.arraySlice(0,0,1).arrayProject([1]).arrayFl
 
 Map.addLayer(forSorting,{},'forSorting',false);
 Map.addLayer(afterForSorting,{},'afterForSorting',false);
-Map.addLayer(afterForSorting,{},'afterForSorting',false);
+Map.addLayer(distImg,{},'distImg',false);
 // Map.addLayer(sortBy,{},'sortBy',false);
 // Map.addLayer(duration,{},'duration',false)
 // //Pull out slow and fast loss and gain
