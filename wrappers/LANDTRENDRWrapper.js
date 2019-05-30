@@ -17,12 +17,69 @@ var geometry =
 //Returns the raw LANDTRENDR output, a fitted time series and
 //a thresholded year, magnitude, and duration of greatest disturbance
 
-//Module imports
+///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-dLib.getExistingChangeData();
+var changeDetectionLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+changeDetectionLib.getExistingChangeData();
+////////////////////////////////////////////////////////////////////////////////////////////
+//Parameters
+
+//Date parameters
+var startYear = 2000;
+var endYear = 2018;
+var startJulian = 190;
+var endJulian = 250;
+
+//Choose band or index
+//NBR, NDMI, and NDVI tend to work best
+//Other good options are wetness and tcAngleBG
+var indexName = 'NBR';
+
+//Parameters to identify suitable LANDTRENDR segments
+
+//Thresholds to identify loss in vegetation
+//Any segment that has a change magnitude or slope less than both of these thresholds is omitted
+var lossMagThresh = -0.15;
+var lossSlopeThresh = -0.05;
+
+
+//Thresholds to identify gain in vegetation
+//Any segment that has a change magnitude or slope greater than both of these thresholds is omitted
+var gainMagThresh = 0.1;
+var gainSlopeThresh = 0.05;
+
+
+
+
+//Define landtrendr params
+var run_params = { 
+  maxSegments:            6,
+  spikeThreshold:         0.9,
+  vertexCountOvershoot:   3,
+  preventOneYearRecovery: true,
+  recoveryThreshold:      0.25,
+  pvalThreshold:          0.05,
+  bestModelProportion:    0.75,
+  minObservationsNeeded:  6
+};
+////////////////////////////////////////////////////////////////////////////////////////////
+//Get images
+var allImages = getImagesLib.getLandsatWrapper(geometry,startYear,endYear,startJulian,endJulian);
+var images = allImages[0];
+var composites = allImages[1];
+
+//Get single band time series and set its direction so that a loss in veg is going up
+var ts = composites.select([indexName]);
+var distDir = getImagesLib.changeDirDict[indexName];
+run_params.timeSeries = ts.map(function(img){return changeDetectionLib.multBands(img,distDir,1)});
+
+//Run LANDTRENDR
+var lt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params).select([0]);
+Map.addLayer(lt,{},'Raw LT',false);
+
+//Get joined raw and fitted LANDTRENDR for viz
+var joinedTS = changeDetectionLib.getRawAndFittedLT(ts,lt,startYear,endYear,indexName,distDir);
+Map.addLayer(joinedTS,{},'joinedTS',false);
 // // Define user parameters:
 
 // // 1. Specify study area: Study area
