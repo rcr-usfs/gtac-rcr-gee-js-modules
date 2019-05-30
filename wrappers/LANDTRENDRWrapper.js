@@ -93,13 +93,8 @@ var left = lt.arraySlice(1,0,-1);
 var right = lt.arraySlice(1,1,null);
 var diff  = left.subtract(right);
 
-//Pop off the years, magnitude, and duration
-var yearsRight = right.arraySlice(0,0,1);
-var mag = diff.arraySlice(0,2,3);
-var duration = diff.arraySlice(0,0,1);
-var slope = mag.divide(duration);
 
-var forSorting = yearsRight.arrayCat(diff,0);
+var forSorting = right.arraySlice(0,0,1).arrayCat(diff,0);
 
 var columnDict = {'newest':[0,-1],
                   'oldest':[0,1],
@@ -112,15 +107,23 @@ var sortByValue = columnDict[chooseWhichLoss];
 var sortBy = forSorting.arraySlice(0,sortByValue[0],sortByValue[0]+1).multiply(sortByValue[1]);
 var afterForSorting = forSorting.arraySort(sortBy);
 
-Map.addLayer(forSorting,{},'forSorting',false)
-Map.addLayer(afterForSorting,{},'afterForSorting',false)
-Map.addLayer(sortBy,{},'sortBy',false)
-// //Pull out slow and fast loss and gain
-// var slowLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
-// var fastLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
-// var gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
+//Pop off the years, magnitude, and duration
+yearsRight = afterForSorting.arraySlice(0,0,1);
+var mag = afterForSorting.arraySlice(0,2,3);
+var duration = afterForSorting.arraySlice(0,0,1);
+var slope = mag.divide(duration);
 
-// Map.addLayer(gain)
+
+Map.addLayer(forSorting,{},'forSorting',false);
+Map.addLayer(afterForSorting,{},'afterForSorting',false);
+Map.addLayer(sortBy,{},'sortBy',false);
+
+//Pull out slow and fast loss and gain
+var slowLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
+var fastLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
+var gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
+
+Map.addLayer(fastLoss)
 
 // // Define user parameters:
 
