@@ -81,7 +81,24 @@ Map.addLayer(lt,{},'Raw LT',false);
 var joinedTS = changeDetectionLib.getRawAndFittedLT(ts,lt,startYear,endYear,indexName,distDir);
 Map.addLayer(joinedTS,{},'joinedTS',false);
 
+///////////////////////////////////////
+//Pop off vertices
+var vertices = lt.arraySlice(0,3,4);
 
+//Mask out any non-vertex values
+lt = lt.arrayMask(vertices);
+
+//Get the pair-wise difference of the years
+left = lt.arraySlice(1,0,-1);
+right = lt.arraySlice(1,1,null);
+diff  = right.subtract(left);
+
+#Pop off the years, magnitude, and duration
+yearsRight = right.arraySlice(0,0,1)
+mag = diff.arraySlice(0,2,3)
+duration = diff.arraySlice(0,0,1)
+
+slope = mag.divide(duration)
 
 // // Define user parameters:
 
