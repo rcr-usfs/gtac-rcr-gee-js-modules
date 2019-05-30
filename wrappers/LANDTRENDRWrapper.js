@@ -105,16 +105,24 @@ var columnDict = {'newest':[0,-1],
                 };
 var sortByValue = columnDict[chooseWhichLoss];
 var sortBy = forSorting.arraySlice(0,sortByValue[0],sortByValue[0]+1).multiply(sortByValue[1]);
-var afterForSorting = forSorting.arraySort(sortBy);
+var afterForSorting = forSorting.arraySort(sortBy).arraySlice(1, 0, 1);
 
+
+
+// make an image from the array of attributes for the greatest disturbance
+var distImg = ee.Image.cat(distArray.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['year']]),
+                             distArray.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['dur']]),
+                             distArray.arraySlice(0,3,4).arrayProject([1]).arrayFlatten([['mag']])
+                            );
 //Pop off the years, magnitude, and duration
-var yearsRight = afterForSorting.arraySlice(0,0,1);
-var mag = afterForSorting.arraySlice(0,3,4);
-var duration = afterForSorting.arraySlice(0,1,2).multiply(-1);
-var slope = mag.divide(duration).multiply(-1);
+// var yearsRight = afterForSorting.arraySlice(0,0,1);
+// var mag = afterForSorting.arraySlice(0,3,4);
+// var duration = afterForSorting.arraySlice(0,1,2).multiply(-1);
+// var slope = mag.divide(duration).multiply(-1);
 
 
 Map.addLayer(forSorting,{},'forSorting',false);
+Map.addLayer(afterForSorting,{},'afterForSorting',false);
 Map.addLayer(afterForSorting,{},'afterForSorting',false);
 // Map.addLayer(sortBy,{},'sortBy',false);
 // Map.addLayer(duration,{},'duration',false)
