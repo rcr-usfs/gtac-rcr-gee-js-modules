@@ -115,7 +115,7 @@ var distImg = ee.Image.cat(afterForSorting.arraySlice(0,0,1).arrayProject([1]).a
                              afterForSorting.arraySlice(0,3,4).arrayProject([1]).arrayFlatten([['mag']])
                             );
 var slope = distImg.select(['mag']).divide(distImg.select(['dur'])).rename(['slope']);
-
+distImg = distImg.addBands(slope);
 //Pop off the years, magnitude, and duration
 // var yearsRight = afterForSorting.arraySlice(0,0,1);
 // var mag = afterForSorting.arraySlice(0,3,4);
