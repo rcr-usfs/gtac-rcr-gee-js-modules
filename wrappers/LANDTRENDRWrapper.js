@@ -89,16 +89,18 @@ var vertices = lt.arraySlice(0,3,4);
 lt = lt.arrayMask(vertices);
 
 //Get the pair-wise difference of the years
-left = lt.arraySlice(1,0,-1);
-right = lt.arraySlice(1,1,null);
-diff  = right.subtract(left);
+var left = lt.arraySlice(1,0,-1);
+var right = lt.arraySlice(1,1,null);
+var diff  = right.subtract(left);
 
-#Pop off the years, magnitude, and duration
-yearsRight = right.arraySlice(0,0,1)
-mag = diff.arraySlice(0,2,3)
-duration = diff.arraySlice(0,0,1)
+//Pop off the years, magnitude, and duration
+var yearsRight = right.arraySlice(0,0,1);
+var mag = diff.arraySlice(0,2,3);
+var duration = diff.arraySlice(0,0,1);
 
-slope = mag.divide(duration)
+var slope = mag.divide(duration);
+
+Map.addLayer(mag)
 
 // // Define user parameters:
 
