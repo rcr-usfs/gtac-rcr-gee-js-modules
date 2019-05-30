@@ -364,7 +364,7 @@ function landtrendrWrapper(processedComposites,startYear,endYear,indexName,distD
   return [lt,distImg,fittedCollection,vertStack];
   
 }
-//Other LANDTRENDR code
+//Other LANDTRENDR code//
 //////////////////////////////////////////////
 //Function to join raw time series with fitted time series from LANDTRENDR
 //Takes the rawTs as an imageCollection, lt is the first band of the output from LANDTRENDR, and the distDir
