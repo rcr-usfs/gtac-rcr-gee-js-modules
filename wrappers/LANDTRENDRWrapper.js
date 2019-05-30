@@ -91,7 +91,7 @@ lt = lt.arrayMask(vertices);
 //Get the pair-wise difference of the years
 var left = lt.arraySlice(1,0,-1);
 var right = lt.arraySlice(1,1,null);
-var diff  = right.subtract(left);
+var diff  = left.subtract(right);
 
 //Pop off the years, magnitude, and duration
 var yearsRight = right.arraySlice(0,0,1);
@@ -99,6 +99,11 @@ var mag = diff.arraySlice(0,2,3);
 var duration = diff.arraySlice(0,0,1);
 
 var slope = mag.divide(duration);
+
+//Pull out slow and fast loss and gain
+var slowLoss = (mag.lt(lossMagThresh).or(mag.lt(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
+var fastLoss = (mag.lt(lossMagThresh).or(mag.lt(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
+  gain = mag.lt(gainMagThresh)
 
 Map.addLayer(mag)
 
