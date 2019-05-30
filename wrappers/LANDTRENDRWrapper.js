@@ -126,7 +126,7 @@ Map.addLayer(distImg,{},'distImg',false);
 //Pull out slow and fast loss and gain
 var slowLoss = (distImg.select(['mag']).lte(lossMagThresh).or(distImg.select(['slope']).lte(lossSlopeThresh))).and(distImg.select(['dur']).gte(slowLossDurationThresh));
 var fastLoss = (distImg.select(['mag']).lte(lossMagThresh).or(distImg.select(['slope']).lte(lossSlopeThresh))).and(distImg.select(['dur']).lt(slowLossDurationThresh));
-var gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
+var gain = distImg.select(['mag']).gt(gainMagThresh).or(distImg.select(['slope']).gt(gainSlopeThresh));
 
 
 
