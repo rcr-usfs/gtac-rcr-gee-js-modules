@@ -157,9 +157,9 @@ Map.addLayer(slowLoss.select(['dur']),vizParamsDuration,indexName +' Slow Loss D
 
 
 
-Map.addLayer(gain.select(['year']),vizParamsGainYear,indexName +' Gain Year',False)
-Map.addLayer(gain.select(['mag']),vizParamsGainMag,indexName +' Gain Magnitude',False)
-Map.addLayer(gain.select(['dur']),vizParamsDuration,indexName +' Gain Duration',False)
+Map.addLayer(gain.select(['year']),vizParamsGainYear,indexName +' Gain Year',false);
+Map.addLayer(gain.select(['mag']),vizParamsGainMag,indexName +' Gain Magnitude',false);
+Map.addLayer(gain.select(['dur']),vizParamsDuration,indexName +' Gain Duration',false);
 // Map.addLayer(fastLoss)
 // Map.addLayer(fastLossYears)
 
