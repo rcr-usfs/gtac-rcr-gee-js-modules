@@ -80,6 +80,27 @@ Map.addLayer(lt,{},'Raw LT',false);
 //Get joined raw and fitted LANDTRENDR for viz
 var joinedTS = changeDetectionLib.getRawAndFittedLT(ts,lt,startYear,endYear,indexName,distDir);
 Map.addLayer(joinedTS,{},'joinedTS',false);
+
+//Convert to image stack and mask any non vertex values
+var ltStack = changeDetectionLib.getLTvertStack(lt,run_params);
+ltStack = ltStack.updateMask(ltStack.neq(-32768));
+
+//Select off the years and fitted vertex bands
+var yearStack = ltStack.select(['.*yrs_vert_.*']);
+var fittedStack = ltStack.select(['.*fit_vert_.*']);
+
+//Find the left and right bands for the years and fitted values
+var leftBands = ee.List.sequence(0,run_params.maxSegments-1);
+var rightBands = ee.List.sequence(1,run_params.maxSegments);
+
+var yearsLeftStack = yearStack.select(leftBands);
+var yearsRightStack = yearStack.select(rightBands);
+
+var fittedLeftStack = fittedStack.select(leftBands);
+var fittedRightStack = fittedStack.select(rightBands);
+
+
+
 // // Define user parameters:
 
 // // 1. Specify study area: Study area
