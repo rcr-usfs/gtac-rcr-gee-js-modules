@@ -87,7 +87,7 @@ var vertices = lt.arraySlice(0,3,4);
 
 //Mask out any non-vertex values
 lt = lt.arrayMask(vertices);
-
+Map.addLayer(lt,{},'lt',false);
 //Get the pair-wise difference of the years
 var left = lt.arraySlice(1,0,-1);
 var right = lt.arraySlice(1,1,null);
