@@ -111,7 +111,8 @@ var columnDict = {'newest':[0,-1],
 var sortByValue = columnDict[chooseWhichLoss]
 var sortBy = forSorting.arraySlice(sortByValue[0])
                   
-Map.addLayer(forSorting)
+Map.addLayer(forSorting,{},'forSorting',false)
+Map.addLayer(sortBy,{},'sortBy',false)
 // //Pull out slow and fast loss and gain
 // var slowLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
 // var fastLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
