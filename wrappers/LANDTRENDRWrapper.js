@@ -153,9 +153,9 @@ var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
 // Map.addLayer(slowLossMag,vizParamsLossMag,indexName +' Slow Loss Magnitude',False)
 // Map.addLayer(slowLossDuration,vizParamsDuration,indexName +' Slow Loss Duration',False)
 
-// Map.addLayer(fastLossYears,vizParamsLossYear,indexName +' Fast Loss Year',false);
-// Map.addLayer(fastLossMag,vizParamsLossMag,indexName +' Fast Loss Magnitude',false);
-// Map.addLayer(fastLossDuration,vizParamsDuration,indexName +' Fast Loss Duration',false);
+Map.addLayer(fastLoss.select(['year']),vizParamsLossYear,indexName +' Fast Loss Year',false);
+Map.addLayer(fastLoss.select(['mag']),vizParamsLossMag,indexName +' Fast Loss Magnitude',false);
+Map.addLayer(fastLoss.select(['dur']),vizParamsDuration,indexName +' Fast Loss Duration',false);
 
 
 // Map.addLayer(gainYears,vizParamsGainYear,indexName +' Gain Year',False)
