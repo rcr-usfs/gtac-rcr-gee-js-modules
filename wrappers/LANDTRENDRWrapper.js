@@ -142,22 +142,22 @@ var vizParamsGainMag = {'min':-0.8,'max':gainMagThresh,'palette':'F5DEB3,006400'
 var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
 
 //Add layers to map
-Map.addLayer(joinedTS,{'addToLegend':'false'},'Time Series ('+indexName+')',False)
+// Map.addLayer(joinedTS,{'addToLegend':'false'},'Time Series ('+indexName+')',False)
 
-Map.addLayer(slowLossYears,vizParamsLossYear,indexName +' Slow Loss Year',False)
-Map.addLayer(slowLossMag,vizParamsLossMag,indexName +' Slow Loss Magnitude',False)
-Map.addLayer(slowLossDuration,vizParamsDuration,indexName +' Slow Loss Duration',False)
+// Map.addLayer(slowLossYears,vizParamsLossYear,indexName +' Slow Loss Year',False)
+// Map.addLayer(slowLossMag,vizParamsLossMag,indexName +' Slow Loss Magnitude',False)
+// Map.addLayer(slowLossDuration,vizParamsDuration,indexName +' Slow Loss Duration',False)
 
 Map.addLayer(fastLossYears,vizParamsLossYear,indexName +' Fast Loss Year',False)
 Map.addLayer(fastLossMag,vizParamsLossMag,indexName +' Fast Loss Magnitude',False)
 Map.addLayer(fastLossDuration,vizParamsDuration,indexName +' Fast Loss Duration',False)
 
 
-Map.addLayer(gainYears,vizParamsGainYear,indexName +' Gain Year',False)
-Map.addLayer(gainMag,vizParamsGainMag,indexName +' Gain Magnitude',False)
-Map.addLayer(gainDuration,vizParamsDuration,indexName +' Gain Duration',False)
-Map.addLayer(fastLoss)
-Map.addLayer(fastLossYears)
+// Map.addLayer(gainYears,vizParamsGainYear,indexName +' Gain Year',False)
+// Map.addLayer(gainMag,vizParamsGainMag,indexName +' Gain Magnitude',False)
+// Map.addLayer(gainDuration,vizParamsDuration,indexName +' Gain Duration',False)
+// Map.addLayer(fastLoss)
+// Map.addLayer(fastLossYears)
 
 // // Define user parameters:
 
