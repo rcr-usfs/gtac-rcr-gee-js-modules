@@ -111,19 +111,28 @@ var afterForSorting = forSorting.arraySort(sortBy);
 var yearsRight = afterForSorting.arraySlice(0,0,1);
 var mag = afterForSorting.arraySlice(0,3,4);
 var duration = afterForSorting.arraySlice(0,1,2);
-var slope = mag.divide(duration);
+var slope = mag.divide(duration).multiply(-1);
 
 
 Map.addLayer(forSorting,{},'forSorting',false);
 Map.addLayer(afterForSorting,{},'afterForSorting',false);
 Map.addLayer(sortBy,{},'sortBy',false);
-Map.addLayer(slope,{},'slope',false);
+
 //Pull out slow and fast loss and gain
 var slowLoss = (mag.lte(lossMagThresh).or(slope.lte(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
 var fastLoss = (mag.lte(lossMagThresh).or(slope.lte(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
 var gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
 
+
+
+//Mask fast loss and convert to image objects
+var fastLossYears = yearsRight.arrayMask(fastLoss).arrayGet(0);//.arrayProject([0]).arrayFlatten([['fastLossYear']])
+
+  // fastLossMag = mag.arrayMask(fastLoss).arraySort(lossSortArray).arrayReduce(ee.Reducer.first(), [1]).arrayProject([0]).arrayFlatten([['fastLossMag']]).updateMask(fastLossYears.neq(0))
+  // fastLossDuration = duration.arrayMask(fastLoss).arraySort(lossSortArray).arrayReduce(ee.Reducer.first(), [1]).arrayProject([0]).arrayFlatten([['fastLossDuration']]).updateMask(fastLossYears.neq(0))
+  // fastLossYears = fastLossYears.updateMask(fastLossYears.neq(0))
 Map.addLayer(fastLoss)
+Map.addLayer(fastLossYears)
 
 // // Define user parameters:
 
