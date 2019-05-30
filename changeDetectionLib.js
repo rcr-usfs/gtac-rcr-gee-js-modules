@@ -106,31 +106,7 @@ function getExistingChangeData(changeThresh,showLayers){
   // return conusChangeOut;
   return hansen
 }
-//Other LANDTRENDR code
-//////////////////////////////////////////////
-//Function to join raw time series with fitted time series from LANDTRENDR
-//Takes the rawTs as an imageCollection, lt is the first band of the output from LANDTRENDR, and the distDir
-//is the direction of change for a loss in vegeation for the chosen band/index
-function getRawAndFittedLT(rawTs,lt,distDir){
-  if(distDir === undefined || distDir === null){distDir = -1}
-  
-  //Pop off years and fitted values
-  var ltYear = lt.arraySlice(0,0,1).arrayProject([1]);
-  var ltFitted = lt.arraySlice(0,2,3).arrayProject([1]);
-  
-  //Flip fitted values if needed
-  if(distDir == -1){ltFitted = ltFitted.multiply(-1)}
-  
-  //Convert array to an imageCollection
-  var fittedCollection = cd.arrayToTimeSeries(ltFitted,ltYear,ee.List.sequence(startYear,endYear),'LT_Fitted_'+indexName);
-  
-  //Join raw time series with fitted
-  var joinedTS = getImagesLib.joinCollections(rawTs,fittedCollection);
-  
-  return joinedTS;
-  
 
-}
 //########################################################################################################
 //Landtrendr code taken from users/emaprlab/public
 //########################################################################################################
@@ -388,7 +364,31 @@ function landtrendrWrapper(processedComposites,startYear,endYear,indexName,distD
   return [lt,distImg,fittedCollection,vertStack];
   
 }
+//Other LANDTRENDR code
+//////////////////////////////////////////////
+//Function to join raw time series with fitted time series from LANDTRENDR
+//Takes the rawTs as an imageCollection, lt is the first band of the output from LANDTRENDR, and the distDir
+//is the direction of change for a loss in vegeation for the chosen band/index
+function getRawAndFittedLT(rawTs,lt,distDir){
+  if(distDir === undefined || distDir === null){distDir = -1}
+  
+  //Pop off years and fitted values
+  var ltYear = lt.arraySlice(0,0,1).arrayProject([1]);
+  var ltFitted = lt.arraySlice(0,2,3).arrayProject([1]);
+  
+  //Flip fitted values if needed
+  if(distDir == -1){ltFitted = ltFitted.multiply(-1)}
+  
+  //Convert array to an imageCollection
+  var fittedCollection = cd.arrayToTimeSeries(ltFitted,ltYear,ee.List.sequence(startYear,endYear),'LT_Fitted_'+indexName);
+  
+  //Join raw time series with fitted
+  var joinedTS = getImagesLib.joinCollections(rawTs,fittedCollection);
+  
+  return joinedTS;
+  
 
+}
 //////////////////////////////////////////////////////////////////////////
 //Wrapper for applying VERDET slightly more simply
 //Returns annual collection of verdet slope
