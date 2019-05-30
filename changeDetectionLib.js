@@ -380,7 +380,7 @@ function getRawAndFittedLT(rawTs,lt,distDir){
   if(distDir == -1){ltFitted = ltFitted.multiply(-1)}
   
   //Convert array to an imageCollection
-  var fittedCollection = cd.arrayToTimeSeries(ltFitted,ltYear,ee.List.sequence(startYear,endYear),'LT_Fitted_'+indexName);
+  var fittedCollection = arrayToTimeSeries(ltFitted,ltYear,ee.List.sequence(startYear,endYear),'LT_Fitted_'+indexName);
   
   //Join raw time series with fitted
   var joinedTS = getImagesLib.joinCollections(rawTs,fittedCollection);
