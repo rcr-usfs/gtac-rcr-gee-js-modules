@@ -111,9 +111,11 @@ var afterForSorting = forSorting.arraySort(sortBy).arraySlice(1, 0, 1);
 
 // make an image from the array of attributes for the greatest disturbance
 var distImg = ee.Image.cat(afterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['year']]),
-                             afterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['dur']]),
+                             afterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['dur']]).multiply(-1),
                              afterForSorting.arraySlice(0,3,4).arrayProject([1]).arrayFlatten([['mag']])
                             );
+var slope = distImg.select(['mag']).divide(distImg.select(['dur'])).rename(['slope']);
+
 //Pop off the years, magnitude, and duration
 // var yearsRight = afterForSorting.arraySlice(0,0,1);
 // var mag = afterForSorting.arraySlice(0,3,4);
