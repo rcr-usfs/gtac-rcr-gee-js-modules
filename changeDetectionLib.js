@@ -106,6 +106,7 @@ function getExistingChangeData(changeThresh,showLayers){
   // return conusChangeOut;
   return hansen
 }
+//Other LANDTRENDR code
 //########################################################################################################
 //Landtrendr code taken from users/emaprlab/public
 //########################################################################################################
