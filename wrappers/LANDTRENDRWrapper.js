@@ -109,9 +109,10 @@ var columnDict = {'newest':[0,-1],
                   'longest':[1,1]
                 };
 var sortByValue = columnDict[chooseWhichLoss]
-var sortBy = forSorting.arraySlice(sortByValue[0])
-                  
+var sortBy = forSorting.arraySlice(0,sortByValue[0],sortByValue[0]+1).multiply(sortByValue[1])
+var afterForSorting = forSorting.arraySort(sortBy)       
 Map.addLayer(forSorting,{},'forSorting',false)
+Map.addLayer(afterForSorting,{},'afterForSorting',false)
 Map.addLayer(sortBy,{},'sortBy',false)
 // //Pull out slow and fast loss and gain
 // var slowLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
