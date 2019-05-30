@@ -130,10 +130,9 @@ var gain = distImg.select(['mag']).gt(gainMagThresh).or(distImg.select(['slope']
 
 
 Map.addLayer(fastLoss)
-//Mask fast loss and convert to image objects
-// var fastLoss = distImg.select(['mag']).updateMask(fastLoss);
-// var fastLossMag = mag.arrayMask(fastLoss).arrayGet([0,0]).rename(['fastLossMag']);
-// var fastLossDuration = duration.arrayMask(fastLoss).arrayGet([0,0]).rename(['fastLossDuration']);
+//Mask  loss 
+var fastLoss = distImg.updateMask(fastLoss);
+var fastLoss = distImg.updateMask(slowLoss);
 
 // //Mask slow loss and convert to image objects
 // var slowLossYears = yearsRight.arrayMask(fastLoss).arrayGet([0,0]).rename(['fastLossYear']);
