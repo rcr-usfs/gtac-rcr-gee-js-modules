@@ -768,6 +768,7 @@ exports.multBands = multBands;
 exports.addToImage = addToImage;
 exports.getExistingChangeData = getExistingChangeData;
 exports.arrayToTimeSeries = arrayToTimeSeries;
+exports.getLTvertStack = getLTvertStack;
 exports.verdetAnnualSlope  = verdetAnnualSlope;
 exports.annualizeEWMA = annualizeEWMA;
 exports.getEWMA = getEWMA;
