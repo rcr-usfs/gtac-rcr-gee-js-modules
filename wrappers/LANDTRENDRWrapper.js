@@ -103,9 +103,9 @@ var slope = mag.divide(duration);
 //Pull out slow and fast loss and gain
 var slowLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.gte(slowLossDurationThresh));
 var fastLoss = (mag.lt(lossMagThresh).or(slope.lt(lossSlopeThresh))).and(duration.lt(slowLossDurationThresh));
-gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
+var gain = mag.gt(gainMagThresh).or(slope.gt(gainSlopeThresh));
 
-Map.addLayer(mag)
+Map.addLayer(gain)
 
 // // Define user parameters:
 
