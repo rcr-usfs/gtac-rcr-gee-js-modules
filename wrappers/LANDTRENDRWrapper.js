@@ -92,7 +92,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   
   //Get single band time series and set its direction so that a loss in veg is going up
-  var ts = composites.select([indexName]);
+  var ts = ts.select([indexName]);
   var distDir = getImagesLib.changeDirDict[indexName];
   run_params.timeSeries = ts.map(function(img){return changeDetectionLib.multBands(img,distDir,1)});
   
@@ -207,7 +207,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   Map.addLayer(gain.select(['gain_mag']),vizParamsGainMag,indexName +' Gain Magnitude',false);
   Map.addLayer(gain.select(['gain_dur']),vizParamsDuration,indexName +' Gain Duration',false);
 }
-
+simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,gainMagThresh,slowLossDurationThresh,addToMap)
 // Map.addLayer(fastLoss)
 // Map.addLayer(fastLossYears)
 
