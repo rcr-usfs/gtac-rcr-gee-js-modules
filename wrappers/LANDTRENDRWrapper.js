@@ -151,6 +151,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
                     'shortest':[2,-1],
                     'longest':[2,1]
                   };
+  //Pull the respective column and direction
   var lossSortValue = lossColumnDict[chooseWhichLoss];
   var gainSortValue = gainColumnDict[chooseWhichGain];
   
