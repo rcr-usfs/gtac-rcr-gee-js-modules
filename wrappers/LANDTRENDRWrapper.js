@@ -172,26 +172,26 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
 
    
-  // //Dictionaries for choosing the column and direction to multiply the column for sorting
-  // //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
-  // var lossColumnDict = {'newest':[0,-1],
-  //                   'oldest':[0,1],
-  //                   'largest':[4,1],
-  //                   'smallest':[4,-1],
-  //                   'steepest':[1,1],
-  //                   'mostGradual':[1,-1],
-  //                   'shortest':[2,-1],
-  //                   'longest':[2,1]
-  //                 };
-  // var gainColumnDict = {'newest':[0,-1],
-  //                   'oldest':[0,1],
-  //                   'largest':[4,-1],
-  //                   'smallest':[4,1],
-  //                   'steepest':[1,-1],
-  //                   'mostGradual':[1,1],
-  //                   'shortest':[2,-1],
-  //                   'longest':[2,1]
-  //                 };
+  //Dictionaries for choosing the column and direction to multiply the column for sorting
+  //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
+  var lossColumnDict = {'newest':[0,-1],
+                    'oldest':[0,1],
+                    'largest':[2,1],
+                    'smallest':[2,-1],
+                    'steepest':[3,1],
+                    'mostGradual':[3,-1],
+                    'shortest':[1,1],
+                    'longest':[1,-1]
+                  };
+  var gainColumnDict = {'newest':[0,-1],
+                    'oldest':[0,1],
+                    'largest':[2,-1],
+                    'smallest':[2,1],
+                    'steepest':[3,-1],
+                    'mostGradual':[3,1],
+                    'shortest':[1,1],
+                    'longest':[1,-1]
+                  };
   // //Pull the respective column and direction
   // var lossSortValue = lossColumnDict[chooseWhichLoss];
   // var gainSortValue = gainColumnDict[chooseWhichGain];
