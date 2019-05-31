@@ -25,7 +25,7 @@ changeDetectionLib.getExistingChangeData();
 //Parameters
 
 //Date parameters
-var startYear = 2000;
+var startYear = 1984;
 var endYear = 2018;
 var startJulian = 190;
 var endJulian = 250;
@@ -51,8 +51,8 @@ var gainSlopeThresh = 0.05;
 var slowLossDurationThresh = 3;
 
 //Choose from: 'newest','oldest','largest','smallest','steepest','mostGradual','shortest','longest'
-var chooseWhichLoss = 'largest';
-var chooseWhichGain = 'largest';
+var chooseWhichLoss = 'mostGradual';
+var chooseWhichGain = 'mostGradual';
 //Define landtrendr params
 var run_params = { 
   maxSegments:            6,
