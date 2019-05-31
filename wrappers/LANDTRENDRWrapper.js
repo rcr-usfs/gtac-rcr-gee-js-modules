@@ -149,38 +149,40 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   Map.addLayer(forLossSorting,{},'forLossSorting',false);
   Map.addLayer(forGainSorting,{},'forGainSorting',false);
    
-  // //Dictionaries for choosing the column and direction to multiply the column for sorting
-  // //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
-  // var lossColumnDict = {'newest':[0,-1],
-  //                   'oldest':[0,1],
-  //                   'largest':[4,1],
-  //                   'smallest':[4,-1],
-  //                   'steepest':[1,1],
-  //                   'mostGradual':[1,-1],
-  //                   'shortest':[2,-1],
-  //                   'longest':[2,1]
-  //                 };
-  // var gainColumnDict = {'newest':[0,-1],
-  //                   'oldest':[0,1],
-  //                   'largest':[4,-1],
-  //                   'smallest':[4,1],
-  //                   'steepest':[1,-1],
-  //                   'mostGradual':[1,1],
-  //                   'shortest':[2,-1],
-  //                   'longest':[2,1]
-  //                 };
-  // //Pull the respective column and direction
-  // var lossSortValue = lossColumnDict[chooseWhichLoss];
-  // var gainSortValue = gainColumnDict[chooseWhichGain];
+  //Dictionaries for choosing the column and direction to multiply the column for sorting
+  //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
+  var lossColumnDict = {'newest':[0,-1],
+                    'oldest':[0,1],
+                    'largest':[4,1],
+                    'smallest':[4,-1],
+                    'steepest':[1,1],
+                    'mostGradual':[1,-1],
+                    'shortest':[2,-1],
+                    'longest':[2,1]
+                  };
+  var gainColumnDict = {'newest':[0,-1],
+                    'oldest':[0,1],
+                    'largest':[4,-1],
+                    'smallest':[4,1],
+                    'steepest':[1,-1],
+                    'mostGradual':[1,1],
+                    'shortest':[2,-1],
+                    'longest':[2,1]
+                  };
+  //Pull the respective column and direction
+  var lossSortValue = lossColumnDict[chooseWhichLoss];
+  var gainSortValue = gainColumnDict[chooseWhichGain];
   
-  // //Pull the sort column and multiply it
-  // var lossSortBy = forSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
-  // var gainSortBy = forSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
+  //Pull the sort column and multiply it
+  var lossSortBy = forLossSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
+  var gainSortBy = forGainSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
   
-  // //Sort the loss and gain and slice off the first column
-  // var lossAfterForSorting = forSorting.arraySort(lossSortBy).arraySlice(1, 0, 1);
-  // var gainAfterForSorting = forSorting.arraySort(gainSortBy).arraySlice(1, 0, 1);
+  //Sort the loss and gain and slice off the first column
+  var lossAfterForSorting = forLossSorting.arraySort(lossSortBy).arraySlice(1, 0, 1);
+  var gainAfterForSorting = forGainSorting.arraySort(gainSortBy).arraySlice(1, 0, 1);
   
+  Map.addLayer(lossAfterForSorting,{},'lossAfterForSorting',false);
+  Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
   
   // //Loosely based on code from: users/emaprlab/public
   // // make an image from the array of attributes for the greatest disturbance
