@@ -201,6 +201,10 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
     Map.addLayer(lossStackI.select(['loss_yr.*']),vizParamsLossYear,i.toString()+'_'+indexName +' Loss Year',false);
     Map.addLayer(lossStackI.select(['loss_fit_mag.*']),vizParamsLossMag,i.toString()+'_'+indexName +' Loss Magnitude',false);
     Map.addLayer(lossStackI.select(['loss_dur.*']),vizParamsDuration,i.toString()+'_'+indexName +' Loss Duration',false);
+    
+    Map.addLayer(gainStackI.select(['gain_yr.*']),vizParamsLossYear,i.toString()+'_'+indexName +' Gain Year',false);
+    Map.addLayer(gainStackI.select(['gain_fit_mag.*']),vizParamsLossMag,i.toString()+'_'+indexName +' Gain Magnitude',false);
+    Map.addLayer(gainStackI.select(['gain_dur.*']),vizParamsDuration,i.toString()+'_'+indexName +' Gain Duration',false);
   })
     
   // //Mask  loss 
