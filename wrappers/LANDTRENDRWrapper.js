@@ -199,21 +199,21 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
   
-  
-  Map.addLayer(fastLoss.select(['loss_year']),vizParamsLossYear,indexName +' Fast Loss Year',false);
-  Map.addLayer(fastLoss.select(['loss_mag']),vizParamsLossMag,indexName +' Fast Loss Magnitude',false);
-  Map.addLayer(fastLoss.select(['loss_dur']),vizParamsDuration,indexName +' Fast Loss Duration',false);
-  
-  Map.addLayer(slowLoss.select(['loss_year']),vizParamsLossYear,indexName +' Slow Loss Year',false);
-  Map.addLayer(slowLoss.select(['loss_mag']),vizParamsLossMag,indexName +' Slow Loss Magnitude',false);
-  Map.addLayer(slowLoss.select(['loss_dur']),vizParamsDuration,indexName +' Slow Loss Duration',false);
-  
-  
-  
-  Map.addLayer(gain.select(['gain_year']),vizParamsGainYear,indexName +' Gain Year',false);
-  Map.addLayer(gain.select(['gain_mag']),vizParamsGainMag,indexName +' Gain Magnitude',false);
-  Map.addLayer(gain.select(['gain_dur']),vizParamsDuration,indexName +' Gain Duration',false);
-  
+  if(addToMap){
+    Map.addLayer(fastLoss.select(['loss_year']),vizParamsLossYear,indexName +' Fast Loss Year',false);
+    Map.addLayer(fastLoss.select(['loss_mag']),vizParamsLossMag,indexName +' Fast Loss Magnitude',false);
+    Map.addLayer(fastLoss.select(['loss_dur']),vizParamsDuration,indexName +' Fast Loss Duration',false);
+    
+    Map.addLayer(slowLoss.select(['loss_year']),vizParamsLossYear,indexName +' Slow Loss Year',false);
+    Map.addLayer(slowLoss.select(['loss_mag']),vizParamsLossMag,indexName +' Slow Loss Magnitude',false);
+    Map.addLayer(slowLoss.select(['loss_dur']),vizParamsDuration,indexName +' Slow Loss Duration',false);
+    
+    
+    
+    Map.addLayer(gain.select(['gain_year']),vizParamsGainYear,indexName +' Gain Year',false);
+    Map.addLayer(gain.select(['gain_mag']),vizParamsGainMag,indexName +' Gain Magnitude',false);
+    Map.addLayer(gain.select(['gain_dur']),vizParamsDuration,indexName +' Gain Duration',false);
+  }
   return [rawLt,distImg];
 }
 simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap)
