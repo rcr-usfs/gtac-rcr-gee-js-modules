@@ -153,23 +153,22 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var duration = diff.arraySlice(0,0,1).multiply(-1);
   var fittedMag = diff.arraySlice(0,2,3);
   //Set up array for sorting
-  var forSorting = yearsRight.arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
-  Map.addLayer(forSorting,{},'forsorting',false);
-  // forSorting = right.arraySlice(0,0,1).arrayCat(forSorting,0);
+  var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
+ 
   
-  // //Apply thresholds
-  // var magLossMask =  forSorting.arraySlice(0,4,5).lte(lossMagThresh);
-  // var slopeLossMask = forSorting.arraySlice(0,1,2).lte(lossSlopeThresh);
-  // var lossMask = magLossMask.or(slopeLossMask);
+  //Apply thresholds
+  var magLossMask =  forSorting.arraySlice(0,2,3).lte(lossMagThresh);
+  var slopeLossMask = forSorting.arraySlice(0,3,4).lte(lossSlopeThresh);
+  var lossMask = magLossMask.or(slopeLossMask);
   
-  // var magGainMask =  forSorting.arraySlice(0,4,5).gte(gainMagThresh);
-  // var slopeGainMask = forSorting.arraySlice(0,1,2).gte(gainSlopeThresh);
-  // var gainMask = magGainMask.or(slopeGainMask);
+  var magGainMask =  forSorting.arraySlice(0,2,3).gte(gainMagThresh);
+  var slopeGainMask = forSorting.arraySlice(0,3,4).gte(gainSlopeThresh);
+  var gainMask = magGainMask.or(slopeGainMask);
   
   
-  // //Mask any segments that do not meet thresholds
-  // var forLossSorting = forSorting.arrayMask(lossMask);
-  // var forGainSorting = forSorting.arrayMask(gainMask);
+  //Mask any segments that do not meet thresholds
+  var forLossSorting = forSorting.arrayMask(lossMask);
+  var forGainSorting = forSorting.arrayMask(gainMask);
   
 
    
