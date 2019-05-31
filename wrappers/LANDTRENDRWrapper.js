@@ -186,6 +186,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   
 var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,run_params,5,['loss_yr_','loss_slope_','loss_dur_','loss_raw_','loss_fit_']);
+var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,run_params,5,['gain_yr_','gain_slope_','gain_dur_','gain_raw_','gain_fit_']);
+
 Map.addLayer(lossStack,{},'lossstack',false);
   //Loosely based on code from: users/emaprlab/public
   // make an image from the array of attributes for the greatest disturbance
