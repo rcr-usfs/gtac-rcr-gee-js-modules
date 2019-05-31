@@ -71,7 +71,7 @@ var images = allImages[0];
 var composites = allImages[1];
 
 
-function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,gainMagThresh = -0.1,slowLossDurationThresh = 3,addToMap = False)
+function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,gainMagThresh,slowLossDurationThresh,addToMap = False)
   if(indexName === undefined || indexName === null){indexName = 'NBR'}
   if(run_params === undefined || run_params === null){run_params = {'maxSegments':6,
   'spikeThreshold':         0.9,
@@ -84,7 +84,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   }}
   if(lossMagThresh === undefined || lossMagThresh === null){lossMagThresh =-0.15}
   if(gainMagThresh === undefined || gainMagThresh === null){gainMagThresh =0.1}
-  
+  if(slowLossDurationThresh === undefined || slowLossDurationThresh === null){slowLossDurationThresh =3}
+  if(addToMap === undefined || addToMap === null){addToMap =true}
 //Get single band time series and set its direction so that a loss in veg is going up
 var ts = composites.select([indexName]);
 var distDir = getImagesLib.changeDirDict[indexName];
