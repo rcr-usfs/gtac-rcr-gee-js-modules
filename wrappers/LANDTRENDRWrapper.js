@@ -121,15 +121,18 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   
   
-  //Get the pair-wise difference of the years
+  //Get the pair-wise difference and slopes of the years
   var left = lt.arraySlice(1,0,-1);
   var right = lt.arraySlice(1,1,null);
   var diff  = left.subtract(right);
   var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1);
   
+  //Set up array for sorting
   var forSorting = slopes.arrayCat(diff,0);
   forSorting = right.arraySlice(0,0,1).arrayCat(forSorting,0);
   
+  //Dictionaries for choosing the column and direction to multiply the column for sorting
+  //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
   var lossColumnDict = {'newest':[0,-1],
                     'oldest':[0,1],
                     'largest':[4,1],
