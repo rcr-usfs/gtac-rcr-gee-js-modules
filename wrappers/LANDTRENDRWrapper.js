@@ -192,21 +192,21 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
                     'shortest':[1,1],
                     'longest':[1,-1]
                   };
-  // //Pull the respective column and direction
-  // var lossSortValue = lossColumnDict[chooseWhichLoss];
-  // var gainSortValue = gainColumnDict[chooseWhichGain];
+  //Pull the respective column and direction
+  var lossSortValue = lossColumnDict[chooseWhichLoss];
+  var gainSortValue = gainColumnDict[chooseWhichGain];
   
-  // //Pull the sort column and multiply it
-  // var lossSortBy = forLossSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
-  // var gainSortBy = forGainSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
+  //Pull the sort column and multiply it
+  var lossSortBy = forLossSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
+  var gainSortBy = forGainSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
   
-  // //Sort the loss and gain and slice off the first column
-  // var lossAfterForSorting = forLossSorting.arraySort(lossSortBy);
-  // var gainAfterForSorting = forGainSorting.arraySort(gainSortBy);
+  //Sort the loss and gain and slice off the first column
+  var lossAfterForSorting = forLossSorting.arraySort(lossSortBy);
+  var gainAfterForSorting = forGainSorting.arraySort(gainSortBy);
   
-  // //Convert array to image stck
-  // var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,4,['loss_yr_','loss_slope_','loss_dur_','loss_raw_mag_','loss_fit_mag_']);
-  // var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,4,['gain_yr_','gain_slope_','gain_dur_','gain_raw_mag_','gain_fit_mag_']);
+  //Convert array to image stck
+  var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,4,['loss_yr_','loss_dur_','loss_mag_','loss_slope_']);
+  var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,4,['gain_yr_','gain_dur_','gain_mag_','gain_slope_']);
   
 
   // //Set up viz params
