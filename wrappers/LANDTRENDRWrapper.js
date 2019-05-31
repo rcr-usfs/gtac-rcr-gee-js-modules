@@ -244,6 +244,6 @@ print(ltOutStack)
 //Export  stack
 var exportName = outputName + '_Stack_'+indexName;
 var exportPath = exportPathRoot + '/'+ exportName;
-var pyramidingPolicyObject =
+// var pyramidingPolicyObject =
 // getImageLib.exportToAssetWrapper2(ltOutStack,exportName,exportPath,
 //   pyramidingPolicyObject,roi,scale,crs,transform);
