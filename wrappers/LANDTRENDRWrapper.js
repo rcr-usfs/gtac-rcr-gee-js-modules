@@ -131,6 +131,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var forSorting = slopes.arrayCat(diff,0);
   forSorting = right.arraySlice(0,0,1).arrayCat(forSorting,0);
   
+  //Apply thresholds
   var magLossMask =  forSorting.arraySlice(0,4,5).lte(lossMagThresh);
   var slopeLossMask = forSorting.arraySlice(0,1,2).lte(lossSlopeThresh);
   var lossMask = magLossMask.or(slopeLossMask);
@@ -140,7 +141,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var gainMask = magGainMask.or(slopeGainMask);
   
   
-
+  //Mask any segments that do not meet thresholds
   var forLossSorting = forSorting.arrayMask(lossMask);
   var forGainSorting = forSorting.arrayMask(gainMask);
   
