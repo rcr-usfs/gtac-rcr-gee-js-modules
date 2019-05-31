@@ -54,8 +54,8 @@ var gainSlopeThresh = 0.05;
 var slowLossDurationThresh = 3;
 
 //Choose from: 'newest','oldest','largest','smallest','steepest','mostGradual','shortest','longest'
-var chooseWhichLoss = 'steepest';
-var chooseWhichGain = 'steepest';
+var chooseWhichLoss = 'largest';
+var chooseWhichGain = 'largest';
 
 //Define landtrendr params
 var run_params = { 
@@ -205,8 +205,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var gainAfterForSorting = forGainSorting.arraySort(gainSortBy);
   
   //Convert array to image stck
-  var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,4,['loss_yr_','loss_dur_','loss_mag_','loss_slope_']);
-  var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,4,['gain_yr_','gain_dur_','gain_mag_','gain_slope_']);
+  var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,howManyToPull,['loss_yr_','loss_dur_','loss_mag_','loss_slope_']);
+  var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,howManyToPull,['gain_yr_','gain_dur_','gain_mag_','gain_slope_']);
   
 
   //Set up viz params
