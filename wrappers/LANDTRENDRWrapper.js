@@ -241,8 +241,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   return [rawLt,outStack];
 }
 var ltOut = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap)
-// var ltOutStack = ltOut[1];
-// print(ltOutStack)
+var ltOutStack = ltOut[1];
+print(ltOutStack)
 //Export  stack
 var exportName = outputName + '_Stack_'+indexName;
 var exportPath = exportPathRoot + '/'+ exportName;
