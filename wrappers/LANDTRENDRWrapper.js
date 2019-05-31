@@ -127,7 +127,7 @@ var lossAfterForSorting = forSorting.arraySort(lossSortBy).arraySlice(1, 0, 1);
 var gainAfterForSorting = forSorting.arraySort(gainSortBy).arraySlice(1, 0, 1);
 
 
-
+//Loosely based on code from: users/emaprlab/public
 // make an image from the array of attributes for the greatest disturbance
 var distImg = ee.Image.cat(lossAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['loss_year']]),
                             lossAfterForSorting.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['loss_dur']]).multiply(-1),
