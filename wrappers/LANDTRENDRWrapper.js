@@ -53,6 +53,7 @@ var slowLossDurationThresh = 3;
 //Choose from: 'newest','oldest','largest','smallest','steepest','mostGradual','shortest','longest'
 var chooseWhichLoss = 'steepest';
 var chooseWhichGain = 'steepest';
+
 //Define landtrendr params
 var run_params = { 
   maxSegments:            6,
@@ -68,7 +69,26 @@ var run_params = {
 //Whether to add outputs to map
 var addToMap = true;
 
-var exportOutputs
+var exportLTStack = false;
+
+//Set up Names for the export
+var outputName = 'LT_';
+
+//Provide location LT stack will be exported to
+//This should be an asset folder or an asset imageCollection
+var exportPathRoot = 'users/ianhousman/test/changeCollection';
+
+//CRS- must be provided.  
+//Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
+//WGS84 UTM N hemisphere is EPSG:326+ zone number (zone 12 N would be EPSG:32612) and S hemisphere is EPSG:327+ zone number
+var crs = 'EPSG:5070';
+
+//Specify transform if scale is null and snapping to known grid is needed
+var transform = [30,0,-2361915.0,0,-30,3177735.0];
+
+//Specify scale if transform is null
+var scale = null;
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 //Get images
 var allImages = getImagesLib.getLandsatWrapper(geometry,startYear,endYear,startJulian,endJulian);
