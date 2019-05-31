@@ -189,6 +189,7 @@ var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,run_params,5,[
 var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,run_params,5,['gain_yr_','gain_slope_','gain_dur_','gain_raw_','gain_fit_']);
 
 Map.addLayer(lossStack,{},'lossstack',false);
+Map.addLayer(gainStack,{},'gainStack',false);
   //Loosely based on code from: users/emaprlab/public
   // make an image from the array of attributes for the greatest disturbance
   // var distImg = ee.Image.cat(lossAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['loss_year']]),
