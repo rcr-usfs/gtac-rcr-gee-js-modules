@@ -151,96 +151,97 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1);
   
   //Set up array for sorting
-  var forSorting = slopes.arrayCat(diff,0);
-  forSorting = right.arraySlice(0,0,1).arrayCat(forSorting,0);
+  var forSorting = diff.arrayCat(slopes,0);
+  Map.addLayer(forSorting,{},'forsorting',false);
+  // forSorting = right.arraySlice(0,0,1).arrayCat(forSorting,0);
   
-  //Apply thresholds
-  var magLossMask =  forSorting.arraySlice(0,4,5).lte(lossMagThresh);
-  var slopeLossMask = forSorting.arraySlice(0,1,2).lte(lossSlopeThresh);
-  var lossMask = magLossMask.or(slopeLossMask);
+  // //Apply thresholds
+  // var magLossMask =  forSorting.arraySlice(0,4,5).lte(lossMagThresh);
+  // var slopeLossMask = forSorting.arraySlice(0,1,2).lte(lossSlopeThresh);
+  // var lossMask = magLossMask.or(slopeLossMask);
   
-  var magGainMask =  forSorting.arraySlice(0,4,5).gte(gainMagThresh);
-  var slopeGainMask = forSorting.arraySlice(0,1,2).gte(gainSlopeThresh);
-  var gainMask = magGainMask.or(slopeGainMask);
+  // var magGainMask =  forSorting.arraySlice(0,4,5).gte(gainMagThresh);
+  // var slopeGainMask = forSorting.arraySlice(0,1,2).gte(gainSlopeThresh);
+  // var gainMask = magGainMask.or(slopeGainMask);
   
   
-  //Mask any segments that do not meet thresholds
-  var forLossSorting = forSorting.arrayMask(lossMask);
-  var forGainSorting = forSorting.arrayMask(gainMask);
+  // //Mask any segments that do not meet thresholds
+  // var forLossSorting = forSorting.arrayMask(lossMask);
+  // var forGainSorting = forSorting.arrayMask(gainMask);
   
 
    
-  //Dictionaries for choosing the column and direction to multiply the column for sorting
-  //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
-  var lossColumnDict = {'newest':[0,-1],
-                    'oldest':[0,1],
-                    'largest':[4,1],
-                    'smallest':[4,-1],
-                    'steepest':[1,1],
-                    'mostGradual':[1,-1],
-                    'shortest':[2,-1],
-                    'longest':[2,1]
-                  };
-  var gainColumnDict = {'newest':[0,-1],
-                    'oldest':[0,1],
-                    'largest':[4,-1],
-                    'smallest':[4,1],
-                    'steepest':[1,-1],
-                    'mostGradual':[1,1],
-                    'shortest':[2,-1],
-                    'longest':[2,1]
-                  };
-  //Pull the respective column and direction
-  var lossSortValue = lossColumnDict[chooseWhichLoss];
-  var gainSortValue = gainColumnDict[chooseWhichGain];
+  // //Dictionaries for choosing the column and direction to multiply the column for sorting
+  // //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
+  // var lossColumnDict = {'newest':[0,-1],
+  //                   'oldest':[0,1],
+  //                   'largest':[4,1],
+  //                   'smallest':[4,-1],
+  //                   'steepest':[1,1],
+  //                   'mostGradual':[1,-1],
+  //                   'shortest':[2,-1],
+  //                   'longest':[2,1]
+  //                 };
+  // var gainColumnDict = {'newest':[0,-1],
+  //                   'oldest':[0,1],
+  //                   'largest':[4,-1],
+  //                   'smallest':[4,1],
+  //                   'steepest':[1,-1],
+  //                   'mostGradual':[1,1],
+  //                   'shortest':[2,-1],
+  //                   'longest':[2,1]
+  //                 };
+  // //Pull the respective column and direction
+  // var lossSortValue = lossColumnDict[chooseWhichLoss];
+  // var gainSortValue = gainColumnDict[chooseWhichGain];
   
-  //Pull the sort column and multiply it
-  var lossSortBy = forLossSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
-  var gainSortBy = forGainSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
+  // //Pull the sort column and multiply it
+  // var lossSortBy = forLossSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
+  // var gainSortBy = forGainSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
   
-  //Sort the loss and gain and slice off the first column
-  var lossAfterForSorting = forLossSorting.arraySort(lossSortBy);
-  var gainAfterForSorting = forGainSorting.arraySort(gainSortBy);
+  // //Sort the loss and gain and slice off the first column
+  // var lossAfterForSorting = forLossSorting.arraySort(lossSortBy);
+  // var gainAfterForSorting = forGainSorting.arraySort(gainSortBy);
   
-  //Convert array to image stck
-  var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,4,['loss_yr_','loss_slope_','loss_dur_','loss_raw_mag_','loss_fit_mag_']);
-  var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,4,['gain_yr_','gain_slope_','gain_dur_','gain_raw_mag_','gain_fit_mag_']);
+  // //Convert array to image stck
+  // var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,4,['loss_yr_','loss_slope_','loss_dur_','loss_raw_mag_','loss_fit_mag_']);
+  // var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,4,['gain_yr_','gain_slope_','gain_dur_','gain_raw_mag_','gain_fit_mag_']);
   
 
-  //Set up viz params
-  var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02'};
-  var vizParamsLossMag = {'min':-0.8 ,'max':lossMagThresh,'palette':'D00,F5DEB3'};
+  // //Set up viz params
+  // var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02'};
+  // var vizParamsLossMag = {'min':-0.8 ,'max':lossMagThresh,'palette':'D00,F5DEB3'};
   
-  var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':'54A247,AFDEA8,80C476,308023,145B09'};
-  var vizParamsGainMag = {'min':gainMagThresh,'max':0.8,'palette':'F5DEB3,006400'};
+  // var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':'54A247,AFDEA8,80C476,308023,145B09'};
+  // var vizParamsGainMag = {'min':gainMagThresh,'max':0.8,'palette':'F5DEB3,006400'};
   
-  var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
+  // var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
   
   
-  if(addToMap){
-    Map.addLayer(lt,{},'Raw LT',false);
-    Map.addLayer(joinedTS,{},'Time Series',false);
+  // if(addToMap){
+  //   Map.addLayer(lt,{},'Raw LT',false);
+  //   Map.addLayer(joinedTS,{},'Time Series',false);
   
-    ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
+  //   ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
      
-      var lossStackI = lossStack.select(['.*_'+i.toString()]);
-      var gainStackI = gainStack.select(['.*_'+i.toString()]);
+  //     var lossStackI = lossStack.select(['.*_'+i.toString()]);
+  //     var gainStackI = gainStack.select(['.*_'+i.toString()]);
       
-      Map.addLayer(lossStackI.select(['loss_yr.*']),vizParamsLossYear,i.toString()+' '+indexName +' Loss Year',false);
-      Map.addLayer(lossStackI.select(['loss_fit_mag.*']),vizParamsGainMag,i.toString()+' '+indexName +' Loss Magnitude',false);
-      Map.addLayer(lossStackI.select(['loss_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Loss Duration',false);
+  //     Map.addLayer(lossStackI.select(['loss_yr.*']),vizParamsLossYear,i.toString()+' '+indexName +' Loss Year',false);
+  //     Map.addLayer(lossStackI.select(['loss_fit_mag.*']),vizParamsGainMag,i.toString()+' '+indexName +' Loss Magnitude',false);
+  //     Map.addLayer(lossStackI.select(['loss_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Loss Duration',false);
       
-      Map.addLayer(gainStackI.select(['gain_yr.*']),vizParamsGainYear,i.toString()+' '+indexName +' Gain Year',false);
-      Map.addLayer(gainStackI.select(['gain_fit_mag.*']),vizParamsLossMag,i.toString()+' '+indexName +' Gain Magnitude',false);
-      Map.addLayer(gainStackI.select(['gain_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Gain Duration',false);
-    });
-  }
-  var outStack = lossStack.addBands(gainStack);
-  return [rawLt,outStack];
+  //     Map.addLayer(gainStackI.select(['gain_yr.*']),vizParamsGainYear,i.toString()+' '+indexName +' Gain Year',false);
+  //     Map.addLayer(gainStackI.select(['gain_fit_mag.*']),vizParamsLossMag,i.toString()+' '+indexName +' Gain Magnitude',false);
+  //     Map.addLayer(gainStackI.select(['gain_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Gain Duration',false);
+  //   });
+  // }
+  // var outStack = lossStack.addBands(gainStack);
+  // return [rawLt,outStack];
 }
 var ltOut = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap)
-var ltOutStack = ltOut[1];
-print(ltOutStack)
+// var ltOutStack = ltOut[1];
+// print(ltOutStack)
 //Export  stack
 var exportName = outputName + '_Stack_'+indexName;
 var exportPath = exportPathRoot + '/'+ exportName;
