@@ -141,7 +141,14 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   
   Map.addLayer(lossMask,{},'lossmask',false);
-   Map.addLayer(gainMask,{},'gainMask',false);
+  Map.addLayer(gainMask,{},'gainMask',false);
+   
+  var forLossSorting = forSorting.arrayMask(lossMask);
+  var forGainSorting = forSorting.arrayMask(gainMask);
+  
+  Map.addLayer(forLossSorting,{},'forLossSorting',false);
+  Map.addLayer(forGainSorting,{},'forGainSorting',false);
+   
   // //Dictionaries for choosing the column and direction to multiply the column for sorting
   // //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
   // var lossColumnDict = {'newest':[0,-1],
