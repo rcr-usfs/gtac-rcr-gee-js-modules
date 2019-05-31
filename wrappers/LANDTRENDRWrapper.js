@@ -97,7 +97,7 @@ var diff  = left.subtract(right);
 
 
 var forSorting = right.arraySlice(0,0,1).arrayCat(diff,0);
-
+Map.addLayer(forSorting,{},'forSorting',false);
 // var lossColumnDict = {'newest':[0,-1],
 //                   'oldest':[0,1],
 //                   'largest':[3,1],
