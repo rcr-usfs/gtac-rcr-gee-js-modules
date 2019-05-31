@@ -121,7 +121,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   
   //Get single band time series and set its direction so that a loss in veg is going up
-  var ts = ts.select([indexName]);
+  ts = ts.select([indexName]);
   var distDir = getImagesLib.changeDirDict[indexName];
   run_params.timeSeries = ts.map(function(img){return changeDetectionLib.multBands(img,distDir,1)});
   
@@ -235,13 +235,15 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
       Map.addLayer(gainStackI.select(['gain_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Gain Duration',false);
     });
   }
-  return [rawLt,lossStack.addBands(gainStack)];
+  var outStack = lossStack.addBands(gainStack);
+  return [rawLt,outStack];
 }
 var ltOut = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap)
 var ltOutStack = ltOut[1];
-
+print(ltOutStack)
 //Export  stack
 var exportName = outputName + '_Stack_'+indexName;
 var exportPath = exportPathRoot + '/'+ exportName;
-    
-getImageLib.exportToAssetWrapper(ltOutStack,exportName,exportPath,'mean',studyArea,null,crs,transform);
+var pyramidingPolicyObject =
+// getImageLib.exportToAssetWrapper2(ltOutStack,exportName,exportPath,
+//   pyramidingPolicyObject,roi,scale,crs,transform);
