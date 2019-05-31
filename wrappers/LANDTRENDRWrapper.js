@@ -86,6 +86,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   if(gainMagThresh === undefined || gainMagThresh === null){gainMagThresh =0.1}
   if(slowLossDurationThresh === undefined || slowLossDurationThresh === null){slowLossDurationThresh =3}
   if(addToMap === undefined || addToMap === null){addToMap =true}
+  
+  
 //Get single band time series and set its direction so that a loss in veg is going up
 var ts = composites.select([indexName]);
 var distDir = getImagesLib.changeDirDict[indexName];
