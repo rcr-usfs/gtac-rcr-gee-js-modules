@@ -117,14 +117,19 @@ var gainSortValue = lossColumnDict[gainColumnDict];
 
 var lossSortBy = forSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
 var gainSortBy = forSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
-var afterForSorting = forSorting.arraySort(sortBy).arraySlice(1, 0, 1);
+var lossAfterForSorting = forSorting.arraySort(lossSortBy).arraySlice(1, 0, 1);
+var gainAfterForSorting = forSorting.arraySort(gainSortBy).arraySlice(1, 0, 1);
 
 
 
 // make an image from the array of attributes for the greatest disturbance
-var distImg = ee.Image.cat(afterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['year']]),
-                             afterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['dur']]).multiply(-1),
-                             afterForSorting.arraySlice(0,3,4).arrayProject([1]).arrayFlatten([['mag']])
+var distImg = ee.Image.cat(lossAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['loss_year']]),
+                             lossAfterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['loss_dur']]).multiply(-1),
+                             lossAfterForSorting.arraySlice(0,3,4).arrayProject([1]).arrayFlatten([['loss_mag']],
+                             gainAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['gain_year']]),
+                             gainAfterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['gain_dur']]).multiply(-1),
+                             gainAfterForSorting.arraySlice(0,3,4).arrayProject([1]).arrayFlatten([['gain_mag']],
+                             )
                             );
 var slope = distImg.select(['mag']).divide(distImg.select(['dur'])).rename(['slope']);
 distImg = distImg.addBands(slope);
