@@ -51,8 +51,8 @@ var gainSlopeThresh = 0.05;
 var slowLossDurationThresh = 3;
 
 //Choose from: 'newest','oldest','largest','smallest','steepest','mostGradual','shortest','longest'
-var chooseWhichLoss = 'largest';
-var chooseWhichGain = 'largest';
+var chooseWhichLoss = 'newest';
+var chooseWhichGain = 'newest';
 //Define landtrendr params
 var run_params = { 
   maxSegments:            6,
@@ -190,32 +190,13 @@ var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,run_params,5,[
 
 Map.addLayer(lossStack,{},'lossstack',false);
 Map.addLayer(gainStack,{},'gainStack',false);
-  //Loosely based on code from: users/emaprlab/public
-  // make an image from the array of attributes for the greatest disturbance
-  // var distImg = ee.Image.cat(lossAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['loss_year']]),
-  //                             lossAfterForSorting.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['loss_dur']]).multiply(-1),
-  //                             lossAfterForSorting.arraySlice(0,4,5).arrayProject([1]).arrayFlatten([['loss_mag']]),
-  //                             lossAfterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['loss_slope']]),
-  //                             gainAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['gain_year']]),
-  //                             gainAfterForSorting.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['gain_dur']]).multiply(-1),
-  //                             gainAfterForSorting.arraySlice(0,4,5).arrayProject([1]).arrayFlatten([['gain_mag']]),
-  //                             gainAfterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['gain_slope']])
-  //                             );
-  
-  
-  
-  // // Map.addLayer(forSorting,{},'forSorting',false);
-  // // Map.addLayer(lossAfterForSorting,{},'lossAfterForSorting',false);
-  // // Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
-  // Map.addLayer(distImg,{},'distImg',false);
-  
-  // // //Pull out slow and fast loss and gain
-  // var loss = distImg.select(['loss_mag']).lte(lossMagThresh).or(distImg.select(['loss_slope']).lte(lossSlopeThresh));
-  // var slowLoss = loss.and(distImg.select(['loss_dur']).gte(slowLossDurationThresh));
-  // var fastLoss = loss.and(distImg.select(['loss_dur']).lt(slowLossDurationThresh));
-  // var gain = distImg.select(['gain_mag']).gte(gainMagThresh).or(distImg.select(['gain_slope']).gt(gainSlopeThresh));
-  
-  
+ 
+var howManyToPull = 3;
+ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
+  print(i)
+  var lossStackI = lossStack.select(['.*_'+i.toString()]);
+  Map.addLayer(lossStackI,{},i.toString(),false);
+})
   
   // //Mask  loss 
   // fastLoss = distImg.select(['loss_.*']).updateMask(fastLoss);
