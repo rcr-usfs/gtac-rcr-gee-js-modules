@@ -51,8 +51,8 @@ var gainSlopeThresh = 0.05;
 var slowLossDurationThresh = 3;
 
 //Choose from: 'newest','oldest','largest','smallest','steepest','mostGradual','shortest','longest'
-var chooseWhichLoss = 'steepest';
-var chooseWhichGain = 'steepest';
+var chooseWhichLoss = 'largest';
+var chooseWhichGain = 'largest';
 //Define landtrendr params
 var run_params = { 
   maxSegments:            6,
@@ -184,7 +184,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   // Map.addLayer(distImg,{},'distImg',false);
   
   // //Pull out slow and fast loss and gain
-  var loss = (distImg.select(['loss_mag']).lte(lossMagThresh).or(distImg.select(['loss_slope']).lte(lossSlopeThresh)))
+  var loss = distImg.select(['loss_mag']).lte(lossMagThresh).or(distImg.select(['loss_slope']).lte(lossSlopeThresh));
   var slowLoss = loss.and(distImg.select(['loss_dur']).gte(slowLossDurationThresh));
   var fastLoss = loss.and(distImg.select(['loss_dur']).lt(slowLossDurationThresh));
   var gain = distImg.select(['gain_mag']).gte(gainMagThresh).or(distImg.select(['gain_slope']).gt(gainSlopeThresh));
