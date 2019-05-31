@@ -150,7 +150,7 @@ function getLTStack(LTresult,run_params,nBands,bandNames) {
   var iString;                                      // initialize variable to hold vertex number
   for(var i=1;i<=run_params.maxSegments+1;i++){     // loop through the maximum number of vertices in segmentation and fill empty arrays
     iString = i.toString();                         // define vertex number as string 
-    vertLabels.push("vert_"+iString);               // make a band name for given vertex
+    vertLabels.push(iString);               // make a band name for given vertex
     emptyArray.push(-32768);                             // fill in emptyArray
   }
   //Set up empty array list
