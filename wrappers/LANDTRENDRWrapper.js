@@ -89,12 +89,13 @@ var vertices = lt.arraySlice(0,3,4);
 
 //Mask out any non-vertex values
 lt = lt.arrayMask(vertices);
+lt = lt.arraySlice(0,0,3);
 Map.addLayer(lt,{},'lt',false);
 //Get the pair-wise difference of the years
 var left = lt.arraySlice(1,0,-1);
 var right = lt.arraySlice(1,1,null);
 var diff  = left.subtract(right);
-var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1)
+var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1);
 
 var forSorting = slopes.arrayCat(diff,0);
 forSorting = right.arraySlice(0,0,1).arrayCat(forSorting,0);
