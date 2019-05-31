@@ -144,7 +144,7 @@ var getLTvertStack = function(LTresult,run_params) {
 
 //Adapted version for converting sorted array to image
 
-function getLTStac(LTresult,run_params,nBands,bandNames) {
+function getLTStack(LTresult,run_params,nBands,bandNames) {
   var emptyArray = [];                              // make empty array to hold another array whose length will vary depending on maxSegments parameter    
   var vertLabels = [];                              // make empty array to hold band names whose length will vary depending on maxSegments parameter 
   var iString;                                      // initialize variable to hold vertex number
@@ -824,6 +824,7 @@ exports.addToImage = addToImage;
 exports.getExistingChangeData = getExistingChangeData;
 exports.arrayToTimeSeries = arrayToTimeSeries;
 exports.getRawAndFittedLT = getRawAndFittedLT;
+exports.getLTStack = getLTStack;
 exports.getLTvertStack = getLTvertStack;
 exports.verdetAnnualSlope  = verdetAnnualSlope;
 exports.annualizeEWMA = annualizeEWMA;
