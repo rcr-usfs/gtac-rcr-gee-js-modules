@@ -7,10 +7,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-115.32694887221157, 44.98400828371906],
-          [-115.32694887221157, 43.663673424693],
-          [-113.48124574721157, 43.663673424693],
-          [-113.48124574721157, 44.98400828371906]]], null, false);
+        [[[-106.84387059260797, 40.8682392270605],
+          [-106.84387059260797, 39.10916732123826],
+          [-104.85534520198297, 39.10916732123826],
+          [-104.85534520198297, 40.8682392270605]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for LANDTRENDR across an annual time series
 //Supports multiple bands and/or indices
