@@ -144,7 +144,8 @@ var getLTvertStack = function(LTresult,run_params) {
 
 //Adapted version for converting sorted array to image
 
-function getLTStack(LTresult,maxVertices,nBands,bandNames) {
+function getLTStack(LTresult,maxVertices,bandNames) {
+  var nBands = bandNames.length;
   var emptyArray = [];                              // make empty array to hold another array whose length will vary depending on maxSegments parameter    
   var vertLabels = [];                              // make empty array to hold band names whose length will vary depending on maxSegments parameter 
   var iString;                                      // initialize variable to hold vertex number
