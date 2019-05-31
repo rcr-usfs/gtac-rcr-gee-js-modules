@@ -119,7 +119,7 @@ var gainColumnDict = {'newest':[0,-1],
                   'longest':[2,1]
                 };
 var lossSortValue = lossColumnDict[chooseWhichLoss];
-var gainSortValue = lossColumnDict[gainColumnDict];
+var gainSortValue = lossColumnDict[chooseWhichGain];
 
 var lossSortBy = forSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
 var gainSortBy = forSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
@@ -142,7 +142,8 @@ var distImg = ee.Image.cat(lossAfterForSorting.arraySlice(0,0,1).arrayProject([1
 
 
 Map.addLayer(forSorting,{},'forSorting',false);
-Map.addLayer(afterForSorting,{},'afterForSorting',false);
+Map.addLayer(lossAfterForSorting,{},'lossAfterForSorting',false);
+Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
 Map.addLayer(distImg,{},'distImg',false);
 
 // //Pull out slow and fast loss and gain
