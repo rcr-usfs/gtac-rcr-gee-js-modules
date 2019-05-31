@@ -241,5 +241,4 @@ var ltOutStack = ltOut[1];
 var exportName = outputName + '_Stack_'+indexName;
 var exportPath = exportPathRoot + '/'+ exportName;
     
-// getImageLib.exportToAssetWrapper(outputStack,exportName,exportPath,'mean',
-//       studyArea,null,crs,transform);
+getImageLib.exportToAssetWrapper(outputStack,exportName,exportPath,'mean',studyArea,null,crs,transform);
