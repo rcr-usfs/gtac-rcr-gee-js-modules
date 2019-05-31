@@ -170,13 +170,13 @@ var vizParamsGainMag = {'min':gainMagThresh,'max':0.8,'palette':'006400,F5DEB3'}
 var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
 
 
-Map.addLayer(fastLoss.select(['year']),vizParamsLossYear,indexName +' Fast Loss Year',false);
-Map.addLayer(fastLoss.select(['mag']),vizParamsLossMag,indexName +' Fast Loss Magnitude',false);
-Map.addLayer(fastLoss.select(['dur']),vizParamsDuration,indexName +' Fast Loss Duration',false);
+Map.addLayer(fastLoss.select(['loss_year']),vizParamsLossYear,indexName +' Fast Loss Year',false);
+Map.addLayer(fastLoss.select(['loss_year']),vizParamsLossMag,indexName +' Fast Loss Magnitude',false);
+Map.addLayer(fastLoss.select(['loss_year']),vizParamsDuration,indexName +' Fast Loss Duration',false);
 
-// Map.addLayer(slowLoss.select(['year']),vizParamsLossYear,indexName +' Slow Loss Year',false);
-// Map.addLayer(slowLoss.select(['mag']),vizParamsLossMag,indexName +' Slow Loss Magnitude',false);
-// Map.addLayer(slowLoss.select(['dur']),vizParamsDuration,indexName +' Slow Loss Duration',false);
+Map.addLayer(slowLoss.select(['loss_year']),vizParamsLossYear,indexName +' Slow Loss Year',false);
+Map.addLayer(slowLoss.select(['loss_year']),vizParamsLossMag,indexName +' Slow Loss Magnitude',false);
+Map.addLayer(slowLoss.select(['loss_year']),vizParamsDuration,indexName +' Slow Loss Duration',false);
 
 
 
