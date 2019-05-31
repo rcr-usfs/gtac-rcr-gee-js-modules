@@ -142,6 +142,34 @@ var getLTvertStack = function(LTresult,run_params) {
   return ltVertStack;                               // return the stack
 };
 
+//Adapted version for converting sorted array to image
+
+function getLTStac(LTresult,run_params,nBands,bandNames) {
+  var emptyArray = [];                              // make empty array to hold another array whose length will vary depending on maxSegments parameter    
+  var vertLabels = [];                              // make empty array to hold band names whose length will vary depending on maxSegments parameter 
+  var iString;                                      // initialize variable to hold vertex number
+  for(var i=1;i<=run_params.maxSegments+1;i++){     // loop through the maximum number of vertices in segmentation and fill empty arrays
+    iString = i.toString();                         // define vertex number as string 
+    vertLabels.push("vert_"+iString);               // make a band name for given vertex
+    emptyArray.push(-32768);                             // fill in emptyArray
+  }
+  var emptyArrayList = [];
+  ee.List.sequence(1,nBands).getInfo().map(function(i){emptyArrayList.push(emptyArray)});
+  var zeros = ee.Image(ee.Array(emptyArrayList));        // make an image to fill holes in result 'LandTrendr' array where vertices found is not equal to maxSegments parameter plus 1
+                               
+  
+  var lbls = [bandNames, vertLabels,]; // labels for 2 dimensions of the array that will be cast to each other in the final step of creating the vertice output 
+  
+          // slices out the 4th row of a 4 row x N col (N = number of years in annual stack) matrix, which identifies vertices - contains only 0s and 1s, where 1 is a vertex (referring to spectral-temporal segmentation) year and 0 is not
+  
+  var ltVertStack = LTresult       // uses the sliced out isVert row as a mask to only include vertice in this data - after this a pixel will only contain as many "bands" are there are vertices for that pixel - min of 2 to max of 7. 
+                      .addBands(zeros)              // ...adds the 3 row x 7 col 'zeros' matrix as a band to the vertOnly array - this is an intermediate step to the goal of filling in the vertOnly data so that there are 7 vertice slots represented in the data - right now there is a mix of lengths from 2 to 7
+                      .toArray(1)                   // ...concatenates the 3 row x 7 col 'zeros' matrix band to the vertOnly data so that there are at least 7 vertice slots represented - in most cases there are now > 7 slots filled but those will be truncated in the next step
+                      .arraySlice(1, 0, run_params.maxSegments+1) // ...before this line runs the array has 3 rows and between 9 and 14 cols depending on how many vertices were found during segmentation for a given pixel. this step truncates the cols at 7 (the max verts allowed) so we are left with a 3 row X 7 col array
+                      .arrayFlatten(lbls, '');      // ...this takes the 2-d array and makes it 1-d by stacking the unique sets of rows and cols into bands. there will be 7 bands (vertices) for vertYear, followed by 7 bands (vertices) for rawVert, followed by 7 bands (vertices) for fittedVert, according to the 'lbls' list
+  
+  return ltVertStack.updateMask(ltVertStack.neq(-32768));                               // return the stack
+};
 
 
 
