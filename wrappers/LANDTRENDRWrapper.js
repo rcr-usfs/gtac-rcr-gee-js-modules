@@ -185,7 +185,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
   
   
-  var getLTvertStack = function(LTresult,run_params,nBands) {
+  var getLTvertStack = function(LTresult,run_params,nBands,bandNames) {
   var emptyArray = [];                              // make empty array to hold another array whose length will vary depending on maxSegments parameter    
   var vertLabels = [];                              // make empty array to hold band names whose length will vary depending on maxSegments parameter 
   var iString;                                      // initialize variable to hold vertex number
@@ -199,7 +199,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var zeros = ee.Image(ee.Array(emptyArrayList));        // make an image to fill holes in result 'LandTrendr' array where vertices found is not equal to maxSegments parameter plus 1
                                
   
-  var lbls = [['yrs_','slope_','dur_','raw_','fit_'], vertLabels,]; // labels for 2 dimensions of the array that will be cast to each other in the final step of creating the vertice output 
+  var lbls = [bandNames, vertLabels,]; // labels for 2 dimensions of the array that will be cast to each other in the final step of creating the vertice output 
 
           // slices out the 4th row of a 4 row x N col (N = number of years in annual stack) matrix, which identifies vertices - contains only 0s and 1s, where 1 is a vertex (referring to spectral-temporal segmentation) year and 0 is not
   
@@ -209,10 +209,10 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
                       .arraySlice(1, 0, run_params.maxSegments+1) // ...before this line runs the array has 3 rows and between 9 and 14 cols depending on how many vertices were found during segmentation for a given pixel. this step truncates the cols at 7 (the max verts allowed) so we are left with a 3 row X 7 col array
                       .arrayFlatten(lbls, '');      // ...this takes the 2-d array and makes it 1-d by stacking the unique sets of rows and cols into bands. there will be 7 bands (vertices) for vertYear, followed by 7 bands (vertices) for rawVert, followed by 7 bands (vertices) for fittedVert, according to the 'lbls' list
 
-  return ltVertStack;                               // return the stack
+  return ltVertStack.updateMask(ltVertStack.neq(-32768));                               // return the stack
 };
 
-var lossStack = getLTvertStack(lossAfterForSorting,run_params);
+var lossStack = getLTvertStack(lossAfterForSorting,run_params,5,['yrs_','slope_','dur_','raw_','fit_']);
 Map.addLayer(lossStack,{},'lossstack',false);
   //Loosely based on code from: users/emaprlab/public
   // make an image from the array of attributes for the greatest disturbance
