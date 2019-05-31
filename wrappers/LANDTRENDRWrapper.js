@@ -155,8 +155,11 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var lossSortValue = lossColumnDict[chooseWhichLoss];
   var gainSortValue = gainColumnDict[chooseWhichGain];
   
+  //Pull the sort column and multiply it
   var lossSortBy = forSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
   var gainSortBy = forSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
+  
+  //Sort the loss and gain and slice off the first column
   var lossAfterForSorting = forSorting.arraySort(lossSortBy).arraySlice(1, 0, 1);
   var gainAfterForSorting = forSorting.arraySort(gainSortBy).arraySlice(1, 0, 1);
   
