@@ -94,9 +94,10 @@ Map.addLayer(lt,{},'lt',false);
 var left = lt.arraySlice(1,0,-1);
 var right = lt.arraySlice(1,1,null);
 var diff  = left.subtract(right);
+var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1)
 
-
-var forSorting = right.arraySlice(0,0,1).arrayCat(diff,0);
+var forSorting = slopes.arrayCat(diff,0);
+forSorting = right.arraySlice(0,0,1).arrayCat(forSorting,0);
 Map.addLayer(forSorting,{},'forSorting',false);
 // var lossColumnDict = {'newest':[0,-1],
 //                   'oldest':[0,1],
