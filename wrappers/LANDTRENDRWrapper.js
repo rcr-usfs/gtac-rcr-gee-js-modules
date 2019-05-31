@@ -90,7 +90,9 @@ var vertices = lt.arraySlice(0,3,4);
 //Mask out any non-vertex values
 lt = lt.arrayMask(vertices);
 lt = lt.arraySlice(0,0,3);
-Map.addLayer(lt,{},'lt',false);
+
+
+
 //Get the pair-wise difference of the years
 var left = lt.arraySlice(1,0,-1);
 var right = lt.arraySlice(1,1,null);
@@ -141,10 +143,10 @@ var distImg = ee.Image.cat(lossAfterForSorting.arraySlice(0,0,1).arrayProject([1
 
 
 
-Map.addLayer(forSorting,{},'forSorting',false);
-Map.addLayer(lossAfterForSorting,{},'lossAfterForSorting',false);
-Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
-Map.addLayer(distImg,{},'distImg',false);
+// Map.addLayer(forSorting,{},'forSorting',false);
+// Map.addLayer(lossAfterForSorting,{},'lossAfterForSorting',false);
+// Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
+// Map.addLayer(distImg,{},'distImg',false);
 
 // //Pull out slow and fast loss and gain
 var slowLoss = (distImg.select(['loss_mag']).lte(lossMagThresh).or(distImg.select(['loss_slope']).lte(lossSlopeThresh))).and(distImg.select(['loss_dur']).gte(slowLossDurationThresh));
