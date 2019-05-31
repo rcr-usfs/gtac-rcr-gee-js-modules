@@ -185,8 +185,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
   
   
-  var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,run_params,5,['loss_yr_','loss_slope_','loss_dur_','loss_raw_','loss_fit_']);
-  var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,run_params,5,['gain_yr_','gain_slope_','gain_dur_','gain_raw_','gain_fit_']);
+  var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,run_params,5,['loss_yr_','loss_slope_','loss_dur_','loss_raw_mag_','loss_fit_mag_']);
+  var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,run_params,5,['gain_yr_','gain_slope_','gain_dur_','gain_raw_mag_','gain_fit_mag_']);
   
   Map.addLayer(lossStack,{},'lossstack',false);
   Map.addLayer(gainStack,{},'gainStack',false);
