@@ -76,7 +76,7 @@ var images = allImages[0];
 var composites = allImages[1];
 
 
-function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap){
+function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap,howManyToPull){
   
   if(indexName === undefined || indexName === null){indexName = 'NBR'}
   if(run_params === undefined || run_params === null){
@@ -94,6 +94,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   if(gainMagThresh === undefined || gainMagThresh === null){gainMagThresh =0.1}
   if(slowLossDurationThresh === undefined || slowLossDurationThresh === null){slowLossDurationThresh =3}
   if(addToMap === undefined || addToMap === null){addToMap =true}
+  if(howManyToPull === undefined || howManyToPull === null){howManyToPull =2}
   
   
   //Get single band time series and set its direction so that a loss in veg is going up
@@ -193,21 +194,21 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
     
-  var howManyToPull = 3;
-  ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
-   
-    var lossStackI = lossStack.select(['.*_'+i.toString()]);
-    var gainStackI = gainStack.select(['.*_'+i.toString()]);
-    
-    Map.addLayer(lossStackI.select(['loss_yr.*']),vizParamsLossYear,i.toString()+'_'+indexName +' Loss Year',false);
-    Map.addLayer(lossStackI.select(['loss_fit_mag.*']),vizParamsGainMag,i.toString()+'_'+indexName +' Loss Magnitude',false);
-    Map.addLayer(lossStackI.select(['loss_dur.*']),vizParamsDuration,i.toString()+'_'+indexName +' Loss Duration',false);
-    
-    Map.addLayer(gainStackI.select(['gain_yr.*']),vizParamsGainYear,i.toString()+'_'+indexName +' Gain Year',false);
-    Map.addLayer(gainStackI.select(['gain_fit_mag.*']),vizParamsLossMag,i.toString()+'_'+indexName +' Gain Magnitude',false);
-    Map.addLayer(gainStackI.select(['gain_dur.*']),vizParamsDuration,i.toString()+'_'+indexName +' Gain Duration',false);
-  });
-    
+  if(addToMap){
+    ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
+     
+      var lossStackI = lossStack.select(['.*_'+i.toString()]);
+      var gainStackI = gainStack.select(['.*_'+i.toString()]);
+      
+      Map.addLayer(lossStackI.select(['loss_yr.*']),vizParamsLossYear,i.toString()+'_'+indexName +' Loss Year',false);
+      Map.addLayer(lossStackI.select(['loss_fit_mag.*']),vizParamsGainMag,i.toString()+'_'+indexName +' Loss Magnitude',false);
+      Map.addLayer(lossStackI.select(['loss_dur.*']),vizParamsDuration,i.toString()+'_'+indexName +' Loss Duration',false);
+      
+      Map.addLayer(gainStackI.select(['gain_yr.*']),vizParamsGainYear,i.toString()+'_'+indexName +' Gain Year',false);
+      Map.addLayer(gainStackI.select(['gain_fit_mag.*']),vizParamsLossMag,i.toString()+'_'+indexName +' Gain Magnitude',false);
+      Map.addLayer(gainStackI.select(['gain_dur.*']),vizParamsDuration,i.toString()+'_'+indexName +' Gain Duration',false);
+    });
+  }
   return [rawLt,lossStack.addBands(gainStack)];
 }
 simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap)
