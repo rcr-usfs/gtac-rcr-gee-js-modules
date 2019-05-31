@@ -192,7 +192,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var vizParamsGainMag = {'min':gainMagThresh,'max':0.8,'palette':'F5DEB3,006400'};
   
   var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
-    
+  
+  
   if(addToMap){
     Map.addLayer(lt,{},'Raw LT',false);
     Map.addLayer(joinedTS,{},'Time Series',false);
