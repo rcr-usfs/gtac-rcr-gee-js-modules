@@ -212,7 +212,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   Map.addLayer(gain.select(['gain_mag']),vizParamsGainMag,indexName +' Gain Magnitude',false);
   Map.addLayer(gain.select(['gain_dur']),vizParamsDuration,indexName +' Gain Duration',false);
 }
-simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,gainMagThresh,slowLossDurationThresh,addToMap)
+simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap)
 // Map.addLayer(fastLoss)
 // Map.addLayer(fastLossYears)
 
