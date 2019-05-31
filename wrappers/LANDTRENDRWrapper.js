@@ -100,20 +100,24 @@ var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1);
 var forSorting = slopes.arrayCat(diff,0);
 forSorting = right.arraySlice(0,0,1).arrayCat(forSorting,0);
 Map.addLayer(forSorting,{},'forSorting',false);
-// var lossColumnDict = {'newest':[0,-1],
-//                   'oldest':[0,1],
-//                   'largest':[3,1],
-//                   'smallest':[3,-1],
-//                   'shortest':[1,-1],
-//                   'longest':[1,1]
-//                 };
-// var gainColumnDict = {'newest':[0,-1],
-//                   'oldest':[0,1],
-//                   'largest':[3,-1],
-//                   'smallest':[3,1],
-//                   'shortest':[1,-1],
-//                   'longest':[1,1]
-//                 };
+var lossColumnDict = {'newest':[0,-1],
+                  'oldest':[0,1],
+                  'largest':[4,1],
+                  'smallest':[4,-1],
+                  'steepest':[1,1],
+                  'mostGradual':[1,-1],
+                  'shortest':[2,-1],
+                  'longest':[2,1]
+                };
+var gainColumnDict = {'newest':[0,-1],
+                  'oldest':[0,1],
+                  'largest':[4,-1],
+                  'smallest':[4,1],
+                  'steepest':[1,-1],
+                  'mostGradual':[1,1],
+                  'shortest':[2,-1],
+                  'longest':[2,1]
+                };
 // var lossSortValue = lossColumnDict[chooseWhichLoss];
 // var gainSortValue = lossColumnDict[gainColumnDict];
 
