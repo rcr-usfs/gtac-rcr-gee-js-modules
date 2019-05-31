@@ -165,7 +165,7 @@ var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,
 var vizParamsLossMag = {'min':-0.8 ,'max':lossMagThresh,'palette':'D00,F5DEB3'};
 
 var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':'54A247,AFDEA8,80C476,308023,145B09'};
-var vizParamsGainMag = {'min':gainMagThresh,'max':0.8,'palette':'006400,F5DEB3'};
+var vizParamsGainMag = {'min':gainMagThresh,'max':0.8,'palette':'F5DEB3,006400'};
 
 var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
 
