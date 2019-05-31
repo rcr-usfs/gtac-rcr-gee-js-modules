@@ -50,6 +50,7 @@ var gainSlopeThresh = 0.05;
 
 var slowLossDurationThresh = 3;
 
+//Choose from: 'newest','oldest','largest','smallest','shortest':[1,-1],'longest'
 var chooseWhichLoss = 'largest';
 var chooseWhichGain = 'largest';
 //Define landtrendr params
@@ -97,14 +98,22 @@ var diff  = left.subtract(right);
 
 var forSorting = right.arraySlice(0,0,1).arrayCat(diff,0);
 
-var columnDict = {'newest':[0,-1],
+var lossColumnDict = {'newest':[0,-1],
                   'oldest':[0,1],
                   'largest':[3,1],
                   'smallest':[3,-1],
                   'shortest':[1,-1],
                   'longest':[1,1]
                 };
-var sortByValue = columnDict[chooseWhichLoss];
+var gainColumnDict = {'newest':[0,-1],
+                  'oldest':[0,1],
+                  'largest':[3,-1],
+                  'smallest':[3,1],
+                  'shortest':[1,-1],
+                  'longest':[1,1]
+                };
+var lossSortValue = lossColumnDict[chooseWhichLoss];
+var gainSortValue = lossColumnDict[gainColumnDict];
 var sortBy = forSorting.arraySlice(0,sortByValue[0],sortByValue[0]+1).multiply(sortByValue[1]);
 var afterForSorting = forSorting.arraySort(sortBy).arraySlice(1, 0, 1);
 
@@ -161,6 +170,8 @@ Map.addLayer(slowLoss.select(['dur']),vizParamsDuration,indexName +' Slow Loss D
 Map.addLayer(gain.select(['year']),vizParamsGainYear,indexName +' Gain Year',false);
 Map.addLayer(gain.select(['mag']),vizParamsGainMag,indexName +' Gain Magnitude',false);
 Map.addLayer(gain.select(['dur']),vizParamsDuration,indexName +' Gain Duration',false);
+
+
 // Map.addLayer(fastLoss)
 // Map.addLayer(fastLossYears)
 
