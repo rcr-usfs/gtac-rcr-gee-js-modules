@@ -214,7 +214,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   }
   return [rawLt,lossStack.addBands(gainStack)];
 }
-simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap)
+var ltOut = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap)
+var ltOutStack = ltOut[1];
 // Map.addLayer(fastLoss)
 // Map.addLayer(fastLossYears)
 
