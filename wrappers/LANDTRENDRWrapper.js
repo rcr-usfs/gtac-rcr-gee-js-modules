@@ -102,7 +102,9 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   run_params.timeSeries = ts.map(function(img){return changeDetectionLib.multBands(img,distDir,1)});
   
   //Run LANDTRENDR
-  var lt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params).select([0]);
+  var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
+  
+  var rawLt = lt.select([0]);
   Map.addLayer(lt,{},'Raw LT',false);
   
   //Get joined raw and fitted LANDTRENDR for viz
@@ -211,6 +213,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   Map.addLayer(gain.select(['gain_year']),vizParamsGainYear,indexName +' Gain Year',false);
   Map.addLayer(gain.select(['gain_mag']),vizParamsGainMag,indexName +' Gain Magnitude',false);
   Map.addLayer(gain.select(['gain_dur']),vizParamsDuration,indexName +' Gain Duration',false);
+  
+  return []
 }
 simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap)
 // Map.addLayer(fastLoss)
