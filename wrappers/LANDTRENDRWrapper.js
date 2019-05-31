@@ -135,12 +135,13 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var slopeLossMask = forSorting.arraySlice(0,1,2).lte(lossSlopeThresh);
   var lossMask = magLossMask.or(slopeLossMask);
   
-  var magGainMask =  forSorting.arraySlice(0,4,5).lte(gainMagThresh);
-  var slopeLossMask = forSorting.arraySlice(0,1,2).lte(lossSlopeThresh);
-  var lossMask = magLossMask.or(slopeLossMask);
+  var magGainMask =  forSorting.arraySlice(0,4,5).gte(gainMagThresh);
+  var slopeGainMask = forSorting.arraySlice(0,1,2).gte(gainSlopeThresh);
+  var gainMask = magGainMask.or(slopeGainMask);
   
   
-  .or(distImg.select(['loss_slope']).lte(lossSlopeThresh));
+  Map.addLayer(lossMask,{},'lossmask',false);
+   Map.addLayer(gainMask,{},'gainMask',false);
   // //Dictionaries for choosing the column and direction to multiply the column for sorting
   // //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
   // var lossColumnDict = {'newest':[0,-1],
