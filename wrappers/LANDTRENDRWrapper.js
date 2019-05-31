@@ -104,7 +104,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   //Run LANDTRENDR
   var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
   
-  var rawLt = lt.select([0]);
+  var lt = rawLt.select([0]);
   Map.addLayer(lt,{},'Raw LT',false);
   
   //Get joined raw and fitted LANDTRENDR for viz
