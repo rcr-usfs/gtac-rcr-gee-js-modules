@@ -110,7 +110,6 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   //Get joined raw and fitted LANDTRENDR for viz
   var joinedTS = changeDetectionLib.getRawAndFittedLT(ts,lt,startYear,endYear,indexName,distDir);
-  Map.addLayer(joinedTS,{},'joinedTS',false);
   
   ///////////////////////////////////////
   //Pop off vertices
@@ -195,6 +194,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
     
   if(addToMap){
+    Map.addLayer(joinedTS,{},'Time Series',false);
+  
     ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
      
       var lossStackI = lossStack.select(['.*_'+i.toString()]);
