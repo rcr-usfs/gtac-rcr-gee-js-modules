@@ -136,16 +136,15 @@ var distImg = ee.Image.cat(lossAfterForSorting.arraySlice(0,0,1).arrayProject([1
                             gainAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['gain_year']]),
                             gainAfterForSorting.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['gain_dur']]).multiply(-1),
                             gainAfterForSorting.arraySlice(0,4,5).arrayProject([1]).arrayFlatten([['gain_mag']]),
-                            gainAfterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['gain_slope']]),
+                            gainAfterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['gain_slope']])
                             );
 
 
 
-// Map.addLayer(forSorting,{},'forSorting',false);
-// Map.addLayer(afterForSorting,{},'afterForSorting',false);
-// Map.addLayer(distImg,{},'distImg',false);
-// // Map.addLayer(sortBy,{},'sortBy',false);
-// // Map.addLayer(duration,{},'duration',false)
+Map.addLayer(forSorting,{},'forSorting',false);
+Map.addLayer(afterForSorting,{},'afterForSorting',false);
+Map.addLayer(distImg,{},'distImg',false);
+
 // //Pull out slow and fast loss and gain
 // var slowLoss = (distImg.select(['mag']).lte(lossMagThresh).or(distImg.select(['slope']).lte(lossSlopeThresh))).and(distImg.select(['dur']).gte(slowLossDurationThresh));
 // var fastLoss = (distImg.select(['mag']).lte(lossMagThresh).or(distImg.select(['slope']).lte(lossSlopeThresh))).and(distImg.select(['dur']).lt(slowLossDurationThresh));
