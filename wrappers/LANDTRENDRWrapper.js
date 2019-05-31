@@ -147,32 +147,32 @@ Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
 Map.addLayer(distImg,{},'distImg',false);
 
 // //Pull out slow and fast loss and gain
-// var slowLoss = (distImg.select(['mag']).lte(lossMagThresh).or(distImg.select(['slope']).lte(lossSlopeThresh))).and(distImg.select(['dur']).gte(slowLossDurationThresh));
-// var fastLoss = (distImg.select(['mag']).lte(lossMagThresh).or(distImg.select(['slope']).lte(lossSlopeThresh))).and(distImg.select(['dur']).lt(slowLossDurationThresh));
-// var gain = distImg.select(['mag']).gt(gainMagThresh).or(distImg.select(['slope']).gt(gainSlopeThresh));
+var slowLoss = (distImg.select(['loss_mag']).lte(lossMagThresh).or(distImg.select(['loss_slope']).lte(lossSlopeThresh))).and(distImg.select(['loss_dur']).gte(slowLossDurationThresh));
+var fastLoss = (distImg.select(['loss_mag']).lte(lossMagThresh).or(distImg.select(['loss_slope']).lte(lossSlopeThresh))).and(distImg.select(['loss_dur']).lt(slowLossDurationThresh));
+var gain = distImg.select(['gain_mag']).gte(gainMagThresh).or(distImg.select(['gain_slope']).gt(gainSlopeThresh));
 
 
 
-// //Mask  loss 
-// fastLoss = distImg.updateMask(fastLoss);
-// slowLoss = distImg.updateMask(slowLoss);
-// gain = distImg.updateMask(gain);
+//Mask  loss 
+fastLoss = distImg.select(['loss_.*']).updateMask(fastLoss);
+slowLoss = distImg.select(['loss_.*']).updateMask(slowLoss);
+gain = distImg.select(['gain_.*']).updateMask(gain);
 
 
 
-// //Set up viz params
-// var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02'};
-// var vizParamsLossMag = {'min':-0.8 ,'max':lossMagThresh,'palette':'D00,F5DEB3'};
+//Set up viz params
+var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02'};
+var vizParamsLossMag = {'min':-0.8 ,'max':lossMagThresh,'palette':'D00,F5DEB3'};
 
-// var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':'54A247,AFDEA8,80C476,308023,145B09'};
-// var vizParamsGainMag = {'min':gainMagThresh,'max':0.8,'palette':'006400,F5DEB3'};
+var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':'54A247,AFDEA8,80C476,308023,145B09'};
+var vizParamsGainMag = {'min':gainMagThresh,'max':0.8,'palette':'006400,F5DEB3'};
 
-// var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
+var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
 
 
-// Map.addLayer(fastLoss.select(['year']),vizParamsLossYear,indexName +' Fast Loss Year',false);
-// Map.addLayer(fastLoss.select(['mag']),vizParamsLossMag,indexName +' Fast Loss Magnitude',false);
-// Map.addLayer(fastLoss.select(['dur']),vizParamsDuration,indexName +' Fast Loss Duration',false);
+Map.addLayer(fastLoss.select(['year']),vizParamsLossYear,indexName +' Fast Loss Year',false);
+Map.addLayer(fastLoss.select(['mag']),vizParamsLossMag,indexName +' Fast Loss Magnitude',false);
+Map.addLayer(fastLoss.select(['dur']),vizParamsDuration,indexName +' Fast Loss Duration',false);
 
 // Map.addLayer(slowLoss.select(['year']),vizParamsLossYear,indexName +' Slow Loss Year',false);
 // Map.addLayer(slowLoss.select(['mag']),vizParamsLossMag,indexName +' Slow Loss Magnitude',false);
