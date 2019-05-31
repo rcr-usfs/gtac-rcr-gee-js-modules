@@ -70,6 +70,20 @@ var allImages = getImagesLib.getLandsatWrapper(geometry,startYear,endYear,startJ
 var images = allImages[0];
 var composites = allImages[1];
 
+
+function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params
+  ,lossMagThresh = 0.15,gainMagThresh = -0.1,slowLossDurationThresh = 3,addToMap = False)
+  if(indexName === undefined || indexName === null){indexName = 'NBR'}
+  if(indexName === undefined || indexName === null){indexName = 'NBR'}
+  {'maxSegments':            6,\
+  'spikeThreshold':         0.9,\
+  'vertexCountOvershoot':   3,\
+  'preventOneYearRecovery': True,\
+  'recoveryThreshold':      0.25,\
+  'pvalThreshold':          0.05,\
+  'bestModelProportion':    0.75,\
+  'minObservationsNeeded':  6\
+  }
 //Get single band time series and set its direction so that a loss in veg is going up
 var ts = composites.select([indexName]);
 var distDir = getImagesLib.changeDirDict[indexName];
