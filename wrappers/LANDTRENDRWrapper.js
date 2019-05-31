@@ -150,8 +150,10 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var diff  = left.subtract(right);
   var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1);
   
+  var duration = diff.arraySlice(0,0,1).multiply(-1);
+  var fittedMag = diff.arraySlice(0,2,3);
   //Set up array for sorting
-  var forSorting = diff.arrayCat(slopes,0);
+  var forSorting = yearsRight.arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
   Map.addLayer(forSorting,{},'forsorting',false);
   // forSorting = right.arraySlice(0,0,1).arrayCat(forSorting,0);
   
