@@ -178,30 +178,30 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var gainSortBy = forGainSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
   
   //Sort the loss and gain and slice off the first column
-  var lossAfterForSorting = forLossSorting.arraySort(lossSortBy).arraySlice(1, 0, 1);
-  var gainAfterForSorting = forGainSorting.arraySort(gainSortBy).arraySlice(1, 0, 1);
+  var lossAfterForSorting = forLossSorting.arraySort(lossSortBy)//.arraySlice(1, 0, 1);
+  var gainAfterForSorting = forGainSorting.arraySort(gainSortBy)//.arraySlice(1, 0, 1);
   
   Map.addLayer(lossAfterForSorting,{},'lossAfterForSorting',false);
   Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
   
   //Loosely based on code from: users/emaprlab/public
   // make an image from the array of attributes for the greatest disturbance
-  var distImg = ee.Image.cat(lossAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['loss_year']]),
-                              lossAfterForSorting.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['loss_dur']]).multiply(-1),
-                              lossAfterForSorting.arraySlice(0,4,5).arrayProject([1]).arrayFlatten([['loss_mag']]),
-                              lossAfterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['loss_slope']]),
-                              gainAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['gain_year']]),
-                              gainAfterForSorting.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['gain_dur']]).multiply(-1),
-                              gainAfterForSorting.arraySlice(0,4,5).arrayProject([1]).arrayFlatten([['gain_mag']]),
-                              gainAfterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['gain_slope']])
-                              );
+  // var distImg = ee.Image.cat(lossAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['loss_year']]),
+  //                             lossAfterForSorting.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['loss_dur']]).multiply(-1),
+  //                             lossAfterForSorting.arraySlice(0,4,5).arrayProject([1]).arrayFlatten([['loss_mag']]),
+  //                             lossAfterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['loss_slope']]),
+  //                             gainAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['gain_year']]),
+  //                             gainAfterForSorting.arraySlice(0,2,3).arrayProject([1]).arrayFlatten([['gain_dur']]).multiply(-1),
+  //                             gainAfterForSorting.arraySlice(0,4,5).arrayProject([1]).arrayFlatten([['gain_mag']]),
+  //                             gainAfterForSorting.arraySlice(0,1,2).arrayProject([1]).arrayFlatten([['gain_slope']])
+  //                             );
   
   
   
   // // Map.addLayer(forSorting,{},'forSorting',false);
   // // Map.addLayer(lossAfterForSorting,{},'lossAfterForSorting',false);
   // // Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
-  Map.addLayer(distImg,{},'distImg',false);
+  // Map.addLayer(distImg,{},'distImg',false);
   
   // // //Pull out slow and fast loss and gain
   // var loss = distImg.select(['loss_mag']).lte(lossMagThresh).or(distImg.select(['loss_slope']).lte(lossSlopeThresh));
