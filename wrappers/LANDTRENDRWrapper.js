@@ -7,10 +7,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-106.84387059260797, 40.8682392270605],
-          [-106.84387059260797, 39.10916732123826],
-          [-104.85534520198297, 39.10916732123826],
-          [-104.85534520198297, 40.8682392270605]]], null, false);
+        [[[-114.8126495682767, 48.58524635048106],
+          [-114.8126495682767, 48.13631682610862],
+          [-113.5657013260892, 48.13631682610862],
+          [-113.5657013260892, 48.58524635048106]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for LANDTRENDR across an annual time series
 //Supports multiple bands and/or indices
@@ -185,7 +185,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
   
   
-  var getLTvertStack = function(LTresult,run_params,nBands,bandNames) {
+  function getLTStac(LTresult,run_params,nBands,bandNames) {
   var emptyArray = [];                              // make empty array to hold another array whose length will vary depending on maxSegments parameter    
   var vertLabels = [];                              // make empty array to hold band names whose length will vary depending on maxSegments parameter 
   var iString;                                      // initialize variable to hold vertex number
