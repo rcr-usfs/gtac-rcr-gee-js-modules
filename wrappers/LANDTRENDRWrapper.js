@@ -184,8 +184,9 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   // Map.addLayer(distImg,{},'distImg',false);
   
   // //Pull out slow and fast loss and gain
-  var slowLoss = (distImg.select(['loss_mag']).lte(lossMagThresh).or(distImg.select(['loss_slope']).lte(lossSlopeThresh))).and(distImg.select(['loss_dur']).gte(slowLossDurationThresh));
-  var fastLoss = (distImg.select(['loss_mag']).lte(lossMagThresh).or(distImg.select(['loss_slope']).lte(lossSlopeThresh))).and(distImg.select(['loss_dur']).lt(slowLossDurationThresh));
+  var loss = (distImg.select(['loss_mag']).lte(lossMagThresh).or(distImg.select(['loss_slope']).lte(lossSlopeThresh)))
+  var slowLoss = loss.and(distImg.select(['loss_dur']).gte(slowLossDurationThresh));
+  var fastLoss = loss.and(distImg.select(['loss_dur']).lt(slowLossDurationThresh));
   var gain = distImg.select(['gain_mag']).gte(gainMagThresh).or(distImg.select(['gain_slope']).gt(gainSlopeThresh));
   
   
