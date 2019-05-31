@@ -194,7 +194,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
     
   var howManyToPull = 3;
   ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
-    print(i)
+   
     var lossStackI = lossStack.select(['.*_'+i.toString()]);
     var gainStackI = gainStack.select(['.*_'+i.toString()]);
     
