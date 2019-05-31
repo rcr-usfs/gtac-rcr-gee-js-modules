@@ -140,14 +140,11 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var gainMask = magGainMask.or(slopeGainMask);
   
   
-  Map.addLayer(lossMask,{},'lossmask',false);
-  Map.addLayer(gainMask,{},'gainMask',false);
-   
+
   var forLossSorting = forSorting.arrayMask(lossMask);
   var forGainSorting = forSorting.arrayMask(gainMask);
   
-  Map.addLayer(forLossSorting,{},'forLossSorting',false);
-  Map.addLayer(forGainSorting,{},'forGainSorting',false);
+
    
   //Dictionaries for choosing the column and direction to multiply the column for sorting
   //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
@@ -178,20 +175,14 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var gainSortBy = forGainSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
   
   //Sort the loss and gain and slice off the first column
-  var lossAfterForSorting = forLossSorting.arraySort(lossSortBy)//.arraySlice(1, 0, 1);
-  var gainAfterForSorting = forGainSorting.arraySort(gainSortBy)//.arraySlice(1, 0, 1);
-  
-  Map.addLayer(lossAfterForSorting,{},'lossAfterForSorting',false);
-  Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
+  var lossAfterForSorting = forLossSorting.arraySort(lossSortBy);
+  var gainAfterForSorting = forGainSorting.arraySort(gainSortBy);
   
   
   var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,run_params,5,['loss_yr_','loss_slope_','loss_dur_','loss_raw_mag_','loss_fit_mag_']);
   var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,run_params,5,['gain_yr_','gain_slope_','gain_dur_','gain_raw_mag_','gain_fit_mag_']);
   
-  Map.addLayer(lossStack,{},'lossstack',false);
-  Map.addLayer(gainStack,{},'gainStack',false);
-  
-  
+
   //Set up viz params
   var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02'};
   var vizParamsLossMag = {'min':-0.8 ,'max':lossMagThresh,'palette':'D00,F5DEB3'};
