@@ -212,6 +212,9 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
 
   return ltVertStack;                               // return the stack
 };
+
+var lossStack = getLTvertStack(lossAfterForSorting,run_params);
+Map.addLayer(lossStack,{},'lossstack',false);
   //Loosely based on code from: users/emaprlab/public
   // make an image from the array of attributes for the greatest disturbance
   // var distImg = ee.Image.cat(lossAfterForSorting.arraySlice(0,0,1).arrayProject([1]).arrayFlatten([['loss_year']]),
