@@ -185,19 +185,31 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   Map.addLayer(gainAfterForSorting,{},'gainAfterForSorting',false);
   
   
-var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,run_params,5,['loss_yr_','loss_slope_','loss_dur_','loss_raw_','loss_fit_']);
-var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,run_params,5,['gain_yr_','gain_slope_','gain_dur_','gain_raw_','gain_fit_']);
-
-Map.addLayer(lossStack,{},'lossstack',false);
-Map.addLayer(gainStack,{},'gainStack',false);
- 
-var howManyToPull = 3;
-ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
-  print(i)
-  var lossStackI = lossStack.select(['.*_'+i.toString()]);
-  Map.addLayer(lossStackI,{},i.toString(),false);
-})
+  var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,run_params,5,['loss_yr_','loss_slope_','loss_dur_','loss_raw_','loss_fit_']);
+  var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,run_params,5,['gain_yr_','gain_slope_','gain_dur_','gain_raw_','gain_fit_']);
   
+  Map.addLayer(lossStack,{},'lossstack',false);
+  Map.addLayer(gainStack,{},'gainStack',false);
+  
+  
+  //Set up viz params
+  var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02'};
+  var vizParamsLossMag = {'min':-0.8 ,'max':lossMagThresh,'palette':'D00,F5DEB3'};
+  
+  var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':'54A247,AFDEA8,80C476,308023,145B09'};
+  var vizParamsGainMag = {'min':gainMagThresh,'max':0.8,'palette':'F5DEB3,006400'};
+  
+  var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
+    
+  var howManyToPull = 3;
+  ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
+    print(i)
+    var lossStackI = lossStack.select(['.*_'+i.toString()]);
+    var gainStackI = gainStack.select(['.*_'+i.toString()]);
+    
+    Map.addLayer(lossStackI,{},i.toString(),false);
+  })
+    
   // //Mask  loss 
   // fastLoss = distImg.select(['loss_.*']).updateMask(fastLoss);
   // slowLoss = distImg.select(['loss_.*']).updateMask(slowLoss);
@@ -205,14 +217,6 @@ ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
   
   
   
-  // //Set up viz params
-  // var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02'};
-  // var vizParamsLossMag = {'min':-0.8 ,'max':lossMagThresh,'palette':'D00,F5DEB3'};
-  
-  // var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':'54A247,AFDEA8,80C476,308023,145B09'};
-  // var vizParamsGainMag = {'min':gainMagThresh,'max':0.8,'palette':'F5DEB3,006400'};
-  
-  // var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
   
   // if(addToMap){
   //   Map.addLayer(fastLoss.select(['loss_year']),vizParamsLossYear,indexName +' Fast Loss Year',false);
