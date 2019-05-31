@@ -64,6 +64,10 @@ var run_params = {
   bestModelProportion:    0.75,
   minObservationsNeeded:  6
 };
+
+//Whether to add outputs to map
+var addToMap = true;
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 //Get images
 var allImages = getImagesLib.getLandsatWrapper(geometry,startYear,endYear,startJulian,endJulian);
@@ -207,7 +211,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   Map.addLayer(gain.select(['gain_mag']),vizParamsGainMag,indexName +' Gain Magnitude',false);
   Map.addLayer(gain.select(['gain_dur']),vizParamsDuration,indexName +' Gain Duration',false);
 }
-simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,gainMagThresh,slowLossDurationThresh,addToMap)
+simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,gainMagThresh,slowLossDurationThresh,addToMap)
 // Map.addLayer(fastLoss)
 // Map.addLayer(fastLossYears)
 
