@@ -200,13 +200,13 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
       var lossStackI = lossStack.select(['.*_'+i.toString()]);
       var gainStackI = gainStack.select(['.*_'+i.toString()]);
       
-      Map.addLayer(lossStackI.select(['loss_yr.*']),vizParamsLossYear,i.toString()+'_'+indexName +' Loss Year',false);
-      Map.addLayer(lossStackI.select(['loss_fit_mag.*']),vizParamsGainMag,i.toString()+'_'+indexName +' Loss Magnitude',false);
-      Map.addLayer(lossStackI.select(['loss_dur.*']),vizParamsDuration,i.toString()+'_'+indexName +' Loss Duration',false);
+      Map.addLayer(lossStackI.select(['loss_yr.*']),vizParamsLossYear,i.toString()+' '+indexName +' Loss Year',false);
+      Map.addLayer(lossStackI.select(['loss_fit_mag.*']),vizParamsGainMag,i.toString()+' '+indexName +' Loss Magnitude',false);
+      Map.addLayer(lossStackI.select(['loss_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Loss Duration',false);
       
-      Map.addLayer(gainStackI.select(['gain_yr.*']),vizParamsGainYear,i.toString()+'_'+indexName +' Gain Year',false);
-      Map.addLayer(gainStackI.select(['gain_fit_mag.*']),vizParamsLossMag,i.toString()+'_'+indexName +' Gain Magnitude',false);
-      Map.addLayer(gainStackI.select(['gain_dur.*']),vizParamsDuration,i.toString()+'_'+indexName +' Gain Duration',false);
+      Map.addLayer(gainStackI.select(['gain_yr.*']),vizParamsGainYear,i.toString()+' '+indexName +' Gain Year',false);
+      Map.addLayer(gainStackI.select(['gain_fit_mag.*']),vizParamsLossMag,i.toString()+' '+indexName +' Gain Magnitude',false);
+      Map.addLayer(gainStackI.select(['gain_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Gain Duration',false);
     });
   }
   return [rawLt,lossStack.addBands(gainStack)];
