@@ -76,7 +76,7 @@ var images = allImages[0];
 var composites = allImages[1];
 
 
-function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,gainMagThresh,slowLossDurationThresh,addToMap){
+function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap){
   
   if(indexName === undefined || indexName === null){indexName = 'NBR'}
   if(run_params === undefined || run_params === null){
