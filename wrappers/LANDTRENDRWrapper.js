@@ -24,6 +24,9 @@ changeDetectionLib.getExistingChangeData();
 ////////////////////////////////////////////////////////////////////////////////////////////
 //Parameters
 
+//Study area
+var studyArea = geometry;
+
 //Date parameters
 var startYear = 1984;
 var endYear = 2018;
@@ -91,7 +94,7 @@ var scale = null;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //Get images
-var allImages = getImagesLib.getLandsatWrapper(geometry,startYear,endYear,startJulian,endJulian);
+var allImages = getImagesLib.getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian);
 var images = allImages[0];
 var composites = allImages[1];
 
