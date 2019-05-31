@@ -68,6 +68,7 @@ var run_params = {
 //Whether to add outputs to map
 var addToMap = true;
 
+var exportOutputs
 ////////////////////////////////////////////////////////////////////////////////////////////
 //Get images
 var allImages = getImagesLib.getLandsatWrapper(geometry,startYear,endYear,startJulian,endJulian);
