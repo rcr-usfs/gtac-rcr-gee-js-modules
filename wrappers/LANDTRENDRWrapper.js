@@ -180,9 +180,9 @@ Map.addLayer(slowLoss.select(['loss_dur']),vizParamsDuration,indexName +' Slow L
 
 
 
-Map.addLayer(gain.select(['year']),vizParamsGainYear,indexName +' Gain Year',false);
-Map.addLayer(gain.select(['mag']),vizParamsGainMag,indexName +' Gain Magnitude',false);
-Map.addLayer(gain.select(['dur']),vizParamsDuration,indexName +' Gain Duration',false);
+Map.addLayer(gain.select(['gain_year']),vizParamsGainYear,indexName +' Gain Year',false);
+Map.addLayer(gain.select(['gain_mag']),vizParamsGainMag,indexName +' Gain Magnitude',false);
+Map.addLayer(gain.select(['gain_dur']),vizParamsDuration,indexName +' Gain Duration',false);
 
 
 // Map.addLayer(fastLoss)
