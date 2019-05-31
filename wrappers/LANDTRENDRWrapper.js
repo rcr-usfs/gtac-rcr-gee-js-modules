@@ -114,7 +114,9 @@ var gainColumnDict = {'newest':[0,-1],
                 };
 var lossSortValue = lossColumnDict[chooseWhichLoss];
 var gainSortValue = lossColumnDict[gainColumnDict];
-var sortBy = forSorting.arraySlice(0,sortByValue[0],sortByValue[0]+1).multiply(sortByValue[1]);
+
+var lossSortBy = forSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
+var gainSortBy = forSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
 var afterForSorting = forSorting.arraySort(sortBy).arraySlice(1, 0, 1);
 
 
