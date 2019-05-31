@@ -153,6 +153,7 @@ function getLTStac(LTresult,run_params,nBands,bandNames) {
     vertLabels.push("vert_"+iString);               // make a band name for given vertex
     emptyArray.push(-32768);                             // fill in emptyArray
   }
+  //Set up empty array list
   var emptyArrayList = [];
   ee.List.sequence(1,nBands).getInfo().map(function(i){emptyArrayList.push(emptyArray)});
   var zeros = ee.Image(ee.Array(emptyArrayList));        // make an image to fill holes in result 'LandTrendr' array where vertices found is not equal to maxSegments parameter plus 1
