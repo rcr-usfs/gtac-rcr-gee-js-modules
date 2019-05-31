@@ -50,7 +50,7 @@ var gainSlopeThresh = 0.05;
 
 var slowLossDurationThresh = 3;
 
-//Choose from: 'newest','oldest','largest','smallest','shortest':[1,-1],'longest'
+//Choose from: 'newest','oldest','largest','smallest','steepest','mostGradual','shortest','longest'
 var chooseWhichLoss = 'largest';
 var chooseWhichGain = 'largest';
 //Define landtrendr params
