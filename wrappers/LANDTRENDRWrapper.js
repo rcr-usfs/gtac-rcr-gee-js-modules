@@ -235,7 +235,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var gainThematic = gainStack.select(['.*_yr_.*']).int16().addBands(gainStack.select(['.*_dur_.*']).byte());
   var gainContinuous = gainStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
   gainStack = gainThematic.addBands(gainContinuous);
-  print(gainStack)
+  
+  
   //Set up viz params
   var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02'};
   var vizParamsLossMag = {'min':-0.8*10000 ,'max':lossMagThresh*10000,'palette':'D00,F5DEB3'};
