@@ -130,18 +130,17 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   ts = ts.select([indexName]);
   var distDir = getImagesLib.changeDirDict[indexName];
   var tsT = ts.map(function(img){return changeDetectionLib.multBands(img,distDir,1)});
-  var count = tsT.count();
-  count = count.unmask()
-  var countMask = count.gte(6);
-  Map.addLayer(count,{},'count')
-  Map.addLayer(tsT,{},'before')
+  
+  //Find areas with insufficient data to run LANDTRENDR
+  var countMask = tsT.count().unmask().gte(6);
+
   tsT = tsT.map(function(img){
     var m = img.mask();
     m = m.or(countMask.not());
     img = img.mask(m);
-    img = img.where(countMask.not(),-32768)
+    img = img.where(countMask.not(),-32768);
     return img});
-  Map.addLayer(tsT,{},'after')
+
   run_params.timeSeries = tsT;
   
   //Run LANDTRENDR
