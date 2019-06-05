@@ -238,7 +238,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   //Remask areas with insufficient data that were given dummy values 
   lossStack = lossStack.updateMask(countMask);
-  gainStack = lossStack.updateMask(countMask);
+  gainStack = gainStack.updateMask(countMask);
   
   
   //Set up viz params
