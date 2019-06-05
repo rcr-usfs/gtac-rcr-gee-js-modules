@@ -104,7 +104,7 @@ var allImages = getImagesLib.getLandsatWrapper(studyArea,startYear,endYear,start
 var images = allImages[0];
 var composites = allImages[1];
 
-composites = composites.map(function(img){return composites.unmask()})
+composites = composites.map(function(img){return img.unmask()})
 function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap,howManyToPull){
   
   if(indexName === undefined || indexName === null){indexName = 'NBR'}
