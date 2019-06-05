@@ -42,7 +42,7 @@ var indexName = 'NBR';
 //Do not make less than 1
 //If you only want the first loss and/or gain, choose 1
 //Generally any past 2 are noise
-var howManyToPull = 1;
+var howManyToPull = 2;
 
 //Parameters to identify suitable LANDTRENDR segments
 
@@ -260,7 +260,7 @@ var ltOut = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,
 var ltOutStack = ltOut[1];
 print(ltOutStack)
 //Export  stack
-var exportName = outputName + '_Stack_'+indexName;
+var exportName = outputName + '_Stack2_'+indexName;
 var exportPath = exportPathRoot + '/'+ exportName;
 
 
