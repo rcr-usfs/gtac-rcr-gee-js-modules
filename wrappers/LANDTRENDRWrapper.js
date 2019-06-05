@@ -136,6 +136,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
 
   tsT = tsT.map(function(img){
     var m = img.mask();
+    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
     m = m.or(countMask.not());
     img = img.mask(m);
     img = img.where(countMask.not(),-32768);
