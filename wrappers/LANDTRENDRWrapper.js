@@ -208,13 +208,21 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,howManyToPull,['loss_yr_','loss_dur_','loss_mag_','loss_slope_']);
   var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,howManyToPull,['gain_yr_','gain_dur_','gain_mag_','gain_slope_']);
   
-
+  //Convert to byte/int16 to save space
+  var lossThematic = lossStack.select(['.*_yr_.*']).int16().addBands(lossStack.select(['.*_dur_.*']).byte());
+  var lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
+  lossStack = lossThematic.addBands(lossContinuous);
+  
+  var gainThematic = gainStack.select(['.*_yr_.*']).int16().addBands(gainStack.select(['.*_dur_.*']).byte());
+  var gainContinuous = gainStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
+  gainStack = gainThematic.addBands(gainContinuous);
+  print(gainStack)
   //Set up viz params
   var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02'};
-  var vizParamsLossMag = {'min':-0.8 ,'max':lossMagThresh,'palette':'D00,F5DEB3'};
+  var vizParamsLossMag = {'min':-0.8*10000 ,'max':lossMagThresh*10000,'palette':'D00,F5DEB3'};
   
   var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':'54A247,AFDEA8,80C476,308023,145B09'};
-  var vizParamsGainMag = {'min':gainMagThresh,'max':0.8,'palette':'F5DEB3,006400'};
+  var vizParamsGainMag = {'min':gainMagThresh*10000,'max':0.8*10000,'palette':'F5DEB3,006400'};
   
   var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
   
@@ -238,6 +246,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
     });
   }
   var outStack = lossStack.addBands(gainStack);
+  
   return [rawLt,outStack];
 }
 var ltOut = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap)
