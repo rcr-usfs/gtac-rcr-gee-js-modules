@@ -132,6 +132,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var tsT = ts.map(function(img){return changeDetectionLib.multBands(img,distDir,1)});
   var count = tsT.count();
   var countMask = count.gte(6);
+  Map.addLayer(count,{},'count')
   Map.addLayer(tsT,{},'before')
   tsT = tsT.map(function(img){
     var m = img.mask();
