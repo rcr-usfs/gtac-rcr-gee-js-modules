@@ -38,6 +38,12 @@ var endJulian = 250;
 //Other good options are wetness and tcAngleBG
 var indexName = 'NBR';
 
+//How many significant loss and/or gain segments to include
+//Do not make less than 1
+//If you only want the first loss and/or gain, choose 1
+//Generally any past 2 are noise
+var howManyToPull = 2;
+
 //Parameters to identify suitable LANDTRENDR segments
 
 //Thresholds to identify loss in vegetation
@@ -249,13 +255,24 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   return [rawLt,outStack];
 }
-var ltOut = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap)
+var ltOut = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap,howManyToPull)
 var ltOutStack = ltOut[1];
 print(ltOutStack)
 //Export  stack
 var exportName = outputName + '_Stack_'+indexName;
 var exportPath = exportPathRoot + '/'+ exportName;
 
-var pyramidingPolicyObject = {'.*_yr_.*':'mode','.*_dur_.*':'mode','.*_mag_.*':'mean','.*_slope_.*':'mean'};
-getImagesLib.exportToAssetWrapper2(ltOutStack,exportName,exportPath,
-  pyramidingPolicyObject,studyArea,scale,crs,transform);
+
+var pyrObj = {'_yr_':'mode','_dur_':'mode','_mag_':'mean','_slope_':'mean'};
+var possible = ['loss','gain'];
+var outObj = {};
+possible.map(function(p){
+  Object.keys(pyrObj).map(function(key){
+    ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
+      var kt = p + key+i.toString();
+      outObj[kt]= pyrObj[key];
+    });
+  });
+});
+
+getImagesLib.exportToAssetWrapper2(ltOutStack,exportName,exportPath,outObj,studyArea,scale,crs,transform);
