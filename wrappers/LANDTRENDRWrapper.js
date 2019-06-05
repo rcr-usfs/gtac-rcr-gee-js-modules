@@ -255,7 +255,7 @@ print(ltOutStack)
 //Export  stack
 var exportName = outputName + '_Stack_'+indexName;
 var exportPath = exportPathRoot + '/'+ exportName;
-// var pyramidingPolicyObject =
-// getImageLib.exportToAssetWrapper2(ltOutStack,exportName,exportPath,
-//   pyramidingPolicyObject,roi,scale,crs,transform);
-//
+
+var pyramidingPolicyObject = {'.*_yr_.*':'mode','.*_dur_.*':'mode','.*_mag_.*':'mean','.*_slope_.*':'mean'};
+getImagesLib.exportToAssetWrapper2(ltOutStack,exportName,exportPath,
+  pyramidingPolicyObject,studyArea,scale,crs,transform);
