@@ -236,7 +236,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var gainContinuous = gainStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
   gainStack = gainThematic.addBands(gainContinuous);
   
-  //Remask areas that were given dummy values
+  //Remask areas with insufficient data that were given dummy values 
   lossStack = lossStack.updateMask(countMask);
   gainStack = lossStack.updateMask(gainStack);
   
