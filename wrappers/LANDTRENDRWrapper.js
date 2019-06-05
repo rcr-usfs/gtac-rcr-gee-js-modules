@@ -42,7 +42,7 @@ var indexName = 'NBR';
 //Do not make less than 1
 //If you only want the first loss and/or gain, choose 1
 //Generally any past 2 are noise
-var howManyToPull = 2;
+var howManyToPull = 1;
 
 //Parameters to identify suitable LANDTRENDR segments
 
