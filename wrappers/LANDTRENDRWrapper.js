@@ -134,9 +134,10 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var countMask = count.gte(6);
   tsT = tsT.map(function(img){
     var m = img.mask();
-    img = img.mask(ee.Image(1));
+    m = m.or(countMask.not());
+    img = img.mask(m);
     
-    return img.unmask()});
+    return img});
   
   run_params.timeSeries = tsT;
   
