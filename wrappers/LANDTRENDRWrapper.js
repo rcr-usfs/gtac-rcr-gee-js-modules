@@ -129,7 +129,11 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
   var distDir = getImagesLib.changeDirDict[indexName];
-  run_params.timeSeries = ts.map(function(img){return changeDetectionLib.multBands(img,distDir,1)});
+  var tsT = ts.map(function(img){return changeDetectionLib.multBands(img,distDir,1)});
+  var count = tsT.count();
+  var countMask = count.gte(6);
+  tsT = tsT.map(function(img){return img.unmask()});
+  run_params.timeSeries = tsT;
   
   //Run LANDTRENDR
   var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
