@@ -104,7 +104,7 @@ var allImages = getImagesLib.getLandsatWrapper(studyArea,startYear,endYear,start
 var images = allImages[0];
 var composites = allImages[1];
 
-
+composites = composites.map(function(img){return composites.unmask()})
 function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap,howManyToPull){
   
   if(indexName === undefined || indexName === null){indexName = 'NBR'}
@@ -255,6 +255,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   return [rawLt,outStack];
 }
+Map.addLayer(composites)
 var ltOut = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap,howManyToPull)
 var ltOutStack = ltOut[1];
 print(ltOutStack)
