@@ -132,7 +132,11 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var tsT = ts.map(function(img){return changeDetectionLib.multBands(img,distDir,1)});
   var count = tsT.count();
   var countMask = count.gte(6);
-  tsT = tsT.map(function(img){return img.unmask()});
+  tsT = tsT.map(function(img){
+    var m = img.mask();
+    img = img.mask(ee.Image(1));
+    
+    return img.unmask()});
   
   run_params.timeSeries = tsT;
   
