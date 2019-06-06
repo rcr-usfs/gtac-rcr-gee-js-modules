@@ -437,6 +437,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   if(lossMagThresh === undefined || lossMagThresh === null){lossMagThresh =-0.15}
   if(gainMagThresh === undefined || gainMagThresh === null){gainMagThresh =0.1}
   if(slowLossDurationThresh === undefined || slowLossDurationThresh === null){slowLossDurationThresh =3}
+  if(chooseWhichLoss === undefined || chooseWhichLoss === null){chooseWhichLoss ='largest'}
+  if(chooseWhichGain === undefined || chooseWhichGain === null){chooseWhichGain ='largest'}
   if(addToMap === undefined || addToMap === null){addToMap =true}
   if(howManyToPull === undefined || howManyToPull === null){howManyToPull =2}
   
