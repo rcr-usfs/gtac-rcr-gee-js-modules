@@ -600,6 +600,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   }
   var outStack = lossStack.addBands(gainStack);
   
+  //Add indexName to bandnames
   var bns = outStack.bandNames();
   var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
   outStack = outStack.select(bns,outBns);
