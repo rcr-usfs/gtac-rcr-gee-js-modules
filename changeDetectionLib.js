@@ -1,6 +1,12 @@
 //Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
+var lossYearPalette =  'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02';
+var lossMagPalette = 'D00,F5DEB3';
+var gainYearPalette =  '54A247,AFDEA8,80C476,308023,145B09';
+var gainMagPalette = 'F5DEB3,006400';
+var changeDurationPalette = 'BD1600,E2F400,0C2780';
+
 //////////////////////////////////////////////////////////////////////////
 // Function to compute R^2 (Coefficient of Determination) for a linear model.
 // Written by Joshua Goldstein (joshuagoldstein@fs.fed.us) on 21-Sept-2016
@@ -559,20 +565,15 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   lossStack = lossStack.updateMask(countMask);
   gainStack = gainStack.updateMask(countMask);
   
-var lossYearPalette =  'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02';
-var lossMagPalette = 'D00,F5DEB3';
-var gainYearPalette =  'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02';
-var gainMagPalette = 'D00,F5DEB3';
-
 
   //Set up viz params
   var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':lossYearPalette};
   var vizParamsLossMag = {'min':-0.8*10000 ,'max':lossMagThresh*10000,'palette':lossMagPalette};
   
-  var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':'54A247,AFDEA8,80C476,308023,145B09'};
-  var vizParamsGainMag = {'min':gainMagThresh*10000,'max':0.8*10000,'palette':'F5DEB3,006400'};
+  var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':gainYearPalette};
+  var vizParamsGainMag = {'min':gainMagThresh*10000,'max':0.8*10000,'palette':gainMagPalette};
   
-  var vizParamsDuration = {'min':1,'max':5,'palette':'BD1600,E2F400,0C2780'};
+  var vizParamsDuration = {'min':1,'max':5,'palette':changeDurationPalette};
   
   
   if(addToMap){
