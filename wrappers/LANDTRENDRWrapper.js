@@ -110,7 +110,7 @@ var composites = allImages[1];
 //Run LT and get output stack
 var ltOut = changeDetectionLib.simpleLANDTRENDR(composites,startYear,endYear)//,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull);
 var ltOutStack = ltOut[1];
-
+print(ltOutStack)
 //Export  stack
 var exportName = outputName + '_Stack_'+indexName;
 var exportPath = exportPathRoot + '/'+ exportName;
@@ -122,11 +122,11 @@ var outObj = {};
 possible.map(function(p){
   Object.keys(pyrObj).map(function(key){
     ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
-      var kt = p + key+i.toString();
+      var kt = indexName + '_LT_'+p + key+i.toString();
       outObj[kt]= pyrObj[key];
     });
   });
 });
-
+print(outObj)
 //Export output
 getImagesLib.exportToAssetWrapper2(ltOutStack,exportName,exportPath,outObj,studyArea,scale,crs,transform);
