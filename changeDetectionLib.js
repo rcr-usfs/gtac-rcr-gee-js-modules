@@ -435,7 +435,9 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
     };
   }
   if(lossMagThresh === undefined || lossMagThresh === null){lossMagThresh =-0.15}
+  if(lossSlopeThresh === undefined || lossSlopeThresh === null){lossSlopeThresh =-0.1}
   if(gainMagThresh === undefined || gainMagThresh === null){gainMagThresh =0.1}
+  if(gainSlopeThresh === undefined || gainSlopeThresh === null){gainSlopeThresh =0.1}
   if(slowLossDurationThresh === undefined || slowLossDurationThresh === null){slowLossDurationThresh =3}
   if(chooseWhichLoss === undefined || chooseWhichLoss === null){chooseWhichLoss ='largest'}
   if(chooseWhichGain === undefined || chooseWhichGain === null){chooseWhichGain ='largest'}
