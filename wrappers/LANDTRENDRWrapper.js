@@ -19,9 +19,9 @@ var geometry =
 
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-var cd = require('users/USFS_GTAC/modules:changeDetectionLib.js');
-cd.getExistingChangeData();
-print(cd)
+var changeDetectionLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+changeDetectionLib.getExistingChangeData();
+print(changeDetectionLib)
 ////////////////////////////////////////////////////////////////////////////////////////////
 //Parameters
 
@@ -108,7 +108,7 @@ var composites = allImages[1];
 
 
 
-var ltOut = cd.simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap,howManyToPull)
+var ltOut = changeDetectionLib.simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull)
 var ltOutStack = ltOut[1];
 
 //Export  stack
