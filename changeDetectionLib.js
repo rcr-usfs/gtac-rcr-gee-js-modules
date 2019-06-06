@@ -444,7 +444,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
   var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return .multBands(img,distDir,1)});
+  var tsT = ts.map(function(img){return multBands(img,distDir,1)});
   
   //Find areas with insufficient data to run LANDTRENDR
   var countMask = tsT.count().unmask().gte(6);
