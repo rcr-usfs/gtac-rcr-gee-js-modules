@@ -13,9 +13,9 @@ var geometry =
           [-113.5657013260892, 48.58524635048106]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for LANDTRENDR across an annual time series
-//Supports multiple bands and/or indices
-//Returns the raw LANDTRENDR output, a fitted time series and
-//a thresholded year, magnitude, and duration of greatest disturbance
+//Returns a thresholded LANDTRENDR output
+//The user can specify how to sort the LT segments and how many to export
+
 
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
