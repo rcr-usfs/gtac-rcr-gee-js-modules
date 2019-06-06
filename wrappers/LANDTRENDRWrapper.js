@@ -107,7 +107,7 @@ var composites = allImages[1];
 
 
 
-
+//Run LT and get output stack
 var ltOut = changeDetectionLib.simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull)
 var ltOutStack = ltOut[1];
 
@@ -115,7 +115,7 @@ var ltOutStack = ltOut[1];
 var exportName = outputName + '_Stack_'+indexName;
 var exportPath = exportPathRoot + '/'+ exportName;
 
-
+//Set up proper resampling for each band
 var pyrObj = {'_yr_':'mode','_dur_':'mode','_mag_':'mean','_slope_':'mean'};
 var possible = ['loss','gain'];
 var outObj = {};
@@ -128,4 +128,5 @@ possible.map(function(p){
   });
 });
 
+//Export output
 getImagesLib.exportToAssetWrapper2(ltOutStack,exportName,exportPath,outObj,studyArea,scale,crs,transform);
