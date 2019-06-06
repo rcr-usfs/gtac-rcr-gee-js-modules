@@ -82,7 +82,7 @@ var addToMap = true;
 var exportLTStack = false;
 
 //Set up Names for the export
-var outputName = 'LT_';
+var outputName = 'LT_Test';
 
 //Provide location LT stack will be exported to
 //This should be an asset folder or an asset imageCollection
