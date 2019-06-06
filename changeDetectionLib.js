@@ -430,6 +430,8 @@ function getRawAndFittedLT(rawTs,lt,startYear,endYear,indexName,distDir){
   
 
 }
+//////////////////////////////////////////////////////////////////////////////////
+//Function for running LT, thresholding the segments for both loss and gain, sort them, and convert them to an image stack
 function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull){
   
   if(indexName === undefined || indexName === null){indexName = 'NBR'}
