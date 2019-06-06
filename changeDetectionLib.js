@@ -559,10 +559,15 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   lossStack = lossStack.updateMask(countMask);
   gainStack = gainStack.updateMask(countMask);
   
-  
+var lossYearPalette =  'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02';
+var lossMagPalette = 'D00,F5DEB3';
+var gainYearPalette =  'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02';
+var gainMagPalette = 'D00,F5DEB3';
+
+
   //Set up viz params
-  var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02'};
-  var vizParamsLossMag = {'min':-0.8*10000 ,'max':lossMagThresh*10000,'palette':'D00,F5DEB3'};
+  var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':lossYearPalette};
+  var vizParamsLossMag = {'min':-0.8*10000 ,'max':lossMagThresh*10000,'palette':lossMagPalette};
   
   var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':'54A247,AFDEA8,80C476,308023,145B09'};
   var vizParamsGainMag = {'min':gainMagThresh*10000,'max':0.8*10000,'palette':'F5DEB3,006400'};
