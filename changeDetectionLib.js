@@ -444,7 +444,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
   var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return changeDetectionLib.multBands(img,distDir,1)});
+  var tsT = ts.map(function(img){return .multBands(img,distDir,1)});
   
   //Find areas with insufficient data to run LANDTRENDR
   var countMask = tsT.count().unmask().gte(6);
@@ -466,7 +466,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   
   //Get joined raw and fitted LANDTRENDR for viz
-  var joinedTS = changeDetectionLib.getRawAndFittedLT(ts,lt,startYear,endYear,indexName,distDir);
+  var joinedTS = getRawAndFittedLT(ts,lt,startYear,endYear,indexName,distDir);
   
   ///////////////////////////////////////
   //Pop off vertices
@@ -539,8 +539,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var gainAfterForSorting = forGainSorting.arraySort(gainSortBy);
   
   //Convert array to image stck
-  var lossStack = changeDetectionLib.getLTStack(lossAfterForSorting,howManyToPull,['loss_yr_','loss_dur_','loss_mag_','loss_slope_']);
-  var gainStack = changeDetectionLib.getLTStack(gainAfterForSorting,howManyToPull,['gain_yr_','gain_dur_','gain_mag_','gain_slope_']);
+  var lossStack = getLTStack(lossAfterForSorting,howManyToPull,['loss_yr_','loss_dur_','loss_mag_','loss_slope_']);
+  var gainStack = getLTStack(gainAfterForSorting,howManyToPull,['gain_yr_','gain_dur_','gain_mag_','gain_slope_']);
   
   //Convert to byte/int16 to save space
   var lossThematic = lossStack.select(['.*_yr_.*']).int16().addBands(lossStack.select(['.*_dur_.*']).byte());
