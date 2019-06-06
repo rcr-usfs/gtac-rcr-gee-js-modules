@@ -420,7 +420,7 @@ function getRawAndFittedLT(rawTs,lt,startYear,endYear,indexName,distDir){
   
 
 }
-function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,addToMap,howManyToPull){
+function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull){
   
   if(indexName === undefined || indexName === null){indexName = 'NBR'}
   if(run_params === undefined || run_params === null){
