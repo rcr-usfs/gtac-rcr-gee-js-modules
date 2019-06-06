@@ -21,6 +21,7 @@ var geometry =
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var changeDetectionLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 changeDetectionLib.getExistingChangeData();
+print(changeDetectionLib)
 ////////////////////////////////////////////////////////////////////////////////////////////
 //Parameters
 
