@@ -6,6 +6,11 @@ var lossMagPalette = 'D00,F5DEB3';
 var gainYearPalette =  '54A247,AFDEA8,80C476,308023,145B09';
 var gainMagPalette = 'F5DEB3,006400';
 var changeDurationPalette = 'BD1600,E2F400,0C2780';
+exports.lossYearPalette = lossYearPalette;
+exports.lossMagPalette = lossMagPalette;
+exports.gainYearPalette = gainYearPalette;
+exports.gainMagPalette = gainMagPalette;
+exports.changeDurationPalette = changeDurationPalette;
 //////////////////////////////////////////////////////////////////////////
 // Function to compute R^2 (Coefficient of Determination) for a linear model.
 // Written by Joshua Goldstein (joshuagoldstein@fs.fed.us) on 21-Sept-2016
