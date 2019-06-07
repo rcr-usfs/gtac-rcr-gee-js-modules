@@ -609,6 +609,113 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   return [rawLt,outStack];
 }
+///////////////////////////////////////////////////////////////////////////////////////////
+//Function for running LANDTRENDR and converting output to annual image collection
+//with the fitted value, duration, magnitude, and slope for the segment for each given year
+function LANDTRENDRFitMagSlopeCollection(ts,indexName, run_params){
+  var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
+  var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
+
+   //Get single band time series and set its direction so that a loss in veg is going up
+  ts = ts.select([indexName]);
+  var distDir = getImagesLib.changeDirDict[indexName];
+  var tsT = ts.map(function(img){return multBands(img,distDir,1)});
+  
+  //Find areas with insufficient data to run LANDTRENDR
+  var countMask = tsT.count().unmask().gte(6);
+
+  tsT = tsT.map(function(img){
+    var m = img.mask();
+    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
+    m = m.or(countMask.not());
+    img = img.mask(m);
+    img = img.where(countMask.not(),-32768);
+    return img});
+
+  run_params.timeSeries = tsT;
+  
+  //Run LANDTRENDR
+  var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
+  
+  //Get LT output and convert to image stack
+  var lt = rawLt.select([0]);
+  var ltStack = getLTvertStack(lt,run_params);
+  
+  //Parse into annual fitted, duration, magnitude, and slope images
+  //Iterate across each possible segment and find its fitted end value, duration, magnitude, and slope
+  var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,run_params.maxSegments).map(function(i){
+    i = ee.Number(i);
+    
+    //Set up slector for left and right side of segments
+    var stringSelectLeft = ee.String('.*_').cat(i.byte().format());
+    var stringSelectRight = ee.String('.*_').cat((i.add(1)).byte().format());
+    
+    //Get the left and right bands into separate images
+    var ltStackLeft = ltStack.select([stringSelectLeft]);
+    var ltStackRight = ltStack.select([stringSelectRight]);
+    
+    //Select off the year bands
+    var segYearsLeft = ltStackLeft.select(['yrs_.*']).rename(['year_left']);
+    var segYearsRight = ltStackRight.select(['yrs_.*']).rename(['year_right']);
+    
+    //Select off the fitted bands and flip them if they were flipped for use in LT
+    var segFitLeft = ltStackLeft.select(['fit_.*']).rename(['fitted']).multiply(distDir*10000);
+    var segFitRight = ltStackRight.select(['fit_.*']).rename(['fitted']).multiply(distDir*10000);
+    
+    
+    //Comput duration, magnitude, and then slope
+    var segDur = segYearsRight.subtract( segYearsLeft).rename(['dur']);
+    var segMag = segFitRight.subtract( segFitLeft).rename(['mag']);
+    var segSlope = segMag.divide(segDur).rename(['slope']);
+    
+    //Iterate across each year to see if the year is within a given segment
+    //All annualizing is done from the right vertex backward
+    //The first year of the time series is inserted manually with an if statement
+    //Ex: If the first segment goes from 1984-1990 and the second from 1990-1997, the duration, magnitude,and slope
+    //values from the first segment will be given to 1984-1990, while the second segment (and any subsequent segment)
+    //the duration, magnitude, and slope values will be given from 1991-1997
+    return ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(function(yr){
+      yr = ee.Number(yr);
+      var yrImage = ee.Image(yr);
+      
+      //Find if the year is the first and include the left year if it is
+      //Otherwise, do not include the left year
+      yrImage = ee.Algorithms.If(yr.eq(startYear),
+                  yrImage.updateMask(segYearsLeft.lte(yr).and(segYearsRight.gte(yr))),
+                  yrImage.updateMask(segYearsLeft.lt(yr).and(segYearsRight.gte(yr))));
+    
+      yrImage = ee.Image(yrImage).rename(['yr']).int16();
+      
+      //Mask out the duration, magnitude, slope, and fit raster for the given year mask
+      var yrDur = segDur.updateMask(yrImage);
+      var yrFit = ee.Algorithms.If(yr.eq(startYear),
+                  segFitLeft.updateMask(yrImage),
+                  segFitRight.updateMask(yrImage));
+      var yrMag = segMag.updateMask(yrImage);
+      var yrSlope = segSlope.updateMask(yrImage);
+      
+      //Stack it up
+      var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope).int16();
+      return out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
+    }));
+    
+  }));
+  
+  //Convert to an image collection
+  yrDurMagSlope = ee.ImageCollection(yrDurMagSlope.flatten());
+  
+  //Collapse each given year to the single segment with data
+  var yrDurMagSlopeCleaned = ee.ImageCollection.fromImages(ee.List.sequence(startYear,endYear).map(function(yr){
+    var yrDurMagSlopeT = yrDurMagSlope.filter(ee.Filter.calendarRange(yr,yr,'year')).mosaic().updateMask(countMask);
+    return yrDurMagSlopeT.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
+  }));
+  
+  //Rename
+  var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
+  var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
+  
+  return yrDurMagSlopeCleaned.select(bns,outBns);
+} 
 //////////////////////////////////////////////////////////////////////////
 //Wrapper for applying VERDET slightly more simply
 //Returns annual collection of verdet slope
@@ -1017,6 +1124,7 @@ exports.getRawAndFittedLT = getRawAndFittedLT;
 exports.getLTStack = getLTStack;
 exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
+exports.LANDTRENDRFitMagSlopeCollection = LANDTRENDRFitMagSlopeCollection;
 exports.verdetAnnualSlope  = verdetAnnualSlope;
 exports.annualizeEWMA = annualizeEWMA;
 exports.getEWMA = getEWMA;
