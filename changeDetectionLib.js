@@ -854,7 +854,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
   var ccdc_raw = ccdc_output.filterBounds(studyArea).mosaic().clip(studyArea);
   
   // Loop through the available segments
-  var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).map(function(i){
+  var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).getInfo().map(function(i){
 
     // Create a string to select relevant segments (e.g. 'S1')
     i = ee.Number(i);
@@ -880,9 +880,9 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
       var segMag = segSlope.multiply(segDur).rename(['mag']);
       return segSlope.addBands(segIntp).addBands(segMag).set('system:index',thisBand);
     }));  
-    
+    print('segBands',segBands)
     // Annualize
-    var output = ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(function(yr){
+    var output = ee.FeatureCollection(ee.List.sequence(startYear,endYear).getInfo().map(function(yr){
       yr = ee.Number(yr).int();
       
       // We have to assign a year based on whether the start and end times are before or after Julian day 250 of that year
@@ -904,7 +904,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
                       .updateMask(yrMask);
       })).toBands();
       yrBands = ee.Image(multBands(yrBands,1,0.0001));
-  
+      print('yrBands',yrBands)
       var yrDur = segDur.updateMask(yrMask);
       var yrProb = segChangeProb.updateMask(yrMask);
       var yrSegStart = segStartDay.updateMask(yrMask);
