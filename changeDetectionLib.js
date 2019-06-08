@@ -881,6 +881,8 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
       return segSlope.addBands(segIntp).addBands(segMag).set('system:index',thisBand);
     }));  
     print('segBands',segBands)
+    print('startYear',startYear)
+    print('endYear',endYear)
     // Annualize
     var output = ee.FeatureCollection(ee.List.sequence(startYear,endYear).getInfo().map(function(yr){
       yr = ee.Number(yr).int();
@@ -893,7 +895,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
       // y\Year mask to pull out appropriate values for each year
       var yrImage = ee.Image(yr).rename(['yr']).int16();
       var yrMask = segStartDay.lt(cutoffday).and(segEndDay.gte(lastYrCutoffday));
-      
+      print('yrMask',yrMask)
       // Loop through the values for each band and apply year mask
       var yrBands = ee.ImageCollection(segBands.map(function(band){
         var yrSlope = ee.Image(band.select(['.*slope'])).rename(['CCDC_slope']);
