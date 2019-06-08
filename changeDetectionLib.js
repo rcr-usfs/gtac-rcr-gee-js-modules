@@ -902,7 +902,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
         return yrSlope.addBands(yrIntp).addBands(yrMag).addBands(yrFit)
                       .updateMask(yrMask);
       })).toBands();
-      yrBands = ee.Image(dLib.multBands(yrBands,1,0.0001));
+      yrBands = ee.Image(multBands(yrBands,1,0.0001));
   
       var yrDur = segDur.updateMask(yrMask);
       var yrProb = segChangeProb.updateMask(yrMask);
