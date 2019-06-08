@@ -854,7 +854,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
   var ccdc_raw = ccdc_output.filterBounds(studyArea).mosaic().clip(studyArea);
   
   // Loop through the available segments
-  var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).getInfo().map(function(i){
+  var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).map(function(i){
 
     // Create a string to select relevant segments (e.g. 'S1')
     i = ee.Number(i);
@@ -882,9 +882,9 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
     }));  
 
     // Annualize
-    var output = ee.FeatureCollection(ee.List.sequence(startYear,endYear).getInfo().map(function(yr){
+    var output = ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(function(yr){
       yr = ee.Number(yr).int();
-      print('yr',yr)
+
       // We have to assign a year based on whether the start and end times are before or after Julian day 250 of that year
       var cutoffday = ee.Date.parse('yyyy-D',yr.format().cat('-250')).difference(ee.Date.fromYMD(0,1,1),'day');
       var lastYrCutoffday = ee.Date.parse('yyyy-D',yr.subtract(1).format().cat('-250')).difference(ee.Date.fromYMD(0,1,1),'day');
@@ -893,7 +893,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
       // y\Year mask to pull out appropriate values for each year
       var yrImage = ee.Image(yr).rename(['yr']).int16();
       var yrMask = segStartDay.lt(cutoffday).and(segEndDay.gte(lastYrCutoffday));
-      print('yrMask',yrMask)
+
       // Loop through the values for each band and apply year mask
       var yrBands = ee.ImageCollection(segBands.map(function(band){
         var yrSlope = ee.Image(band.select(['.*slope'])).rename(['CCDC_slope']);
@@ -904,7 +904,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
                       .updateMask(yrMask);
       })).toBands();
       yrBands = ee.Image(multBands(yrBands,1,0.0001));
-      print('yrBands',yrBands)
+
       var yrDur = segDur.updateMask(yrMask);
       var yrProb = segChangeProb.updateMask(yrMask);
       var yrSegStart = segStartDay.updateMask(yrMask);
