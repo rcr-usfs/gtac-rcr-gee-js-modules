@@ -845,6 +845,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
   var startYear = ccdc_output.first().get('startYear');
   var endYear = ccdc_output.first().get('endYear');
   var maxSegments = ccdc_output.first().get('nSegments');
+  var create_date = ccdc_output.first().get('create_date');
   
   // order of bands so we can pull them out by number frow raw CCDC output
   var bandNames = ee.List(['blue','green','red','nir','swir1','temp', 'swir2'])
