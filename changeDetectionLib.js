@@ -880,13 +880,11 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
       var segMag = segSlope.multiply(segDur).rename(['mag']);
       return segSlope.addBands(segIntp).addBands(segMag).set('system:index',thisBand);
     }));  
-    print('segBands',segBands)
-    print('startYear',startYear)
-    print('endYear',endYear)
+
     // Annualize
     var output = ee.FeatureCollection(ee.List.sequence(startYear,endYear).getInfo().map(function(yr){
       yr = ee.Number(yr).int();
-      
+      print('yr',yr)
       // We have to assign a year based on whether the start and end times are before or after Julian day 250 of that year
       var cutoffday = ee.Date.parse('yyyy-D',yr.format().cat('-250')).difference(ee.Date.fromYMD(0,1,1),'day');
       var lastYrCutoffday = ee.Date.parse('yyyy-D',yr.subtract(1).format().cat('-250')).difference(ee.Date.fromYMD(0,1,1),'day');
