@@ -841,13 +841,106 @@ function runEWMACD(lsIndex,indexName,startYear,endYear,trainingStartYear,trainin
 //with the fitted value, duration, magnitude, and slope for the segment for each given year
 // Input must be an image collection of CCDC tiles. The script will mosaic them to one image.
 function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
+  // Grab important properties
   var startYear = ccdc_output.first().get('startYear');
   var endYear = ccdc_output.first().get('endYear');
+  var maxSegments = ccdc_output.first().get('nSegments');
+  
+  // order of bands so we can pull them out by number frow raw CCDC output
+  var bandNames = ee.List(['blue','green','red','nir','swir1','temp', 'swir2'])
 
   // Mosaic CCDC tiles and clip to study area.
-  var ccdc_raw = ccdc_collection.filterBounds(studyArea).mosaic().clip(studyArea);
+  var ccdc_raw = ccdc_output.filterBounds(studyArea).mosaic().clip(studyArea);
   
-  return yrDurMagSlopeCleaned.select(bns,outBns);
+  // Loop through the available segments
+  var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).map(function(i){
+
+    // Create a string to select relevant segments (e.g. 'S1')
+    i = ee.Number(i);
+    var stringSelect = ee.String('S').cat(i.byte().format())
+    
+    var segAll = ccdc_raw.select([stringSelect.cat('_.*')]);
+    
+    // Start and end times for the segment. Time format is days from 0000-01-01
+    var segStartDay = segAll.select([stringSelect.cat('_tStart')]).rename(['startDay']);
+    var segEndDay = segAll.select([stringSelect.cat('_tEnd')]).rename(['endDay']);
+    var segBreakDay = segAll.select([stringSelect.cat('_tBreak')]).rename(['breakDay']);
+    var effEndDay = segEndDay.max(segBreakDay).rename(['effEndDay']); // effective end day - latest time between tEnd and tBreak
+    var segDur = effEndDay.subtract(segStartDay).divide(365).rename(['CCDC_dur']);
+    
+    // Grab the linear fit information for each band for this segment
+    var segChangeProb = segAll.select([stringSelect.cat('_changeProb')]).rename(['changeProb']);    
+    var segBands = ee.ImageCollection(ee.List.sequence(1,7).map(function(bandNum){
+      bandNum = ee.Number(bandNum).int();
+      var thisBand = ee.String(bandNames.get(bandNum.subtract(1)));
+      var bandString = ee.String('_B').cat(bandNum.format());
+      var segSlope = segAll.select([stringSelect.cat(bandString.cat('_coef_SLP'))]).rename(['slope']);
+      var segIntp = segAll.select([stringSelect.cat(bandString.cat('_coef_INTP'))]).rename(['intercept']);
+      var segMag = segSlope.multiply(segDur).rename(['mag']);
+      return segSlope.addBands(segIntp).addBands(segMag).set('system:index',thisBand);
+    }));  
+    
+    // Annualize
+    var output = ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(function(yr){
+      yr = ee.Number(yr).int();
+      
+      // We have to assign a year based on whether the start and end times are before or after Julian day 250 of that year
+      var cutoffday = ee.Date.parse('yyyy-D',yr.format().cat('-250')).difference(ee.Date.fromYMD(0,1,1),'day');
+      var lastYrCutoffday = ee.Date.parse('yyyy-D',yr.subtract(1).format().cat('-250')).difference(ee.Date.fromYMD(0,1,1),'day');
+      var yearDay = ee.Date.fromYMD(yr,6,1).difference(ee.Date.fromYMD(0,1,1),'day'); // this will be the date/year assigned to the output timeseries
+      
+      // y\Year mask to pull out appropriate values for each year
+      var yrImage = ee.Image(yr).rename(['yr']).int16();
+      var yrMask = segStartDay.lt(cutoffday).and(segEndDay.gte(lastYrCutoffday));
+      
+      // Loop through the values for each band and apply year mask
+      var yrBands = ee.ImageCollection(segBands.map(function(band){
+        var yrSlope = ee.Image(band.select(['.*slope'])).rename(['CCDC_slope']);
+        var yrIntp = ee.Image(band.select(['.*intercept'])).rename(['CCDC_intercept']);
+        var yrMag = ee.Image(band.select(['.*mag'])).rename(['CCDC_mag']);
+        var yrFit = yrSlope.multiply(yearDay).add(yrIntp).rename(['CCDC_fitted']);
+        return yrSlope.addBands(yrIntp).addBands(yrMag).addBands(yrFit)
+                      .updateMask(yrMask);
+      })).toBands();
+      yrBands = ee.Image(dLib.multBands(yrBands,1,0.0001));
+  
+      var yrDur = segDur.updateMask(yrMask);
+      var yrProb = segChangeProb.updateMask(yrMask);
+      var yrSegStart = segStartDay.updateMask(yrMask);
+      var yrSegEnd = segEndDay.updateMask(yrMask);
+      var yrSegBreak = segBreakDay.updateMask(yrMask);
+      var yrEffEnd = effEndDay.updateMask(yrMask);
+      
+      var out = yrBands.addBands(yrDur).addBands(yrProb).addBands(yrSegStart)
+                      .addBands(yrSegEnd).addBands(yrSegBreak).addBands(yrEffEnd);
+  
+      return out.set('system:time_start', ee.Date.fromYMD(yr,6,1).millis()).set('year',yr);
+    }));
+    
+    return output;
+  }));
+  
+  yrDurMagSlope = ee.ImageCollection(yrDurMagSlope.flatten());
+  var ccdc = ee.ImageCollection.fromImages(ee.List.sequence(startYear,endYear).map(function(yr){
+    var yrDurMagSlopeT = yrDurMagSlope.filter(ee.Filter.calendarRange(yr,yr,'year')).mosaic();
+    return yrDurMagSlopeT.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis())
+                         .set('create_date', create_date)
+                         .set('startYear', startYear)
+                         .set('endYear', endYear)
+                         .set('nSegments', maxSegments);
+  }));
+  
+  // Add NBR etc. to images
+  function simpleAddIndices(in_image){
+      in_image = in_image.addBands(in_image.normalizedDifference(['nir_CCDC_fitted', 'red_CCDC_fitted']).select([0],['NDVI_CCDC_fitted']));
+      in_image = in_image.addBands(in_image.normalizedDifference(['nir_CCDC_fitted', 'swir2_CCDC_fitted']).select([0],['NBR_CCDC_fitted']));
+      in_image = in_image.addBands(in_image.normalizedDifference(['nir_CCDC_fitted', 'swir1_CCDC_fitted']).select([0],['NDMI_CCDC_fitted']));
+      in_image = in_image.addBands(in_image.normalizedDifference(['green_CCDC_fitted', 'swir1_CCDC_fitted']).select([0],['NDSI_CCDC_fitted']));  
+      return in_image;
+  }
+  ccdc = ccdc.map(simpleAddIndices);
+  
+  return ccdc;
 } 
 //////////////////////////////////////////////////////////////////////////
 //Function to find the pairwise difference of a time series
