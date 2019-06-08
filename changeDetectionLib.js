@@ -842,9 +842,9 @@ function runEWMACD(lsIndex,indexName,startYear,endYear,trainingStartYear,trainin
 // Input must be an image collection of CCDC tiles. The script will mosaic them to one image.
 function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
   // Grab important properties
-  var startYear = ccdc_output.first().get('startYear');
-  var endYear = ccdc_output.first().get('endYear');
-  var maxSegments = ccdc_output.first().get('nSegments');
+  var startYear = ee.Number(ccdc_output.first().get('startYear'));
+  var endYear = ee.Number(ccdc_output.first().get('endYear'));
+  var maxSegments = ee.Number(ccdc_output.first().get('nSegments'));
   var create_date = ccdc_output.first().get('create_date');
   
   // order of bands so we can pull them out by number frow raw CCDC output
