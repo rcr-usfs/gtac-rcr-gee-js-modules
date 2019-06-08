@@ -836,6 +836,19 @@ function runEWMACD(lsIndex,indexName,startYear,endYear,trainingStartYear,trainin
   
   return [ewma.arrayCat(lsYear,1),annualEWMA];
 }
+///////////////////////////////////////////////////////////////////////////////////////////
+//Function for converting CCDC output to annual image collection
+//with the fitted value, duration, magnitude, and slope for the segment for each given year
+// Input must be an image collection of CCDC tiles. The script will mosaic them to one image.
+function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
+  var startYear = ccdc_output.first().get('startYear');
+  var endYear = ccdc_output.first().get('endYear');
+
+  // Mosaic CCDC tiles and clip to study area.
+  var ccdc_raw = ccdc_collection.filterBounds(studyArea).mosaic().clip(studyArea);
+  
+  return yrDurMagSlopeCleaned.select(bns,outBns);
+} 
 //////////////////////////////////////////////////////////////////////////
 //Function to find the pairwise difference of a time series
 //Assumes one image per year
