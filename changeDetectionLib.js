@@ -842,7 +842,7 @@ function runEWMACD(lsIndex,indexName,startYear,endYear,trainingStartYear,trainin
 // Input must be an image collection of CCDC tiles. The script will mosaic them to one image.
 function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
   // Grab important properties
-  var startYear = ee.Number(ccdc_output.first().get('startYear').getInfo());
+  var startYear = ccdc_output.first().get('startYear').getInfo();
   print('startYear',startYear)
   var endYear = ee.Number(ccdc_output.first().get('endYear')).int().getInfo();
   
