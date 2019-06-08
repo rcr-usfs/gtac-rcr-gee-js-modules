@@ -1235,6 +1235,7 @@ exports.verdetAnnualSlope  = verdetAnnualSlope;
 exports.annualizeEWMA = annualizeEWMA;
 exports.getEWMA = getEWMA;
 exports.runEWMACD = runEWMACD;
+exports.CCDCFitMagSlopeCollection = CCDCFitMagSlopeCollection;
 
 exports.pairwiseSlope = pairwiseSlope;
 exports.thresholdChange = thresholdChange;
