@@ -900,7 +900,8 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
         var yrIntp = ee.Image(band.select(['.*intercept'])).rename(['CCDC_intercept']);
         var yrMag = ee.Image(band.select(['.*mag'])).rename(['CCDC_mag']);
         var yrFit = yrSlope.multiply(yearDay).add(yrIntp).rename(['CCDC_fitted']);
-        return yrSlope.addBands(yrIntp).addBands(yrMag).addBands(yrFit)
+        var yrDur = segDur.rename(['CCDC_dur']);
+        return yrSlope.addBands(yrIntp).addBands(yrMag).addBands(yrFit).addBands(yrDur)
                       .updateMask(yrMask);
       })).toBands();
       yrBands = ee.Image(multBands(yrBands,1,0.0001));
@@ -912,8 +913,8 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
       var yrSegBreak = segBreakDay.updateMask(yrMask);
       var yrEffEnd = effEndDay.updateMask(yrMask);
       
-      var out = yrBands.addBands(yrDur).addBands(yrProb).addBands(yrSegStart)
-                      .addBands(yrSegEnd).addBands(yrSegBreak).addBands(yrEffEnd);
+      var out = yrBands//.addBands(yrDur).addBands(yrProb).addBands(yrSegStart)
+                      //.addBands(yrSegEnd).addBands(yrSegBreak).addBands(yrEffEnd);
   
       return out.set('system:time_start', ee.Date.fromYMD(yr,6,1).millis()).set('year',yr);
     }));
