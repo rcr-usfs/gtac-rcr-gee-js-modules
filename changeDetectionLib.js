@@ -940,12 +940,15 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
       in_image = in_image.addBands(in_image.normalizedDifference(['nir_CCDC_fitted', 'swir1_CCDC_fitted']).select([0],['NDMI_CCDC_fitted']));
       in_image = in_image.addBands(in_image.normalizedDifference(['green_CCDC_fitted', 'swir1_CCDC_fitted']).select([0],['NDSI_CCDC_fitted'])); 
       
+      
       return in_image;
   }
   ccdc = ccdc.map(simpleAddIndices);
   
   return ccdc;
 } 
+
+
 //////////////////////////////////////////////////////////////////////////
 //Function to find the pairwise difference of a time series
 //Assumes one image per year
