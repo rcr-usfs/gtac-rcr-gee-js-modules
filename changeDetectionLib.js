@@ -935,9 +935,11 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
   // Add NBR etc. to images
   function simpleAddIndices(in_image){
       in_image = in_image.addBands(in_image.normalizedDifference(['nir_CCDC_fitted', 'red_CCDC_fitted']).select([0],['NDVI_CCDC_fitted']));
+      in_image = in_image.addBands(in_image.select(['nir_CCDC_dur'],['NDVI_CCDC_dur']));
       in_image = in_image.addBands(in_image.normalizedDifference(['nir_CCDC_fitted', 'swir2_CCDC_fitted']).select([0],['NBR_CCDC_fitted']));
       in_image = in_image.addBands(in_image.normalizedDifference(['nir_CCDC_fitted', 'swir1_CCDC_fitted']).select([0],['NDMI_CCDC_fitted']));
-      in_image = in_image.addBands(in_image.normalizedDifference(['green_CCDC_fitted', 'swir1_CCDC_fitted']).select([0],['NDSI_CCDC_fitted']));  
+      in_image = in_image.addBands(in_image.normalizedDifference(['green_CCDC_fitted', 'swir1_CCDC_fitted']).select([0],['NDSI_CCDC_fitted'])); 
+      
       return in_image;
   }
   ccdc = ccdc.map(simpleAddIndices);
