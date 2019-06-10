@@ -880,7 +880,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
       var segIntp = segAll.select([stringSelect.cat(bandString.cat('_coef_INTP'))]).rename(['intercept']);
       var segMag = segSlope.multiply(segDur).rename(['mag']);
       return segSlope.addBands(segIntp).addBands(segMag).set('system:index',thisBand);
-    }));  
+    })); 
 
     // Annualize
     var output = ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(function(yr){
@@ -891,7 +891,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
       var lastYrCutoffday = ee.Date.parse('yyyy-D',yr.subtract(1).format().cat('-250')).difference(ee.Date.fromYMD(0,1,1),'day');
       var yearDay = ee.Date.fromYMD(yr,6,1).difference(ee.Date.fromYMD(0,1,1),'day'); // this will be the date/year assigned to the output timeseries
       
-      // y\Year mask to pull out appropriate values for each year
+      // Year mask to pull out appropriate values for each year
       var yrImage = ee.Image(yr).rename(['yr']).int16();
       var yrMask = segStartDay.lt(cutoffday).and(segEndDay.gte(lastYrCutoffday));
 
