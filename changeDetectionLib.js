@@ -712,7 +712,7 @@ function LANDTRENDRFitMagSlopeCollection(ts,indexName, run_params){
   
   //Rename
   var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
-  var outBns = bns.map(function(bn){return ee.String('LT_Fitted_').cat(bn)})//ee.String(indexName).cat('_LT_').cat(bn)});
+  var outBns = bns.map(function(bn){return ee.String('LT_').cat(bn).cat('_').cat(ee.String(indexName))})//ee.String(indexName).cat('_LT_').cat(bn)});
   
   return yrDurMagSlopeCleaned.select(bns,outBns);
 } 
