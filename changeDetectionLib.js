@@ -677,7 +677,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
     
     //Collapse each given year to the single segment with data
     var yrDurMagSlopeCleaned = ee.ImageCollection.fromImages(ee.List.sequence(startYear,endYear).map(function(yr){
-      var yrDurMagSlopeT = yrDurMagSlope.filter(ee.Filter.calendarRange(yr,yr,'year')).mosaic().updateMask(countMask);
+      var yrDurMagSlopeT = yrDurMagSlope.filter(ee.Filter.calendarRange(yr,yr,'year')).mosaic();
       return yrDurMagSlopeT.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
     }));
     return yrDurMagSlopeCleaned;
@@ -715,7 +715,8 @@ function LANDTRENDRFitMagSlopeCollection(ts,indexName, run_params){
   var ltStack = getLTvertStack(lt,run_params);
   
   //Convert to image collection
-  var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, run_params.maxSegments,startYear,endYear,distDir)
+  var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, run_params.maxSegments,startYear,endYear,distDir);
+  yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.map(function(img){return img.updateMask(countMask)});
   //Rename
   var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
   var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
