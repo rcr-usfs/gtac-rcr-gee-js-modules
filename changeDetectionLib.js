@@ -610,37 +610,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   return [rawLt,outStack];
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
-//Function for running LANDTRENDR and converting output to annual image collection
-//with the fitted value, duration, magnitude, and slope for the segment for each given year
-function LANDTRENDRFitMagSlopeCollection(ts,indexName, run_params){
-  var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
-  var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
-
-   //Get single band time series and set its direction so that a loss in veg is going up
-  ts = ts.select([indexName]);
-  var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return multBands(img,distDir,1)});
-  
-  //Find areas with insufficient data to run LANDTRENDR
-  var countMask = tsT.count().unmask().gte(6);
-
-  tsT = tsT.map(function(img){
-    var m = img.mask();
-    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
-    m = m.or(countMask.not());
-    img = img.mask(m);
-    img = img.where(countMask.not(),-32768);
-    return img});
-
-  run_params.timeSeries = tsT;
-  
-  //Run LANDTRENDR
-  var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
-  
-  //Get LT output and convert to image stack
-  var lt = rawLt.select([0]);
-  var ltStack = getLTvertStack(lt,run_params);
-  
+//Function to parse stack from LANDTRENDR or VERDET into image collection
   function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
     //Parse into annual fitted, duration, magnitude, and slope images
     //Iterate across each possible segment and find its fitted end value, duration, magnitude, and slope
@@ -712,7 +682,39 @@ function LANDTRENDRFitMagSlopeCollection(ts,indexName, run_params){
     }));
     return yrDurMagSlopeCleaned;
   }
+///////////////////////////////////////////////////////////////////////////////////////////
+//Function for running LANDTRENDR and converting output to annual image collection
+//with the fitted value, duration, magnitude, and slope for the segment for each given year
+function LANDTRENDRFitMagSlopeCollection(ts,indexName, run_params){
+  var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
+  var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
+
+   //Get single band time series and set its direction so that a loss in veg is going up
+  ts = ts.select([indexName]);
+  var distDir = getImagesLib.changeDirDict[indexName];
+  var tsT = ts.map(function(img){return multBands(img,distDir,1)});
   
+  //Find areas with insufficient data to run LANDTRENDR
+  var countMask = tsT.count().unmask().gte(6);
+
+  tsT = tsT.map(function(img){
+    var m = img.mask();
+    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
+    m = m.or(countMask.not());
+    img = img.mask(m);
+    img = img.where(countMask.not(),-32768);
+    return img});
+
+  run_params.timeSeries = tsT;
+  
+  //Run LANDTRENDR
+  var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
+  
+  //Get LT output and convert to image stack
+  var lt = rawLt.select([0]);
+  var ltStack = getLTvertStack(lt,run_params);
+  
+  //Convert to image collection
   var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, run_params.maxSegments,startYear,endYear,distDir)
   //Rename
   var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
