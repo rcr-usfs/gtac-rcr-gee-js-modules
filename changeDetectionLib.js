@@ -1232,6 +1232,7 @@ exports.getRawAndFittedLT = getRawAndFittedLT;
 exports.getLTStack = getLTStack;
 exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
+exports.fitStackToCollection = fitStackToCollection;
 exports.LANDTRENDRFitMagSlopeCollection = LANDTRENDRFitMagSlopeCollection;
 exports.verdetAnnualSlope  = verdetAnnualSlope;
 exports.annualizeEWMA = annualizeEWMA;
