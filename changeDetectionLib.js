@@ -652,16 +652,16 @@ function LANDTRENDRFitMagSlopeCollection(ts,indexName, run_params){
       var stringSelectRight = ee.String('.*_').cat((i.add(1)).byte().format());
       
       //Get the left and right bands into separate images
-      var ltStackLeft = ltStack.select([stringSelectLeft]);
-      var ltStackRight = ltStack.select([stringSelectRight]);
+      var stackLeft = stack.select([stringSelectLeft]);
+      var stackRight = stack.select([stringSelectRight]);
       
       //Select off the year bands
-      var segYearsLeft = ltStackLeft.select(['yrs_.*']).rename(['year_left']);
-      var segYearsRight = ltStackRight.select(['yrs_.*']).rename(['year_right']);
+      var segYearsLeft = stackLeft.select(['yrs_.*']).rename(['year_left']);
+      var segYearsRight = stackRight.select(['yrs_.*']).rename(['year_right']);
       
       //Select off the fitted bands and flip them if they were flipped for use in LT
-      var segFitLeft = ltStackLeft.select(['fit_.*']).rename(['fitted']).multiply(distDir*10000);
-      var segFitRight = ltStackRight.select(['fit_.*']).rename(['fitted']).multiply(distDir*10000);
+      var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted']).multiply(distDir*10000);
+      var segFitRight = stackRight.select(['fit_.*']).rename(['fitted']).multiply(distDir*10000);
       
       
       //Comput duration, magnitude, and then slope
