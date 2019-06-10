@@ -644,7 +644,7 @@ function LANDTRENDRFitMagSlopeCollection(ts,indexName, run_params){
   function fitStackToCollection(stack, maxSegments,startYear,endYear){
     //Parse into annual fitted, duration, magnitude, and slope images
     //Iterate across each possible segment and find its fitted end value, duration, magnitude, and slope
-    var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,run_params.maxSegments).map(function(i){
+    var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).map(function(i){
       i = ee.Number(i);
       
       //Set up slector for left and right side of segments
