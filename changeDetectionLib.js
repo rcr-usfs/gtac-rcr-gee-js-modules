@@ -659,11 +659,12 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
         
         //Mask out the duration, magnitude, slope, and fit raster for the given year mask
         var yrDur = segDur.updateMask(yrImage);
+        var yrMag = segMag.updateMask(yrImage);
+        var yrSlope = segSlope.updateMask(yrImage);
         var yrFit = ee.Algorithms.If(yr.eq(startYear),
                     segFitLeft.updateMask(yrImage),
                     segFitRight.updateMask(yrImage));
-        var yrMag = segMag.updateMask(yrImage);
-        var yrSlope = segSlope.updateMask(yrImage);
+        
         
         //Stack it up
         var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope).int16();
