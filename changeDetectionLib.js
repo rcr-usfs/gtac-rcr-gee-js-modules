@@ -661,7 +661,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
         var yrDur = segDur.updateMask(yrImage);
         var yrMag = segMag.updateMask(yrImage);
         var yrSlope = segSlope.updateMask(yrImage);
-        var yrFit = segFitRight.add(yrSlope.multiply(setYearsRight.subtract(yr))).updateMask(yrImage);
+        var yrFit = segFitRight.add(yrSlope.multiply(segYearsRight.subtract(yr))).updateMask(yrImage);
         
         
         //Stack it up
