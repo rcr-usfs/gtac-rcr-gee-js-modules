@@ -713,7 +713,7 @@ function LANDTRENDRFitMagSlopeCollection(ts,indexName, run_params){
     return yrDurMagSlopeCleaned;
   }
   
-  var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, run_params.maxSegments,startYear,endYear)
+  var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, run_params.maxSegments,startYear,endYear,distDir)
   //Rename
   var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
   var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
