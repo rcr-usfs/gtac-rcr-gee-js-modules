@@ -849,6 +849,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea){
   
   // order of bands so we can pull them out by number frow raw CCDC output
   var bandNames = ee.List(['blue','green','red','nir','swir1','temp', 'swir2'])
+  var normDiffNames = ['NBR','NDVI','NDMI','NDSI']; // which additional indices to calculate
 
   // Mosaic CCDC tiles and clip to study area.
   var ccdc_raw = ccdc_output.filterBounds(studyArea).mosaic().clip(studyArea);
