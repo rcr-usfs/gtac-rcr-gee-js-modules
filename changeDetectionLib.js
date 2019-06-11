@@ -745,8 +745,8 @@ function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,cor
   ts = ts.select([indexName]);
   // Map.addLayer(ts,{},'raw ts',false);
   var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return dLib.multBands(img,-distDir,correctionFactor)});
-  tsT = tsT.map(function(img){return dLib.addToImage(img,1)});
+  var tsT = ts.map(function(img){return multBands(img,-distDir,correctionFactor)});
+  tsT = tsT.map(function(img){return addToImage(img,1)});
   
   //Find areas with insufficient data to run VERDET
   //VERDET currently requires all pixels have a value
@@ -802,10 +802,10 @@ function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,cor
   
 
   //Convert to stack and mask out any pixels that didn't have an observation in every image
-  var stack = dLib.getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']).updateMask(countMask);
+  var stack = getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']).updateMask(countMask);
 
   //Convert to a collection
-  var yrDurMagSlopeCleaned = dLib.fitStackToCollection(stack, maxSegments,startYear,endYear,-distDir);
+  var yrDurMagSlopeCleaned = fitStackToCollection(stack, maxSegments,startYear,endYear,-distDir);
   
   //Give meaningful band names
   var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
@@ -813,7 +813,7 @@ function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,cor
   yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.select(bns,outBns);
   
   
-  // fitted = yrDurMagSlopeCleaned.select(['.*_fitted']).map(function(img){return dLib.multBands(img,1,0.0001)});
+  // fitted = yrDurMagSlopeCleaned.select(['.*_fitted']).map(function(img){return multBands(img,1,0.0001)});
   // var forViz = getImagesLib.joinCollections(ts,fitted);
   // Map.addLayer(forViz,{},'fitted',false);
   
