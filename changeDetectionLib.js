@@ -285,6 +285,19 @@ function addToImage(img,howMuch){
               .copyProperties(img);
     return out;
   }
+// Helper to multiply new baselearner format values (LandTrendr & Verdet) by the appropriate amount when importing
+// Duration is the only band that does not get multiplied by 0.0001 upon import.
+function LT_VT_mult(img){
+    var fitted = img.select('.*_fitted').multiply(0.0001);
+    var slope = img.select('.*_slope').multiply(0.0001);
+    var diff = img.select('.*_diff').multiply(0.0001);
+    var mag = img.select('.*_mag').multiply(0.0001);
+    var dur = img.select('.*_dur');
+    var out = dur.addBands(fitted).addBands(slope).addBands(diff).addBands(mag);
+    out  = out.copyProperties(img,['system:time_start'])
+              .copyProperties(img);
+    return out;
+}
 ///////////////////////////////////////////////////////////////
 //Function to convert an image array object to collection
 function arrayToTimeSeries(tsArray,yearsArray,possibleYears,bandName){
