@@ -665,7 +665,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
         
         //Get the difference from the 
         var diffFromLeft =yrFit.subtract(segFitLeft).updateMask(yrImage).rename(['yr_diff']);
-        var relativeDiffFromLeft = diffFromLeft.divide(segMag).multiply(-1).updateMask(yrImage).rename(['rel_yr_diff']).multiply(10000)
+        var relativeDiffFromLeft = diffFromLeft.divide(segMag.abs()).updateMask(yrImage).rename(['rel_yr_diff']).multiply(10000)
         //Stack it up
         var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope).addBands(diffFromLeft).addBands(relativeDiffFromLeft).int16();
         return out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
