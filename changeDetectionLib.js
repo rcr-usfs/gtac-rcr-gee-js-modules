@@ -665,14 +665,14 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
         
         //Get the difference from the 
         var diffFromLeft =yrFit.subtract(segFitLeft).updateMask(yrImage).rename(['yr_diff_left']);
-        var relativeDiffFromLeft = diffFromLeft.divide(segMag.abs()).updateMask(yrImage).rename(['rel_yr_diff_left']).multiply(10000);
+        // var relativeDiffFromLeft = diffFromLeft.divide(segMag.abs()).updateMask(yrImage).rename(['rel_yr_diff_left']).multiply(10000);
         
-        var diffFromRight =yrFit.subtract(segFitRight).updateMask(yrImage).rename(['yr_diff_right']);
-        var relativeDiffFromRight = diffFromRight.divide(segMag.abs()).updateMask(yrImage).rename(['rel_yr_diff_right']).multiply(10000)
+        // var diffFromRight =yrFit.subtract(segFitRight).updateMask(yrImage).rename(['yr_diff_right']);
+        // var relativeDiffFromRight = diffFromRight.divide(segMag.abs()).updateMask(yrImage).rename(['rel_yr_diff_right']).multiply(10000)
         //Stack it up
         var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope)
-                  .addBands(diffFromLeft).addBands(relativeDiffFromLeft)
-                  .addBands(diffFromRight).addBands(relativeDiffFromRight)
+                  .addBands(diffFromLeft)
+                  
                   .int16();
         return out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
       }));
