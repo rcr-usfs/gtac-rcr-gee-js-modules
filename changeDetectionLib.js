@@ -730,7 +730,8 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
   return yrDurMagSlopeCleaned.select(bns,outBns);
 } 
 //////////////////////////////////////////////////////////////////////////////////////////
-//Function to run VERDET and get an image collection of fitted, duration, magnitude, slope, and diff from left vertex
+//Function for running VERDET and converting output to annual image collection
+//with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,correctionFactor){
   if(run_params === undefined || run_params === null){run_params = {tolerance:0.0001,
                   alpha: 0.1}}
