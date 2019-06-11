@@ -828,15 +828,15 @@ function verdetAnnualSlope(tsIndex,indexName,startYear,endYear, alpha, tolerance
   var verdet =   ee.Algorithms.TemporalSegmentation.Verdet({timeSeries: tsIndex,
                                         tolerance: tolerance, //default tolerance = 0.0001
                                         alpha: alpha}).arraySlice(0,1,null); //default alpha = 0.03333
-  print('indexName',indexName)
-  print('verdet',verdet) 
-  Map.addLayer(verdet,{},'verdet '+indexName)
+  print('indexName',indexName);
+  print('verdet',verdet);
+  Map.addLayer(verdet,{},'verdet '+indexName);
   var tsYear = tsIndex.map(getImagesLib.addYearBand).select([1]).toArray().arraySlice(0,1,null).arrayProject([0]);
   
   //Find possible years to convert back to collection with
   var possibleYears = ee.List.sequence(startYear,endYear);
-  print('possibleYears',possibleYears)
-  print('tsYear',tsYear)
+  print('possibleYears',possibleYears);
+  print('tsYear',tsYear);
   var verdetC = arrayToTimeSeries(verdet,tsYear,possibleYears,'VERDET_fitted_'+indexName+'_slope');
   
   return verdetC;
