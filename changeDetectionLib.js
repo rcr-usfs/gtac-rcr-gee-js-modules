@@ -691,7 +691,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function for running LANDTRENDR and converting output to annual image collection
 //with the fitted value, duration, magnitude, and slope for the segment for each given year
-function LANDTRENDRFitMagSlopeCollection(ts,indexName, run_params){
+function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
 
@@ -729,6 +729,96 @@ function LANDTRENDRFitMagSlopeCollection(ts,indexName, run_params){
   
   return yrDurMagSlopeCleaned.select(bns,outBns);
 } 
+//////////////////////////////////////////////////////////////////////////////////////////
+//Function to run VERDET and get an image collection of fitted, duration, magnitude, slope, and diff from left vertex
+function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,correctionFactor){
+  if(run_params === undefined || run_params === null){run_params = {tolerance:0.0001,
+                  alpha: 0.1}}
+  if(maxSegments === undefined || maxSegments === null){maxSegments = 10}
+  if(correctionFactor === undefined || correctionFactor === null){correctionFactor = 1}
+  //Get the start and end years
+  var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
+  var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
+
+   //Get single band time series and set its direction so that a loss in veg is going up
+  ts = ts.select([indexName]);
+  // Map.addLayer(ts,{},'raw ts',false);
+  var distDir = getImagesLib.changeDirDict[indexName];
+  var tsT = ts.map(function(img){return dLib.multBands(img,-distDir,correctionFactor)});
+  tsT = tsT.map(function(img){return dLib.addToImage(img,1)});
+  
+  //Find areas with insufficient data to run VERDET
+  //VERDET currently requires all pixels have a value
+  var countMask = tsT.count().unmask().gte(endYear.subtract(startYear).add(1));
+
+  tsT = tsT.map(function(img){
+    var m = img.mask();
+    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
+    m = m.or(countMask.not());
+    img = img.mask(m);
+    img = img.where(countMask.not(),-32768);
+    return img});
+
+  run_params.timeSeries = tsT;
+  
+  //Run VERDET
+  var verdet =   ee.Algorithms.TemporalSegmentation.Verdet(run_params).arraySlice(0,1,null);
+  
+  //Get all possible years
+  var tsYearRight = ee.Image(ee.Array.cat([ee.Array([startYear]),ee.Array(ee.List.sequence(startYear.add(2),endYear))]));
+  
+  //Slice off right and left slopes
+  var vLeft = verdet.arraySlice(0,1,-1);
+  var vRight = verdet.arraySlice(0,2,null);
+  
+  //Find whether its a vertex (abs of curvature !== 0)
+  var vCurvature = vLeft.subtract(vRight);
+  var vVertices = vCurvature.abs().gte(0.00001);
+  
+  //Append vertices to the start and end of the time series al la LANDTRENDR
+  vVertices = ee.Image(ee.Array([1])).arrayCat(vVertices,0).arrayCat(ee.Image(ee.Array([1])),0);
+
+  //Mask out vertex years
+  tsYearRight = tsYearRight.arrayMask(vVertices);
+  
+  //Find the duration of each segment
+  var dur = tsYearRight.arraySlice(0,1,null).subtract(tsYearRight.arraySlice(0,0,-1));
+  dur = ee.Image(ee.Array([0])).arrayCat(dur,0);
+  
+  
+  //Mask out vertex slopes
+  verdet = verdet.arrayMask(vVertices);
+  
+  //Get the magnitude of change for each segment
+  var mag = verdet.multiply(dur);
+  
+  //Get the fitted values
+  var fitted = ee.Image(tsT.limit(3).mean()).toArray().arrayCat(mag,0);
+  fitted = fitted.arrayAccum(0, ee.Reducer.sum()).arraySlice(0,1,null).subtract(1).divide(correctionFactor);
+  
+  //Get the bands needed to convert to image stack
+  var forStack = tsYearRight.addBands(fitted).toArray(1);
+  
+
+  //Convert to stack and mask out any pixels that didn't have an observation in every image
+  var stack = dLib.getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']).updateMask(countMask);
+
+  //Convert to a collection
+  var yrDurMagSlopeCleaned = dLib.fitStackToCollection(stack, maxSegments,startYear,endYear,-distDir);
+  
+  //Give meaningful band names
+  var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
+  var outBns = bns.map(function(bn){return ee.String(indexName).cat('_VT_').cat(bn)});
+  yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.select(bns,outBns);
+  
+  
+  // fitted = yrDurMagSlopeCleaned.select(['.*_fitted']).map(function(img){return dLib.multBands(img,1,0.0001)});
+  // var forViz = getImagesLib.joinCollections(ts,fitted);
+  // Map.addLayer(forViz,{},'fitted',false);
+  
+  return yrDurMagSlopeCleaned;
+
+}
 //////////////////////////////////////////////////////////////////////////
 //Wrapper for applying VERDET slightly more simply
 //Returns annual collection of verdet slope
@@ -1239,7 +1329,7 @@ exports.getLTStack = getLTStack;
 exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
 exports.fitStackToCollection = fitStackToCollection;
-exports.LANDTRENDRFitMagSlopeCollection = LANDTRENDRFitMagSlopeCollection;
+exports.LANDTRENDRFitMagSlopeDiffCollection = LANDTRENDRFitMagSlopeDiffCollection;
 exports.verdetAnnualSlope  = verdetAnnualSlope;
 exports.annualizeEWMA = annualizeEWMA;
 exports.getEWMA = getEWMA;
