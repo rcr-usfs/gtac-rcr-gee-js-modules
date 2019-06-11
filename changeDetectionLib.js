@@ -287,7 +287,7 @@ function addToImage(img,howMuch){
   }
 // Helper to multiply new baselearner format values (LandTrendr & Verdet) by the appropriate amount when importing
 // Duration is the only band that does not get multiplied by 0.0001 upon import.
-function LT_VT_mult(img){
+function LT_VT_multBands(img){
     var fitted = img.select('.*_fitted').multiply(0.0001);
     var slope = img.select('.*_slope').multiply(0.0001);
     var diff = img.select('.*_diff').multiply(0.0001);
