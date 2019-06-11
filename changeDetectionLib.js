@@ -1335,6 +1335,7 @@ exports.getR2 = getR2;
 exports.extractDisturbance = extractDisturbance;
 exports.landtrendrWrapper = landtrendrWrapper;
 exports.multBands = multBands;
+exports.LT_VT_multBands = LT_VT_multBands;
 exports.addToImage = addToImage;
 exports.getExistingChangeData = getExistingChangeData;
 exports.arrayToTimeSeries = arrayToTimeSeries;
