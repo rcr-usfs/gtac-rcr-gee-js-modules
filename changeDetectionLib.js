@@ -672,7 +672,6 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
         //Stack it up
         var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope)
                   .addBands(diffFromLeft)
-                  
                   .int16();
         return out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
       }));
