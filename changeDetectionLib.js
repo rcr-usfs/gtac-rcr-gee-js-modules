@@ -690,7 +690,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   }
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function for running LANDTRENDR and converting output to annual image collection
-//with the fitted value, duration, magnitude, and slope for the segment for each given year
+//with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
