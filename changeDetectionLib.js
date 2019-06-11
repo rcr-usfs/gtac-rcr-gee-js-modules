@@ -670,7 +670,10 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
         var diffFromRight =yrFit.subtract(segFitRight).updateMask(yrImage).rename(['yr_diff_right']);
         var relativeDiffFromRight = diffFromRight.divide(segMag.abs()).updateMask(yrImage).rename(['rel_yr_diff_right']).multiply(10000)
         //Stack it up
-        var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope).addBands(diffFromLeft).addBands(relativeDiffFromLeft).int16();
+        var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope)
+                  .addBands(diffFromLeft).addBands(relativeDiffFromLeft)
+                  .addBands(diffFromRight).addBands(relativeDiffFromRight)
+                  .int16();
         return out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
       }));
       
