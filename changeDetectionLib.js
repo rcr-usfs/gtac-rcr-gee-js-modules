@@ -858,23 +858,22 @@ function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,cor
 
    //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
-  ts = linearInterp(ts, 365*5, -32768);
   // Map.addLayer(ts,{},'raw ts',false);
   var distDir = getImagesLib.changeDirDict[indexName];
   var tsT = ts.map(function(img){return multBands(img,-distDir,correctionFactor)});
   tsT = tsT.map(function(img){return addToImage(img,1)});
   
-  // //Find areas with insufficient data to run VERDET
-  // //VERDET currently requires all pixels have a value
-  // var countMask = tsT.count().unmask().gte(6);
+  //Find areas with insufficient data to run VERDET
+  //VERDET currently requires all pixels have a value
+  var countMask = tsT.count().unmask().gte(endYear.subtract(startYear).add(1));
 
-  // tsT = tsT.map(function(img){
-  //   var m = img.mask();
-  //   //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
-  //   m = m.or(countMask.not());
-  //   img = img.mask(m);
-  //   img = img.where(countMask.not(),-32768);
-  //   return img});
+  tsT = tsT.map(function(img){
+    var m = img.mask();
+    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
+    m = m.or(countMask.not());
+    img = img.mask(m);
+    img = img.where(countMask.not(),-32768);
+    return img});
 
   run_params.timeSeries = tsT;
   
@@ -918,7 +917,7 @@ function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,cor
   
 
   //Convert to stack and mask out any pixels that didn't have an observation in every image
-  var stack = getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']);//.updateMask(countMask);
+  var stack = getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']).updateMask(countMask);
 
   //Convert to a collection
   var yrDurMagSlopeCleaned = fitStackToCollection(stack, maxSegments,startYear,endYear,-distDir);
