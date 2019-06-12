@@ -858,6 +858,7 @@ function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,cor
 
    //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
+  ts = linearInterp(ts, 365*5, -32768);
   // Map.addLayer(ts,{},'raw ts',false);
   var distDir = getImagesLib.changeDirDict[indexName];
   var tsT = ts.map(function(img){return multBands(img,-distDir,correctionFactor)});
