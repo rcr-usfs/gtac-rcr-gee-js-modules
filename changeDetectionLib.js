@@ -742,6 +742,108 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
   
   return yrDurMagSlopeCleaned.select(bns,outBns);
 } 
+//Adapted from: https://code.earthengine.google.com/?accept_repo=users/kongdd/public
+//To work with multi-band images
+function replace_mask(img, newimg, nodata) {
+    nodata   = nodata || 0;
+    
+    // var con = img.mask();
+    // var res = img., NODATA
+    var mask = img.mask();
+    
+    /** 
+     * This solution lead to interpolation fails | 2018-07-12
+     * Good vlaues can become NA.
+     */
+    // img = img.expression("img*mask + newimg*(!mask)", {
+    //     img    : img.unmask(),  // default unmask value is zero
+    //     newimg : newimg, 
+    //     mask   : mask
+    // });
+
+    /** The only nsolution is unmask & updatemask */
+    img = img.unmask(nodata);
+    img = img.where(mask.not(), newimg);
+    // 
+    // error 2018-07-13 : mask already in newimg, so it's unnecessary to updateMask again
+    // either test or image is masked, values will not be changed. So, newimg 
+    // mask can transfer to img. 
+    // 
+    img = img.updateMask(img.neq(nodata));
+    return img;
+}
+
+/** Interpolation not considering weights */
+function addMillisecondsTimeBand(img) {
+    /** make sure mask is consistent */
+    var mask = img.mask().reduce(ee.Reducer.min());
+    var time = img.metadata('system:time_start').rename("time").mask(mask);
+    return img.addBands(time);
+}
+
+function linearInterp(imgcol, frame, nodata){
+    frame  = frame  || 32;
+    nodata = nodata || 0;
+    
+    var bns = ee.Image(imgcol.first()).bandNames();
+    // var frame = 32;
+    var time   = 'system:time_start';
+    imgcol = imgcol.map(addMillisecondsTimeBand);
+   
+    // We'll look for all images up to 32 days away from the current image.
+    var maxDiff = ee.Filter.maxDifference(frame * (1000*60*60*24), time, null, time);
+    var cond    = {leftField:time, rightField:time};
+    
+    // Images after, sorted in descending order (so closest is last).
+    //var f1 = maxDiff.and(ee.Filter.lessThanOrEquals(time, null, time))
+    var f1 = ee.Filter.and(maxDiff, ee.Filter.lessThanOrEquals(cond));
+    var c1 = ee.Join.saveAll({matchesKey:'after', ordering:time, ascending:false})
+        .apply(imgcol, imgcol, f1);
+    
+    // Images before, sorted in ascending order (so closest is last).
+    //var f2 = maxDiff.and(ee.Filter.greaterThanOrEquals(time, null, time))
+    var f2 = ee.Filter.and(maxDiff, ee.Filter.greaterThanOrEquals(cond));
+    var c2 = ee.Join.saveAll({matchesKey:'before', ordering:time, ascending:true})
+        .apply(c1, imgcol, f2);
+  
+    // print(c2, 'c2');
+    // var img = ee.Image(c2.toList(1, 15).get(0));
+    // var mask   = img.select([0]).mask();
+    // Map.addLayer(img , {}, 'img');
+    // Map.addLayer(mask, {}, 'mask');
+    
+    var interpolated = ee.ImageCollection(c2.map(function(img) {
+        img = ee.Image(img);
+      
+        var before = ee.ImageCollection.fromImages(ee.List(img.get('before'))).mosaic();
+        var after  = ee.ImageCollection.fromImages(ee.List(img.get('after'))).mosaic();
+        
+        img = img.set('before', null).set('after', null);
+        // constrain after or before no NA values, confirm linear Interp having result
+        before = replace_mask(before, after, nodata);
+        after  = replace_mask(after , before, nodata);
+        
+        // Compute the ratio between the image times.
+        var x1 = before.select('time').double();
+        var x2 = after.select('time').double();
+        var now = ee.Image.constant(img.date().millis()).double();
+        var ratio = now.subtract(x1).divide(x2.subtract(x1));  // this is zero anywhere x1 = x2
+        // Compute the interpolated image.
+        before = before.select(bns); //remove time band now;
+        after  = after.select(bns);
+        img    = img.select(bns); 
+        
+        var interp = after.subtract(before).multiply(ratio).add(before);
+        // var mask   = img.select([0]).mask();
+        
+        var qc = img.mask().not();//.rename('qc');
+        interp = replace_mask(img, interp, nodata);
+        // Map.addLayer(interp, {}, 'interp');
+        return interp.copyProperties(img, img.propertyNames());
+    }));
+    return interpolated;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 //Function for running VERDET and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
@@ -763,7 +865,7 @@ function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,cor
   
   //Find areas with insufficient data to run VERDET
   //VERDET currently requires all pixels have a value
-  var countMask = tsT.count().unmask().gte(endYear.subtract(startYear).add(1));
+  var countMask = tsT.count().unmask().gte(6);
 
   tsT = tsT.map(function(img){
     var m = img.mask();
