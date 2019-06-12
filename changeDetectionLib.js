@@ -1447,6 +1447,7 @@ exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
 exports.fitStackToCollection = fitStackToCollection;
 exports.LANDTRENDRFitMagSlopeDiffCollection = LANDTRENDRFitMagSlopeDiffCollection;
+exports.linearInterp = linearInterp;
 exports.VERDETFitMagSlopeDiffCollection = VERDETFitMagSlopeDiffCollection;
 exports.verdetAnnualSlope  = verdetAnnualSlope;
 exports.annualizeEWMA = annualizeEWMA;
