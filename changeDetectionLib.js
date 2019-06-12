@@ -865,7 +865,7 @@ function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,cor
   
   //Find areas with insufficient data to run VERDET
   //VERDET currently requires all pixels have a value
-  var countMask = tsT.count().unmask().gte(endYear.subtract(startYear).add(1));
+  var countMask = tsT.count().unmask().gte(6);//endYear.subtract(startYear).add(1));
 
   tsT = tsT.map(function(img){
     var m = img.mask();
