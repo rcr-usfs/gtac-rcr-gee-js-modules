@@ -918,7 +918,7 @@ function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,cor
 
   //Convert to stack and mask out any pixels that didn't have an observation in every image
   var stack = getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']).updateMask(countMask);
-  print('VTstack', stack)
+
   //Convert to a collection
   var yrDurMagSlopeCleaned = fitStackToCollection(stack, maxSegments,startYear,endYear,-distDir);
   
