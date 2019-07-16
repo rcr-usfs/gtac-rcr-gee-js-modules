@@ -845,7 +845,7 @@ function linearInterp(imgcol, frame, nodata){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-function VERDETLTStack(ts,indexName,run_params,maxSegments,correctionFactor){
+function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor){
   if(!run_params){run_params = {tolerance:0.0001,
                   alpha: 0.1}}
   if(!maxSegments){maxSegments = 10}
@@ -1456,7 +1456,7 @@ exports.simpleLANDTRENDR = simpleLANDTRENDR;
 exports.fitStackToCollection = fitStackToCollection;
 exports.LANDTRENDRFitMagSlopeDiffCollection = LANDTRENDRFitMagSlopeDiffCollection;
 exports.linearInterp = linearInterp;
-exports.VERDETLTStack = VERDETLTStack;
+exports.VERDETVertStack = VERDETVertStack;
 exports.VERDETFitMagSlopeDiffCollection = VERDETFitMagSlopeDiffCollection;
 exports.verdetAnnualSlope  = verdetAnnualSlope;
 exports.annualizeEWMA = annualizeEWMA;
