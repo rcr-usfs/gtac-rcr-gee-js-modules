@@ -81,17 +81,6 @@ var slowLossDurationThresh = 3;
 var chooseWhichLoss = 'largest';
 var chooseWhichGain = 'largest';
 
-//Define landtrendr params
-var run_params = { 
-  maxSegments:            6,
-  spikeThreshold:         0.9,
-  vertexCountOvershoot:   3,
-  preventOneYearRecovery: true,
-  recoveryThreshold:      0.25,
-  pvalThreshold:          0.05,
-  bestModelProportion:    0.75,
-  minObservationsNeeded:  6
-};
 
 //Whether to add outputs to map
 var addToMap = true;
@@ -99,7 +88,7 @@ var addToMap = true;
 var exportLTStack = false;
 
 //Set up Names for the export
-var outputName = 'LT_Test';
+var outputName = 'VT_Test';
 
 //Provide location LT stack will be exported to
 //This should be an asset folder or an asset imageCollection
@@ -135,7 +124,7 @@ print(composites)
 // //Run LT and get output stack
 // var ltOut = changeDetectionLib.simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull);
 // var ltOutStack = ltOut[1];
-
+var vtStack = dLib.VERDETLTStack(composites,indexName,run_params,maxSegments,correctionFactor);
 // //Export  stack
 // var exportName = outputName + '_Stack_'+indexName;
 // var exportPath = exportPathRoot + '/'+ exportName;
