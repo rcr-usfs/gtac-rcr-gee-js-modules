@@ -127,11 +127,11 @@ var masks = composites.map(function(img){return img.mask().reduce(ee.Reducer.min
 
 //Perform linear interpolation        
 composites = dLib.linearInterp(composites, 365*nYearsInterpolate, -32768)
-        .map(getImageLib.simpleAddIndices)
-        .map(getImageLib.getTasseledCap)
-        .map(getImageLib.simpleAddTCAngles);
+        // .map(getImageLib.simpleAddIndices)
+        // .map(getImageLib.getTasseledCap)
+        // .map(getImageLib.simpleAddTCAngles);
         // .map(function(img){return img.clip(studyArea)});
-
+print(composites)
 // //Run LT and get output stack
 // var ltOut = changeDetectionLib.simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull);
 // var ltOutStack = ltOut[1];
