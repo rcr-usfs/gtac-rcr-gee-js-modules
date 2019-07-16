@@ -128,11 +128,11 @@ Map.addLayer(composites.select([indexName]),{},'ts',false);
 var stack = dLib.VERDETLTStack(composites,indexName,run_params,maxSegments,correctionFactor);
 
 
-var yrs = stack.select(['yrs_.*'])//.toArray();
-var fits = stack.select(['fit_.*'])//.toArray();
+var yrs = stack.select(['yrs_.*']).toArray();
+var fits = stack.select(['fit_.*']).toArray();
 
 Map.addLayer(yrs)
-
+Map.addLayer(fits)
 // //Export  stack
 // var exportName = outputName + '_Stack_'+indexName;
 // var exportPath = exportPathRoot + '/'+ exportName;
