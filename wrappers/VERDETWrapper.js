@@ -129,8 +129,7 @@ var stack = dLib.VERDETVertStack(composites,indexName,run_params,maxSegments,cor
 
 
 
-Map.addLayer(yrs)
-Map.addLayer(fits)
+Map.addLayer(stack)
 // //Export  stack
 // var exportName = outputName + '_Stack_'+indexName;
 // var exportPath = exportPathRoot + '/'+ exportName;
