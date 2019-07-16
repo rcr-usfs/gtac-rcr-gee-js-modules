@@ -124,8 +124,9 @@ print(composites)
 // //Run LT and get output stack
 // var ltOut = changeDetectionLib.simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull);
 // var ltOutStack = ltOut[1];
+Map.addLayer(composites.select([indexName]),{},'ts',false);
 var vtStack = dLib.VERDETLTStack(composites,indexName,run_params,maxSegments,correctionFactor);
-print(vtStack)
+Map.addLayer(vtStack)
 // //Export  stack
 // var exportName = outputName + '_Stack_'+indexName;
 // var exportPath = exportPathRoot + '/'+ exportName;
