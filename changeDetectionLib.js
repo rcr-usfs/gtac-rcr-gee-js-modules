@@ -845,13 +845,16 @@ function linearInterp(imgcol, frame, nodata){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
+function VERDETLTStack(ts,indexName,run_params,maxSegments,correctionFactor){
+  
+}
 //Function for running VERDET and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,correctionFactor){
-  if(run_params === undefined || run_params === null){run_params = {tolerance:0.0001,
+  if(!run_params){run_params = {tolerance:0.0001,
                   alpha: 0.1}}
-  if(maxSegments === undefined || maxSegments === null){maxSegments = 10}
-  if(correctionFactor === undefined || correctionFactor === null){correctionFactor = 1}
+  if(!maxSegments){maxSegments = 10}
+  if(!correctionFactor){correctionFactor = 1}
   //Get the start and end years
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
