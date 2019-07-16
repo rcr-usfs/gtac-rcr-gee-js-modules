@@ -925,7 +925,7 @@ function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,cor
   //Get the start and end years
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
-
+  var distDir = getImagesLib.changeDirDict[indexName];
   var stack = VERDETLTStack(ts,indexName,run_params,maxSegments,correctionFactor);
   //Convert to a collection
   var yrDurMagSlopeCleaned = fitStackToCollection(stack, maxSegments,startYear,endYear,-distDir);
