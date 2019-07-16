@@ -846,15 +846,11 @@ function linearInterp(imgcol, frame, nodata){
 
 //////////////////////////////////////////////////////////////////////////////////////////
 function VERDETLTStack(ts,indexName,run_params,maxSegments,correctionFactor){
-  
-}
-//Function for running VERDET and converting output to annual image collection
-//with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
-function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,correctionFactor){
   if(!run_params){run_params = {tolerance:0.0001,
                   alpha: 0.1}}
   if(!maxSegments){maxSegments = 10}
   if(!correctionFactor){correctionFactor = 1}
+  
   //Get the start and end years
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
@@ -921,7 +917,12 @@ function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,cor
 
   //Convert to stack and mask out any pixels that didn't have an observation in every image
   var stack = getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']).updateMask(countMask);
-
+  return stack;
+}
+//Function for running VERDET and converting output to annual image collection
+//with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
+function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,correctionFactor){
+  var stack = VERDETLTStack(ts,indexName,run_params,maxSegments,correctionFactor);
   //Convert to a collection
   var yrDurMagSlopeCleaned = fitStackToCollection(stack, maxSegments,startYear,endYear,-distDir);
   
