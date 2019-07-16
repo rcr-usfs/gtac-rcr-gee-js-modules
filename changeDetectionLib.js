@@ -855,7 +855,7 @@ function VERDETLTStack(ts,indexName,run_params,maxSegments,correctionFactor){
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
 
-   //Get single band time series and set its direction so that a loss in veg is going up
+  //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
   // Map.addLayer(ts,{},'raw ts',false);
   var distDir = getImagesLib.changeDirDict[indexName];
@@ -922,6 +922,10 @@ function VERDETLTStack(ts,indexName,run_params,maxSegments,correctionFactor){
 //Function for running VERDET and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,correctionFactor){
+  //Get the start and end years
+  var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
+  var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
+
   var stack = VERDETLTStack(ts,indexName,run_params,maxSegments,correctionFactor);
   //Convert to a collection
   var yrDurMagSlopeCleaned = fitStackToCollection(stack, maxSegments,startYear,endYear,-distDir);
