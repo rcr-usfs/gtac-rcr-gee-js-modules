@@ -125,8 +125,12 @@ print(composites)
 // var ltOut = changeDetectionLib.simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull);
 // var ltOutStack = ltOut[1];
 Map.addLayer(composites.select([indexName]),{},'ts',false);
-var vtStack = dLib.VERDETLTStack(composites,indexName,run_params,maxSegments,correctionFactor);
-Map.addLayer(vtStack)
+var stack = dLib.VERDETLTStack(composites,indexName,run_params,maxSegments,correctionFactor);
+
+
+var yrs = stack.select(['yrs_.*']);
+// var fits = stack.select(['fit'])
+print(stack)
 // //Export  stack
 // var exportName = outputName + '_Stack_'+indexName;
 // var exportPath = exportPathRoot + '/'+ exportName;
