@@ -632,7 +632,7 @@ function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
    //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
   var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return dLib.multBands(img,distDir,1)});
+  var tsT = ts.map(function(img){return multBands(img,distDir,1)});
   
   //Find areas with insufficient data to run LANDTRENDR
   var countMask = tsT.count().unmask().gte(6);
