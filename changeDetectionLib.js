@@ -622,6 +622,35 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   return [rawLt,outStack];
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Function to prep data following our workflows and run LandTrendr. Will have to convert to stack after.
+function runLandTrendr(ts,indexName, run_params){
+  var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
+  var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
+
+   //Get single band time series and set its direction so that a loss in veg is going up
+  ts = ts.select([indexName]);
+  var distDir = getImagesLib.changeDirDict[indexName];
+  var tsT = ts.map(function(img){return dLib.multBands(img,distDir,1)});
+  
+  //Find areas with insufficient data to run LANDTRENDR
+  var countMask = tsT.count().unmask().gte(6);
+
+  tsT = tsT.map(function(img){
+    var m = img.mask();
+    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
+    m = m.or(countMask.not());
+    img = img.mask(m);
+    img = img.where(countMask.not(),-32768);
+    return img});
+
+  run_params.timeSeries = tsT;
+  
+  //Run LANDTRENDR
+  var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
+  return rawLt;  
+}
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function to parse stack from LANDTRENDR or VERDET into image collection
   function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
