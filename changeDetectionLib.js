@@ -625,7 +625,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Function to prep data following our workflows. Will have to run Landtrendr and convert to stack after.
-function prepIndexForLandTrendr(ts,indexName, run_params){
+function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
 
