@@ -1,7 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-////////////////////////////////////////////////////////////////////////////////
+e////////////////////////////////////////////////////////////////////////////////
 //Module for getting Landsat, Sentinel 2 and MODIS images/composites
 // Define visualization parameters
 var vizParamsFalse = {
@@ -19,7 +19,7 @@ var vizParamsTrue = {
 
 //Direction of  a decrease in photosynthetic vegetation- add any that are missing
 var changeDirDict = {
-"blue":1,"green":-1,"red":1,"nir":-1,"swir1":1,"swir2":1,"temp":1,
+"blue":1,"green":1,"red":1,"nir":-1,"swir1":1,"swir2":1,"temp":1,
 "NDVI":-1,"NBR":-1,"NDMI":-1,"NDSI":1,
 "brightness":1,"greenness":-1,"wetness":-1,"fourth":-1,"fifth":1,"sixth":-1,
 
