@@ -1480,6 +1480,7 @@ exports.getRawAndFittedLT = getRawAndFittedLT;
 exports.getLTStack = getLTStack;
 exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
+exports.prepTimeSeriesForLandTrendr = prepTimeSeriesForLandTrendr;
 exports.fitStackToCollection = fitStackToCollection;
 exports.LANDTRENDRFitMagSlopeDiffCollection = LANDTRENDRFitMagSlopeDiffCollection;
 exports.linearInterp = linearInterp;
