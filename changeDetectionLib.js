@@ -656,7 +656,9 @@ function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
 }
 
 // Function to output LandTrendr as Vertical Stack to take up less space
-function makeLandtrendrStack(composites, indexName, run_params){
+function makeLandtrendrStack(composites, indexName, run_params, startYear, endYear){
+  var creationDate = ee.Date(Date.now()).format('YYYYMMdd');
+  
   // Prep Time Series and put into run parameters
   var prepDict = prepTimeSeriesForLandTrendr(composites, indexName, run_params);
   run_params = prepDict.run_params;
