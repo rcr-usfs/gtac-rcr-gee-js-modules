@@ -721,8 +721,8 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
       var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope)
                 .addBands(diffFromLeft)
                 .int16();
-
-      return out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
+      out = out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis()).set('year',yr);
+      return out;
     }));
     return annualizedCollection;
   }));
