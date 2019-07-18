@@ -660,7 +660,7 @@ function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
 function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
   //Parse into annual fitted, duration, magnitude, and slope images
   //Iterate across each possible segment and find its fitted end value, duration, magnitude, and slope
-  var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).getInfo().map(function(i){
+  var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).map(function(i){
     i = ee.Number(i);
 
     //Set up slector for left and right side of segments
@@ -676,8 +676,8 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
     var segYearsRight = stackRight.select(['yrs_.*']).rename(['year_right']);
     
     //Select off the fitted bands and flip them if they were flipped for use in LT
-    var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted']).multiply(distDir*10000);
-    var segFitRight = stackRight.select(['fit_.*']).rename(['fitted']).multiply(distDir*10000);
+    var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted']).multiply(ee.Number(distDir).multiply(10000));
+    var segFitRight = stackRight.select(['fit_.*']).rename(['fitted']).multiply(ee.Number(distDir).multiply(10000));
     
     
     //Compute duration, magnitude, and then slope
@@ -691,7 +691,7 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
     //Ex: If the first segment goes from 1984-1990 and the second from 1990-1997, the duration, magnitude,and slope
     //values from the first segment will be given to 1984-1990, while the second segment (and any subsequent segment)
     //the duration, magnitude, and slope values will be given from 1991-1997
-    var annualizedCollection = ee.FeatureCollection(ee.List.sequence(startYear,endYear).getInfo().map(function(yr){
+    var annualizedCollection = ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(function(yr){
       yr = ee.Number(yr);
       var yrImage = ee.Image(yr);
 
