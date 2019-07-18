@@ -699,7 +699,6 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
       //Find if the year is the first and include the left year if it is
       //Otherwise, do not include the left year
       yrImage = ee.Algorithms.If(yr.eq(startYear),
-                  //print('yr.eq(startYear)'),
                   yrImage.updateMask(segYearsLeft.lte(yr).and(segYearsRight.gte(yr))),
                   yrImage.updateMask(segYearsLeft.lt(yr).and(segYearsRight.gte(yr))));
     
@@ -721,7 +720,7 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
       var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope)
                 .addBands(diffFromLeft)
                 .int16();
-      out = out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis()).set('year',yr);
+      out = out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
       return out;
     }));
     return annualizedCollection;
