@@ -646,7 +646,7 @@ function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
     return img});
 
   run_params.timeSeries = tsT;
-  var runMask = countMask.rename('insufficentDataMask');
+  var runMask = countMask.rename('insufficientDataMask');
   var prepDict = {
     'run_params': run_params,
     'runMask':    runMask
