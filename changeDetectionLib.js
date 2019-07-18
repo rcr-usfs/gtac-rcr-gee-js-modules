@@ -698,8 +698,8 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
       //Find if the year is the first and include the left year if it is
       //Otherwise, do not include the left year
       yrImage = ee.Algorithms.If(yr.eq(startYear),
-                  print('yr.eq(startYear)'),
-                  //yrImage.updateMask(segYearsLeft.lte(yr).and(segYearsRight.gte(yr))),
+                  //print('yr.eq(startYear)'),
+                  yrImage.updateMask(segYearsLeft.lte(yr).and(segYearsRight.gte(yr))),
                   yrImage.updateMask(segYearsLeft.lt(yr).and(segYearsRight.gte(yr))));
     
       yrImage = ee.Image(yrImage).rename(['yr']).int16();
