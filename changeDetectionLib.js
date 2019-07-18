@@ -662,6 +662,7 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
   //Iterate across each possible segment and find its fitted end value, duration, magnitude, and slope
   var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).map(function(i){
     i = ee.Number(i);
+    distDir = ee.Number(distDir)
 
     //Set up slector for left and right side of segments
     var stringSelectLeft = ee.String('.*_').cat(i.byte().format());
@@ -676,8 +677,8 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
     var segYearsRight = stackRight.select(['yrs_.*']).rename(['year_right']);
     
     //Select off the fitted bands and flip them if they were flipped for use in LT
-    var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted']).multiply(ee.Number(distDir).multiply(10000));
-    var segFitRight = stackRight.select(['fit_.*']).rename(['fitted']).multiply(ee.Number(distDir).multiply(10000));
+    var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted']).multiply(distDir.multiply(10000));
+    var segFitRight = stackRight.select(['fit_.*']).rename(['fitted']).multiply(distDir.multiply(10000));
     
     
     //Compute duration, magnitude, and then slope
