@@ -646,9 +646,13 @@ function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
     return img});
 
   run_params.timeSeries = tsT;
-  run_params.runMask = countMask.rename('insufficentDataMask');
+  var runMask = countMask.rename('insufficentDataMask');
+  var outputDict = {
+    'run_params': run_params,
+    'runMask':    runMask
+  }
   
-  return run_params;  
+  return prepDict;  
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function to parse stack from LANDTRENDR or VERDET into image collection
