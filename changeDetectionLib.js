@@ -658,7 +658,7 @@ function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
 // Function to output LandTrendr as Vertical Stack to take up less space
 function makeLandtrendrStack(composites, indexName, run_params){
   // Prep Time Series and put into run parameters
-  var prepDict = dLib.prepTimeSeriesForLandTrendr(composites, indexName, run_params);
+  var prepDict = prepTimeSeriesForLandTrendr(composites, indexName, run_params);
   run_params = prepDict.run_params;
   var runMask = prepDict.runMask;
   
@@ -667,7 +667,7 @@ function makeLandtrendrStack(composites, indexName, run_params){
   
   // Convert to image stack
   var lt = rawLt.select([0]);
-  var ltStack = ee.Image(dLib.getLTvertStack(lt,run_params));
+  var ltStack = ee.Image(getLTvertStack(lt,run_params));
   ltStack = ltStack.select('yrs.*').addBands(ltStack.select('fit.*')).int16();
   var rmse = rawLt.select([1]).rename('rmse');    
   ltStack = ltStack.addBands(runMask.byte()).addBands(rmse.int16());
