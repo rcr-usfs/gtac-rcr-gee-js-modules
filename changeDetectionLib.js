@@ -684,17 +684,17 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
     var segDur = segYearsRight.subtract( segYearsLeft).rename(['dur']);
     var segMag = segFitRight.subtract( segFitLeft).rename(['mag']);
     var segSlope = segMag.divide(segDur).rename(['slope']);
-    print('segDur',segDur)
+
     //Iterate across each year to see if the year is within a given segment
     //All annualizing is done from the right vertex backward
     //The first year of the time series is inserted manually with an if statement
     //Ex: If the first segment goes from 1984-1990 and the second from 1990-1997, the duration, magnitude,and slope
     //values from the first segment will be given to 1984-1990, while the second segment (and any subsequent segment)
     //the duration, magnitude, and slope values will be given from 1991-1997
-    return ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(function(yr){
+    var annualizedCollection = ee.FeatureCollection(ee.List.sequence(startYear,endYear).getInfo().map(function(yr){
       yr = ee.Number(yr);
       var yrImage = ee.Image(yr);
-      
+      print(yr)
       //Find if the year is the first and include the left year if it is
       //Otherwise, do not include the left year
       yrImage = ee.Algorithms.If(yr.eq(startYear),
@@ -719,9 +719,10 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
       var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope)
                 .addBands(diffFromLeft)
                 .int16();
+      print('out',out)
       return out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
     }));
-    
+    return annualizedCollection;
   }));
   
   //Convert to an image collection
