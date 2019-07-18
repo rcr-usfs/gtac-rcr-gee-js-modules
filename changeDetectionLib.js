@@ -655,6 +655,39 @@ function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
   return prepDict;  
 }
 
+// Function to output LandTrendr as Vertical Stack to take up less space
+function makeLandtrendrStack(composites, indexName, run_params){
+  // Prep Time Series and put into run parameters
+  var prepDict = dLib.prepTimeSeriesForLandTrendr(composites, indexName, run_params);
+  run_params = prepDict.run_params;
+  var runMask = prepDict.runMask;
+  
+  //Run LANDTRENDR
+  var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
+  
+  // Convert to image stack
+  var lt = rawLt.select([0]);
+  var ltStack = ee.Image(dLib.getLTvertStack(lt,run_params));
+  ltStack = ltStack.select('yrs.*').addBands(ltStack.select('fit.*')).int16();
+  var rmse = rawLt.select([1]).rename('rmse');    
+  ltStack = ltStack.addBands(runMask.byte()).addBands(rmse.int16());
+  
+  // Set Properties
+  ltStack = ltStack.set({
+    'startYear': startYear,
+    'endYear': endYear,
+    'band': indexName,
+    'creationDate': creationDate,
+    'maxSegments': run_params.maxSegments,
+    'spikeThreshold': run_params.spikeThreshold,
+    'vertexCountOvershoot': run_params.vertexCountOvershoot,
+    'recoveryThreshold': run_params.recoveryThreshold,
+    'pvalThreshold': run_params.pvalThreshold,
+    'bestModelProportion': run_params.bestModelProportion,
+    'minObservationsNeeded': run_params.minObservationsNeeded
+  });
+  return ltStack;
+}
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function to parse stack from LANDTRENDR or VERDET into image collection
 function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
@@ -1490,6 +1523,7 @@ exports.getLTStack = getLTStack;
 exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
 exports.prepTimeSeriesForLandTrendr = prepTimeSeriesForLandTrendr;
+exports. makeLandtrendrStack =  makeLandtrendrStack;
 exports.fitStackToCollection = fitStackToCollection;
 exports.LANDTRENDRFitMagSlopeDiffCollection = LANDTRENDRFitMagSlopeDiffCollection;
 exports.linearInterp = linearInterp;
