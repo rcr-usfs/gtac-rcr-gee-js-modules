@@ -662,7 +662,7 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
   //Iterate across each possible segment and find its fitted end value, duration, magnitude, and slope
   var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).getInfo().map(function(i){
     i = ee.Number(i);
-    print(i)
+
     //Set up slector for left and right side of segments
     var stringSelectLeft = ee.String('.*_').cat(i.byte().format());
     var stringSelectRight = ee.String('.*_').cat((i.add(1)).byte().format());
@@ -694,7 +694,7 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
     var annualizedCollection = ee.FeatureCollection(ee.List.sequence(startYear,endYear).getInfo().map(function(yr){
       yr = ee.Number(yr);
       var yrImage = ee.Image(yr);
-      print(yr)
+
       //Find if the year is the first and include the left year if it is
       //Otherwise, do not include the left year
       yrImage = ee.Algorithms.If(yr.eq(startYear),
@@ -720,7 +720,7 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
       var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope)
                 .addBands(diffFromLeft)
                 .int16();
-      print('out',out)
+
       return out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
     }));
     return annualizedCollection;
