@@ -868,6 +868,10 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
   
   return yrDurMagSlopeCleaned.select(bns,outBns);
 } 
+
+//----------------------------------------------------------------------------------------------------
+//        Linear Interpolation Functions
+//----------------------------------------------------------------------------------------------------
 //Adapted from: https://code.earthengine.google.com/?accept_repo=users/kongdd/public
 //To work with multi-band images
 function replace_mask(img, newimg, nodata) {
@@ -970,6 +974,9 @@ function linearInterp(imgcol, frame, nodata){
     return interpolated;
 }
 
+//----------------------------------------------------------------------------------------------------
+//        Verdet Functions
+//----------------------------------------------------------------------------------------------------
 // Functions to apply our scaling work arounds for Verdet
 // Multiply by a predetermined factor beforehand and divide after
 // Add 1 before and subtract 1 after
@@ -986,6 +993,7 @@ function undoVerdetScaling(ts, indexName, correctionFactor){
   tsT = tsT.map(function(img){return addToImage(img, 1)});
   return tsT;
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // Function to prep data for Verdet. Will have to run Verdet and convert to stack after.
 function prepTimeSeriesForVerdet(ts, indexName, run_params){
@@ -1020,11 +1028,12 @@ function prepTimeSeriesForVerdet(ts, indexName, run_params){
   return prepDict;  
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor){
+function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,linearInterp){
   if(!run_params){run_params = {tolerance:0.0001,
                   alpha: 0.1}}
   if(!maxSegments){maxSegments = 10}
   if(!correctionFactor){correctionFactor = 1}
+  // linearInterp is applied outside this function. This parameter is just to set the properties (true/false)
   
   // Get today's date for properties
   var creationDate = ee.Date(Date.now()).format('YYYYMMdd');
@@ -1076,8 +1085,17 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor){
   //Convert to stack and mask out any pixels that didn't have an observation in every image
   var stack = getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']).updateMask(countMask);
   
-  // Add
-  stack = stack.addBands(countMask)
+  // Set Properties
+  stack = stack.set({
+    'startYear': startYear,
+    'endYear': endYear,
+    'band': indexName,
+    'creationDate': creationDate,
+    'maxSegments': maxSegments,
+    'correctionFactor': correctionFactor,
+    'tolerance': run_params.tolerance,
+    'alpha': run_params.alpha
+  });
   return stack;
 }
 //Function for running VERDET and converting output to annual image collection
