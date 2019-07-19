@@ -990,7 +990,7 @@ function applyVerdetScaling(ts, indexName, correctionFactor){
 function undoVerdetScaling(fitted, indexName, correctionFactor){
   var distDir = getImagesLib.changeDirDict[indexName];
   fitted = ee.Image(multBands(fitted, -distDir, 1.0/correctionFactor));
-  fitted = addToImage(fitted, 1);
+  fitted = addToImage(fitted, -1);
   return fitted;
 }
 
