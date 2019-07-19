@@ -775,8 +775,8 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
 // Convert image collection created using makeLandtrendrStack() to the same format as that created by
 // LANDTRENDRFitMagSlopeDiffCollection()
 function convertLTStack_To_DurFitMagSlope(ltStackCollection){
-  //var insufficientDataMask = ltStackCollection.first().select('insufficientDataMask'); 
-  //ltStackCollection = ltStackCollection.select(ltStackCollection.first().bandNames().remove('insufficientDataMask'));
+  var insufficientDataMask = ltStackCollection.first().select('insufficientDataMask'); 
+  ltStackCollection = ltStackCollection.select(ltStackCollection.first().bandNames().remove('insufficientDataMask').remove('rmse'));
 
   // Prep parameters for fitStackToCollection
   var maxSegments = ltStackCollection.first().get('maxSegments');
@@ -796,7 +796,7 @@ function convertLTStack_To_DurFitMagSlope(ltStackCollection){
       endYear,
       getImagesLib.changeDirDict[indexName]
     );  
-    //yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.map(function(img){return img.updateMask(insufficientDataMask)});
+    yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.map(function(img){return img.updateMask(insufficientDataMask)});
     
     //Rename
     var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
