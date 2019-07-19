@@ -775,9 +775,13 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
 // Convert image collection created using makeLandtrendrStack() to the same format as that created by
 // LANDTRENDRFitMagSlopeDiffCollection()
 function convertLTStack_To_DurFitMagSlope(ltStackCollection){
-  var insufficientDataMask = ltStackCollection.first().select('insufficientDataMask'); 
-  ltStackCollection = ltStackCollection.select(ltStackCollection.first().bandNames().remove('insufficientDataMask').remove('rmse'));
-
+  try{
+    var insufficientDataMask = ltStackCollection.first().select('insufficientDataMask'); 
+    ltStackCollection = ltStackCollection.select(ltStackCollection.first().bandNames().remove('insufficientDataMask').remove('rmse'));
+    var extraBands = true;
+  }catch(err){
+    var extraBands = false; 
+  }
   // Prep parameters for fitStackToCollection
   var maxSegments = ltStackCollection.first().get('maxSegments');
   var startYear = ltStackCollection.first().get('startYear');
@@ -795,8 +799,10 @@ function convertLTStack_To_DurFitMagSlope(ltStackCollection){
       startYear, 
       endYear,
       getImagesLib.changeDirDict[indexName]
-    );  
-    yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.map(function(img){return img.updateMask(insufficientDataMask)});
+    ); 
+    if (extraBands === true){
+      yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.map(function(img){return img.updateMask(insufficientDataMask)});
+    };
     
     //Rename
     var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
