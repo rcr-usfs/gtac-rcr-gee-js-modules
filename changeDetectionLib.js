@@ -982,8 +982,8 @@ function linearInterp(imgcol, frame, nodata){
 // Add 1 before and subtract 1 after
 function applyVerdetScaling(ts, indexName, correctionFactor){
   var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = tsT.map(function(img){return addToImage(img, 1)});
-  tsT = ts.map(function(img){return multBands(img, -distDir, correctionFactor)});  
+  var tsT = ts.map(function(img){return addToImage(img, 1)});
+  tsT = tsT.map(function(img){return multBands(img, -distDir, correctionFactor)});  
   return tsT;
 }
 
