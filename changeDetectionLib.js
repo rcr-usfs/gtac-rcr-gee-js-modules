@@ -987,10 +987,10 @@ function applyVerdetScaling(ts, indexName, correctionFactor){
   return tsT;
 }
 
-function undoVerdetScaling(ts, indexName, correctionFactor){
+function undoVerdetScaling(fitted, indexName, correctionFactor){
   var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return multBands(img, -distDir, correctionFactor)});
-  tsT = tsT.map(function(img){return addToImage(img, 1)});
+  fitted = multBands(fitted, -distDir, 1.0/correctionFactor);
+  fitted = addToImage(fitted, 1);
   return tsT;
 }
 
@@ -1035,7 +1035,7 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
                   alpha: 0.1}}
   if(!maxSegments){maxSegments = 10}
   if(!correctionFactor){correctionFactor = 1}
-  if(!linearInterp){linearInterp = 1}
+  if(!linearInterp){linearInterp = true}
   // linearInterp is applied outside this function. This parameter is just to set the properties (true/false)
   
   // Get today's date for properties
@@ -1081,7 +1081,9 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
   
   //Get the fitted values
   var fitted = ee.Image(run_params.timeSeries.limit(3).mean()).toArray().arrayCat(mag,0);
-  fitted = fitted.arrayAccum(0, ee.Reducer.sum()).arraySlice(0,1,null).subtract(1).divide(correctionFactor);
+  fitted = fitted.arrayAccum(0, ee.Reducer.sum()).arraySlice(0,1,null);
+  // Undo scaling of fitted values
+  .subtract(1).divide(correctionFactor)
   
   //Get the bands needed to convert to image stack
   var forStack = tsYearRight.addBands(fitted).toArray(1);
