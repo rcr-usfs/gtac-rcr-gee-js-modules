@@ -856,7 +856,7 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
   
   //Get LT output and convert to image stack
   var lt = rawLt.select([0]);
-  var ltStack = getLTvertStack(lt,run_params);
+  var ltStack = getLTvertStack(lt,run_params).updateMask(countMask);
   
   //Convert to image collection
   var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, run_params.maxSegments,startYear,endYear,distDir);
