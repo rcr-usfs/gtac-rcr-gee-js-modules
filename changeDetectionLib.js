@@ -809,7 +809,7 @@ function convertLTStack_To_DurFitMagSlope(ltStackCollection){
       outputCollection = getImagesLib.joinCollections(outputCollection,yrDurMagSlopeCleaned,false);
     }  
   });
-  return outputCollecton;
+  return outputCollection;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
