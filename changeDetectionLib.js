@@ -776,6 +776,8 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
 // LANDTRENDRFitMagSlopeDiffCollection()
 function convertLTStack_To_DurFitMagSlope(ltStackCollection){
   var stackList = ltStackCollection.first().bandNames();
+  print('stackList',stackList)
+  print('stackList.contains',stackList.contains('insufficientDataMask'))
   var applyMask;
   if (stackList.contains('insufficientDataMask')){
     var insufficientDataMask = ltStackCollection.first().select('insufficientDataMask'); 
