@@ -775,29 +775,30 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
 // Convert image collection created using makeLandtrendrStack() to the same format as that created by
 // LANDTRENDRFitMagSlopeDiffCollection()
 function convertLTStack_To_DurFitMagSlope(ltStackCollection){
-  var indexList = ltStackCollection.first().bandNames();
+  var stackList = ltStackCollection.first().bandNames();
   var applyMask;
-  if (indexList.contains('insufficientDataMask')){
+  if (stackList.contains('insufficientDataMask')){
     var insufficientDataMask = ltStackCollection.first().select('insufficientDataMask'); 
-    indexList = indexList.remove('insufficientDataMask');
+    stackList = stackList.remove('insufficientDataMask');
     applyMask = true;
   } else{
     applyMask = false; 
   }
-  if (indexList.contains('rmse')){
-    indexList = indexList.remove('rmse');
+  if (stackList.contains('rmse')){
+    stackList = stackList.remove('rmse');
   }
-  ltStackCollection = ltStackCollection.select(indexList);
+  ltStackCollection = ltStackCollection.select(stackList);
 
   // Prep parameters for fitStackToCollection
   var maxSegments = ltStackCollection.first().get('maxSegments');
   var startYear = ltStackCollection.first().get('startYear');
   var endYear = ltStackCollection.first().get('endYear');
+  var indexList = ee.Dictionary(ltStackCollection.aggregate_histogram('band')).keys().getInfo();
   
   //Set up output collection to populate
   var outputCollection; var ltStack;
   //Iterate across indices
-  indexList.getInfo().map(function(indexName){  
+  indexList.map(function(indexName){  
     ltStack = ltStackCollection.filter(ee.Filter.eq('band',indexName)).first();
     //Convert to image collection
     var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, 
