@@ -775,7 +775,8 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
 
 // Convert image collection created using makeLandtrendrStack() to the same format as that created by
 // LANDTRENDRFitMagSlopeDiffCollection(). Also works for Verdet.
-function convertStack_To_DurFitMagSlope(ltStackCollection){
+// VTorLT is the string that is put in the band names, 'LT' or 'VT'
+function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
   var stackList = ltStackCollection.first().bandNames();
   if (stackList.getInfo().indexOf('rmse') >= 0){
     stackList = stackList.remove('rmse');
@@ -806,7 +807,7 @@ function convertStack_To_DurFitMagSlope(ltStackCollection){
     
     //Rename
     var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
-    var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});  
+    var outBns = bns.map(function(bn){return ee.String(indexName).cat('_'+VTorLT+'_').cat(bn)});  
     yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.select(bns,outBns);
     
     if(outputCollection === undefined){
