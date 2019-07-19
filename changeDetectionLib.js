@@ -981,6 +981,8 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor){
 
   //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
+  print(indexName)
+  print('ts',ts)
   // Map.addLayer(ts,{},'raw ts',false);
   var distDir = getImagesLib.changeDirDict[indexName];
   var tsT = ts.map(function(img){return multBands(img,-distDir,correctionFactor)});
