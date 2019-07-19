@@ -1035,7 +1035,7 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
                   alpha: 0.1}}
   if(!maxSegments){maxSegments = 10}
   if(!correctionFactor){correctionFactor = 1}
-  if(!linearInterp){linearInterp = true}
+  if(!linearInterp){linearInterp = 'unknown'}
   // linearInterp is applied outside this function. This parameter is just to set the properties (true/false)
   
   // Get today's date for properties
@@ -1083,11 +1083,10 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
   var fitted = ee.Image(run_params.timeSeries.limit(3).mean()).toArray().arrayCat(mag,0);
   fitted = fitted.arrayAccum(0, ee.Reducer.sum()).arraySlice(0,1,null);
   // Undo scaling of fitted values
-  .subtract(1).divide(correctionFactor)
+  fitted = undoVerdetScaling(fitted, indexName, correctionFactor)
   
   //Get the bands needed to convert to image stack
   var forStack = tsYearRight.addBands(fitted).toArray(1);
-  
 
   //Convert to stack and mask out any pixels that didn't have an observation in every image
   var stack = getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']).updateMask(countMask);
@@ -1101,7 +1100,8 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
     'maxSegments': maxSegments,
     'correctionFactor': correctionFactor,
     'tolerance': run_params.tolerance,
-    'alpha': run_params.alpha
+    'alpha': run_params.alpha,
+    'linearInterpApplied': linearInterp
   });
   return stack;
 }
