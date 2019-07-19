@@ -782,11 +782,6 @@ function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
     stackList = stackList.remove('rmse');
     ltStackCollection = ltStackCollection.select(stackList);
   }  
-  if(VTorLT == 'VT'){
-    distDir = -getImagesLib.changeDirDict[indexName]
-  }else if(VTorLT == 'LT'){
-    distDir = getImagesLib.changeDirDict[indexName]
-  }
 
   // Prep parameters for fitStackToCollection
   var maxSegments = ltStackCollection.first().get('maxSegments');
@@ -799,6 +794,12 @@ function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
   //Iterate across indices
   indexList.map(function(indexName){  
     ltStack = ltStackCollection.filter(ee.Filter.eq('band',indexName)).first();
+    
+    if(VTorLT == 'VT'){
+      distDir = -getImagesLib.changeDirDict[indexName]
+    }else if(VTorLT == 'LT'){
+      distDir = getImagesLib.changeDirDict[indexName]
+    }
     //Convert to image collection
     var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, 
       maxSegments, 
