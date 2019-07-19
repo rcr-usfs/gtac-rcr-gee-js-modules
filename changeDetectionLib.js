@@ -799,7 +799,7 @@ function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
       maxSegments, 
       startYear, 
       endYear,
-      getImagesLib.changeDirDict[indexName]
+      -getImagesLib.changeDirDict[indexName]
     ); 
     
     //Rename
