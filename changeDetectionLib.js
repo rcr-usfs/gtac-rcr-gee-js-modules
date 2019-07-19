@@ -774,21 +774,13 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
 }
 
 // Convert image collection created using makeLandtrendrStack() to the same format as that created by
-// LANDTRENDRFitMagSlopeDiffCollection()
-function convertLTStack_To_DurFitMagSlope(ltStackCollection){
+// LANDTRENDRFitMagSlopeDiffCollection(). Also works for Verdet.
+function convertStack_To_DurFitMagSlope(ltStackCollection){
   var stackList = ltStackCollection.first().bandNames();
-  var applyMask;
-  if (stackList.getInfo().indexOf('insufficientDataMask') >= 0){
-    var insufficientDataMask = ltStackCollection.first().select('insufficientDataMask'); 
-    stackList = stackList.remove('insufficientDataMask');
-    applyMask = true;
-  } else{
-    applyMask = false; 
-  }
   if (stackList.getInfo().indexOf('rmse') >= 0){
     stackList = stackList.remove('rmse');
-  }
-  ltStackCollection = ltStackCollection.select(stackList);
+    ltStackCollection = ltStackCollection.select(stackList);
+  }  
 
   // Prep parameters for fitStackToCollection
   var maxSegments = ltStackCollection.first().get('maxSegments');
@@ -1642,7 +1634,7 @@ exports.simpleLANDTRENDR = simpleLANDTRENDR;
 exports.prepTimeSeriesForLandTrendr = prepTimeSeriesForLandTrendr;
 exports. makeLandtrendrStack =  makeLandtrendrStack;
 exports.fitStackToCollection = fitStackToCollection;
-exports.convertLTStack_To_DurFitMagSlope = convertLTStack_To_DurFitMagSlope;
+exports.convertStack_To_DurFitMagSlope = convertStack_To_DurFitMagSlope;
 exports.LANDTRENDRFitMagSlopeDiffCollection = LANDTRENDRFitMagSlopeDiffCollection;
 exports.linearInterp = linearInterp;
 exports.VERDETVertStack = VERDETVertStack;
