@@ -1044,7 +1044,7 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
   // Extract composite time series and apply relevant masking & scaling
   var prepDict = prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor)
   run_params = prepDict.run_params;
-  var countMask = prepDict.runMask;
+  var countMask = prepDict.countMask;
   var startYear = prepDict.startYear;
   var endYear = prepDict.endYear;
   
