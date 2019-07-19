@@ -779,7 +779,7 @@ function convertLTStack_To_DurFitMagSlope(ltStackCollection){
   print('stackList',stackList)
   print('stackList.contains',stackList.contains('insufficientDataMask'))
   var applyMask;
-  if (stackList.getInfo().includes('insufficientDataMask') === true){
+  if (stackList.getInfo().indexOf('insufficientDataMask') >= 0){
     var insufficientDataMask = ltStackCollection.first().select('insufficientDataMask'); 
     stackList = stackList.remove('insufficientDataMask');
     applyMask = true;
