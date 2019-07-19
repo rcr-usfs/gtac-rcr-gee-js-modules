@@ -997,7 +997,7 @@ function undoVerdetScaling(ts, indexName, correctionFactor){
 //////////////////////////////////////////////////////////////////////////////////////////
 // Function to prep data for Verdet. Will have to run Verdet and convert to stack after.
 function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
-    //Get the start and end years
+  //Get the start and end years
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
 
@@ -1019,10 +1019,12 @@ function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
 
   run_params.timeSeries = tsT;
   
-  var runMask = countMask.rename('insufficientDataMask');
+  countMask = countMask.rename('insufficientDataMask');
   var prepDict = {
     'run_params': run_params,
-    'runMask':    runMask
+    'countMask':  countMask,
+    'startYear':  startYear,
+    'endYear':    endYear
   }
   
   return prepDict;  
@@ -1043,6 +1045,8 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
   var prepDict = prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor)
   run_params = prepDict.run_params;
   var countMask = prepDict.runMask;
+  var startYear = prepDict.startYear;
+  var endYear = prepDict.endYear;
   
   //Run VERDET
   var verdet =   ee.Algorithms.TemporalSegmentation.Verdet(run_params).arraySlice(0,1,null);
