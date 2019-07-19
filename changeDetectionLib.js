@@ -795,6 +795,7 @@ function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
   indexList.map(function(indexName){  
     ltStack = ltStackCollection.filter(ee.Filter.eq('band',indexName)).first();
     
+    var distDir;
     if(VTorLT == 'VT'){
       distDir = -getImagesLib.changeDirDict[indexName]
     }else if(VTorLT == 'LT'){
