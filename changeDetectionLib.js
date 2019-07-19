@@ -797,7 +797,7 @@ function convertLTStack_To_DurFitMagSlope(ltStackCollection){
   //Set up output collection to populate
   var outputCollection; var ltStack;
   //Iterate across indices
-  indexList.map(function(indexName){  
+  indexList.getInfo().map(function(indexName){  
     ltStack = ltStackCollection.filter(ee.Filter.eq('band',indexName)).first();
     //Convert to image collection
     var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, 
