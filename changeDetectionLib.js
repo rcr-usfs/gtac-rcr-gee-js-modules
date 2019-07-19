@@ -775,18 +775,16 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
 // Convert image collection created using makeLandtrendrStack() to the same format as that created by
 // LANDTRENDRFitMagSlopeDiffCollection()
 function convertLTStack_To_DurFitMagSlope(ltStackCollection){
-  var stackList = ltStackCollection.first().bandNames();
-  print('stackList',stackList)
-  print('stackList.contains',stackList.contains('insufficientDataMask'))
+  var stackList = ltStackCollection.first().bandNames().getInfo();
   var applyMask;
-  if (stackList.getInfo().indexOf('insufficientDataMask') >= 0){
+  if (stackList.indexOf('insufficientDataMask') >= 0){
     var insufficientDataMask = ltStackCollection.first().select('insufficientDataMask'); 
     stackList = stackList.remove('insufficientDataMask');
     applyMask = true;
   } else{
     applyMask = false; 
   }
-  if (stackList.contains('rmse')){
+  if (stackList.indexOf('rmse') >= 0){
     stackList = stackList.remove('rmse');
   }
   ltStackCollection = ltStackCollection.select(stackList);
