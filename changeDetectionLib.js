@@ -801,9 +801,6 @@ function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
       endYear,
       getImagesLib.changeDirDict[indexName]
     ); 
-    if (applyMask === true){
-      yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.map(function(img){return img.updateMask(insufficientDataMask)});
-    }
     
     //Rename
     var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
