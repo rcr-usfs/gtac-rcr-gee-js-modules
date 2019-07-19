@@ -1003,7 +1003,7 @@ function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
 
   //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
-  tsT = applyVerdetScaling(ts, indexName, correctionFactor);
+  var tsT = applyVerdetScaling(ts, indexName, correctionFactor);
   
   //Find areas with insufficient data to run VERDET
   //VERDET currently requires all pixels have a value
