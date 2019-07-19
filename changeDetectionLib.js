@@ -662,17 +662,17 @@ function makeLandtrendrStack(composites, indexName, run_params, startYear, endYe
   // Prep Time Series and put into run parameters
   var prepDict = prepTimeSeriesForLandTrendr(composites, indexName, run_params);
   run_params = prepDict.run_params;
-  var runMask = prepDict.runMask;
+  var countMask = prepDict.runMask;
   
   //Run LANDTRENDR
   var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
   
   // Convert to image stack
   var lt = rawLt.select([0]);
-  var ltStack = ee.Image(getLTvertStack(lt,run_params));
+  var ltStack = ee.Image(getLTvertStack(lt,run_params)).updateMask(countMask);
   ltStack = ltStack.select('yrs.*').addBands(ltStack.select('fit.*'));
   var rmse = rawLt.select([1]).rename('rmse');    
-  ltStack = ltStack.addBands(runMask).addBands(rmse);
+  ltStack = ltStack.addBands(rmse); //.addBands(runMask)
   
   // Set Properties
   ltStack = ltStack.set({
