@@ -829,6 +829,7 @@ function convertLTStack_To_DurFitMagSlope(ltStackCollection){
 //Function for running LANDTRENDR and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
+  var maxSegments = ee.Number(run_params.maxSegments);
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
 
@@ -838,7 +839,7 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
   var tsT = ts.map(function(img){return multBands(img,distDir,1)});
   
   //Find areas with insufficient data to run LANDTRENDR
-  var countMask = tsT.count().unmask().gte(6);
+  var countMask = tsT.count().unmask().gte(maxSegments.add(1));
 
   tsT = tsT.map(function(img){
     var m = img.mask();
@@ -1030,7 +1031,7 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor){
   // Extract composite time series and apply relevant masking & scaling
   var prepDict = prepTimeSeriesForVerdet(ts, indexName, run_params)
   run_params = prepDict.run_params;
-  var runMask = prepDict.runMask;
+  var countMask = prepDict.runMask;
   
   //Run VERDET
   var verdet =   ee.Algorithms.TemporalSegmentation.Verdet(run_params).arraySlice(0,1,null);
@@ -1073,6 +1074,9 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor){
 
   //Convert to stack and mask out any pixels that didn't have an observation in every image
   var stack = getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']).updateMask(countMask);
+  
+  // Add
+  stack = stack.addBands(countMask)
   return stack;
 }
 //Function for running VERDET and converting output to annual image collection
