@@ -1080,7 +1080,7 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
   var mag = verdet.multiply(dur);
   
   //Get the fitted values
-  var fitted = ee.Image(tsT.limit(3).mean()).toArray().arrayCat(mag,0);
+  var fitted = ee.Image(run_params.timeSeries.limit(3).mean()).toArray().arrayCat(mag,0);
   fitted = fitted.arrayAccum(0, ee.Reducer.sum()).arraySlice(0,1,null).subtract(1).divide(correctionFactor);
   
   //Get the bands needed to convert to image stack
