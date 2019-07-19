@@ -996,7 +996,7 @@ function undoVerdetScaling(ts, indexName, correctionFactor){
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Function to prep data for Verdet. Will have to run Verdet and convert to stack after.
-function prepTimeSeriesForVerdet(ts, indexName, run_params){
+function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
     //Get the start and end years
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
@@ -1033,13 +1033,14 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
                   alpha: 0.1}}
   if(!maxSegments){maxSegments = 10}
   if(!correctionFactor){correctionFactor = 1}
+  if(!linearInterp){linearInterp = 1}
   // linearInterp is applied outside this function. This parameter is just to set the properties (true/false)
   
   // Get today's date for properties
   var creationDate = ee.Date(Date.now()).format('YYYYMMdd');
   
   // Extract composite time series and apply relevant masking & scaling
-  var prepDict = prepTimeSeriesForVerdet(ts, indexName, run_params)
+  var prepDict = prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor)
   run_params = prepDict.run_params;
   var countMask = prepDict.runMask;
   
