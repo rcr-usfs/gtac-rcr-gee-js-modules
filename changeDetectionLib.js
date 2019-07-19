@@ -968,23 +968,32 @@ function linearInterp(imgcol, frame, nodata){
     return interpolated;
 }
 
+// Functions to apply our scaling work arounds for Verdet
+// Multiply by a predetermined factor beforehand and divide after
+// Add 1 before and subtract 1 after
+function applyVerdetScaling(ts, indexName, correctionFactor){
+  var distDir = getImagesLib.changeDirDict[indexName];
+  var tsT = ts.map(function(img){return multBands(img, -distDir, correctionFactor)});
+  tsT = tsT.map(function(img){return addToImage(img, 1)});
+  return tsT;
+}
+
+function undoVerdetScaling(ts, indexName, correctionFactor){
+  var distDir = getImagesLib.changeDirDict[indexName];
+  var tsT = ts.map(function(img){return multBands(img, -distDir, correctionFactor)});
+  tsT = tsT.map(function(img){return addToImage(img, 1)});
+  return tsT;
+}
 //////////////////////////////////////////////////////////////////////////////////////////
-function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor){
-  if(!run_params){run_params = {tolerance:0.0001,
-                  alpha: 0.1}}
-  if(!maxSegments){maxSegments = 10}
-  if(!correctionFactor){correctionFactor = 1}
-  
-  //Get the start and end years
+// Function to prep data for Verdet. Will have to run Verdet and convert to stack after.
+function prepTimeSeriesForVerdet(ts, indexName, run_params){
+    //Get the start and end years
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
 
   //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
-  // Map.addLayer(ts,{},'raw ts',false);
-  var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return multBands(img,-distDir,correctionFactor)});
-  tsT = tsT.map(function(img){return addToImage(img,1)});
+  tsT = applyVerdetScaling(ts, indexName, correctionFactor);
   
   //Find areas with insufficient data to run VERDET
   //VERDET currently requires all pixels have a value
@@ -999,6 +1008,29 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor){
     return img});
 
   run_params.timeSeries = tsT;
+  
+  var runMask = countMask.rename('insufficientDataMask');
+  var prepDict = {
+    'run_params': run_params,
+    'runMask':    runMask
+  }
+  
+  return prepDict;  
+}
+//////////////////////////////////////////////////////////////////////////////////////////
+function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor){
+  if(!run_params){run_params = {tolerance:0.0001,
+                  alpha: 0.1}}
+  if(!maxSegments){maxSegments = 10}
+  if(!correctionFactor){correctionFactor = 1}
+  
+  // Get today's date for properties
+  var creationDate = ee.Date(Date.now()).format('YYYYMMdd');
+  
+  // Extract composite time series and apply relevant masking & scaling
+  var prepDict = prepTimeSeriesForVerdet(ts, indexName, run_params)
+  run_params = prepDict.run_params;
+  var runMask = prepDict.runMask;
   
   //Run VERDET
   var verdet =   ee.Algorithms.TemporalSegmentation.Verdet(run_params).arraySlice(0,1,null);
