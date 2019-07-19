@@ -1047,7 +1047,6 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
   var countMask = prepDict.countMask;
   var startYear = prepDict.startYear;
   var endYear = prepDict.endYear;
-  Map.addLayer(countMask,{},'countMask')
   
   //Run VERDET
   var verdet =   ee.Algorithms.TemporalSegmentation.Verdet(run_params).arraySlice(0,1,null);
