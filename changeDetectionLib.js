@@ -1007,7 +1007,7 @@ function applyLinearInterp(composites, nYearsInterpolate){
     // rename bands to better names
     var origNames = masks.bandNames();
     var newNames = origNames.map(function(bandName){return ee.String(bandName).replace('null','mask')});
-    masks = masks.select(origNames, newNames);
+    masks = masks.select(origNames, newNames).set('creationDate',ee.Date(Date.now()).format('YYYYMMdd')).set('mask',true);
     
     //Perform linear interpolation        
     composites = linearInterp(composites, 365*nYearsInterpolate, -32768)
