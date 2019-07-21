@@ -1010,7 +1010,7 @@ function applyLinearInterp(composites, nYearsInterpolate){
             .map(getImagesLib.simpleAddTCAngles);
             
     var outDict = {'composites': composites,
-               'masks':      masks
+                   'masks':      masks
     };
     return outDict;
 }
