@@ -993,13 +993,35 @@ function undoVerdetScaling(fitted, indexName, correctionFactor){
   return fitted;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+//        Function to apply linear interpolation for Verdet
+function applyLinearInterp(composites){      
+    
+    // Start with just the basic bands
+    composites = composites.select(['red','green','blue','nir','swir1','swir2']);
+    
+    // Find pixels/years with no data
+    var masks = composites.map(function(img){return img.mask().reduce(ee.Reducer.min()).byte().copyProperties(img, img.propertyNames())}).select([0],['mask']);
+    
+    //Perform linear interpolation        
+    composites = linearInterp(composites, 365*nYearsInterpolate, -32768)
+            .map(getImagesLib.simpleAddIndices)
+            .map(getImagesLib.getTasseledCap)
+            .map(getImagesLib.simpleAddTCAngles);
+    outDict = {'composites': composites,
+               'masks':      masks
+    };
+    return outDict;
+}
+
+  
 //////////////////////////////////////////////////////////////////////////////////////////
 // Function to prep data for Verdet. Will have to run Verdet and convert to stack after.
 function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
   //Get the start and end years
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
-
+  
   //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
   var tsT = applyVerdetScaling(ts, indexName, correctionFactor);
@@ -1029,19 +1051,19 @@ function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
   return prepDict;  
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,linearInterp){
+function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,linearInterp,masks){
   if(!run_params){run_params = {tolerance:0.0001,
                   alpha: 0.1}}
   if(!maxSegments){maxSegments = 10}
   if(!correctionFactor){correctionFactor = 1}
-  if(!linearInterp){linearInterp = 'unknown'}
-  // linearInterp is applied outside this function. This parameter is just to set the properties (true/false)
+  if(!linearInterp){linearInterp = false}
+  if(!masks){masks = null}
   
   // Get today's date for properties
   var creationDate = ee.Date(Date.now()).format('YYYYMMdd');
   
   // Extract composite time series and apply relevant masking & scaling
-  var prepDict = prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor)
+  var prepDict = prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor, linearInterp)
   run_params = prepDict.run_params;
   var countMask = prepDict.countMask;
   var startYear = prepDict.startYear;
@@ -1089,6 +1111,10 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
 
   //Convert to stack and mask out any pixels that didn't have an observation in every image
   var stack = getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']).updateMask(countMask);
+  
+  if(linearInterp === true){
+      stack = stack.addBands(masks.rename(['LinearInterpMask']));
+  }
   
   // Set Properties
   stack = stack.set({
