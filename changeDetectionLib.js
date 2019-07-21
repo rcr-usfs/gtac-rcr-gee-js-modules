@@ -979,15 +979,17 @@ function linearInterp(imgcol, frame, nodata){
 // Add 1 before and subtract 1 after
 function applyVerdetScaling(ts, indexName, correctionFactor){
   var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return addToImage(img, 1)});
-  tsT = tsT.map(function(img){return multBands(img, -distDir, correctionFactor)});  
+  var tsT = ts.map(function(img){return multBands(img, 1, -distDir)}); // Apply change in direction first
+  tsT = tsT.map(function(img){return addToImage(img, 1)});            // Then add 1 to image to get rid of any negatives
+  tsT = tsT.map(function(img){return multBands(img, 1, correctionFactor)});  // Finally we can apply scaling.
   return tsT;
 }
 
 function undoVerdetScaling(fitted, indexName, correctionFactor){
   var distDir = getImagesLib.changeDirDict[indexName];
-  fitted = ee.Image(multBands(fitted, -distDir, 1.0/correctionFactor));
-  fitted = addToImage(fitted, -1);
+  fitted = ee.Image(multBands(fitted, 1, 1.0/correctionFactor)); // Undo scaling first.
+  fitted = addToImage(fitted, -1); // Undo getting rid of negatives
+  fitted = multBands(img, 1, -distDir); // Finally, undo change in direction
   return fitted;
 }
 
