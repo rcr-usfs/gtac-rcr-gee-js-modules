@@ -1002,7 +1002,7 @@ function applyLinearInterp(composites, nYearsInterpolate){
     
     // Find pixels/years with no data
     var masks = composites.map(function(img){return img.mask().reduce(ee.Reducer.min()).byte().copyProperties(img, img.propertyNames())}).select([0]);
-    masks = masks.map(function(img){return img.rename([ee.Date(img.get('system:time_start')).format('YYYY')])});
+    masks = masks.map(function(img){return img.rename([ee.Date(img.get('system:time_start')).format('YYYY')+'_mask'])});
 
     //Perform linear interpolation        
     composites = linearInterp(composites, 365*nYearsInterpolate, -32768)
