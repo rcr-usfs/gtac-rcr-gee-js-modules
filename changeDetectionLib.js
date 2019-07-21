@@ -1008,6 +1008,7 @@ function applyLinearInterp(composites){
             .map(getImagesLib.simpleAddIndices)
             .map(getImagesLib.getTasseledCap)
             .map(getImagesLib.simpleAddTCAngles);
+            
     outDict = {'composites': composites,
                'masks':      masks
     };
@@ -1051,13 +1052,12 @@ function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
   return prepDict;  
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,linearInterp,masks){
+function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,linearInterp){
   if(!run_params){run_params = {tolerance:0.0001,
                   alpha: 0.1}}
   if(!maxSegments){maxSegments = 10}
   if(!correctionFactor){correctionFactor = 1}
   if(!linearInterp){linearInterp = false}
-  if(!masks){masks = null}
   
   // Get today's date for properties
   var creationDate = ee.Date(Date.now()).format('YYYYMMdd');
@@ -1111,10 +1111,6 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
 
   //Convert to stack and mask out any pixels that didn't have an observation in every image
   var stack = getLTStack(forStack.arrayTranspose(),maxSegments+1,['yrs_','fit_']).updateMask(countMask);
-  
-  if(linearInterp === true){
-      stack = stack.addBands(masks.rename(['LinearInterpMask']));
-  }
   
   // Set Properties
   stack = stack.set({
