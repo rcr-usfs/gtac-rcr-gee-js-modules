@@ -995,7 +995,7 @@ function undoVerdetScaling(fitted, indexName, correctionFactor){
 
 ///////////////////////////////////////////////////////////////////////////////
 //        Function to apply linear interpolation for Verdet
-function applyLinearInterp(composites){      
+function applyLinearInterp(composites, nYearsInterpolate){      
     
     // Start with just the basic bands
     composites = composites.select(['red','green','blue','nir','swir1','swir2']);
