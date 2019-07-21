@@ -1001,8 +1001,8 @@ function applyLinearInterp(composites, nYearsInterpolate){
     composites = composites.select(['red','green','blue','nir','swir1','swir2']);
     
     // Find pixels/years with no data
-    var masks = composites.map(function(img){return img.mask().reduce(ee.Reducer.min()).byte().copyProperties(img, img.propertyNames())}).select([0],['mask']);
-    
+    var masks = composites.map(function(img){return img.mask().reduce(ee.Reducer.min()).byte().copyProperties(img, img.propertyNames())}).select([0],['MaskLinearInterp']);
+
     //Perform linear interpolation        
     composites = linearInterp(composites, 365*nYearsInterpolate, -32768)
             .map(getImagesLib.simpleAddIndices)
