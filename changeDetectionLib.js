@@ -778,7 +778,8 @@ function LT_VT_vertStack_multBands(img, verdet_or_landtrendr, multBy){
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function to parse stack from LANDTRENDR or VERDET in the same format as that created by
 // FitMagSlopeDiffCollection() functions. 
-// July 2019 LSC: multiply(distDir) and multiply(10000) now take place outside of this function
+// July 2019 LSC: multiply(distDir) and multiply(10000) now take place outside of this function,
+// but must be done BEFORE stack is passed to this function
 function fitStackToCollection(stack, maxSegments, startYear, endYear){//, distDir, applyDistDir){
   //if(applyDistDir === undefined || applyDistDir === null){applyDistDir = true}
   
@@ -1180,21 +1181,26 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
   });
   return stack;
 }
+
 //Function for running VERDET and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
-function VERDETFitMagSlopeDiffCollection(ts,indexName,run_params,maxSegments,correctionFactor){
+// July 2019 LSC: multiply(distDir) and multiply(10000) now take place outside of this function 
+function VERDETFitMagSlopeDiffCollection(ts, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp){
   //Get the start and end years
-  var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
-  var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
-  var distDir = getImagesLib.changeDirDict[indexName];
-  var stack = VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor);
-  //Convert to a collection
-  var yrDurMagSlopeCleaned = fitStackToCollection(stack, maxSegments,startYear,endYear,-distDir);
+  //var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
+  //var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
+  
+  // Run Verdet and convert to vertStack format
+  var stack = VERDETVertStack(ts, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp);
+  
+  //Convert to a collection - fitDurMagSlope format
+  var durFitMagSlope = dLib.convertStack_To_DurFitMagSlope(stack, 'VT');
+  //var yrDurMagSlopeCleaned = fitStackToCollection(stack, maxSegments,startYear,endYear,-distDir);
   
   //Give meaningful band names
-  var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
-  var outBns = bns.map(function(bn){return ee.String(indexName).cat('_VT_').cat(bn)});
-  yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.select(bns,outBns);
+  //var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
+  //var outBns = bns.map(function(bn){return ee.String(indexName).cat('_VT_').cat(bn)});
+  //yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.select(bns,outBns);
   
   
   // fitted = yrDurMagSlopeCleaned.select(['.*_fitted']).map(function(img){return multBands(img,1,0.0001)});
