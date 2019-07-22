@@ -693,7 +693,9 @@ function makeLandtrendrStack(composites, indexName, run_params, startYear, endYe
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function to parse stack from LANDTRENDR or VERDET into image collection
-function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
+function fitStackToCollection(stack, maxSegments,startYear,endYear,applyDistDir){
+  if(applyDistDir === undefined || applyDistDir === null){applyDistDir = true}
+  
   //Parse into annual fitted, duration, magnitude, and slope images
   //Iterate across each possible segment and find its fitted end value, duration, magnitude, and slope
   var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).map(function(i){
@@ -713,9 +715,12 @@ function fitStackToCollection(stack, maxSegments,startYear,endYear,distDir){
     var segYearsRight = stackRight.select(['yrs_.*']).rename(['year_right']);
     
     //Select off the fitted bands and flip them if they were flipped for use in LT
-    var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted']).multiply(distDir.multiply(10000));
-    var segFitRight = stackRight.select(['fit_.*']).rename(['fitted']).multiply(distDir.multiply(10000));
-    
+    var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted']).multiply(10000);
+    var segFitRight = stackRight.select(['fit_.*']).rename(['fitted']).multiply(10000);
+    if(applyDistDir === true){
+      segFitLeft = segFitLeft.multiply(distDir);
+      segFitRight = segFitRight.multiply(distDir);
+    }
     
     //Compute duration, magnitude, and then slope
     var segDur = segYearsRight.subtract( segYearsLeft).rename(['dur']);
@@ -796,10 +801,9 @@ function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
     ltStack = ltStackCollection.filter(ee.Filter.eq('band',indexName)).first();
     
     var distDir;
-    // if(VTorLT == 'VT'){
-    //   distDir = -getImagesLib.changeDirDict[indexName]
-    // }else 
-    if(VTorLT == 'LT'){
+    if(VTorLT == 'VT'){
+      distDir = -getImagesLib.changeDirDict[indexName]
+    }else if(VTorLT == 'LT'){
       distDir = getImagesLib.changeDirDict[indexName]
     }
     //Convert to image collection
@@ -807,7 +811,7 @@ function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
       maxSegments, 
       startYear, 
       endYear,
-      distDir
+      applyDistDir
     ); 
     
     //Rename
