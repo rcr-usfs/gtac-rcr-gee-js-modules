@@ -691,10 +691,61 @@ function makeLandtrendrStack(composites, indexName, run_params, startYear, endYe
   });
   return ltStack;
 }
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////
-//Function to parse stack from LANDTRENDR or VERDET into image collection
-function fitStackToCollection(stack, maxSegments, startYear, endYear, distDir, applyDistDir){
-  if(applyDistDir === undefined || applyDistDir === null){applyDistDir = true}
+//Function for running LANDTRENDR and converting output to annual image collection
+//with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
+function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
+  var maxSegments = ee.Number(run_params.maxSegments);
+  var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
+  var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
+
+   //Get single band time series and set its direction so that a loss in veg is going up
+  ts = ts.select([indexName]);
+  var distDir = getImagesLib.changeDirDict[indexName];
+  var tsT = ts.map(function(img){return multBands(img,distDir,1)});
+  
+  //Find areas with insufficient data to run LANDTRENDR
+  var countMask = tsT.count().unmask().gte(maxSegments.add(1));
+
+  tsT = tsT.map(function(img){
+    var m = img.mask();
+    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
+    m = m.or(countMask.not());
+    img = img.mask(m);
+    img = img.where(countMask.not(),-32768);
+    return img});
+
+  run_params.timeSeries = tsT;
+  
+  //Run LANDTRENDR
+  var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
+  
+  //Get LT output and convert to image stack
+  var lt = rawLt.select([0]);
+  var ltStack = getLTvertStack(lt,run_params).updateMask(countMask);
+  
+  //Convert to image collection
+  var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, run_params.maxSegments,startYear,endYear,distDir);
+  yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.map(function(img){return img.updateMask(countMask)});
+  //Rename
+  var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
+  var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
+  
+  return yrDurMagSlopeCleaned.select(bns,outBns);
+} 
+
+//----------------------------------------------------------------------------------------------------
+//        Functions for both Verdet and Landtrendr
+//----------------------------------------------------------------------------------------------------
+
+///////////////////////////////////////////////////////////////////////////////////////////
+//Function to parse stack from LANDTRENDR or VERDET in the same format as that created by
+// FitMagSlopeDiffCollection() functions. 
+// July 2019 LSC: multiply(distDir) and multiply(10000) now take place outside of this function
+function fitStackToCollection(stack, maxSegments, startYear, endYear){//, distDir, applyDistDir){
+  //if(applyDistDir === undefined || applyDistDir === null){applyDistDir = true}
   
   //Parse into annual fitted, duration, magnitude, and slope images
   //Iterate across each possible segment and find its fitted end value, duration, magnitude, and slope
@@ -715,12 +766,12 @@ function fitStackToCollection(stack, maxSegments, startYear, endYear, distDir, a
     var segYearsRight = stackRight.select(['yrs_.*']).rename(['year_right']);
     
     //Select off the fitted bands and flip them if they were flipped for use in LT
-    var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted']).multiply(10000);
-    var segFitRight = stackRight.select(['fit_.*']).rename(['fitted']).multiply(10000);
-    if(applyDistDir === true){
-      segFitLeft = segFitLeft.multiply(distDir);
-      segFitRight = segFitRight.multiply(distDir);
-    }
+    var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted'])//.multiply(10000);
+    var segFitRight = stackRight.select(['fit_.*']).rename(['fitted'])//.multiply(10000);
+    // if(applyDistDir === true){
+    //   segFitLeft = segFitLeft.multiply(distDir);
+    //   segFitRight = segFitRight.multiply(distDir);
+    // }
     
     //Compute duration, magnitude, and then slope
     var segDur = segYearsRight.subtract( segYearsLeft).rename(['dur']);
@@ -778,27 +829,26 @@ function fitStackToCollection(stack, maxSegments, startYear, endYear, distDir, a
   return yrDurMagSlopeCleaned;
 }
 
-// Convert image collection created using makeLandtrendrStack() to the same format as that created by
-// LANDTRENDRFitMagSlopeDiffCollection(). Also works for Verdet.
+// Wrapper for fitStacktoCollection
 // VTorLT is the string that is put in the band names, 'LT' or 'VT'
-function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
-  var stackList = ltStackCollection.first().bandNames();
+function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
+  var stackList = stackCollection.first().bandNames();
   if (stackList.getInfo().indexOf('rmse') >= 0){
     stackList = stackList.remove('rmse');
-    ltStackCollection = ltStackCollection.select(stackList);
+    stackCollection = stackCollection.select(stackList);
   }  
 
   // Prep parameters for fitStackToCollection
-  var maxSegments = ltStackCollection.first().get('maxSegments');
-  var startYear = ltStackCollection.first().get('startYear');
-  var endYear = ltStackCollection.first().get('endYear');
-  var indexList = ee.Dictionary(ltStackCollection.aggregate_histogram('band')).keys().getInfo();
+  var maxSegments = stackCollection.first().get('maxSegments');
+  var startYear = stackCollection.first().get('startYear');
+  var endYear = stackCollection.first().get('endYear');
+  var indexList = ee.Dictionary(stackCollection.aggregate_histogram('band')).keys().getInfo();
   
   //Set up output collection to populate
-  var outputCollection; var ltStack;
+  var outputCollection; var stack;
   //Iterate across indices
   indexList.map(function(indexName){  
-    ltStack = ltStackCollection.filter(ee.Filter.eq('band',indexName)).first();
+    stack = stackCollection.filter(ee.Filter.eq('band',indexName)).first();
     
     var distDir;
     if(VTorLT == 'VT'){
@@ -809,7 +859,7 @@ function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
       applyDistDir = true;
     }
     //Convert to image collection
-    var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, 
+    var yrDurMagSlopeCleaned = fitStackToCollection(stack, 
       maxSegments, 
       startYear, 
       endYear,
@@ -830,49 +880,6 @@ function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
   });
   return outputCollection;
 }
-
-///////////////////////////////////////////////////////////////////////////////////////////
-//Function for running LANDTRENDR and converting output to annual image collection
-//with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
-function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
-  var maxSegments = ee.Number(run_params.maxSegments);
-  var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
-  var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
-
-   //Get single band time series and set its direction so that a loss in veg is going up
-  ts = ts.select([indexName]);
-  var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return multBands(img,distDir,1)});
-  
-  //Find areas with insufficient data to run LANDTRENDR
-  var countMask = tsT.count().unmask().gte(maxSegments.add(1));
-
-  tsT = tsT.map(function(img){
-    var m = img.mask();
-    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
-    m = m.or(countMask.not());
-    img = img.mask(m);
-    img = img.where(countMask.not(),-32768);
-    return img});
-
-  run_params.timeSeries = tsT;
-  
-  //Run LANDTRENDR
-  var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
-  
-  //Get LT output and convert to image stack
-  var lt = rawLt.select([0]);
-  var ltStack = getLTvertStack(lt,run_params).updateMask(countMask);
-  
-  //Convert to image collection
-  var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, run_params.maxSegments,startYear,endYear,distDir);
-  yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.map(function(img){return img.updateMask(countMask)});
-  //Rename
-  var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
-  var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
-  
-  return yrDurMagSlopeCleaned.select(bns,outBns);
-} 
 
 //----------------------------------------------------------------------------------------------------
 //        Linear Interpolation Functions
@@ -979,28 +986,6 @@ function linearInterp(imgcol, frame, nodata){
     return interpolated;
 }
 
-//----------------------------------------------------------------------------------------------------
-//        Verdet Functions
-//----------------------------------------------------------------------------------------------------
-// Functions to apply our scaling work arounds for Verdet
-// Multiply by a predetermined factor beforehand and divide after
-// Add 1 before and subtract 1 after
-function applyVerdetScaling(ts, indexName, correctionFactor){
-  var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return ee.Image(multBands(img, 1, -distDir))}); // Apply change in direction first
-  tsT = tsT.map(function(img){return ee.Image(addToImage(img, 1))});            // Then add 1 to image to get rid of any negatives
-  tsT = tsT.map(function(img){return ee.Image(multBands(img, 1, correctionFactor))});  // Finally we can apply scaling.
-  return tsT;
-}
-
-function undoVerdetScaling(fitted, indexName, correctionFactor){
-  var distDir = getImagesLib.changeDirDict[indexName];
-  fitted = ee.Image(multBands(fitted, 1, 1.0/correctionFactor)); // Undo scaling first.
-  fitted = ee.Image(addToImage(fitted, -1)); // Undo getting rid of negatives
-  fitted = ee.Image(multBands(fitted, 1, -distDir)); // Finally, undo change in direction
-  return fitted;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //        Function to apply linear interpolation for Verdet
 function applyLinearInterp(composites, nYearsInterpolate){      
@@ -1028,6 +1013,30 @@ function applyLinearInterp(composites, nYearsInterpolate){
     };
     return outDict;
 }
+
+//----------------------------------------------------------------------------------------------------
+//        Verdet Functions
+//----------------------------------------------------------------------------------------------------
+// Functions to apply our scaling work arounds for Verdet
+// Multiply by a predetermined factor beforehand and divide after
+// Add 1 before and subtract 1 after
+function applyVerdetScaling(ts, indexName, correctionFactor){
+  var distDir = getImagesLib.changeDirDict[indexName];
+  var tsT = ts.map(function(img){return ee.Image(multBands(img, 1, -distDir))}); // Apply change in direction first
+  tsT = tsT.map(function(img){return ee.Image(addToImage(img, 1))});            // Then add 1 to image to get rid of any negatives
+  tsT = tsT.map(function(img){return ee.Image(multBands(img, 1, correctionFactor))});  // Finally we can apply scaling.
+  return tsT;
+}
+
+function undoVerdetScaling(fitted, indexName, correctionFactor){
+  var distDir = getImagesLib.changeDirDict[indexName];
+  fitted = ee.Image(multBands(fitted, 1, 1.0/correctionFactor)); // Undo scaling first.
+  fitted = ee.Image(addToImage(fitted, -1)); // Undo getting rid of negatives
+  fitted = ee.Image(multBands(fitted, 1, -distDir)); // Finally, undo change in direction
+  return fitted;
+}
+
+
 
   
 //////////////////////////////////////////////////////////////////////////////////////////
