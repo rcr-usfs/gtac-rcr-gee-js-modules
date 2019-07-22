@@ -753,6 +753,24 @@ function applyDistDirStack(stack, distDir){
   return out;  
 }
 
+// Helper to multiply vertStack bands by the appropriate amount before exporting (multBy = 10000)
+// or after importing (multBy = 0.0001)
+// img = vertStack image for one band, e.g. "NBR"
+// verdet_or_landtrendr = 'verdet' or 'landtrendr'
+// multBy = 10000 or 0.0001
+function integerize_vertStack(img, verdet_or_landtrendr, multBy){
+    var years = img.select('yrs.*');
+    var fitted = img.select('fit.*').multiply(multBy);
+    var out = years.addBands(fitted);
+    if(verdet_or_landtrendr == 'landtrendr'){
+      var rmse = img.select('rmse').multiply(multBy);
+      out = out.addBands(rmse); 
+    }
+    out  = out.copyProperties(img,['system:time_start'])
+              .copyProperties(img);
+    return out;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function to parse stack from LANDTRENDR or VERDET in the same format as that created by
 // FitMagSlopeDiffCollection() functions. 
@@ -764,7 +782,7 @@ function fitStackToCollection(stack, maxSegments, startYear, endYear){//, distDi
   //Iterate across each possible segment and find its fitted end value, duration, magnitude, and slope
   var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).map(function(i){
     i = ee.Number(i);
-    distDir = ee.Number(distDir)
+    //distDir = ee.Number(distDir)
 
     //Set up slector for left and right side of segments
     var stringSelectLeft = ee.String('.*_').cat(i.byte().format());
