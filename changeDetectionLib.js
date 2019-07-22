@@ -887,11 +887,6 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
   indexList.map(function(indexName){  
     stack = stackCollection.filter(ee.Filter.eq('band',indexName)).first();
     
-    if(VTorLT == 'LT'){
-      var distDir = getImagesLib.changeDirDict[indexName]
-      stack = ee.Image(applyDistDir_vertStack(stack, distDir));
-    }
-    
     //Convert to image collection
     var yrDurMagSlopeCleaned = fitStackToCollection(stack, 
       maxSegments, 
