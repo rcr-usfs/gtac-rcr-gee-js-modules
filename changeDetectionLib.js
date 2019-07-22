@@ -688,43 +688,54 @@ function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYe
 //Function for running LANDTRENDR and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
-  var maxSegments = ee.Number(run_params.maxSegments);
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
+  
+  // Run LandTrendr and convert to VertStack format
+  var ltStack = ee.Image(LANDTRENDRVertStack(ts, indexName, run_params, startYear, endYear));
+  ltStack = ee.Image(LT_VT_vertStack_multBands(ltStack, 'landtrendr', 10000));
+  
+  // Convert to durFitMagSlope format
+  var durFitMagSlope = dLib.convertStack_To_DurFitMagSlope(ltStack, 'LT');
+  
+  return durFitMagSlope;
+  // var maxSegments = ee.Number(run_params.maxSegments);
+  // var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
+  // var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
 
-   //Get single band time series and set its direction so that a loss in veg is going up
-  ts = ts.select([indexName]);
-  var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return multBands(img,distDir,1)});
+  // //Get single band time series and set its direction so that a loss in veg is going up
+  // ts = ts.select([indexName]);
+  // var distDir = getImagesLib.changeDirDict[indexName];
+  // var tsT = ts.map(function(img){return multBands(img,distDir,1)});
   
-  //Find areas with insufficient data to run LANDTRENDR
-  var countMask = tsT.count().unmask().gte(maxSegments.add(1));
+  // //Find areas with insufficient data to run LANDTRENDR
+  // var countMask = tsT.count().unmask().gte(maxSegments.add(1));
 
-  tsT = tsT.map(function(img){
-    var m = img.mask();
-    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
-    m = m.or(countMask.not());
-    img = img.mask(m);
-    img = img.where(countMask.not(),-32768);
-    return img});
+  // tsT = tsT.map(function(img){
+  //   var m = img.mask();
+  //   //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
+  //   m = m.or(countMask.not());
+  //   img = img.mask(m);
+  //   img = img.where(countMask.not(),-32768);
+  //   return img});
 
-  run_params.timeSeries = tsT;
+  // run_params.timeSeries = tsT;
   
-  //Run LANDTRENDR
-  var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
+  // //Run LANDTRENDR
+  // var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
   
-  //Get LT output and convert to image stack
-  var lt = rawLt.select([0]);
-  var ltStack = getLTvertStack(lt,run_params).updateMask(countMask);
+  // //Get LT output and convert to image stack
+  // var lt = rawLt.select([0]);
+  // var ltStack = getLTvertStack(lt,run_params).updateMask(countMask);
   
-  //Convert to image collection
-  var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, run_params.maxSegments,startYear,endYear,distDir);
-  yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.map(function(img){return img.updateMask(countMask)});
-  //Rename
-  var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
-  var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
+  // //Convert to image collection
+  // var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, run_params.maxSegments,startYear,endYear,distDir);
+  // yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.map(function(img){return img.updateMask(countMask)});
+  // //Rename
+  // var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
+  // var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
   
-  return yrDurMagSlopeCleaned.select(bns,outBns);
+  //return yrDurMagSlopeCleaned.select(bns,outBns);
 } 
 
 //----------------------------------------------------------------------------------------------------
