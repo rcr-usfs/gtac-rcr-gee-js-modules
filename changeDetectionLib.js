@@ -780,14 +780,12 @@ function LT_VT_vertStack_multBands(img, verdet_or_landtrendr, multBy){
 // FitMagSlopeDiffCollection() functions. 
 // July 2019 LSC: multiply(distDir) and multiply(10000) now take place outside of this function,
 // but must be done BEFORE stack is passed to this function
-function fitStackToCollection(stack, maxSegments, startYear, endYear){//, distDir, applyDistDir){
-  //if(applyDistDir === undefined || applyDistDir === null){applyDistDir = true}
+function fitStackToCollection(stack, maxSegments, startYear, endYear){
   
   //Parse into annual fitted, duration, magnitude, and slope images
   //Iterate across each possible segment and find its fitted end value, duration, magnitude, and slope
   var yrDurMagSlope = ee.FeatureCollection(ee.List.sequence(1,maxSegments).map(function(i){
     i = ee.Number(i);
-    //distDir = ee.Number(distDir)
 
     //Set up slector for left and right side of segments
     var stringSelectLeft = ee.String('.*_').cat(i.byte().format());
@@ -802,12 +800,8 @@ function fitStackToCollection(stack, maxSegments, startYear, endYear){//, distDi
     var segYearsRight = stackRight.select(['yrs_.*']).rename(['year_right']);
     
     //Select off the fitted bands and flip them if they were flipped for use in LT
-    var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted'])//.multiply(10000);
-    var segFitRight = stackRight.select(['fit_.*']).rename(['fitted'])//.multiply(10000);
-    // if(applyDistDir === true){
-    //   segFitLeft = segFitLeft.multiply(distDir);
-    //   segFitRight = segFitRight.multiply(distDir);
-    // }
+    var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted'])
+    var segFitRight = stackRight.select(['fit_.*']).rename(['fitted'])
     
     //Compute duration, magnitude, and then slope
     var segDur = segYearsRight.subtract( segYearsLeft).rename(['dur']);
