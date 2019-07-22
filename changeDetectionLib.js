@@ -621,7 +621,7 @@ function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
    //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
   var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return multBands(img,distDir,1)});
+  var tsT = ts.map(function(img){return multBands(img, 1, distDir)});
   
   //Find areas with insufficient data to run LANDTRENDR
   var countMask = tsT.count().unmask().gte(maxSegments.add(1));
@@ -662,6 +662,9 @@ function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYe
   ltStack = ltStack.select('yrs.*').addBands(ltStack.select('fit.*'));
   var rmse = rawLt.select([1]).rename('rmse');    
   ltStack = ltStack.addBands(rmse); //.addBands(runMask)
+  
+  // Undo distDir change done in prepTimeSeriesForLandTrendr()
+  ltStack = applyDistDir_vertStack(ltStack, getImagesLib.changeDirDict[indexName])
   
   // Set Properties
   ltStack = ltStack.set({
