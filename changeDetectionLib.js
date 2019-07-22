@@ -796,9 +796,10 @@ function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
     ltStack = ltStackCollection.filter(ee.Filter.eq('band',indexName)).first();
     
     var distDir;
-    if(VTorLT == 'VT'){
-      distDir = -getImagesLib.changeDirDict[indexName]
-    }else if(VTorLT == 'LT'){
+    // if(VTorLT == 'VT'){
+    //   distDir = -getImagesLib.changeDirDict[indexName]
+    // }else 
+    if(VTorLT == 'LT'){
       distDir = getImagesLib.changeDirDict[indexName]
     }
     //Convert to image collection
@@ -989,7 +990,7 @@ function undoVerdetScaling(fitted, indexName, correctionFactor){
   var distDir = getImagesLib.changeDirDict[indexName];
   fitted = ee.Image(multBands(fitted, 1, 1.0/correctionFactor)); // Undo scaling first.
   fitted = ee.Image(addToImage(fitted, -1)); // Undo getting rid of negatives
-  //fitted = ee.Image(multBands(fitted, 1, -distDir)); // Finally, undo change in direction
+  fitted = ee.Image(multBands(fitted, 1, -distDir)); // Finally, undo change in direction
   return fitted;
 }
 
