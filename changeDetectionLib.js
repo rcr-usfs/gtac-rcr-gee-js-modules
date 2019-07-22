@@ -1154,25 +1154,19 @@ function VERDETVertStack(ts, indexName, run_params, maxSegments, correctionFacto
 //Function for running VERDET and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 // July 2019 LSC: multiply(distDir) and multiply(10000) now take place outside of this function 
-function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxSegments, correctionFactor, doLinearInterp, nYearsInterpolate){
+// Linear Interpolation has to be done beforehand, and the masks collection passed in to this function
+function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxSegments, correctionFactor, doLinearInterp, masks){
   if(doLinearInterp === null || doLinearInterp === undefined){doLinearInterp = false}
-  if(nYearsInterpolate === null || nYearsInterpolate === undefined){nYearsInterpolate = 10}
-  
-  //Perform linear interpolation
-  if (doLinearInterp === true){                
-    var compDict = applyLinearInterp(composites, nYearsInterpolate);
-    composites = ee.ImageCollection(compDict.composites);
-    var masks = ee.Image(compDict.masks);
-  }
-  
+    
   // Run Verdet and convert to vertStack format
   var vtStack = VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, doLinearInterp)
-  vtStack = ee.Image(LT_VT_vertStack_multBands(vtStack, 'verdet', 10000)); // This needs to happen before the fitStackToCollection() step
+  //vtStack = ee.Image(LT_VT_vertStack_multBands(vtStack, 'verdet', 10000)); // This needs to happen before the fitStackToCollection() step
   
   // Convert to durFitMagSlope format
   var durFitMagSlope = convertStack_To_DurFitMagSlope(vtStack, 'VT');
 
-  // Prep data types for export
+  // Prep data for export
+  durFitMagSlope = durFitMagSlope.map(function(img){return LT_VT_multBands(img, 10000)});
   durFitMagSlope = durFitMagSlope.map(function(img){return img.int16()});
   
   // Update Mask from LinearInterp step
