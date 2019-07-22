@@ -693,7 +693,6 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts, indexName, run_params){
   
   // Run LandTrendr and convert to VertStack format
   var ltStack = ee.Image(LANDTRENDRVertStack(ts, indexName, run_params, startYear, endYear));
-  //ltStack = ee.Image(LT_VT_vertStack_multBands(ltStack, 'landtrendr', 10000));
   
   // Convert to durFitMagSlope format
   var durFitMagSlope = convertStack_To_DurFitMagSlope(ltStack, 'LT');
