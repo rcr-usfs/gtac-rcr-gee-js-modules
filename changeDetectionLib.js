@@ -687,7 +687,7 @@ function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYe
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function for running LANDTRENDR and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
-function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
+function LANDTRENDRFitMagSlopeDiffCollection(ts, indexName, run_params){
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
   
@@ -820,8 +820,7 @@ function fitStackToCollection(stack, maxSegments, startYear, endYear){
       // var relativeDiffFromRight = diffFromRight.divide(segMag.abs()).updateMask(yrImage).rename(['rel_yr_diff_right']).multiply(10000)
       //Stack it up
       var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope)
-                .addBands(diffFromLeft)
-                .int16();
+                .addBands(diffFromLeft);
       out = out.set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
       return out;
     }));
