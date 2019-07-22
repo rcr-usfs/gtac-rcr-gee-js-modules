@@ -693,7 +693,7 @@ function makeLandtrendrStack(composites, indexName, run_params, startYear, endYe
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function to parse stack from LANDTRENDR or VERDET into image collection
-function fitStackToCollection(stack, maxSegments,startYear,endYear,applyDistDir){
+function fitStackToCollection(stack, maxSegments, startYear, endYear, distDir, applyDistDir){
   if(applyDistDir === undefined || applyDistDir === null){applyDistDir = true}
   
   //Parse into annual fitted, duration, magnitude, and slope images
