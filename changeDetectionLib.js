@@ -664,7 +664,7 @@ function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYe
   ltStack = ltStack.addBands(rmse); 
   
   // Undo distDir change done in prepTimeSeriesForLandTrendr()
-  ltStack = applyDistDir_vertStack(ltStack, getImagesLib.changeDirDict[indexName])
+  ltStack = applyDistDir_vertStack(ltStack, getImagesLib.changeDirDict[indexName], 'landtrendr')
   
   // Set Properties
   ltStack = ltStack.set({
@@ -747,7 +747,10 @@ function LT_VT_multBands(img, multBy){
 }
 
 // Function to apply the Direction of  a decrease in photosynthetic vegetation to Landtrendr or Verdet vertStack format
-function applyDistDir_vertStack(stack, distDir){
+// img = vertStack image for one band, e.g. "NBR"
+// verdet_or_landtrendr = 'verdet' or 'landtrendr'
+// distDir = from getImagesLib.changeDirDict
+function applyDistDir_vertStack(stack, distDir, verdet_or_landtrendr){
   var years = stack.select('yrs.*');
   var fitted = stack.select('fit.*').multiply(distDir);
   var out = years.addBands(fitted);
