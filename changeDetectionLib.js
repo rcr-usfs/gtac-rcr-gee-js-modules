@@ -1154,7 +1154,7 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
 //Function for running VERDET and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 // July 2019 LSC: multiply(distDir) and multiply(10000) now take place outside of this function 
-function VERDETFitMagSlopeDiffCollection(ts, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp, nYearsInterpolate){
+function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp, nYearsInterpolate){
   if(applyLinearInterp === null || applyLinearInterp === undefined){applyLinearInterp = false}
   if(nYearsInterpolate === null || nYearsInterpolate === undefined){nYearsInterpolate = 10}
   
