@@ -645,7 +645,7 @@ function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
 }
 
 // Function to output LandTrendr as Vertical Stack to take up less space
-function makeLandtrendrStack(composites, indexName, run_params, startYear, endYear){
+function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYear){
   var creationDate = ee.Date(Date.now()).format('YYYYMMdd');
   
   // Prep Time Series and put into run parameters
@@ -883,7 +883,7 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
     
     if(VTorLT == 'LT'){
       var distDir = getImagesLib.changeDirDict[indexName]
-      stack = applyDistDirStack(stack, distDir);
+      stack = applyDistDirStack_vertStack(stack, distDir);
     }
     
     //Convert to image collection
@@ -1061,12 +1061,10 @@ function undoVerdetScaling(fitted, indexName, correctionFactor){
   fitted = ee.Image(multBands(fitted, 1, -distDir)); // Finally, undo change in direction
   return fitted;
 }
-
-
-
-  
+ 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Function to prep data for Verdet. Will have to run Verdet and convert to stack after.
+// This step applies the Verdet Scaling. The scaling is undone in VERDETVertStack().
 function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
   //Get the start and end years
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
@@ -1101,6 +1099,7 @@ function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
   return prepDict;  
 }
 //////////////////////////////////////////////////////////////////////////////////////////
+// This step undoes the Verdet Scaling that is implemented in prepTimeSeriesForVerdet()
 function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,linearInterp){
   if(!run_params){run_params = {tolerance:0.0001,
                   alpha: 0.1}}
@@ -1707,7 +1706,7 @@ exports.getLTStack = getLTStack;
 exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
 exports.prepTimeSeriesForLandTrendr = prepTimeSeriesForLandTrendr;
-exports.makeLandtrendrStack =  makeLandtrendrStack;
+exports.LANDTRENDRVertStack =  LANDTRENDRVertStack;
 exports.applyDistDir_vertStack = applyDistDir_vertStack;
 exports.LT_VT_vertStack_multBands = LT_VT_vertStack_multBands;
 exports.fitStackToCollection = fitStackToCollection;
