@@ -744,7 +744,7 @@ function LT_VT_multBands(img, multBy){
 }
 
 // Function to apply the Direction of  a decrease in photosynthetic vegetation to Landtrendr or Verdet vertStack format
-function applyDistDirStack(stack, distDir){
+function applyDistDir_vertStack(stack, distDir){
   var years = img.select('yrs.*');
   var fitted = img.select('fit.*').multiply(distDir);
   var out = years.addBands(fitted);
@@ -762,7 +762,7 @@ function applyDistDirStack(stack, distDir){
 // img = vertStack image for one band, e.g. "NBR"
 // verdet_or_landtrendr = 'verdet' or 'landtrendr'
 // multBy = 10000 or 0.0001
-function integerize_vertStack(img, verdet_or_landtrendr, multBy){
+function LT_VT_vertStack_multBands(img, verdet_or_landtrendr, multBy){
     var years = img.select('yrs.*');
     var fitted = img.select('fit.*').multiply(multBy);
     var out = years.addBands(fitted);
@@ -1714,7 +1714,9 @@ exports.getLTStack = getLTStack;
 exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
 exports.prepTimeSeriesForLandTrendr = prepTimeSeriesForLandTrendr;
-exports. makeLandtrendrStack =  makeLandtrendrStack;
+exports.makeLandtrendrStack =  makeLandtrendrStack;
+exports.applyDistDir_vertStack = applyDistDir_vertStack;
+exports.LT_VT_vertStack_multBands = LT_VT_vertStack_multBands;
 exports.fitStackToCollection = fitStackToCollection;
 exports.convertStack_To_DurFitMagSlope = convertStack_To_DurFitMagSlope;
 exports.LANDTRENDRFitMagSlopeDiffCollection = LANDTRENDRFitMagSlopeDiffCollection;
