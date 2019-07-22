@@ -1180,29 +1180,21 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 // July 2019 LSC: multiply(distDir) and multiply(10000) now take place outside of this function 
 function VERDETFitMagSlopeDiffCollection(ts, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp){
-  //Get the start and end years
-  //var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
-  //var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
   
-  // Run Verdet and convert to vertStack format
-  var stack = VERDETVertStack(ts, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp);
-  
-  //Convert to a collection - fitDurMagSlope format
-  var durFitMagSlope = dLib.convertStack_To_DurFitMagSlope(stack, 'VT');
-  //var yrDurMagSlopeCleaned = fitStackToCollection(stack, maxSegments,startYear,endYear,-distDir);
-  
-  //Give meaningful band names
-  //var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
-  //var outBns = bns.map(function(bn){return ee.String(indexName).cat('_VT_').cat(bn)});
-  //yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.select(bns,outBns);
-  
-  
-  // fitted = yrDurMagSlopeCleaned.select(['.*_fitted']).map(function(img){return multBands(img,1,0.0001)});
-  // var forViz = getImagesLib.joinCollections(ts,fitted);
-  // Map.addLayer(forViz,{},'fitted',false);
-  
-  return yrDurMagSlopeCleaned;
+  var vtStack = dLib.VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp)
+  vtStack = ee.Image(dLib.LT_VT_vertStack_multBands(vtStack, 'verdet', 10000)); // This needs to happen before the fitStackToCollection() step
+  var durFitMagSlope = dLib.convertStack_To_DurFitMagSlope(vtStack, 'VT');
 
+  // Update Mask from LinearInterp step
+  durFitMagSlope = durFitMagSlope.map(function(img){
+    var thisYear = ee.Date(img.get('system:time_start')).format('YYYY');
+    var thisYear_maskName = ee.String('mask_').cat(thisYear);
+    var thisMask = masks.select(thisYear_maskName);
+    img = img.updateMask(thisMask);
+    return img;
+  });
+  
+  return durFitMagSlope;
 }
 //////////////////////////////////////////////////////////////////////////
 //Wrapper for applying VERDET slightly more simply
