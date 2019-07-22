@@ -696,7 +696,7 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
   ltStack = ee.Image(LT_VT_vertStack_multBands(ltStack, 'landtrendr', 10000));
   
   // Convert to durFitMagSlope format
-  var durFitMagSlope = dLib.convertStack_To_DurFitMagSlope(ltStack, 'LT');
+  var durFitMagSlope = convertStack_To_DurFitMagSlope(ltStack, 'LT');
   
   return durFitMagSlope;
   // var maxSegments = ee.Number(run_params.maxSegments);
