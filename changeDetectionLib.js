@@ -739,6 +739,19 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
 //----------------------------------------------------------------------------------------------------
 //        Functions for both Verdet and Landtrendr
 //----------------------------------------------------------------------------------------------------
+// Function to apply the Direction of  a decrease in photosynthetic vegetation to Landtrendr or Verdet vertStack format
+function applyDistDirStack(stack, distDir){
+  var years = img.select('yrs.*');
+  var fitted = img.select('fit.*').multiply(distDir);
+  var out = years.addBands(fitted);
+  if(verdet_or_landtrendr == 'landtrendr'){
+    var rmse = img.select('rmse');
+    out = out.addBands(rmse); 
+  }
+  out  = out.copyProperties(img,['system:time_start'])
+            .copyProperties(img);
+  return out;  
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function to parse stack from LANDTRENDR or VERDET in the same format as that created by
@@ -850,23 +863,18 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
   indexList.map(function(indexName){  
     stack = stackCollection.filter(ee.Filter.eq('band',indexName)).first();
     
-    var distDir;
-    if(VTorLT == 'VT'){
-      distDir = -getImagesLib.changeDirDict[indexName]
-      applyDistDir = false;
-    }else if(VTorLT == 'LT'){
-      distDir = getImagesLib.changeDirDict[indexName]
-      applyDistDir = true;
+    if(VTorLT == 'LT'){
+      var distDir = getImagesLib.changeDirDict[indexName]
+      stack = applyDistDirStack(stack, distDir);
     }
+    
     //Convert to image collection
     var yrDurMagSlopeCleaned = fitStackToCollection(stack, 
       maxSegments, 
       startYear, 
-      endYear,
-      distDir,
-      applyDistDir
+      endYear
     ); 
-    
+
     //Rename
     var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
     var outBns = bns.map(function(bn){return ee.String(indexName).cat('_'+VTorLT+'_').cat(bn)});  
