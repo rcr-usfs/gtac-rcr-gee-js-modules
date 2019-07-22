@@ -889,7 +889,7 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
     
     if(VTorLT == 'LT'){
       var distDir = getImagesLib.changeDirDict[indexName]
-      stack = applyDistDir_vertStack(stack, distDir);
+      stack = ee.Image(applyDistDir_vertStack(stack, distDir));
     }
     
     //Convert to image collection
