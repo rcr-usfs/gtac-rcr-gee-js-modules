@@ -989,7 +989,7 @@ function undoVerdetScaling(fitted, indexName, correctionFactor){
   var distDir = getImagesLib.changeDirDict[indexName];
   fitted = ee.Image(multBands(fitted, 1, 1.0/correctionFactor)); // Undo scaling first.
   fitted = ee.Image(addToImage(fitted, -1)); // Undo getting rid of negatives
-  fitted = ee.Image(multBands(fitted, 1, -distDir)); // Finally, undo change in direction
+  //fitted = ee.Image(multBands(fitted, 1, -distDir)); // Finally, undo change in direction
   return fitted;
 }
 
