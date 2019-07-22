@@ -867,6 +867,7 @@ function fitStackToCollection(stack, maxSegments, startYear, endYear){//, distDi
 // Wrapper for fitStacktoCollection
 // VTorLT is the string that is put in the band names, 'LT' or 'VT'
 function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
+  stackCollection = ee.ImageCollection(stackCollection);
   var stackList = stackCollection.first().bandNames();
   if (stackList.getInfo().indexOf('rmse') >= 0){
     stackList = stackList.remove('rmse');
