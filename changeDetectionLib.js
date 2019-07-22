@@ -803,14 +803,17 @@ function convertStack_To_DurFitMagSlope(ltStackCollection, VTorLT){
     var distDir;
     if(VTorLT == 'VT'){
       distDir = -getImagesLib.changeDirDict[indexName]
+      applyDistDir = false;
     }else if(VTorLT == 'LT'){
       distDir = getImagesLib.changeDirDict[indexName]
+      applyDistDir = true;
     }
     //Convert to image collection
     var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, 
       maxSegments, 
       startYear, 
       endYear,
+      distDir,
       applyDistDir
     ); 
     
