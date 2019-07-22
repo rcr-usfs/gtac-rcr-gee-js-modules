@@ -285,19 +285,7 @@ function addToImage(img,howMuch){
               .copyProperties(img);
     return out;
   }
-// Helper to multiply new baselearner format values (LandTrendr & Verdet) by the appropriate amount when importing
-// Duration is the only band that does not get multiplied by 0.0001 upon import.
-function LT_VT_multBands(img){
-    var fitted = img.select('.*_fitted').multiply(0.0001);
-    var slope = img.select('.*_slope').multiply(0.0001);
-    var diff = img.select('.*_diff').multiply(0.0001);
-    var mag = img.select('.*_mag').multiply(0.0001);
-    var dur = img.select('.*_dur');
-    var out = dur.addBands(fitted).addBands(slope).addBands(diff).addBands(mag);
-    out  = out.copyProperties(img,['system:time_start'])
-              .copyProperties(img);
-    return out;
-}
+
 ///////////////////////////////////////////////////////////////
 //Function to convert an image array object to collection
 function arrayToTimeSeries(tsArray,yearsArray,possibleYears,bandName){
@@ -739,6 +727,22 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
 //----------------------------------------------------------------------------------------------------
 //        Functions for both Verdet and Landtrendr
 //----------------------------------------------------------------------------------------------------
+// Helper to multiply new baselearner format values (LandTrendr & Verdet) by the appropriate amount when importing
+// Duration is the only band that does not get multiplied by 0.0001 upon import.
+// img = landtrendr or verdet image in fitMagDurSlope format
+// multBy = 10000 (to prep for export) or 0.0001 (after import)
+function LT_VT_multBands(img, multBy){
+    var fitted = img.select('.*_fitted').multiply(multBy);
+    var slope = img.select('.*_slope').multiply(multBy);
+    var diff = img.select('.*_diff').multiply(multBy);
+    var mag = img.select('.*_mag').multiply(multBy);
+    var dur = img.select('.*_dur');
+    var out = dur.addBands(fitted).addBands(slope).addBands(diff).addBands(mag);
+    out  = out.copyProperties(img,['system:time_start'])
+              .copyProperties(img);
+    return out;
+}
+
 // Function to apply the Direction of  a decrease in photosynthetic vegetation to Landtrendr or Verdet vertStack format
 function applyDistDirStack(stack, distDir){
   var years = img.select('yrs.*');
