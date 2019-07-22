@@ -749,15 +749,15 @@ function LT_VT_multBands(img, multBy){
 
 // Function to apply the Direction of  a decrease in photosynthetic vegetation to Landtrendr or Verdet vertStack format
 function applyDistDir_vertStack(stack, distDir){
-  var years = img.select('yrs.*');
-  var fitted = img.select('fit.*').multiply(distDir);
+  var years = stack.select('yrs.*');
+  var fitted = stack.select('fit.*').multiply(distDir);
   var out = years.addBands(fitted);
   if(verdet_or_landtrendr == 'landtrendr'){
-    var rmse = img.select('rmse');
+    var rmse = stack.select('rmse');
     out = out.addBands(rmse); 
   }
-  out  = out.copyProperties(img,['system:time_start'])
-            .copyProperties(img);
+  out  = out.copyProperties(stack,['system:time_start'])
+            .copyProperties(stack);
   return out;  
 }
 
