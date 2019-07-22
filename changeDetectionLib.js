@@ -662,7 +662,6 @@ function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYe
   ltStack = ltStack.select('yrs.*').addBands(ltStack.select('fit.*'));
   var rmse = rawLt.select([1]).rename('rmse');    
   ltStack = ltStack.addBands(rmse); 
-  print('ltStack',ltStack)
   
   // Undo distDir change done in prepTimeSeriesForLandTrendr()
   ltStack = applyDistDir_vertStack(ltStack, getImagesLib.changeDirDict[indexName])
