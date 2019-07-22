@@ -680,7 +680,7 @@ function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYe
     'bestModelProportion': run_params.bestModelProportion,
     'minObservationsNeeded': run_params.minObservationsNeeded
   });
-  return ltStack;
+  return ee.Image(ltStack);
 }
 
 
@@ -1178,7 +1178,8 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
     'alpha': run_params.alpha,
     'linearInterpApplied': linearInterp
   });
-  return stack;
+  
+  return ee.Image(stack);
 }
 
 //Function for running VERDET and converting output to annual image collection
