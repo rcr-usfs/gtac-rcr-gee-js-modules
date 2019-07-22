@@ -1075,18 +1075,18 @@ function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 // This step undoes the Verdet Scaling that is implemented in prepTimeSeriesForVerdet()
-function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,linearInterp){
+function VERDETVertStack(ts, indexName, run_params, maxSegments, correctionFactor, doLinearInterp){
   if(!run_params){run_params = {tolerance:0.0001,
                   alpha: 0.1}}
   if(!maxSegments){maxSegments = 10}
   if(!correctionFactor){correctionFactor = 1}
-  if(!linearInterp){linearInterp = false}
+  if(!doLinearInterp){doLinearInterp = false}
   
   // Get today's date for properties
   var creationDate = ee.Date(Date.now()).format('YYYYMMdd');
   
   // Extract composite time series and apply relevant masking & scaling
-  var prepDict = prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor, linearInterp)
+  var prepDict = prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor)
   run_params = prepDict.run_params;
   var countMask = prepDict.countMask;
   var startYear = prepDict.startYear;
@@ -1145,7 +1145,7 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
     'correctionFactor': correctionFactor,
     'tolerance': run_params.tolerance,
     'alpha': run_params.alpha,
-    'linearInterpApplied': linearInterp
+    'linearInterpApplied': doLinearInterp
   });
   
   return ee.Image(stack);
@@ -1154,26 +1154,29 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
 //Function for running VERDET and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 // July 2019 LSC: multiply(distDir) and multiply(10000) now take place outside of this function 
-function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxSegments, correctionFactor, linearInterp, nYearsInterpolate){
-  if(linearInterp === null || linearInterp === undefined){linearInterp = false}
+function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxSegments, correctionFactor, doLinearInterp, nYearsInterpolate){
+  if(doLinearInterp === null || doLinearInterp === undefined){doLinearInterp = false}
   if(nYearsInterpolate === null || nYearsInterpolate === undefined){nYearsInterpolate = 10}
   
   //Perform linear interpolation
-  if (linearInterp === true){                
+  if (doLinearInterp === true){                
     var compDict = applyLinearInterp(composites, nYearsInterpolate);
     composites = ee.ImageCollection(compDict.composites);
     var masks = ee.Image(compDict.masks);
   }
   
   // Run Verdet and convert to vertStack format
-  var vtStack = VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, linearInterp)
+  var vtStack = VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, doLinearInterp)
   vtStack = ee.Image(LT_VT_vertStack_multBands(vtStack, 'verdet', 10000)); // This needs to happen before the fitStackToCollection() step
   
   // Convert to durFitMagSlope format
   var durFitMagSlope = convertStack_To_DurFitMagSlope(vtStack, 'VT');
 
+  // Prep data types for export
+  durFitMagSlope = durFitMagSlope.map(function(img){return img.int16()});
+  
   // Update Mask from LinearInterp step
-  if (linearInterp === true){
+  if (doLinearInterp === true){
     durFitMagSlope = durFitMagSlope.map(function(img){
       var thisYear = ee.Date(img.get('system:time_start')).format('YYYY');
       var thisYear_maskName = ee.String('mask_').cat(thisYear);
