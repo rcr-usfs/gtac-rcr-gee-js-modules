@@ -998,6 +998,7 @@ function applyLinearInterp(composites, nYearsInterpolate){
     var masks = composites.map(function(img){return img.mask().reduce(ee.Reducer.min()).byte().copyProperties(img, img.propertyNames())}).select([0]);
     masks = masks.map(function(img){return img.rename([ee.Date(img.get('system:time_start')).format('YYYY')])});
     masks = masks.toBands();
+    
     // rename bands to better names
     var origNames = masks.bandNames();
     var newNames = origNames.map(function(bandName){return ee.String(bandName).replace('null','mask')});
@@ -1166,7 +1167,7 @@ function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxS
   }
   
   // Run Verdet and convert to vertStack format
-  var vtStack = VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp)
+  var vtStack = VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, linearInterp)
   vtStack = ee.Image(LT_VT_vertStack_multBands(vtStack, 'verdet', 10000)); // This needs to happen before the fitStackToCollection() step
   
   // Convert to durFitMagSlope format
