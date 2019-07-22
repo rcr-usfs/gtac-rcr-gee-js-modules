@@ -699,43 +699,6 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts,indexName, run_params){
   var durFitMagSlope = convertStack_To_DurFitMagSlope(ltStack, 'LT');
   
   return durFitMagSlope;
-  // var maxSegments = ee.Number(run_params.maxSegments);
-  // var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
-  // var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
-
-  // //Get single band time series and set its direction so that a loss in veg is going up
-  // ts = ts.select([indexName]);
-  // var distDir = getImagesLib.changeDirDict[indexName];
-  // var tsT = ts.map(function(img){return multBands(img,distDir,1)});
-  
-  // //Find areas with insufficient data to run LANDTRENDR
-  // var countMask = tsT.count().unmask().gte(maxSegments.add(1));
-
-  // tsT = tsT.map(function(img){
-  //   var m = img.mask();
-  //   //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
-  //   m = m.or(countMask.not());
-  //   img = img.mask(m);
-  //   img = img.where(countMask.not(),-32768);
-  //   return img});
-
-  // run_params.timeSeries = tsT;
-  
-  // //Run LANDTRENDR
-  // var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
-  
-  // //Get LT output and convert to image stack
-  // var lt = rawLt.select([0]);
-  // var ltStack = getLTvertStack(lt,run_params).updateMask(countMask);
-  
-  // //Convert to image collection
-  // var yrDurMagSlopeCleaned = fitStackToCollection(ltStack, run_params.maxSegments,startYear,endYear,distDir);
-  // yrDurMagSlopeCleaned = yrDurMagSlopeCleaned.map(function(img){return img.updateMask(countMask)});
-  // //Rename
-  // var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
-  // var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
-  
-  //return yrDurMagSlopeCleaned.select(bns,outBns);
 } 
 
 //----------------------------------------------------------------------------------------------------
@@ -1191,20 +1154,34 @@ function VERDETVertStack(ts,indexName,run_params,maxSegments,correctionFactor,li
 //Function for running VERDET and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 // July 2019 LSC: multiply(distDir) and multiply(10000) now take place outside of this function 
-function VERDETFitMagSlopeDiffCollection(ts, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp){
+function VERDETFitMagSlopeDiffCollection(ts, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp, nYearsInterpolate){
+  if(applyLinearInterp === null || applyLinearInterp === undefined){applyLinearInterp = false}
+  if(nYearsInterpolate === null || nYearsInterpolate === undefined){nYearsInterpolate = 10}
   
-  var vtStack = dLib.VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp)
-  vtStack = ee.Image(dLib.LT_VT_vertStack_multBands(vtStack, 'verdet', 10000)); // This needs to happen before the fitStackToCollection() step
-  var durFitMagSlope = dLib.convertStack_To_DurFitMagSlope(vtStack, 'VT');
+  //Perform linear interpolation
+  if (applyLinearInterp === true){                
+    var compDict = applyLinearInterp(composites, nYearsInterpolate);
+    composites = ee.ImageCollection(compDict.composites);
+    var masks = ee.Image(compDict.masks);
+  }
+  
+  // Run Verdet and convert to vertStack format
+  var vtStack = VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, applyLinearInterp)
+  vtStack = ee.Image(LT_VT_vertStack_multBands(vtStack, 'verdet', 10000)); // This needs to happen before the fitStackToCollection() step
+  
+  // Convert to durFitMagSlope format
+  var durFitMagSlope = convertStack_To_DurFitMagSlope(vtStack, 'VT');
 
   // Update Mask from LinearInterp step
-  durFitMagSlope = durFitMagSlope.map(function(img){
-    var thisYear = ee.Date(img.get('system:time_start')).format('YYYY');
-    var thisYear_maskName = ee.String('mask_').cat(thisYear);
-    var thisMask = masks.select(thisYear_maskName);
-    img = img.updateMask(thisMask);
-    return img;
-  });
+  if (applyLinearInterp === true){
+    durFitMagSlope = durFitMagSlope.map(function(img){
+      var thisYear = ee.Date(img.get('system:time_start')).format('YYYY');
+      var thisYear_maskName = ee.String('mask_').cat(thisYear);
+      var thisMask = masks.select(thisYear_maskName);
+      img = img.updateMask(thisMask);
+      return img;
+    });
+  }
   
   return durFitMagSlope;
 }
