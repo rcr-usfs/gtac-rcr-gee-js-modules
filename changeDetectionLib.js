@@ -693,10 +693,14 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts, indexName, run_params){
   
   // Run LandTrendr and convert to VertStack format
   var ltStack = ee.Image(LANDTRENDRVertStack(ts, indexName, run_params, startYear, endYear));
-  ltStack = ee.Image(LT_VT_vertStack_multBands(ltStack, 'landtrendr', 10000));
+  //ltStack = ee.Image(LT_VT_vertStack_multBands(ltStack, 'landtrendr', 10000));
   
   // Convert to durFitMagSlope format
   var durFitMagSlope = convertStack_To_DurFitMagSlope(ltStack, 'LT');
+  
+  // Prep data for export
+  durFitMagSlope = durFitMagSlope.map(function(img){return LT_VT_multBands(img, 10000)});
+  durFitMagSlope = durFitMagSlope.map(function(img){return img.int16()});
   
   return durFitMagSlope;
 } 
@@ -1160,7 +1164,6 @@ function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxS
     
   // Run Verdet and convert to vertStack format
   var vtStack = VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, doLinearInterp)
-  //vtStack = ee.Image(LT_VT_vertStack_multBands(vtStack, 'verdet', 10000)); // This needs to happen before the fitStackToCollection() step
   
   // Convert to durFitMagSlope format
   var durFitMagSlope = convertStack_To_DurFitMagSlope(vtStack, 'VT');
