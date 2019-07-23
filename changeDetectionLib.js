@@ -538,6 +538,9 @@ function LANDTRENDRLossGain(rawLTStack, lossMagThresh, lossSlopeThresh, gainMagT
   var left = rawLTStack.arraySlice(1,0,-1);
   var right = rawLTStack.arraySlice(1,1,null);
   var diff  = left.subtract(right);
+  Map.addLayer(left, {}, 'left')
+  Map.addLayer(right, {}, 'right')
+  Map.addLayer(diff, {}, 'diff')
   var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1);  
   var duration = diff.arraySlice(0,0,1).multiply(-1);
   var fittedMag = diff.arraySlice(0,2,3);
