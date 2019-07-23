@@ -526,7 +526,16 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
 }
 
 function LANDTRENDRLossGain(ts, rawLTStack, startYear, endYear, indexName, distDir, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
-                            slowLossDurationThresh, chooseWhichLoss, chooseWhichGain){
+                            slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull){
+  if(lossMagThresh === undefined || lossMagThresh === null){lossMagThresh =-0.15}
+  if(lossSlopeThresh === undefined || lossSlopeThresh === null){lossSlopeThresh =-0.1}
+  if(gainMagThresh === undefined || gainMagThresh === null){gainMagThresh =0.1}
+  if(gainSlopeThresh === undefined || gainSlopeThresh === null){gainSlopeThresh =0.1}
+  if(slowLossDurationThresh === undefined || slowLossDurationThresh === null){slowLossDurationThresh =3}
+  if(chooseWhichLoss === undefined || chooseWhichLoss === null){chooseWhichLoss ='largest'}
+  if(chooseWhichGain === undefined || chooseWhichGain === null){chooseWhichGain ='largest'}
+  if(howManyToPull === undefined || howManyToPull === null){howManyToPull =2}
+  
   //Get joined raw and fitted LANDTRENDR for viz
   var joinedTS = getRawAndFittedLT(ts,rawLTStack,startYear,endYear,indexName,distDir);
   
