@@ -466,6 +466,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
   
   var lt = rawLt.select([0]);
+  //Remask areas with insufficient data that were given dummy values
+  lt = lt.updateMask(countMask);
   
   var lossGainDict = LANDTRENDRLossGain(ts, lt, startYear, endYear, indexName, distDir, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
                                         slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull)
@@ -599,8 +601,8 @@ function LANDTRENDRLossGain(ts, rawLTStack, startYear, endYear, indexName, distD
   gainStack = gainThematic.addBands(gainContinuous);
   
   //Remask areas with insufficient data that were given dummy values 
-  lossStack = lossStack.updateMask(countMask);
-  gainStack = gainStack.updateMask(countMask);
+  // lossStack = lossStack.updateMask(countMask);
+  // gainStack = gainStack.updateMask(countMask);
   
   var lossGainDict = {  'lossStack': lossStack,
                         'gainStack': gainStack
