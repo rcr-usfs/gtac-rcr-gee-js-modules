@@ -481,7 +481,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
 
   //Convert to byte/int16 to save space
   var lossThematic = lossStack.select(['.*_yr_.*']).int16().addBands(lossStack.select(['.*_dur_.*']).byte());
-  var lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']);//.multiply(10000).int16();
+  var lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
   lossStack = lossThematic.addBands(lossContinuous);
 
   var gainThematic = gainStack.select(['.*_yr_.*']).int16().addBands(gainStack.select(['.*_dur_.*']).byte());
@@ -846,7 +846,7 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     yrs = yrs.arrayMask(yrMask);
     var fit = ltStack.select('fit.*').toArray().arrayMask(yrMask);
     var both = yrs.arrayCat(fit,1).matrixTranspose();
-    Map.addLayer(both, {}, 'both')
+    
     var left = both.arraySlice(1,0,-1);
     var right = both.arraySlice(1,1,null);
     var diff = left.subtract(right);
@@ -854,7 +854,6 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     var duration = diff.arraySlice(0,0,1).multiply(-1);
     var slopes = fittedMag.divide(duration);
     var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
-    Map.addLayer(forSorting, {}, 'forSorting')
   }
   
   //Apply thresholds
@@ -868,7 +867,6 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
   //Mask any segments that do not meet thresholds
   var forLossSorting = forSorting.arrayMask(lossMask);
   var forGainSorting = forSorting.arrayMask(gainMask);
-  Map.addLayer(forLossSorting, {}, 'forLossSorting',false)
   
   //Dictionaries for choosing the column and direction to multiply the column for sorting
   //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
@@ -901,23 +899,10 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
   //Sort the loss and gain and slice off the first column
   var lossAfterForSorting = forLossSorting.arraySort(lossSortBy);
   var gainAfterForSorting = forGainSorting.arraySort(gainSortBy);
-  Map.addLayer(lossAfterForSorting, {}, 'lossAfterForSorting',false)
+
   //Convert array to image stck
   var lossStack = getLTStack(lossAfterForSorting,howManyToPull,['loss_yr_','loss_dur_','loss_mag_','loss_slope_']);
   var gainStack = getLTStack(gainAfterForSorting,howManyToPull,['gain_yr_','gain_dur_','gain_mag_','gain_slope_']);
-  
-  // //Convert to byte/int16 to save space
-  // var lossThematic = lossStack.select(['.*_yr_.*']).int16().addBands(lossStack.select(['.*_dur_.*']).byte());
-  // var lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']);//.multiply(10000).int16();
-  // lossStack = lossThematic.addBands(lossContinuous);
-  // Map.addLayer(lossStack,{},'lossStack',false);
-  // var gainThematic = gainStack.select(['.*_yr_.*']).int16().addBands(gainStack.select(['.*_dur_.*']).byte());
-  // var gainContinuous = gainStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
-  // gainStack = gainThematic.addBands(gainContinuous);
-  
-  //Remask areas with insufficient data that were given dummy values 
-  // lossStack = lossStack.updateMask(countMask);
-  // gainStack = gainStack.updateMask(countMask);
   
   var lossGainDict = {  'lossStack': lossStack,
                         'gainStack': gainStack
