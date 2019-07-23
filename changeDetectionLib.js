@@ -471,7 +471,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   lt = lt.updateMask(countMask);
   
   //Get joined raw and fitted LANDTRENDR for viz
-  var joinedTS = getRawAndFittedLT(ts,rawLTStack,startYear,endYear,indexName,distDir);
+  var joinedTS = getRawAndFittedLT(ts, lt, startYear, endYear, indexName, distDir);
   
   // Convert LandTrendr to Loss & Gain space
   var lossGainDict = LANDTRENDRLossGain(lt, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
