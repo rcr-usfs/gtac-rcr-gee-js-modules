@@ -661,7 +661,7 @@ function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYe
   
   //Run LANDTRENDR
   var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
-  
+  Map.addLayer(rawLt, {}, 'rawLt')
   // Convert to image stack
   var lt = rawLt.select([0]);
   var ltStack = ee.Image(getLTvertStack(lt,run_params)).updateMask(countMask);
