@@ -884,7 +884,7 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
   //Pull the respective column and direction
   var lossSortValue = lossColumnDict[chooseWhichLoss];
   var gainSortValue = gainColumnDict[chooseWhichGain];
-  Map.addLayer(lossSortValue, {}, 'lossSortValue',false)
+  print(lossSortValue)
   //Pull the sort column and multiply it
   var lossSortBy = forLossSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
   var gainSortBy = forGainSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
