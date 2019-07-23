@@ -855,10 +855,11 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
   var magGainMask =  forSorting.arraySlice(0,2,3).gte(gainMagThresh);
   var slopeGainMask = forSorting.arraySlice(0,3,4).gte(gainSlopeThresh);
   var gainMask = magGainMask.or(slopeGainMask);
-    
+  
   //Mask any segments that do not meet thresholds
   var forLossSorting = forSorting.arrayMask(lossMask);
   var forGainSorting = forSorting.arrayMask(gainMask);
+  Map.addLayer(forLossSorting, {}, 'forLossSorting',false)
   
   //Dictionaries for choosing the column and direction to multiply the column for sorting
   //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
