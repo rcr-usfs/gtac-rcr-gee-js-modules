@@ -458,25 +458,10 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   if(addToMap === undefined || addToMap === null){addToMap =true}
   if(howManyToPull === undefined || howManyToPull === null){howManyToPull =2}
   
-  
-  //Get single band time series and set its direction so that a loss in veg is going up
-  ts = ts.select([indexName]);
-  var distDir = getImagesLib.changeDirDict[indexName];
-  var tsT = ts.map(function(img){return multBands(img,distDir,1)});
-  
-  //Find areas with insufficient data to run LANDTRENDR
-  var countMask = tsT.count().unmask().gte(6);
+  var prepDict = prepTimeSeriesForLandTrendr(ts, indexName, run_params)
+  run_params = prepDict.run_params;
+  var countMask = prepDict.runMask;
 
-  tsT = tsT.map(function(img){
-    var m = img.mask();
-    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
-    m = m.or(countMask.not());
-    img = img.mask(m);
-    img = img.where(countMask.not(),-32768);
-    return img});
-
-  run_params.timeSeries = tsT;
-  
   //Run LANDTRENDR
   var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
   
