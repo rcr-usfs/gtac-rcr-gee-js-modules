@@ -899,7 +899,7 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
   
   //Convert to byte/int16 to save space
   var lossThematic = lossStack.select(['.*_yr_.*']).int16().addBands(lossStack.select(['.*_dur_.*']).byte());
-  var lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
+  var lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']);//.multiply(10000).int16();
   lossStack = lossThematic.addBands(lossContinuous);
   Map.addLayer(lossStack,{},'lossStack',false);
   var gainThematic = gainStack.select(['.*_yr_.*']).int16().addBands(gainStack.select(['.*_dur_.*']).byte());
