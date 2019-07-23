@@ -660,6 +660,7 @@ function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYe
   
   // Convert to image stack
   var lt = rawLt.select([0]);
+  print('rawLT',rawLT)
   var ltStack = ee.Image(getLTvertStack(lt,run_params)).updateMask(countMask);
   ltStack = ltStack.select('yrs.*').addBands(ltStack.select('fit.*'));
   var rmse = rawLt.select([1]).rename('rmse');    
