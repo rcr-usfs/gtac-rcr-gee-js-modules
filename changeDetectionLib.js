@@ -461,6 +461,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var prepDict = prepTimeSeriesForLandTrendr(ts, indexName, run_params)
   run_params = prepDict.run_params;
   var countMask = prepDict.runMask;
+  var distDir = getImagesLib.changeDirDict[indexName];
 
   //Run LANDTRENDR
   var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
