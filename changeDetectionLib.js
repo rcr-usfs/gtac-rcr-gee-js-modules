@@ -474,7 +474,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var joinedTS = getRawAndFittedLT(ts, lt, startYear, endYear, indexName, distDir);
   
   // Convert LandTrendr to Loss & Gain space
-  var lossGainDict = LANDTRENDRLossGain(lt, 'raw', lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
+  var lossGainDict = format(lt, 'raw', lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
                                         slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull)
   var lossStack = lossGainDict.lossStack;
   var gainStack = lossGainDict.gainStack;
@@ -516,9 +516,9 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   return [rawLt,outStack];
 }
 
-// Function to convert from raw Landtrendr Output OR LandtrendrVertStack output to Loss & Gain Space
-// LTformat = 'raw' or 'vertStack'
-function LANDTRENDRLossGain(ltStack, ltFormat, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
+// Function to convert from raw Landtrendr Output OR Landtrendr/VerdetVertStack output to Loss & Gain Space
+// format = 'rawLandtrendr' (Landtrendr only) or 'vertStack' (Verdet or Landtrendr)
+function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
                             slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull){
   if(lossMagThresh === undefined || lossMagThresh === null){lossMagThresh =-0.15}
   if(lossSlopeThresh === undefined || lossSlopeThresh === null){lossSlopeThresh =-0.1}
@@ -528,9 +528,9 @@ function LANDTRENDRLossGain(ltStack, ltFormat, lossMagThresh, lossSlopeThresh, g
   if(chooseWhichLoss === undefined || chooseWhichLoss === null){chooseWhichLoss ='largest'}
   if(chooseWhichGain === undefined || chooseWhichGain === null){chooseWhichGain ='largest'}
   if(howManyToPull === undefined || howManyToPull === null){howManyToPull =2}
-  if(ltFormat === undefined || ltFormat === null){ltFormat = 'raw'}
+  if(format === undefined || format === null){format = 'raw'}
   
-  if (ltFormat == 'raw'){
+  if (format == 'rawLandTrendr'){
     print('Converting LandTrendr from raw output to Gain & Loss')
     //Pop off vertices
     var vertices = ltStack.arraySlice(0,3,4);
@@ -548,7 +548,8 @@ function LANDTRENDRLossGain(ltStack, ltFormat, lossMagThresh, lossSlopeThresh, g
     var fittedMag = diff.arraySlice(0,2,3);
     //Set up array for sorting
     var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
-  }else if(ltFormat == 'vertStack'){
+  }else if(format == 'vertStack'){
+    print('Converting LandTrendr OR Verdet from raw output to Gain & Loss')
     var yrs = ltStack.select('yrs.*').toArray();
     var yrMask = yrs.lte(-32000).or(yrs.gte(32000)).not()
     yrs = yrs.arrayMask(yrMask);
