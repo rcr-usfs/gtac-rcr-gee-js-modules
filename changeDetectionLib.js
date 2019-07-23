@@ -470,7 +470,11 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   //Remask areas with insufficient data that were given dummy values
   lt = lt.updateMask(countMask);
   
-  var lossGainDict = LANDTRENDRLossGain(ts, lt, startYear, endYear, indexName, distDir, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
+  //Get joined raw and fitted LANDTRENDR for viz
+  var joinedTS = getRawAndFittedLT(ts,rawLTStack,startYear,endYear,indexName,distDir);
+  
+  // Convert LandTrendr to Loss & Gain space
+  var lossGainDict = LANDTRENDRLossGain(lt, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
                                         slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull)
   var lossStack = lossGainDict.lossStack;
   var gainStack = lossGainDict.gainStack;
@@ -513,7 +517,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   return [rawLt,outStack];
 }
 
-function LANDTRENDRLossGain(ts, rawLTStack, startYear, endYear, indexName, distDir, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
+function LANDTRENDRLossGain(rawLTStack, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
                             slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull){
   if(lossMagThresh === undefined || lossMagThresh === null){lossMagThresh =-0.15}
   if(lossSlopeThresh === undefined || lossSlopeThresh === null){lossSlopeThresh =-0.1}
@@ -523,10 +527,7 @@ function LANDTRENDRLossGain(ts, rawLTStack, startYear, endYear, indexName, distD
   if(chooseWhichLoss === undefined || chooseWhichLoss === null){chooseWhichLoss ='largest'}
   if(chooseWhichGain === undefined || chooseWhichGain === null){chooseWhichGain ='largest'}
   if(howManyToPull === undefined || howManyToPull === null){howManyToPull =2}
-  
-  //Get joined raw and fitted LANDTRENDR for viz
-  var joinedTS = getRawAndFittedLT(ts,rawLTStack,startYear,endYear,indexName,distDir);
-  
+
   //Pop off vertices
   var vertices = rawLTStack.arraySlice(0,3,4);
   
