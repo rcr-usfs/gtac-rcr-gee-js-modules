@@ -433,6 +433,7 @@ function getRawAndFittedLT(rawTs,lt,startYear,endYear,indexName,distDir){
 }
 //////////////////////////////////////////////////////////////////////////////////
 //Function for running LT, thresholding the segments for both loss and gain, sort them, and convert them to an image stack
+// July 2019 LSC: replaced some parts of workflow with functions in changeDetectionLib
 function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull){
   
   if(indexName === undefined || indexName === null){indexName = 'NBR'}
@@ -481,97 +482,10 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   var lt = rawLt.select([0]);
   
-  
-  //Get joined raw and fitted LANDTRENDR for viz
-  var joinedTS = getRawAndFittedLT(ts,lt,startYear,endYear,indexName,distDir);
-  
-  ///////////////////////////////////////
-  //Pop off vertices
-  var vertices = lt.arraySlice(0,3,4);
-  
-  //Mask out any non-vertex values
-  lt = lt.arrayMask(vertices);
-  lt = lt.arraySlice(0,0,3);
-  
-  
-  
-  //Get the pair-wise difference and slopes of the years
-  var left = lt.arraySlice(1,0,-1);
-  var right = lt.arraySlice(1,1,null);
-  var diff  = left.subtract(right);
-  var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1);
-  
-  var duration = diff.arraySlice(0,0,1).multiply(-1);
-  var fittedMag = diff.arraySlice(0,2,3);
-  //Set up array for sorting
-  var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
- 
-  
-  //Apply thresholds
-  var magLossMask =  forSorting.arraySlice(0,2,3).lte(lossMagThresh);
-  var slopeLossMask = forSorting.arraySlice(0,3,4).lte(lossSlopeThresh);
-  var lossMask = magLossMask.or(slopeLossMask);
-  
-  var magGainMask =  forSorting.arraySlice(0,2,3).gte(gainMagThresh);
-  var slopeGainMask = forSorting.arraySlice(0,3,4).gte(gainSlopeThresh);
-  var gainMask = magGainMask.or(slopeGainMask);
-  
-  
-  //Mask any segments that do not meet thresholds
-  var forLossSorting = forSorting.arrayMask(lossMask);
-  var forGainSorting = forSorting.arrayMask(gainMask);
-  
-
-   
-  //Dictionaries for choosing the column and direction to multiply the column for sorting
-  //Loss and gain are handled differently for sorting magnitude and slope (largest/smallest and steepest/mostgradual)
-  var lossColumnDict = {'newest':[0,-1],
-                    'oldest':[0,1],
-                    'largest':[2,1],
-                    'smallest':[2,-1],
-                    'steepest':[3,1],
-                    'mostGradual':[3,-1],
-                    'shortest':[1,1],
-                    'longest':[1,-1]
-                  };
-  var gainColumnDict = {'newest':[0,-1],
-                    'oldest':[0,1],
-                    'largest':[2,-1],
-                    'smallest':[2,1],
-                    'steepest':[3,-1],
-                    'mostGradual':[3,1],
-                    'shortest':[1,1],
-                    'longest':[1,-1]
-                  };
-  //Pull the respective column and direction
-  var lossSortValue = lossColumnDict[chooseWhichLoss];
-  var gainSortValue = gainColumnDict[chooseWhichGain];
-  
-  //Pull the sort column and multiply it
-  var lossSortBy = forLossSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
-  var gainSortBy = forGainSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
-  
-  //Sort the loss and gain and slice off the first column
-  var lossAfterForSorting = forLossSorting.arraySort(lossSortBy);
-  var gainAfterForSorting = forGainSorting.arraySort(gainSortBy);
-  
-  //Convert array to image stck
-  var lossStack = getLTStack(lossAfterForSorting,howManyToPull,['loss_yr_','loss_dur_','loss_mag_','loss_slope_']);
-  var gainStack = getLTStack(gainAfterForSorting,howManyToPull,['gain_yr_','gain_dur_','gain_mag_','gain_slope_']);
-  
-  //Convert to byte/int16 to save space
-  var lossThematic = lossStack.select(['.*_yr_.*']).int16().addBands(lossStack.select(['.*_dur_.*']).byte());
-  var lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
-  lossStack = lossThematic.addBands(lossContinuous);
-  
-  var gainThematic = gainStack.select(['.*_yr_.*']).int16().addBands(gainStack.select(['.*_dur_.*']).byte());
-  var gainContinuous = gainStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
-  gainStack = gainThematic.addBands(gainContinuous);
-  
-  //Remask areas with insufficient data that were given dummy values 
-  lossStack = lossStack.updateMask(countMask);
-  gainStack = gainStack.updateMask(countMask);
-  
+  var lossGainDict = LANDTRENDRLossGain(ts, lt, startYear, endYear, indexName, distDir, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
+                                        slowLossDurationThresh, chooseWhichLoss, chooseWhichGain)
+  var lossStack = lossGainDict.lossStack;
+  var gainStack = lossGainDict.gainStack;
 
   //Set up viz params
   var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':lossYearPalette};
