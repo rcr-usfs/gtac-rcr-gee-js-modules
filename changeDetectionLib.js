@@ -543,10 +543,7 @@ function LANDTRENDRLossGain(rawLTStack, lossMagThresh, lossSlopeThresh, gainMagT
   var fittedMag = diff.arraySlice(0,2,3);
   //Set up array for sorting
   var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
-  print('slopes',slopes)
-  print('duration',duration)
-  print('fittedMag',fittedMag)
-  print('forSorting',forSorting)
+  Map.addLayer(forSorting,{},'forSorting')
   
   //Apply thresholds
   var magLossMask =  forSorting.arraySlice(0,2,3).lte(lossMagThresh);
