@@ -483,7 +483,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var lt = rawLt.select([0]);
   
   var lossGainDict = LANDTRENDRLossGain(ts, lt, startYear, endYear, indexName, distDir, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
-                                        slowLossDurationThresh, chooseWhichLoss, chooseWhichGain)
+                                        slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull)
   var lossStack = lossGainDict.lossStack;
   var gainStack = lossGainDict.gainStack;
 
