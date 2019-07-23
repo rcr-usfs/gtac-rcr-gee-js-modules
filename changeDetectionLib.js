@@ -474,7 +474,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var joinedTS = getRawAndFittedLT(ts, lt, startYear, endYear, indexName, distDir);
   
   // Convert LandTrendr to Loss & Gain space
-  var lossGainDict = format(lt, 'raw', lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
+  var lossGainDict = convertToLossGain(lt, 'rawLandTrendr', lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
                                         slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull)
   var lossStack = lossGainDict.lossStack;
   var gainStack = lossGainDict.gainStack;
