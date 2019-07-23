@@ -479,17 +479,16 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   var lossStack = lossGainDict.lossStack;
   var gainStack = lossGainDict.gainStack;
 
-  //Set up viz params
-  var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':lossYearPalette};
-  var vizParamsLossMag = {'min':-0.8*10000 ,'max':lossMagThresh*10000,'palette':lossMagPalette};
-  
-  var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':gainYearPalette};
-  var vizParamsGainMag = {'min':gainMagThresh*10000,'max':0.8*10000,'palette':gainMagPalette};
-  
-  var vizParamsDuration = {'min':1,'max':5,'palette':changeDurationPalette};
-  
-  
   if(addToMap){
+    //Set up viz params
+    var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':lossYearPalette};
+    var vizParamsLossMag = {'min':-0.8*10000 ,'max':lossMagThresh*10000,'palette':lossMagPalette};
+    
+    var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':gainYearPalette};
+    var vizParamsGainMag = {'min':gainMagThresh*10000,'max':0.8*10000,'palette':gainMagPalette};
+    
+    var vizParamsDuration = {'min':1,'max':5,'palette':changeDurationPalette};
+  
     Map.addLayer(lt,{},'Raw LT',false);
     Map.addLayer(joinedTS,{},'Time Series',false);
   
