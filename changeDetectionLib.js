@@ -683,7 +683,10 @@ function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYe
     'bestModelProportion': run_params.bestModelProportion,
     'minObservationsNeeded': run_params.minObservationsNeeded
   });
-  return ee.Image(ltStack);
+  
+  var landtrendrOut = { 'ltStack': ee.Image(ltStack),
+                        'rawLt':   rawLt};
+  return landtrendrOut;
 }
 
 
@@ -695,7 +698,8 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts, indexName, run_params){
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
   
   // Run LandTrendr and convert to VertStack format
-  var ltStack = ee.Image(LANDTRENDRVertStack(ts, indexName, run_params, startYear, endYear));
+  var landtrendrOut = LANDTRENDRVertStack(ts, indexName, run_params, startYear, endYear);
+  var ltStack = ee.Image(landtrendrOut.ltStack);
   
   // Convert to durFitMagSlope format
   var durFitMagSlope = convertStack_To_DurFitMagSlope(ltStack, 'LT');
