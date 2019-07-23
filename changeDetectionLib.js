@@ -516,7 +516,9 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   return [rawLt,outStack];
 }
 
-function LANDTRENDRLossGain(rawLTStack, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
+// Function to convert from raw Landtrendr Output OR LandtrendrVertStack output to Loss & Gain Space
+// LTformat = 'raw' or 'vertStack'
+function LANDTRENDRLossGain(ltStack, ltFormat, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
                             slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull){
   if(lossMagThresh === undefined || lossMagThresh === null){lossMagThresh =-0.15}
   if(lossSlopeThresh === undefined || lossSlopeThresh === null){lossSlopeThresh =-0.1}
@@ -526,27 +528,41 @@ function LANDTRENDRLossGain(rawLTStack, lossMagThresh, lossSlopeThresh, gainMagT
   if(chooseWhichLoss === undefined || chooseWhichLoss === null){chooseWhichLoss ='largest'}
   if(chooseWhichGain === undefined || chooseWhichGain === null){chooseWhichGain ='largest'}
   if(howManyToPull === undefined || howManyToPull === null){howManyToPull =2}
+  if(ltFormat === undefined || ltFormat === null){ltFormat = 'raw'}
+  
+  if (ltFormat == 'raw'){
+    print('Converting LandTrendr from raw output to Gain & Loss')
+    //Pop off vertices
+    var vertices = ltStack.arraySlice(0,3,4);
+    
+    //Mask out any non-vertex values
+    ltStack = ltStack.arrayMask(vertices);
+    ltStack = ltStack.arraySlice(0,0,3);
+    
+    //Get the pair-wise difference and slopes of the years
+    var left = ltStack.arraySlice(1,0,-1);
+    var right = ltStack.arraySlice(1,1,null);
+    var diff  = left.subtract(right);
+    var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1);  
+    var duration = diff.arraySlice(0,0,1).multiply(-1);
+    var fittedMag = diff.arraySlice(0,2,3);
+    //Set up array for sorting
+    var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
+  }else if(ltFormat == 'vertStack'){
+    var yrs = ltStack.select('yrs.*').toArray();
+    var yrMask = yrs.lte(-32000).or(yrs.gte(32000)).not()
+    yrs = yrs.arrayMask(yrMask);
+    var fit = ltStack.select('fit.*').toArray().arrayMask(yrMask);
+    var both = yrs.arrayCat(fit,1).matrixTranspose();
 
-  //Pop off vertices
-  var vertices = rawLTStack.arraySlice(0,3,4);
-  
-  //Mask out any non-vertex values
-  rawLTStack = rawLTStack.arrayMask(vertices);
-  rawLTStack = rawLTStack.arraySlice(0,0,3);
-  
-  //Get the pair-wise difference and slopes of the years
-  var left = rawLTStack.arraySlice(1,0,-1);
-  var right = rawLTStack.arraySlice(1,1,null);
-  var diff  = left.subtract(right);
-  Map.addLayer(left, {}, 'left')
-  Map.addLayer(right, {}, 'right')
-  Map.addLayer(diff, {}, 'diff')
-  var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1);  
-  var duration = diff.arraySlice(0,0,1).multiply(-1);
-  var fittedMag = diff.arraySlice(0,2,3);
-  //Set up array for sorting
-  var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
-  Map.addLayer(forSorting,{},'forSorting')
+    var left = both.arraySlice(1,0,-1);
+    var right = both.arraySlice(1,1,null);
+    var diff = left.subtract(right);
+    var fittedMag = diff.arraySlice(0,1,2);
+    var duration = diff.arraySlice(0,0,1).multiply(-1);
+    var slopes = fittedMag.divide(duration);
+    var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
+  }
   
   //Apply thresholds
   var magLossMask =  forSorting.arraySlice(0,2,3).lte(lossMagThresh);
