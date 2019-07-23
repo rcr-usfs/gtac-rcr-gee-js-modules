@@ -661,7 +661,7 @@ function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYe
   
   //Run LANDTRENDR
   var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
-  Map.addLayer(rawLt, {}, 'rawLt')
+  
   // Convert to image stack
   var lt = rawLt.select([0]);
   var ltStack = ee.Image(getLTvertStack(lt,run_params)).updateMask(countMask);
@@ -790,7 +790,7 @@ function fitStackToCollection(stack, maxSegments, startYear, endYear){
     var segYearsLeft = stackLeft.select(['yrs_.*']).rename(['year_left']);
     var segYearsRight = stackRight.select(['yrs_.*']).rename(['year_right']);
     
-    //Select off the fitted bands and flip them if they were flipped for use in LT
+    //Select off the fitted bands 
     var segFitLeft = stackLeft.select(['fit_.*']).rename(['fitted'])
     var segFitRight = stackRight.select(['fit_.*']).rename(['fitted'])
     
