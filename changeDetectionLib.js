@@ -459,8 +459,8 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   if(howManyToPull === undefined || howManyToPull === null){howManyToPull =2}
   
   var prepDict = prepTimeSeriesForLandTrendr(ts, indexName, run_params)
-  run_params = prepDict.run_params;
-  var countMask = prepDict.runMask;
+  run_params = prepDict.run_params; // added composite time series prepped above
+  var countMask = prepDict.runMask; // count mask for pixels without enough data
   var distDir = getImagesLib.changeDirDict[indexName];
 
   //Run LANDTRENDR
