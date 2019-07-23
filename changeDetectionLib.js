@@ -615,8 +615,8 @@ function LANDTRENDRLossGain(ts, rawLTStack, startYear, endYear, indexName, distD
 // Function to prep data following our workflows. Will have to run Landtrendr and convert to stack after.
 function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
   var maxSegments = ee.Number(run_params.maxSegments);
-  var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
-  var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
+  //var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
+  //var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
 
    //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
@@ -638,7 +638,8 @@ function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
   var runMask = countMask.rename('insufficientDataMask');
   var prepDict = {
     'run_params': run_params,
-    'runMask':    runMask
+    'runMask':    runMask,
+    'distDir':    distDir
   }
   
   return prepDict;  
