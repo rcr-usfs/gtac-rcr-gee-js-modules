@@ -884,11 +884,11 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
   //Pull the respective column and direction
   var lossSortValue = lossColumnDict[chooseWhichLoss];
   var gainSortValue = gainColumnDict[chooseWhichGain];
-  print(lossSortValue)
+
   //Pull the sort column and multiply it
   var lossSortBy = forLossSorting.arraySlice(0,lossSortValue[0],lossSortValue[0]+1).multiply(lossSortValue[1]);
   var gainSortBy = forGainSorting.arraySlice(0,gainSortValue[0],gainSortValue[0]+1).multiply(gainSortValue[1]);
-  Map.addLayer(lossSortBy, {}, 'lossSortBy',false)
+
   //Sort the loss and gain and slice off the first column
   var lossAfterForSorting = forLossSorting.arraySort(lossSortBy);
   var gainAfterForSorting = forGainSorting.arraySort(gainSortBy);
@@ -896,7 +896,7 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
   //Convert array to image stck
   var lossStack = getLTStack(lossAfterForSorting,howManyToPull,['loss_yr_','loss_dur_','loss_mag_','loss_slope_']);
   var gainStack = getLTStack(gainAfterForSorting,howManyToPull,['gain_yr_','gain_dur_','gain_mag_','gain_slope_']);
-  
+  Map.addLayer(lossStack,{},'lossStack',false);
   //Convert to byte/int16 to save space
   var lossThematic = lossStack.select(['.*_yr_.*']).int16().addBands(lossStack.select(['.*_dur_.*']).byte());
   var lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
