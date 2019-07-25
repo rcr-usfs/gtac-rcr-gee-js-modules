@@ -839,10 +839,10 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
     
   }else if(format == 'vertStack'){
-    print('Converting LandTrendr OR Verdet from vertStack format to Gain & Loss')
+    print('Converting LandTrendr OR Verdet from vertStack format to Gain & Loss');
     
     var yrs = ltStack.select('yrs.*').toArray();
-    var yrMask = yrs.lte(1983).or(yrs.gte(2030)).not()
+    var yrMask = yrs.lte(1983).or(yrs.gte(2030)).not();
     yrs = yrs.arrayMask(yrMask);
     var fit = ltStack.select('fit.*').toArray().arrayMask(yrMask);
     var both = yrs.arrayCat(fit,1).matrixTranspose();
