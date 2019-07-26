@@ -639,7 +639,7 @@ function LT_VT_multBands(img, multBy){
     var out = dur.addBands(fitted).addBands(slope).addBands(diff).addBands(mag);
     out  = out.copyProperties(img,['system:time_start'])
               .copyProperties(img);
-    return out;
+    return ee.Image(out);
 }
 
 // Function to apply the Direction of  a decrease in photosynthetic vegetation to Landtrendr or Verdet vertStack format
@@ -656,7 +656,7 @@ function applyDistDir_vertStack(stack, distDir, verdet_or_landtrendr){
   }
   out  = out.copyProperties(stack,['system:time_start'])
             .copyProperties(stack);
-  return out;  
+  return ee.Image(out);  
 }
 
 // Helper to multiply vertStack bands by the appropriate amount before exporting (multBy = 10000)
@@ -674,7 +674,7 @@ function LT_VT_vertStack_multBands(img, verdet_or_landtrendr, multBy){
     }
     out  = out.copyProperties(img,['system:time_start'])
               .copyProperties(img);
-    return out;
+    return ee.Image(out);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
