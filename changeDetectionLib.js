@@ -846,7 +846,7 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     yrs = yrs.arrayMask(yrMask);
     var fit = ltStack.select('fit.*').toArray().arrayMask(yrMask);
     var both = yrs.arrayCat(fit,1).matrixTranspose();
-    
+    Map.addLayer(both, {}, 'both', false);
     var left = both.arraySlice(1,0,-1);
     var right = both.arraySlice(1,1,null);
     var diff = left.subtract(right);
@@ -854,6 +854,7 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     var duration = diff.arraySlice(0,0,1).multiply(-1);
     var slopes = fittedMag.divide(duration);
     var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
+    Map.addLayer(forSorting, {}, 'forSorting', false);
   }
   
   //Apply thresholds
