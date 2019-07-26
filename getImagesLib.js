@@ -1497,7 +1497,7 @@ function joinCollections(c1,c2, maskAnyNullValues){
     return ee.Image.cat(element.get('primary'), element.get('secondary'));
   };
 
-  var join = ee.Join.inner();
+  var join = ee.Join.inner({'measureKey':'system:time_start'});
   var filter = ee.Filter.equals('system:time_start', null, 'system:time_start');
   var joined = ee.ImageCollection(join.apply(c1, c2, filter));
   print('joined',joined) 
