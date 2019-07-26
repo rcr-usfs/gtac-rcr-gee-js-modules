@@ -1489,24 +1489,25 @@ var multModisDict = {
   };
 /////////////////////////////////////////////////
 //Helper function to join two collections- Source: code.earthengine.google.com
-    function joinCollections(c1,c2, maskAnyNullValues){
-      if(maskAnyNullValues === undefined || maskAnyNullValues === null){maskAnyNullValues = true}
-      var MergeBands = function(element) {
-        // A function to merge the bands together.
-        // After a join, results are in 'primary' and 'secondary' properties.
-        return ee.Image.cat(element.get('primary'), element.get('secondary'));
-      };
+function joinCollections(c1,c2, maskAnyNullValues){
+  if(maskAnyNullValues === undefined || maskAnyNullValues === null){maskAnyNullValues = true}
+  var MergeBands = function(element) {
+    // A function to merge the bands together.
+    // After a join, results are in 'primary' and 'secondary' properties.
+    return ee.Image.cat(element.get('primary'), element.get('secondary'));
+  };
 
-      var join = ee.Join.inner();
-      var filter = ee.Filter.equals('system:time_start', null, 'system:time_start');
-      var joined = ee.ImageCollection(join.apply(c1, c2, filter));
-     
-      joined = ee.ImageCollection(joined.map(MergeBands));
-      if(maskAnyNullValues){
-        joined = joined.map(function(img){return img.mask(img.mask().and(img.reduce(ee.Reducer.min()).neq(0)))});
-      }
-      return joined;
-    }
+  var join = ee.Join.inner({'measureKey': 'system:time_start'});
+  var filter = ee.Filter.equals('system:time_start', null, 'system:time_start');
+  var joined = ee.ImageCollection(join.apply(c1, c2, filter));
+ 
+  joined = ee.ImageCollection(joined.map(MergeBands));
+  if(maskAnyNullValues){
+    joined = joined.map(function(img){return img.mask(img.mask().and(img.reduce(ee.Reducer.min()).neq(0)))});
+  }
+  return joined;
+}
+
 function smartJoin(primary,secondary,hourDiff){
   var millis = hourDiff * 60 * 60 * 1000;
   
