@@ -842,9 +842,11 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     print('Converting LandTrendr OR Verdet from vertStack format to Gain & Loss');
     
     var yrs = ltStack.select('yrs.*').toArray();
+    Map.addLayer(yrs, {}, 'yrs', false);
     var yrMask = yrs.lte(1983).or(yrs.gte(2030)).not();
     yrs = yrs.arrayMask(yrMask);
     var fit = ltStack.select('fit.*').toArray().arrayMask(yrMask);
+    Map.addLayer(fit, {}, 'fit', false);
     var both = yrs.arrayCat(fit,1).matrixTranspose();
     Map.addLayer(both, {}, 'both', false);
     var left = both.arraySlice(1,0,-1);
