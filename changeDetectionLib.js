@@ -809,6 +809,7 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
 // format = 'rawLandtrendr' (Landtrendr only) or 'vertStack' (Verdet or Landtrendr)
 // If using vertStack format, this will not work if there are masked values in the vertStack. Must use getImagesLib.setNoData prior to 
 // calling this function
+// Have to apply LandTrendr changeDirection to both Verdet and Landtrendr before applying convertToLossGain()
 function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
                             slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull){
   if(lossMagThresh === undefined || lossMagThresh === null){lossMagThresh =-0.15}
