@@ -840,7 +840,7 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     
   }else if(format == 'vertStack'){
     print('Converting LandTrendr OR Verdet from vertStack format to Gain & Loss');
-    
+    Map.addLayer(ltStack.unmask(), {}, 'ltStack.unmask()',false);
     var yrs = ltStack.select('yrs.*').toArray();
     Map.addLayer(yrs, {}, 'yrs', false);
     var yrMask = yrs.lte(1983).or(yrs.gte(2030)).not();
