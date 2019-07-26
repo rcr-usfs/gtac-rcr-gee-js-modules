@@ -807,6 +807,8 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Function to convert from raw Landtrendr Output OR Landtrendr/VerdetVertStack output to Loss & Gain Space
 // format = 'rawLandtrendr' (Landtrendr only) or 'vertStack' (Verdet or Landtrendr)
+// If using vertStack format, this will not work if there are masked values in the vertStack. Must use getImagesLib.setNoData prior to 
+// calling this function
 function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
                             slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull){
   if(lossMagThresh === undefined || lossMagThresh === null){lossMagThresh =-0.15}
@@ -840,15 +842,13 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     
   }else if(format == 'vertStack'){
     print('Converting LandTrendr OR Verdet from vertStack format to Gain & Loss');
-    //Map.addLayer(ltStack.unmask(), {}, 'ltStack.unmask()',false);
+   
     var yrs = ltStack.select('yrs.*').toArray();
-    Map.addLayer(yrs, {}, 'yrs', false);
     var yrMask = yrs.lte(1983).or(yrs.gte(2030)).not();
     yrs = yrs.arrayMask(yrMask);
     var fit = ltStack.select('fit.*').toArray().arrayMask(yrMask);
-    Map.addLayer(fit, {}, 'fit', false);
     var both = yrs.arrayCat(fit,1).matrixTranspose();
-    Map.addLayer(both, {}, 'both', false);
+
     var left = both.arraySlice(1,0,-1);
     var right = both.arraySlice(1,1,null);
     var diff = left.subtract(right);
