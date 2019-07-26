@@ -1500,8 +1500,7 @@ function joinCollections(c1,c2, maskAnyNullValues){
   var join = ee.Join.inner();
   var filter = ee.Filter.equals('system:time_start', null, 'system:time_start');
   var joined = ee.ImageCollection(join.apply(c1, c2, filter));
-  print('joined',joined) 
-  print(ee.Image(joined.first()).get('primary').get('system:time_start'))
+
   joined = ee.ImageCollection(joined.map(MergeBands));
   if(maskAnyNullValues){
     joined = joined.map(function(img){return img.mask(img.mask().and(img.reduce(ee.Reducer.min()).neq(0)))});
