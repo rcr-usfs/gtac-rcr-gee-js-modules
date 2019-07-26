@@ -1497,10 +1497,11 @@ function joinCollections(c1,c2, maskAnyNullValues){
     return ee.Image.cat(element.get('primary'), element.get('secondary'));
   };
 
-  var join = ee.Join.inner({'measureKey':'system:time_start'});
+  var join = ee.Join.inner();
   var filter = ee.Filter.equals('system:time_start', null, 'system:time_start');
   var joined = ee.ImageCollection(join.apply(c1, c2, filter));
   print('joined',joined) 
+  print(joined.get('primary').get('system:time_start'))
   joined = ee.ImageCollection(joined.map(MergeBands));
   if(maskAnyNullValues){
     joined = joined.map(function(img){return img.mask(img.mask().and(img.reduce(ee.Reducer.min()).neq(0)))});
