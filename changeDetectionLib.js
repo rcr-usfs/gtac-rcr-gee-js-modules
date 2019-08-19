@@ -843,9 +843,11 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     
   }else if(format == 'vertStack'){
     print('Converting LandTrendr OR Verdet from vertStack format to Gain & Loss');
-   
+    var baseMask = ltStack.select('yrs_vert_1').mask(); //Will fail on completely masked pixels. Have to work around and then remask later.
+    var ltStack = ltStack.unmask(255); // Set masked pixels to 255
+    
     var yrs = ltStack.select('yrs.*').toArray();
-    var yrMask = yrs.lte(1983).or(yrs.gte(2030)).not();
+    var yrMask = yrs.eq(-32768).or(yrs.eq(32767)).or(yrs.eq(0)).not();
     yrs = yrs.arrayMask(yrMask);
     var fit = ltStack.select('fit.*').toArray().arrayMask(yrMask);
     var both = yrs.arrayCat(fit,1).matrixTranspose();
@@ -857,6 +859,7 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     var duration = diff.arraySlice(0,0,1).multiply(-1);
     var slopes = fittedMag.divide(duration);
     var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
+    forSorting = forSorting.updateMask(baseMask);
   }
   
   //Apply thresholds
