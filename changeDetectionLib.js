@@ -843,8 +843,12 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     
   }else if(format == 'vertStack'){
     print('Converting LandTrendr OR Verdet from vertStack format to Gain & Loss');
-    var baseMask = ltStack.select('yrs.*').first().mask(); //Will fail on completely masked pixels. Have to work around and then remask later.
-    Map.addLayer(baseMask, {}, 'baskMask')
+    try {
+      var baseMask = ltStack.select('yrs_vert_1').mask(); //Will fail on completely masked pixels. Have to work around and then remask later.
+    } catch {
+      var baseMask = ltStack.select('yrs_1').mask(); 
+    }
+    Map.addLayer(baseMask, {}, 'baseMask')
     var ltStack = ltStack.unmask(255); // Set masked pixels to 255
     
     var yrs = ltStack.select('yrs.*').toArray();
