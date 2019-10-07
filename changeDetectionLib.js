@@ -861,6 +861,7 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     var slopes = fittedMag.divide(duration);
     var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
     forSorting = forSorting.updateMask(baseMask);
+    Map.addLayer(forSorting, {}, 'forSorting')
   }
   
   //Apply thresholds
