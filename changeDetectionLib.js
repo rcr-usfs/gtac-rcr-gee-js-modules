@@ -845,7 +845,6 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     print('Converting LandTrendr OR Verdet from vertStack format to Gain & Loss');
     
     var baseMask = ltStack.select([0]).mask(); //Will fail on completely masked pixels. Have to work around and then remask later.
-    Map.addLayer(baseMask, {}, 'baseMask')
     var ltStack = ltStack.unmask(255); // Set masked pixels to 255
     
     var yrs = ltStack.select('yrs.*').toArray();
@@ -862,7 +861,7 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
     var slopes = fittedMag.divide(duration);
     var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
     forSorting = forSorting.updateMask(baseMask);
-    Map.addLayer(forSorting, {}, 'forSorting')
+
   }
   
   //Apply thresholds
