@@ -162,9 +162,9 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
-  ).map(getImageLib.addSAVIandEVI).select(indexNames);
-  
-
+  ).map(getImageLib.addSAVIandEVI)
+Map.addLayer(processedScenes.select(['NBR']),{},'ts',false);
+processedScenes = processedScenes.select(indexNames);
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir2'], 6, 0.99, 1.33, 1,0);
 
 var ccdcImage = ccdcLib.buildCcdcImage(ccdc,3);
