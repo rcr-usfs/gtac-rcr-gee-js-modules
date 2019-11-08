@@ -146,7 +146,7 @@ var scale = null;
 //Can include: 'blue','green','red','nir','swir1','swir2'
 //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
 // var indexList = ee.List(['nir','swir1']);
-var indexNames = ['blue','green','red','nir','swir1','temp','swir2'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
+var indexNames = ['blue','green','red','nir','swir1','swir2','temp'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -171,4 +171,4 @@ var ccdcImage = ccdcLib.buildCcdcImage(ccdc,3);
 
 Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
 print(ccdcImage)
-// Map.addLayer(ccdc,{},'cdc')
+Map.addLayer(ccdc,{},'cdc')
