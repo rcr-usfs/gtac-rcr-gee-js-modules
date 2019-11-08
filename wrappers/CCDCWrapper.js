@@ -161,7 +161,7 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
-  ).map(getImageLib.addSAVIandEVI).select(indexNames);
+  ).map(getImageLib.addSAVIandEVI);
   
 
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, indexNames, 6, 0.99, 1.33, 1);
