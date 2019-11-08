@@ -149,7 +149,7 @@ var annualReducer = ee.Reducer.percentile([10]);
 //Can include: 'blue','green','red','nir','swir1','swir2'
 //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
 // var indexList = ee.List(['nir','swir1']);
-var indexNames = ['NBR','SAVI','EVI'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
+var indexNames = ['NBR'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
 
 //Year range to train harmonic regression model with
 var trainingStartYear = 1984;
@@ -171,4 +171,5 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
   ).map(getImageLib.addSAVIandEVI);
   
 
-print(processedScenes)
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, indexNames, 6, 0.99, 1.33, 1);
+Map.addLayer(ccdc,{},'cdc')
