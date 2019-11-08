@@ -166,4 +166,7 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
   
 
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, indexNames, 6, 0.99, 1.33, 1,0);
+
+var ccdcImage = ccdcLib.buildCcdcImage(ccdc,3);
+print(ccdcImage)
 Map.addLayer(ccdc,{},'cdc')
