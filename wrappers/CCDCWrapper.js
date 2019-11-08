@@ -164,5 +164,5 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
   ).map(getImageLib.addSAVIandEVI).select(['green','nir','swir1','swir2','NDVI','NBR','NDMI']);
   
 
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, indexNames, 6, 0.99, 1.33, 1);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, indexNames, 6, 0.99, 1.33, 1,0);
 Map.addLayer(ccdc,{},'cdc')
