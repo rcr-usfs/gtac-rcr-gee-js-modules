@@ -171,41 +171,4 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
   ).map(getImageLib.addSAVIandEVI);
   
 
-//Get EWMACD values for each index/band
-var outputCollection;
-indexNames.map(function(indexName){
-  var lsIndex = processedScenes.select(indexName);
- 
-  //Apply EWMACD
-  var ewmaOutputs = dLib.runEWMACD(lsIndex,indexName,startYear,endYear,trainingStartYear,trainingEndYear,harmonicCount,annualReducer,!includeSLCOffL7);
-  var annualEWMA = ewmaOutputs[1];
-  
-  var ewmaChange = dLib.thresholdChange(annualEWMA,3,-1).select('.*_change');
-  Map.addLayer(annualEWMA,{},indexName + ' ewma',false);
-  Map.addLayer(ewmaChange.min().select([0]),{'min':startYear,'max':endYear,'palette':'FF0,F00'},indexName + ' EWMA First Change Year',false);
-    
-    if(outputCollection === undefined){
-      outputCollection = annualEWMA;
-    }else{
-      outputCollection = getImageLib.joinCollections(outputCollection,annualEWMA,false);
-    }
-
-});
-
-//Export each years EWMACD output
-// var years = ee.List.sequence(startYear,endYear).getInfo();
-
-//   years.map(function(year){
-//     var ewmaYr = ee.Image(outputCollection.filter(ee.Filter.calendarRange(year,year,'year')).first())
-//     .int16();
-    
-//   var exportName = outputName+'_' + year.toString();
-//     var exportPath = exportPathRoot + '/'+exportName;
-    
-//     getImageLib.exportToAssetWrapper(ewmaYr,exportName,exportPath,'mean',
-//       studyArea,null,crs,transform);
-//   });
-var ewmaOut = ee.ImageCollection('users/ianhousman/test/changeCollection');
-Map.addLayer(ewmaOut)
-ewmaOut = dLib.thresholdChange(ewmaOut,5,-1)
-Map.addLayer(ewmaOut.select([5]).min(),{'min':1984,'max':2018,'palette':'FF0,F00'})
+print(processedScenes)
