@@ -1,9 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.Polygon(
-        [[[-122.91349669443616, 40.98973589629366],
-          [-123.02335997568616, 40.4652228774622],
-          [-122.01261778818616, 40.481937594544576],
-          [-122.00163146006116, 40.931660898201365]]]);
+var geometry = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-114.50966081843637, 48.965044278041475],
+          [-114.50966081843637, 48.66481691441383],
+          [-113.58131609187387, 48.66481691441383],
+          [-113.58131609187387, 48.965044278041475]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -30,7 +37,7 @@ var endJulian = 365;
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
 var startYear = 1984;
-var endYear = 2000;
+var endYear = 2019;
 
 
 
@@ -154,7 +161,7 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
-  ).map(getImageLib.addSAVIandEVI);
+  ).map(getImageLib.addSAVIandEVI).select(indexNames);
   
 
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, indexNames, 6, 0.99, 1.33, 1);
