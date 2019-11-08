@@ -132,28 +132,14 @@ var scale = null;
 
 ////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
-//EWMACD Parameters
-
-
-//Expected frequency of phenological cycles. 
-//harmonicCount is n pi so 1 cycle/yr is 2 
-var harmonicCount = 2;
-
-//When simplifying from all EWMA values to annual values
-//this is the reducer that is applied.  Generally will want to pull from the 
-//bottom quadrant
-var annualReducer = ee.Reducer.percentile([10]);
 
 //List of bands or indices to iterate across
 //Typically a list of spectral bands or computed indices
 //Can include: 'blue','green','red','nir','swir1','swir2'
 //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
 // var indexList = ee.List(['nir','swir1']);
-var indexNames = ['NBR'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
+var indexNames = ['NBR','swir2'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
 
-//Year range to train harmonic regression model with
-var trainingStartYear = 1984;
-var trainingEndYear = 1989;
 
 ///////////////////////////////////////////////////////////////////////
 // End user parameters
