@@ -236,9 +236,9 @@ function addFullYearJulianDayBand(img){
   var d = ee.Date(img.get('system:time_start'));
   var julian = ee.Number(d.getRelative('day','year')).add(1).format('%03d');
   var y = ee.String(d.get('year'));
-  var yj = ee.Image(ee.Number.parse(y.cat(julian))).rename(['yearJulian']).int64();
+  var yj = ee.Image(ee.Number.parse(y.cat(julian))).rename(['yearJulian']).int32();
   
-  return img.addBands(yj).float();
+  return img.addBands(yj);
 }
 
 ////////////////////////////////////////////////
