@@ -1830,32 +1830,32 @@ var buildCcdcImage = function(fit, nSegments) {
  * 
  * v2: extract coef and rmse
  */
-var getSegmentParamsForYear = function(image, year, month, day) {
-  var epoch = ee.Date('1970-01-01').millis()
-  var DAYS = 719529  
+// var getSegmentParamsForYear = function(image, year, month, day) {
+//   var epoch = ee.Date('1970-01-01').millis()
+//   var DAYS = 719529  
   
-  var timeT = ee.Date.fromYMD(year, month, day).millis().subtract(epoch).divide(24*60*60*1000).add(DAYS)
+//   var timeT = ee.Date.fromYMD(year, month, day).millis().subtract(epoch).divide(24*60*60*1000).add(DAYS)
   
-  var start = image.select('.*tStart') //segment start data
-  var end = image.select('.*tEnd')    //segment end date
+//   var start = image.select('.*tStart') //segment start data
+//   var end = image.select('.*tEnd')    //segment end date
   
-  var n = start.bandNames().length() //number of segments
+//   var n = start.bandNames().length() //number of segments
   
-  var cfarray = ee.List.sequence(1, n).map(function(i) {
-    var cf = image.select(ee.String('S').cat(ee.Number(i).byte()).cat('.*coef.*'))
-    var rmse = image.select(ee.String('S').cat(ee.Number(i).byte()).cat('.*RMSE'))
-    return cf.addBands(rmse).float().toArray()
-  })
+//   var cfarray = ee.List.sequence(1, n).map(function(i) {
+//     var cf = image.select(ee.String('S').cat(ee.Number(i).byte()).cat('.*coef.*'))
+//     var rmse = image.select(ee.String('S').cat(ee.Number(i).byte()).cat('.*RMSE'))
+//     return cf.addBands(rmse).float().toArray()
+//   })
   
-  cfarray = ee.ImageCollection(cfarray).toArrayPerBand(1).arrayTranspose()
-  Map.addLayer(cfarray,{},'cfarray')
-  // var vic = start.toArray().lte(timeT).and(end.toArray().gt(timeT)).toArray(1)
-  var vic = start.toArray().lte(timeT).and(start.toArray().gt(0)).toArray(1)
+//   cfarray = ee.ImageCollection(cfarray).toArrayPerBand(1).arrayTranspose()
+//   Map.addLayer(cfarray,{},'cfarray')
+//   // var vic = start.toArray().lte(timeT).and(end.toArray().gt(timeT)).toArray(1)
+//   var vic = start.toArray().lte(timeT).and(start.toArray().gt(0)).toArray(1)
 
-  var coefNames = image.select('S1.*coef.*', 'S1.*RMSE').bandNames()
+//   var coefNames = image.select('S1.*coef.*', 'S1.*RMSE').bandNames()
 
-  return cfarray.arrayMask(vic).arraySlice(0, -1).arrayProject([1]).arrayFlatten([coefNames])
-}
+//   return cfarray.arrayMask(vic).arraySlice(0, -1).arrayProject([1]).arrayFlatten([coefNames])
+// }
 
 /**
  * get ccdc coefficients for specified segment
