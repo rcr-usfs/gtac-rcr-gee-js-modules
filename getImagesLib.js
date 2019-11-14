@@ -236,9 +236,9 @@ function addFullYearJulianDayBand(img){
   var d = ee.Date(img.get('system:time_start'));
   var julian = ee.Number(d.getRelative('day','year')).add(1).format('%03d');
   var y = ee.String(d.get('year'));
-  var yj = ee.Image(ee.Number.parse(y.cat(julian))).rename(['yearJulian']).int32();
+  var yj = ee.Image(ee.Number.parse(y.cat(julian))).rename(['yearJulian']).int64();
   
-  return img.addBands(yj);
+  return img.addBands(yj).float();
 }
 
 ////////////////////////////////////////////////
@@ -1040,7 +1040,7 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
   // Find band names in first image
   var f = ee.Image(inCollection.first());
   var bandNames = f.bandNames();
-  var bandNumbers = ee.List.sequence(1,bandNames.length());
+  //var bandNumbers = ee.List.sequence(1,bandNames.length());
   
   if (medoidIncludeBands === undefined || medoidIncludeBands === null) {
     medoidIncludeBands = bandNames;
@@ -1052,14 +1052,18 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
   var medoid = inCollection.map(function(img){
     var diff = ee.Image(img).select(medoidIncludeBands).subtract(median)
       .pow(ee.Image.constant(2));
+    img = addFullYearJulianDayBand(img);
     return diff.reduce('sum').addBands(img);
   });
   // When exported as CSV, this provides a weighted list of the scenes being included in the composite
   // Map.addLayer(medoid,{},'Medoid Image Collection Scenes') 
   
+  var bandNames = bandNames.cat(['yearJulian']);
+  var numBands = bandNames.length();
+  var bandNumbers = ee.List.sequence(1, numBands);
   // Minimize the distance across all bands
   medoid = ee.ImageCollection(medoid)
-    .reduce(ee.Reducer.min(bandNames.length().add(1)))
+    .reduce(ee.Reducer.min(numBands.add(1)))
     .select(bandNumbers,bandNames);
   
   return medoid;
