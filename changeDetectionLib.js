@@ -1715,6 +1715,198 @@ function thresholdZAndTrendSubtle(zAndTrendCollection,zThreshLow,zThreshHigh,slo
 // //   });
 // // }); 
 // }
+//Taken from users/yang/CCDC
+//-------------------- BEGIN CCDC Helper Function -------------------//
+/**
+ * create segment tab
+ */
+var buildSegmentTag = function(nSegments) {
+  return ee.List.sequence(1, nSegments).map(function(i) {
+    return ee.String('S').cat(ee.Number(i).int())
+  })
+}
+
+/**
+ * create band tag
+ */
+var buildBandTag = function(tag) {
+  var bands = ee.List(['B1','B2','B3','B4','B5','B7','B6'])
+  return bands.map(function(s) {
+    return ee.String(s).cat('_' + tag)
+  })
+}
+
+/**
+ * Extract CCDC magnitude image
+ * 
+ */
+var buildMagnitude = function(fit, nSegments) {
+  var segmentTag = buildSegmentTag(nSegments)
+  var magTag = buildBandTag('MAG')  
+  
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, 7)]).repeat(0, nSegments))
+  var magImg =fit.select('magnitude').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
+
+  return magImg.arrayFlatten([segmentTag, magTag])
+}
+
+/**
+ * Extract CCDC RMSE image
+ * 
+ */
+var buildRMSE = function(fit, nSegments) {
+  var segmentTag = buildSegmentTag(nSegments)
+  var magTag = buildBandTag('RMSE')  
+  
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, 7)]).repeat(0, nSegments))
+  var magImg = fit.select('rmse').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
+
+  return magImg.arrayFlatten([segmentTag, magTag])
+}
+
+/**
+ * Extract CCDC Coefficient image
+ * 
+ */
+var buildCoefs = function(fit, nSegments) {
+  var segmentTag = buildSegmentTag(nSegments)
+  var magTag = buildBandTag('coef')
+  var harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3']
+  
+  var zeros = ee.Array([[[0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0]]])
+                       
+  var magImg = fit.select('coefs').arrayCat(zeros.repeat(0, nSegments), 0).arraySlice(0, 0, nSegments)
+
+  return magImg.arrayFlatten([segmentTag, magTag, harmonicTag])
+}
+
+/**
+ * Extract CCDC tStart, tEnd, tBreak, changeProb
+ * 
+ */
+var buildStartEndBreakProb = function(fit, nSegments, tag) {
+  var segmentTag = buildSegmentTag(nSegments).map(function(s) {
+    return ee.String(s).cat('_'+tag)
+  })
+  
+  var zeros = ee.Array(0).repeat(0, nSegments)
+                       
+  var magImg = fit.select(tag).arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
+
+  return magImg.arrayFlatten([segmentTag])
+}
+
+/**
+ * build a 74 x nSegments layer image
+ * using int32 as output.
+ * 
+ */
+var buildCcdcImage = function(fit, nSegments) {
+  var magnitude = buildMagnitude(fit, nSegments)
+  var rmse = buildRMSE(fit, nSegments)
+  var coef = buildCoefs(fit, nSegments)
+  
+  var tStart = buildStartEndBreakProb(fit, nSegments, 'tStart')
+  var tEnd = buildStartEndBreakProb(fit, nSegments, 'tEnd')
+  var tBreak = buildStartEndBreakProb(fit, nSegments, 'tBreak')
+  var probs = buildStartEndBreakProb(fit, nSegments, 'changeProb').multiply(100)
+
+  return ee.Image.cat(coef, rmse, magnitude, tStart, tEnd, tBreak, probs).float()
+}
+//
+//-------------------- END CCDC Helper Function -------------------//
+
+/**
+ * get ccdc coefficients for specified date
+ * 
+ * v2: extract coef and rmse
+ */
+var getSegmentParamsForYear = function(image, year, month, day) {
+  var epoch = ee.Date('1970-01-01').millis()
+  var DAYS = 719529  
+  
+  var timeT = ee.Date.fromYMD(year, month, day).millis().subtract(epoch).divide(24*60*60*1000).add(DAYS)
+  
+  var start = image.select('.*tStart') //segment start data
+  var end = image.select('.*tEnd')    //segment end date
+  
+  var n = start.bandNames().length() //number of segments
+  
+  var cfarray = ee.List.sequence(1, n).map(function(i) {
+    var cf = image.select(ee.String('S').cat(ee.Number(i).byte()).cat('.*coef.*'))
+    var rmse = image.select(ee.String('S').cat(ee.Number(i).byte()).cat('.*RMSE'))
+    return cf.addBands(rmse).float().toArray()
+  })
+  
+  cfarray = ee.ImageCollection(cfarray).toArrayPerBand(1).arrayTranspose()
+  
+  // var vic = start.toArray().lte(timeT).and(end.toArray().gt(timeT)).toArray(1)
+  var vic = start.toArray().lte(timeT).and(start.toArray().gt(0)).toArray(1)
+
+  var coefNames = image.select('S1.*coef.*', 'S1.*RMSE').bandNames()
+
+  return cfarray.arrayMask(vic).arraySlice(0, -1).arrayProject([1]).arrayFlatten([coefNames])
+}
+
+/**
+ * get ccdc coefficients for specified segment
+ * 
+ * v3: extract coef and rmse
+ */
+var getSegmentParams_v3 = function(image, idx) {
+  var coefNames = image.select('S1.*coef.*', 'S1.*RMSE').bandNames()
+
+  var scoef = image.select('S' + idx + '.*coef.*', 'S' + idx + '.*RMSE').rename(coefNames)
+
+  return scoef
+}
+
+
+/**
+ * create synthetic image for specified band
+ * 
+ */
+var getSyntheticForYear = function(image, year, month, day, band) {
+  var epoch = ee.Date('1970-01-01')
+  var days = 719529
+  
+  var tfit = ee.Date.fromYMD(year, month, day).difference(epoch, 'day').add(days)
+  var omega = 2.0 * Math.PI / 365.25
+  var imageT = ee.Image.constant([1, tfit,
+                                tfit.multiply(omega).cos(),
+                                tfit.multiply(omega).sin(),
+                                tfit.multiply(omega * 2).cos(),
+                                tfit.multiply(omega * 2).sin(),
+                                tfit.multiply(omega * 3).cos(),
+                                tfit.multiply(omega * 3).sin()])
+  
+  var params = getSegmentParamsForYear(image, year, month, day)
+                        .select('.*' + band + '_coef.*')
+  
+  return imageT.multiply(params).reduce('sum').rename(band)
+  
+}
+
+
+//CCDC wrapper
+exports.buildSegmentTag: buildSegmentTag,
+exports.buildBandTag: buildBandTag,
+exports.buildMagnitude: buildMagnitude,
+exports.buildRMSE: buildRMSE,
+exports.buildCoefs: buildCoefs,
+exports.buildStartEndBreakProb: buildStartEndBreakProb,
+exports.buildCcdcImage: buildCcdcImage,
+
+exports.getSyntheticForYear: getSyntheticForYear,
+exports.getSegmentParamsForYear: getSegmentParamsForYear,
+exports.getSegmentParams: getSegmentParams_v3,
+
 //////////////////////////////////////////////////////////////////////////
 exports.getR2 = getR2;
 exports.extractDisturbance = extractDisturbance;
