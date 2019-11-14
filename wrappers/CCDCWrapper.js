@@ -162,13 +162,14 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
-  ).map(getImageLib.addSAVIandEVI)
+  ).map(getImageLib.addSAVIandEVI);
+print(processedScenes.first())
 Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
 processedScenes = processedScenes.select(['blue','green','red','nir','swir1','swir2','temp'],['B1','B2','B3','B4','B5','B7','B6']);
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['B2','B7'], 6, 0.99, 1.33, 1,0);
-
-var ccdcImage = ccdcLib.buildCcdcImage(ccdc,1);
-print(ccdcImage);
+Map.addLayer(ccdc);
+// var ccdcImage = ccdcLib.buildCcdcImage(ccdc,1);
+// print(ccdcImage);
 // Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
 // print(ccdcImage)
 // Map.addLayer(ccdc,{},'cdc')
