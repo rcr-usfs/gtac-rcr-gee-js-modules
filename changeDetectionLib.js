@@ -1848,7 +1848,7 @@ var getSegmentParamsForYear = function(image, year, month, day) {
   })
   
   cfarray = ee.ImageCollection(cfarray).toArrayPerBand(1).arrayTranspose()
-  
+  Map.addLayer(cfarray,{},'cfarray')
   // var vic = start.toArray().lte(timeT).and(end.toArray().gt(timeT)).toArray(1)
   var vic = start.toArray().lte(timeT).and(start.toArray().gt(0)).toArray(1)
 
