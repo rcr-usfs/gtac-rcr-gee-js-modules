@@ -1895,17 +1895,17 @@ var getSyntheticForYear = function(image, year, month, day, band) {
 
 
 //CCDC wrapper
-exports.buildSegmentTag: buildSegmentTag,
-exports.buildBandTag: buildBandTag,
-exports.buildMagnitude: buildMagnitude,
-exports.buildRMSE: buildRMSE,
-exports.buildCoefs: buildCoefs,
-exports.buildStartEndBreakProb: buildStartEndBreakProb,
-exports.buildCcdcImage: buildCcdcImage,
+exports.buildSegmentTag= buildSegmentTag;
+exports.buildBandTag= buildBandTag;
+exports.buildMagnitude= buildMagnitude;
+exports.buildRMSE= buildRMSE;
+exports.buildCoefs= buildCoefs;
+exports.buildStartEndBreakProb= buildStartEndBreakProb;
+exports.buildCcdcImage= buildCcdcImage;
 
-exports.getSyntheticForYear: getSyntheticForYear,
-exports.getSegmentParamsForYear: getSegmentParamsForYear,
-exports.getSegmentParams: getSegmentParams_v3,
+exports.getSyntheticForYear= getSyntheticForYear;
+exports.getSegmentParamsForYear= getSegmentParamsForYear;
+exports.getSegmentParams= getSegmentParams_v3;
 
 //////////////////////////////////////////////////////////////////////////
 exports.getR2 = getR2;
