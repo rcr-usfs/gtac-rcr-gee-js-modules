@@ -169,8 +169,8 @@ processedScenes = processedScenes.select(['blue','green','red','nir','swir1','sw
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['B2','B7']);
 print(ccdc)
 Map.addLayer(ccdc);
-// var ccdcImage = ccdcLib.buildCcdcImage(ccdc,1);
-// print(ccdcImage);
+var ccdcImage = ccdcLib.buildCcdcImage(ccdc,1);
+print(ccdcImage);
 // Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
 // print(ccdcImage)
 // Map.addLayer(ccdc,{},'cdc')
