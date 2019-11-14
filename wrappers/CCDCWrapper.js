@@ -167,8 +167,8 @@ Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
 processedScenes = processedScenes.select(indexNames);
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir2'], 6, 0.99, 1.33, 1,0);
 
-var ccdcImage = ccdcLib.buildCcdcImage(ccdc,3);
-print(ccdcImage);
+// var ccdcImage = ccdcLib.buildCcdcImage(ccdc,3);
+print(ccdc);
 // Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
 // print(ccdcImage)
 // Map.addLayer(ccdc,{},'cdc')
