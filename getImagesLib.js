@@ -1058,12 +1058,11 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
   // When exported as CSV, this provides a weighted list of the scenes being included in the composite
   // Map.addLayer(medoid,{},'Medoid Image Collection Scenes') 
   
-  var bandNames = bandNames.cat(['yearJulian']);
-  var numBands = bandNames.length();
-  var bandNumbers = ee.List.sequence(1, numBands);
+  bandNames = bandNames.cat(['yearJulian']);
+  var bandNumbers = ee.List.sequence(1, bandNames.length());
   // Minimize the distance across all bands
   medoid = ee.ImageCollection(medoid)
-    .reduce(ee.Reducer.min(numBands.add(1)))
+    .reduce(ee.Reducer.min(bandNames.length().add(1)))
     .select(bandNumbers,bandNames);
   
   return medoid;
