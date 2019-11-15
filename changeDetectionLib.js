@@ -1746,13 +1746,7 @@ function getSegmentParamsForYear(ccdc,yearImg){
   var firstValid = blankRaster.reduce(ee.Reducer.min());
   blankRaster = blankRaster.updateMask(blankRaster.eq(firstValid));
   yearMask = yearMask.updateMask(blankRaster);
-  
-  // Map.addLayer(blankRaster,{},'blankRaster',false);
-  // Map.addLayer(validPixels,{},'validPixels',false);
-  // Map.addLayer(yearImg,{},'yearImg',false);
-  // Map.addLayer(start,{},'start',false);
-  // Map.addLayer(end,{},'end',false)
-  // Map.addLayer(yearMask,{},'year mask',false)
+
   
   //Set up blank raster
   var out = ee.Image.constant(ee.List.repeat(0,outBandNames.length())).rename(outBandNames);
