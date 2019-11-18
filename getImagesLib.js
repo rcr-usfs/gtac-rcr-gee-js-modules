@@ -365,7 +365,7 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
                       })
                       .select(['QA60', 'B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9','B10', 'B11','B12'],['QA60','cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus','swir1', 'swir2']);
                       // .map(function(img){return img.resample('bicubic') }) ;
-  
+  s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
   if(['bilinear','bicubic'].indexOf(resampleMethod) > -1){
     print('Setting resample method to ',resampleMethod);
     s2s = s2s.map(function(img){return img.resample(resampleMethod)});
