@@ -2691,6 +2691,36 @@ function getHarmonicCoefficientsAndFit(allImages,indexNames,whichHarmonics,detre
   return [coeffs,predicted];
 }
 ///////////////////////////////////////////////////////////////
+//Simple predict function for harmonic coefficients
+//Expects coeffs from getHarmonicCoefficientsAndFit function
+//Date image is expected to be yyyy.dd where dd is the day of year / 365 (proportion of year)
+//ex. synthImage(coeffs,ee.Image([2019.6]),['blue','green','red','nir','swir1','swir2','NBR','NDVI'],[2,4],true)
+function synthImage(coeffs,dateImage,indexNames,harmonics,detrend){
+  
+  //Set up constant image to multiply coeffs by
+  var constImage = ee.Image(1);
+  if(detrend){constImage = constImage.addBands(dateImage);}
+  harmonics.map(function(harm){
+    constImage = constImage.addBands(ee.Image([dateImage.multiply(harm*Math.PI).sin()]))
+                           .addBands(ee.Image([dateImage.multiply(harm*Math.PI).cos()]));
+  });
+  
+  //Predict values for each band                    
+  var out = ee.Image(1);
+  out = ee.Image(ee.List(indexNames).iterate(function(bn, out) {
+    bn = ee.String(bn);
+    //Select coeffs for that band
+    var coeffssBn = coeffs.select(ee.String(bn).cat('.*'));
+    
+    var predicted = constImage.multiply(coeffssBn).reduce('sum').rename(bn);
+    return ee.Image(out).addBands(predicted);
+  },out));
+  
+  out = out.select(ee.List.sequence(1, out.bandNames().size().subtract(1)));
+ 
+  return out;
+}
+///////////////////////////////////////////////////////////////
 // function getHarmonicFit(allImages,indexNames,whichHarmonics){
 //   getHarmonicCoefficients(allImages,indexNames,whichHarmonics)
 //   // newPredict(coeffs,withHarmonics)
@@ -2841,6 +2871,7 @@ exports.fillEmptyCollections = fillEmptyCollections;
 exports.getHarmonicCoefficientsAndFit = getHarmonicCoefficientsAndFit;
 exports.getPhaseAmplitudePeak = getPhaseAmplitudePeak;
 exports.getAreaUnderCurve = getAreaUnderCurve;
+exports.synthImage = synthImage;
 
 exports.getClimateWrapper = getClimateWrapper;
 exports.exportCollection = exportCollection;
