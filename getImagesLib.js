@@ -360,7 +360,7 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
       'TOA': ['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 're4', 'waterVapor', 'cirrus','swir1', 'swir2']
     };
     
-    print(['QA60'].concat(sensorBandDict[toaOrSR])); print(['QA60'].concat(sensorBandNameDict[toaOrSR]))
+   
   //Get some s2 data
   var s2s = ee.ImageCollection(s2CollectionDict[toaOrSR.toLowerCase()])
                     .filterDate(startDate,endDate)
@@ -375,6 +375,7 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
                       })
                       .select(['QA60'].concat(sensorBandDict[toaOrSR]),['QA60'].concat(sensorBandNameDict[toaOrSR]));
                       // .map(function(img){return img.resample('bicubic') }) ;
+  print(s2s)
   s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
   print(s2s);
   if(['bilinear','bicubic'].indexOf(resampleMethod) > -1){
