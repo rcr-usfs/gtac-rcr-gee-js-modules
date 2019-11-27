@@ -350,7 +350,15 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'toa'}
   
-  var s2CollectionDict = {'toa':'COPERNICUS/S2','sr':'COPERNICUS/S2_SR'}
+  var s2CollectionDict = {'toa':'COPERNICUS/S2','sr':'COPERNICUS/S2_SR'};
+  var sensorBandDict = {
+      'sr': ee.List(['B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9', 'B11','B12']),
+      'toa': ee.List(['B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9', 'B10', 'B11','B12'])
+    };
+  var sensorBandNameDict = {
+      'sr': ee.List(['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 're4', 'waterVapor', 'swir1', 'swir2']),
+      'toa': ee.List(['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 're4', 'waterVapor', 'cirrus','swir1', 'swir2'])
+    };
   //Get some s2 data
   var s2s = ee.ImageCollection(s2CollectionDict[toaOrSR.toLowerCase()])
                     .filterDate(startDate,endDate)
@@ -358,12 +366,12 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
                     .filterBounds(studyArea)
                     .map(function(img){
                       
-                      var t = img.select([ 'B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9','B10', 'B11','B12']).divide(10000);//Rescale to 0-1
+                      var t = img.select(sensorBandDict[toaOrSR]).divide(10000);//Rescale to 0-1
                       t = t.addBands(img.select(['QA60']));
                       var out = t.copyProperties(img).copyProperties(img,['system:time_start']);
                     return out;
                       })
-                      .select(['QA60', 'B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9','B10', 'B11','B12'],['QA60','cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus','swir1', 'swir2']);
+                      .select(['QA60'].concat(sensorBandDict[toaOrSR]),['QA60'].concat(sensorBandNameDict[toaOrSR]));
                       // .map(function(img){return img.resample('bicubic') }) ;
   s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
   print(s2s);
