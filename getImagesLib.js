@@ -348,16 +348,16 @@ function dailyMosaics(imgs){
 //////////////////////////////////////////////////////
 function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR){
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
-  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'toa'}
-  
-  var s2CollectionDict = {'toa':'COPERNICUS/S2','sr':'COPERNICUS/S2_SR'};
+  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
+  toaOrSR = toaOrSR.toUpperCase();
+  var s2CollectionDict = {'TOA':'COPERNICUS/S2','SR':'COPERNICUS/S2_SR'};
   var sensorBandDict = {
-      'sr': ee.List(['B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9', 'B11','B12']),
-      'toa': ee.List(['B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9', 'B10', 'B11','B12'])
+      'SR': ee.List(['B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9', 'B11','B12']),
+      'TOA': ee.List(['B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9', 'B10', 'B11','B12'])
     };
   var sensorBandNameDict = {
-      'sr': ee.List(['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 're4', 'waterVapor', 'swir1', 'swir2']),
-      'toa': ee.List(['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 're4', 'waterVapor', 'cirrus','swir1', 'swir2'])
+      'SR': ee.List(['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 're4', 'waterVapor', 'swir1', 'swir2']),
+      'TOA': ee.List(['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 're4', 'waterVapor', 'cirrus','swir1', 'swir2'])
     };
   //Get some s2 data
   var s2s = ee.ImageCollection(s2CollectionDict[toaOrSR.toLowerCase()])
