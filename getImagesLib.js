@@ -362,7 +362,7 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
     
    
   //Get some s2 data
-  var s2s = ee.ImageCollection(s2CollectionDict[toaOrSR.toLowerCase()])
+  var s2s = ee.ImageCollection(s2CollectionDict[toaOrSR])
                     .filterDate(startDate,endDate)
                     .filter(ee.Filter.calendarRange(startJulian,endJulian))
                     .filterBounds(studyArea)
