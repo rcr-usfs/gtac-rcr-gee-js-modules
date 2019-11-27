@@ -359,6 +359,8 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
       'SR': ['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 're4', 'waterVapor', 'swir1', 'swir2'],
       'TOA': ['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 're4', 'waterVapor', 'cirrus','swir1', 'swir2']
     };
+    
+    print(['QA60'].concat(sensorBandDict[toaOrSR])); print(['QA60'].concat(sensorBandNameDict[toaOrSR]))
   //Get some s2 data
   var s2s = ee.ImageCollection(s2CollectionDict[toaOrSR.toLowerCase()])
                     .filterDate(startDate,endDate)
