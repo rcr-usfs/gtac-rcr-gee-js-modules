@@ -375,9 +375,9 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
                       })
                       .select(['QA60'].concat(sensorBandDict[toaOrSR]),['QA60'].concat(sensorBandNameDict[toaOrSR]));
                       // .map(function(img){return img.resample('bicubic') }) ;
-  print(s2s)
+
   s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
-  print(s2s);
+
   if(['bilinear','bicubic'].indexOf(resampleMethod) > -1){
     print('Setting resample method to ',resampleMethod);
     s2s = s2s.map(function(img){return img.resample(resampleMethod)});
