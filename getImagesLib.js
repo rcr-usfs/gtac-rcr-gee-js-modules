@@ -1534,7 +1534,7 @@ var maxDiffFilter = ee.Filter.or(
     rightField: 'system:time_start'
   }),
   ee.Filter.maxDifference({
-    difference: millis,
+    difference: -millis,
     leftField: 'system:time_start',
     rightField: 'system:time_start'
   })
