@@ -1531,11 +1531,11 @@ var maxDiffFilter = ee.Filter.or(
   ee.Filter.maxDifference({
     difference: millis,
     leftField: 'system:time_start',
-    rightField: 'system:time_end'
+    rightField: 'system:time_start'
   }),
   ee.Filter.maxDifference({
     difference: millis,
-    leftField: 'system:time_end',
+    leftField: 'system:time_start',
     rightField: 'system:time_start'
   })
 );
