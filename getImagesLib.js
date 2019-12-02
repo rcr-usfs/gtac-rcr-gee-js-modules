@@ -1527,18 +1527,19 @@ function smartJoin(primary,secondary,hourDiff){
   var millis = hourDiff * 60 * 60 * 1000;
   
   // Create a time filter to define a match as overlapping timestamps.
-var maxDiffFilter = ee.Filter.or(
-  ee.Filter.maxDifference({
-    difference: millis,
-    leftField: 'system:time_start',
-    rightField: 'system:time_start'
-  }),
+var maxDiffFilter = //ee.Filter.or(
   ee.Filter.maxDifference({
     difference: millis,
     leftField: 'system:time_start',
     rightField: 'system:time_start'
   })
-);
+  // ,
+  // ee.Filter.maxDifference({
+  //   difference: millis,
+  //   leftField: 'system:time_start',
+  //   rightField: 'system:time_start'
+  // })
+// );
   // Define the join.
   var saveBestJoin = ee.Join.saveBest({
     matchKey: 'bestImage',
