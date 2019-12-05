@@ -1564,6 +1564,7 @@ function spatioTemporalJoin(primary,secondary,hourDiff,outKey){
   if(hourDiff === undefined || hourDiff === null){hourDiff = 24}
   var time = hourDiff* 60 * 60 * 1000;
   
+  var outBns = ee.Image(secondary.first()).bandNames().map(function(bn){return ee.String(bn).cat('_').cat(outKey)});
   // Define a spatial filter as geometries that intersect.
   var spatioTemporalFilter = ee.Filter.and(
     ee.Filter.maxDifference({
@@ -1588,7 +1589,7 @@ function spatioTemporalJoin(primary,secondary,hourDiff,outKey){
   var MergeBands = function(element) {
         // A function to merge the bands together.
         // After a join, results are in 'primary' and 'secondary' properties.
-        return ee.Image.cat(element, element.get(outKey));
+        return ee.Image.cat(element, element.get(outKey).rename(outBns));
       };
   joined = joined.map(MergeBands);
   return joined;
