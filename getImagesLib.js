@@ -314,7 +314,7 @@ function uniqueValues(collection,field){
     
     return values;
   }
-//////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 //Function to simplify data into daily mosaics
 //This procedure must be used for proper processing of S2 imagery
 function dailyMosaics(imgs){
