@@ -1579,7 +1579,7 @@ function spatioTemporalJoin(primary,secondary,hourDiff,outKey){
   );
   // Define a save all join.
   var saveBestJoin = ee.Join.saveBest({
-    matchesKey: outKey,
+    matchKey: outKey,
     measureKey: 'timeDiff'
   });
   
