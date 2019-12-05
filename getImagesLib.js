@@ -346,8 +346,9 @@ function dailyMosaics(imgs){
     return imgs;
 }
 //////////////////////////////////////////////////////
-function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR){
+function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR,convertToDailyMosaics){
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
+  if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
   toaOrSR = toaOrSR.toUpperCase();
   var s2CollectionDict = {'TOA':'COPERNICUS/S2','SR':'COPERNICUS/S2_SR'};
