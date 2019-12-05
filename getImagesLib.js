@@ -384,7 +384,9 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
     s2s = s2s.map(function(img){return img.resample(resampleMethod)});
   }
   //Convert to daily mosaics to avoid redundent observations in MGRS overlap areas and edge artifacts for shadow masking
-  s2s = dailyMosaics(s2s);
+  if(convertToDailyMosaics){
+    s2s = dailyMosaics(s2s);
+  }
 return s2s;
 }
 
