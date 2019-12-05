@@ -1578,13 +1578,13 @@ function spatioTemporalJoin(primary,secondary,hourDiff,outKey){
   })
   );
   // Define a save all join.
-  var saveAllJoin = ee.Join.saveBest({
+  var saveBestJoin = ee.Join.saveBest({
     matchesKey: outKey,
     measureKey: 'timeDiff'
   });
   
   // Apply the join.
-  var joined = saveAllJoin.apply(primary, secondary, spatioTemporalFilter);
+  var joined = saveBestJoin.apply(primary, secondary, spatioTemporalFilter);
   return joined;
     
 }
