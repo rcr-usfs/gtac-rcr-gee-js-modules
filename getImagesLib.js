@@ -1560,8 +1560,8 @@ var maxDiffFilter = //ee.Filter.or(
 }
 //Join collections by space (intersection) and time (specified by user)
 function spatioTemporalJoin(primary,secondary,hourDiff,outKey){
-  if(outKey === undefined || outKey === null){outKey = 'secondary'};
-  if(hourDiff === undefined || hourDiff === null){hourDiff = 24};
+  if(outKey === undefined || outKey === null){outKey = 'secondary'}
+  if(hourDiff === undefined || hourDiff === null){hourDiff = 24}
   var time = hourDiff* 60 * 60 * 1000;
   
   // Define a spatial filter as geometries that intersect.
