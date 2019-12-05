@@ -2905,6 +2905,7 @@ exports.exportToAssetWrapper2 = exportToAssetWrapper2;
 exports.exportCollection = exportCollection;
 exports.joinCollections = joinCollections;
 exports.smartJoin = smartJoin;
+exports.spatioTemporalJoin = spatioTemporalJoin;
 exports.listToString = listToString;
 exports.harmonizationRoy = harmonizationRoy;
 exports.harmonizationChastain = harmonizationChastain;
