@@ -1559,7 +1559,9 @@ var maxDiffFilter = //ee.Filter.or(
   return joined;
 }
 //Join collections by space (intersection) and time (specified by user)
-function spatioTemporalJoin(primary,secondary,hourDiff){
+function spatioTemporalJoin(primary,secondary,hourDiff,outKey){
+  if(outKey === undefined || outKey === null){outKey = 'secondary'};
+  if(hourDiff === undefined || hourDiff === null){hourDiff = 24};
   var time = hourDiff* 60 * 60 * 1000;
   
   // Define a spatial filter as geometries that intersect.
@@ -1577,7 +1579,7 @@ function spatioTemporalJoin(primary,secondary,hourDiff){
   );
   // Define a save all join.
   var saveAllJoin = ee.Join.saveAll({
-    matchesKey: 'secondary',
+    matchesKey: outKey,
   });
   
   // Apply the join.
