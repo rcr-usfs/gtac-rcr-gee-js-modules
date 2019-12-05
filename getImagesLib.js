@@ -1589,7 +1589,7 @@ function spatioTemporalJoin(primary,secondary,hourDiff,outKey){
   var MergeBands = function(element) {
         // A function to merge the bands together.
         // After a join, results are in 'primary' and 'secondary' properties.
-        return ee.Image.cat(element, element.get(outKey).rename(outBns));
+        return ee.Image.cat(element, ee.Image(element.get(outKey)).rename(outBns));
       };
   joined = joined.map(MergeBands);
   return joined;
