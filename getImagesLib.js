@@ -1585,6 +1585,12 @@ function spatioTemporalJoin(primary,secondary,hourDiff,outKey){
   
   // Apply the join.
   var joined = saveBestJoin.apply(primary, secondary, spatioTemporalFilter);
+  var MergeBands = function(element) {
+        // A function to merge the bands together.
+        // After a join, results are in 'primary' and 'secondary' properties.
+        return ee.Image.cat(element, element.get(outKey));
+      };
+  joined = joined.map(MergeBands);
   return joined;
     
 }
