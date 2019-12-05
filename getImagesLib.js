@@ -1558,6 +1558,33 @@ var maxDiffFilter = //ee.Filter.or(
   joined = joined.map(MergeBands);
   return joined;
 }
+//Join collections by space (intersection) and time (specified by user)
+function spatioTemporalJoin(primary,secondary,hourDiff){
+  var time = hourDiff* 60 * 60 * 1000;
+  
+  // Define a spatial filter as geometries that intersect.
+  var spatioTemporalFilter = ee.Filter.and(
+    ee.Filter.maxDifference({
+      difference: time,
+      leftField: 'system:time_start',
+      rightField: 'system:time_start'
+    }),
+    ee.Filter.intersects({
+    leftField: '.geo',
+    rightField: '.geo',
+    maxError: 10
+  })
+  );
+  // Define a save all join.
+  var saveAllJoin = ee.Join.saveAll({
+    matchesKey: 'secondary',
+  });
+  
+  // Apply the join.
+  var joined = saveAllJoin.apply(primary, secondary, spatioTemporalFilter);
+  return joined;
+    
+}
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 //Method for removing spikes in time series
