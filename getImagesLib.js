@@ -2193,7 +2193,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   cloudHeights,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod
+  contractPixels,dilatePixels,resampleMethod,toaOrSR
   ){
   
   
@@ -2210,6 +2210,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
   if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
+  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
   
   // Prepare dates
   //Wrap the dates if needed
@@ -2223,7 +2224,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
 
   
   // Get Sentinel2 image collection
-  var s2s = getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod)
+  var s2s = getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR)
   // Map.addLayer(s2s.median().reproject('EPSG:32612',null,30),{min:0.05,max:0.4,bands:'swir1,nir,red'});
   
   if(applyQABand){
