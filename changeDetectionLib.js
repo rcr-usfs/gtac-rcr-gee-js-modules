@@ -1052,6 +1052,15 @@ function applyLinearInterp(composites, nYearsInterpolate){
     return outDict;
 }
 
+// Update Mask from LinearInterp step
+function updateVerdetMasks(img, linearInterpMasks){
+  thisYear = ee.Date(img.get('system:time_start')).format('YYYY');
+  //thisYear_maskName = ee.String('mask_').cat(thisYear);
+  thisYear_maskName = ee.String('.*_').cat(thisYear);
+  thisMask = linearInterpMasks.select(thisYear_maskName);
+  img = img.updateMask(thisMask);
+  return img;
+}
 //----------------------------------------------------------------------------------------------------
 //        Verdet Functions
 //----------------------------------------------------------------------------------------------------
