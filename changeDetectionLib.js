@@ -1844,6 +1844,7 @@ exports.fitStackToCollection = fitStackToCollection;
 exports.convertStack_To_DurFitMagSlope = convertStack_To_DurFitMagSlope;
 exports.LANDTRENDRFitMagSlopeDiffCollection = LANDTRENDRFitMagSlopeDiffCollection;
 exports.applyLinearInterp = applyLinearInterp;
+exports.updateVerdetMasks = updateVerdetMasks;
 exports.VERDETVertStack = VERDETVertStack;
 exports.VERDETFitMagSlopeDiffCollection = VERDETFitMagSlopeDiffCollection;
 exports.verdetAnnualSlope  = verdetAnnualSlope;
