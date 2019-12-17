@@ -1895,7 +1895,7 @@ applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFm
       composite = composite.multiply(10000).int16();
     }
     
-    
+    composite = composite.select(compositeBands);
 
     // Add metadata, cast to integer, and export composite
     composite = composite.set({
