@@ -2068,7 +2068,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   //Export composites
   if(exportComposites){// Export composite collection
     if(compositingMethod == 'medoid'){
-      var exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'temp','swir2','yearJulian'];
+      var exportBands = ['blue', 'green', 'red', 'nir', 'swir1','temp','swir2','yearJulian'];
       exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
       ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
                   applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','yearJulian']);
