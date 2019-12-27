@@ -1,16 +1,17 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-121.37255235343139, 36.48315570998864],
-          [-121.37255235343139, 35.63499190784505],
-          [-119.98827500968139, 35.63499190784505],
-          [-119.98827500968139, 36.48315570998864]]], null, false);
+        [[[-112.35626572394727, 40.956917244172885],
+          [-112.35626572394727, 40.264686424502266],
+          [-110.88409775519727, 40.264686424502266],
+          [-110.88409775519727, 40.956917244172885]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -159,7 +160,7 @@ var scale = null;
 var whichHarmonics = [2];
 
 //Which bands/indices to run harmonic regression across
-var indexNames =['NDVI','NBR','swir1'];//,'NBR','NDMI','nir','swir1','swir2','tcAngleBG'];//['nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];//['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];
+var indexNames =['swir2','nir','red'];//NDVI','NBR','swir1'];//,'NBR','NDMI','nir','swir1','swir2','tcAngleBG'];//['nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];//['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];
 
 //Whether to apply a linear detrending of data.  Can be useful if long-term change is not of interest
 var detrend = false;
@@ -214,6 +215,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     var peakJulians = pap.select(['.*peakJulianDay']);
     var AUCs = pap.select(['.*AUC']);
     
+    Map.addLayer(phases,{},nameStart+ '_phases',false);
     Map.addLayer(amplitudes,{},nameStart+ '_amplitudes',false);
     Map.addLayer(AUCs,{},nameStart+ '_AUCs',false);
     Map.addLayer(peakJulians,{'min':0,'max':365},nameStart+ '_peakJulians',false);
