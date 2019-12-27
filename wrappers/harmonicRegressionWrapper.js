@@ -216,7 +216,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     var AUCs = pap.select(['.*AUC']);
     
     Map.addLayer(phases,{},nameStart+ '_phases',false);
-    Map.addLayer(amplitudes,{},nameStart+ '_amplitudes',false);
+    Map.addLayer(amplitudes,{min:0,max:0.6},nameStart+ '_amplitudes',false);
     Map.addLayer(AUCs,{},nameStart+ '_AUCs',false);
     Map.addLayer(peakJulians,{'min':0,'max':365},nameStart+ '_peakJulians',false);
   
@@ -250,5 +250,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   
 });
 
+
+Map.setOptions('HYBRID');
 // // coeffCollection = ee.ImageCollection(coeffCollection);
 // // Map.addLayer(coeffCollection);
