@@ -43,6 +43,7 @@ var buildBandTag = function(tag) {
  * 
  */
 var buildMagnitude = function(fit, nSegments) {
+  fit = fit.select('.*magnitude');
   var bns = fit.bandNames();
   var bands = bns.map(function(bn){return ee.String(bn).split('_').get(0)});
   print(bands)
