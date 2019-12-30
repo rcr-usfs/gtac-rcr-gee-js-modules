@@ -45,8 +45,11 @@ var buildBandTag = function(tag) {
 var buildMagnitude = function(fit, nSegments) {
   fit = fit.select('.*magnitude');
   var bns = fit.bandNames();
-  var bands = bns.map(function(bn){return ee.String(bn).split('_').get(0)});
+  var bands = bns.map(function(bn){return ee.String('.*').cat(ee.String(bn).split('_').get(0))});
   print(bands)
+  var stack = bands.iterate(function(bn,out){
+    return out.addBands(fit.select())
+  },ee.Image(1))
   var segmentTag = buildSegmentTag(nSegments)
   var magTag = buildBandTag('MAG')  
   
