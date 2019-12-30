@@ -15,7 +15,115 @@ var geometry =
 ///Module imports
 var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
-var ccdcLib = require('users/yang/CCDC:default');
+// var ccdcLib = require('users/yang/CCDC:default');
+
+
+//-------------------- BEGIN CCDC Helper Function -------------------//
+/**
+ * create segment tab
+ */
+var buildSegmentTag = function(nSegments) {
+  return ee.List.sequence(1, nSegments).map(function(i) {
+    return ee.String('S').cat(ee.Number(i).int())
+  })
+}
+
+/**
+ * create band tag
+ */
+var buildBandTag = function(tag) {
+  var bands = ee.List(['B1','B2','B3','B4','B5','B7','B6'])
+  return bands.map(function(s) {
+    return ee.String(s).cat('_' + tag)
+  })
+}
+
+/**
+ * Extract CCDC magnitude image
+ * 
+ */
+var buildMagnitude = function(fit, nSegments) {
+  var segmentTag = buildSegmentTag(nSegments)
+  var magTag = buildBandTag('MAG')  
+  
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, 7)]).repeat(0, nSegments))
+  var magImg =fit.select('.*magnitude').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
+
+  return magImg.arrayFlatten([segmentTag, magTag])
+}
+
+/**
+ * Extract CCDC RMSE image
+ * 
+ */
+var buildRMSE = function(fit, nSegments) {
+  var segmentTag = buildSegmentTag(nSegments)
+  var magTag = buildBandTag('RMSE')  
+  
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, 7)]).repeat(0, nSegments))
+  var magImg = fit.select('rmse').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
+
+  return magImg.arrayFlatten([segmentTag, magTag])
+}
+
+/**
+ * Extract CCDC Coefficient image
+ * 
+ */
+var buildCoefs = function(fit, nSegments) {
+  var segmentTag = buildSegmentTag(nSegments)
+  var magTag = buildBandTag('coef')
+  var harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3']
+  
+  var zeros = ee.Array([[[0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0]]])
+                       
+  var magImg = fit.select('coefs').arrayCat(zeros.repeat(0, nSegments), 0).arraySlice(0, 0, nSegments)
+
+  return magImg.arrayFlatten([segmentTag, magTag, harmonicTag])
+}
+
+/**
+ * Extract CCDC tStart, tEnd, tBreak, changeProb
+ * 
+ */
+var buildStartEndBreakProb = function(fit, nSegments, tag) {
+  var segmentTag = buildSegmentTag(nSegments).map(function(s) {
+    return ee.String(s).cat('_'+tag)
+  })
+  
+  var zeros = ee.Array(0).repeat(0, nSegments)
+                       
+  var magImg = fit.select(tag).arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
+
+  return magImg.arrayFlatten([segmentTag])
+}
+
+/**
+ * build a 74 x nSegments layer image
+ * using int32 as output.
+ * 
+ */
+var buildCcdcImage = function(fit, nSegments) {
+  var magnitude = buildMagnitude(fit, nSegments);
+  print(magnitude);
+  // var rmse = buildRMSE(fit, nSegments)
+  // var coef = buildCoefs(fit, nSegments)
+  
+  // var tStart = buildStartEndBreakProb(fit, nSegments, 'tStart')
+  // var tEnd = buildStartEndBreakProb(fit, nSegments, 'tEnd')
+  // var tBreak = buildStartEndBreakProb(fit, nSegments, 'tBreak')
+  // var probs = buildStartEndBreakProb(fit, nSegments, 'changeProb').multiply(100)
+
+  // return ee.Image.cat(coef, rmse, magnitude, tStart, tEnd, tBreak, probs).float()
+}
+
+//-------------------- END CCDC Helper Function -------------------//
 ///////////////////////////////////////////////////////////////////////////////
 dLib.getExistingChangeData();
 ///////////////////////////////////////////////////////////////////////////////
@@ -169,8 +277,8 @@ processedScenes = processedScenes.select(['blue','green','red','nir','swir1','sw
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['B2','B7']);
 print(ccdc)
 Map.addLayer(ccdc);
-var ccdcImage = ccdcLib.buildCcdcImage(ccdc,1);
-print(ccdcImage);
+var ccdcImage = buildCcdcImage(ccdc,4);
+// print(ccdcImage);
 // Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
 // print(ccdcImage)
 // Map.addLayer(ccdc,{},'cdc')
