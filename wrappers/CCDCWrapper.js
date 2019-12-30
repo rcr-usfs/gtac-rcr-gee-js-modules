@@ -61,7 +61,7 @@ var buildRMSE = function(fit, nSegments) {
   var magTag = buildBandTag('RMSE')  
   
   var zeros = ee.Image(ee.Array([ee.List.repeat(0, 7)]).repeat(0, nSegments))
-  var magImg = fit.select('rmse').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
+  var magImg = fit.select('.*rmse').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
 
   return magImg.arrayFlatten([segmentTag, magTag])
 }
