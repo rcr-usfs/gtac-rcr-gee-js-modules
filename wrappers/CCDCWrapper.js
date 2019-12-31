@@ -106,7 +106,7 @@ var buildCoefs = function(fit, nSegments) {
   //                       [0,0,0,0,0,0,0,0],
   //                       [0,0,0,0,0,0,0,0]]])
   // var totalLength = 
-  var zeros = ee.Image(ee.Array([0,0,0,0,0,0,0,0]).repeat(1, ee.Number(nSegments).multiply(bns.length())));
+  var zeros = ee.Image(ee.Array([0,0,0,0,0,0,0,0]).repeat(0, ee.Number(nSegments).multiply(bns.length())));
   Map.addLayer(zeros)
   var coeffImg = coeffs.toArray(0)//.arrayCat(ee.Array([0,0,0,0,0,0,0,0]).repeat(0, nSegments), 0)//.arraySlice(0, 0, nSegments)
   // coeffImg = coeffImg.arrayFlatten([segmentTag, magTag, harmonicTag]);
