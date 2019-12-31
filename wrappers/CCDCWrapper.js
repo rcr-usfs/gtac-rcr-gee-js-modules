@@ -84,23 +84,16 @@ var buildMagnitude = function(fit, nSegments) {
  * 
  */
 var buildRMSE = function(fit, nSegments) {
-  // var segmentTag = buildSegmentTag(nSegments)
-  // var magTag = buildBandTag('RMSE') 
   var rmses = fit.select(['.*_rmse']);
   var bns = rmses.bandNames();
   var segBns = buildSegmentBandTag(nSegments,bns);
-  print(segBns)
+
   var totalLength = ee.Number(nSegments).multiply(bns.length());
   var zeros = ee.Image(ee.Array(ee.List.repeat(0,totalLength)));
   
-  var rmseImg = rmses.toArray(0).arrayCat(zeros, 0).arrayFlatten([segBns])
-  Map.addLayer(rmses)
-  Map.addLayer(rmseImg)
-  // var zeros = ee.Image(ee.Array([ee.List.repeat(0, 7)]).repeat(0, nSegments))
-  // var magImg = fit.select('.*rmse').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
-
-  // return magImg.arrayFlatten([segmentTag, magTag])
-}
+  var rmseImg = rmses.toArray(0).arrayCat(zeros, 0).arraySlice(0, 0, totalLength).arrayFlatten([segBns]);
+  return rmseImg;
+};
 
 /**
  * Extract CCDC Coefficient image
