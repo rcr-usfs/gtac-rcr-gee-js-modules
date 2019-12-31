@@ -87,8 +87,10 @@ var buildRMSE = function(fit, nSegments) {
   // var segmentTag = buildSegmentTag(nSegments)
   // var magTag = buildBandTag('RMSE') 
   var rmses = fit.select(['.*_rmse']);
-  var bns = coeffs.bandNames();
+  var bns = rmses.bandNames();
   var segBns = buildSegmentBandTag(nSegments,bns);
+  print(segBns)
+  rmses = rmses.toArray(0);
   Map.addLayer(rmses)
   // var zeros = ee.Image(ee.Array([ee.List.repeat(0, 7)]).repeat(0, nSegments))
   // var magImg = fit.select('.*rmse').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
