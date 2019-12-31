@@ -277,10 +277,15 @@ Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
 processedScenes = processedScenes.select(['blue','green','red','nir','swir1','swir2','temp']);
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0.002);
 print(ccdc)
-Map.addLayer(ccdc);
+Map.addLayer(ccdc,{},'raw ccdc',false);
 var ccdcImg = buildCcdcImage(ccdc, 4);
 Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
+var breaks = ccdcImg.select(['.*_tBreak']);
+var probs = ccdcImg.select(['.*_changeProb']);
+var change = probs.eq(1);
+breaks = breaks.updateMask(change.neq(0));
+Map.addLayer(breaks.reduce(ee.Reducer.max()),{min:startYear,max:endYear},'Change year')
 // var ccdcImage = buildCcdcImage(ccdc,9);
 // print(ccdcImage);
 // Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
