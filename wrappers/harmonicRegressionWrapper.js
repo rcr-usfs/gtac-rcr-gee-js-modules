@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-151.1754011095, 60.81558232889408],
-          [-151.1754011095, 60.193550537732165],
-          [-148.758408922, 60.193550537732165],
-          [-148.758408922, 60.81558232889408]]], null, false);
+        [[[-144.40221198644747, 60.43336937756652],
+          [-144.40221198644747, 59.3925300955549],
+          [-138.41466315832247, 59.3925300955549],
+          [-138.41466315832247, 60.43336937756652]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
