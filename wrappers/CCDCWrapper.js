@@ -53,8 +53,8 @@ var buildMagnitude = function(fit, nSegments) {
     return out.addBands(fit.select([bn]).toArray().arrayCat(ee.Image(ee.Array(ee.List.repeat(0, nSegments))),0).arraySlice(0, 0, nSegments))
   },ee.Image(ee.Array(ee.List.repeat(0, nSegments))));
   stack = ee.Image(stack)
-  // stack = stack.select(1,nSegments)
-  print(stack)
+  stack = stack.select(ee.List.sequence(1,nSegments))
+  Map.addLayer(stack)
   // var segmentTag = buildSegmentTag(nSegments)
   // var magTag = buildBandTag('MAG')  
   
