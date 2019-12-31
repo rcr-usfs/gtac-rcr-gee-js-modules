@@ -98,29 +98,19 @@ var buildRMSE = function(fit, nSegments) {
  * 
  */
 var buildCoefs = function(fit, nSegments) {
-  // var segmentTag = buildSegmentTag(nSegments)
-  // var bnTag = buildBandTag('coef');
-  
-  // print(segmentTag,magTag)
   var harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3']
   
   var coeffs = fit.select(['.*_coefs']);
+  
   var bns = coeffs.bandNames();
-  var segBns = buildSegmentBandTag(nSegments,bns)
-  // var zeros = ee.Array([[[0,0,0,0,0,0,0,0],
-  //                       [0,0,0,0,0,0,0,0],
-  //                       [0,0,0,0,0,0,0,0],
-  //                       [0,0,0,0,0,0,0,0],
-  //                       [0,0,0,0,0,0,0,0],
-  //                       [0,0,0,0,0,0,0,0],
-  //                       [0,0,0,0,0,0,0,0]]])
+  var segBns = buildSegmentBandTag(nSegments,bns);
   var totalLength = ee.Number(nSegments).multiply(bns.length());
-  var zeros = ee.Image(ee.Array([[0,0,0,0,0,0,0,0]]).repeat(0, totalLength));
-  Map.addLayer(zeros)
-  var coeffImg = coeffs.toArray(0).arrayCat(zeros, 0).arraySlice(0, 0, totalLength)
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0,harmonicTag.length)]).repeat(0, totalLength));
+  
+  var coeffImg = coeffs.toArray(0).arrayCat(zeros, 0).arraySlice(0, 0, totalLength);
   coeffImg = coeffImg.arrayFlatten([segBns, harmonicTag]);
-  Map.addLayer(coeffImg)
-  return coeffImg
+ 
+  return coeffImg;
 }
 
 /**
@@ -312,8 +302,8 @@ processedScenes = processedScenes.select(['blue','green','red','nir','swir1','sw
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0.002);
 print(ccdc)
 Map.addLayer(ccdc);
-buildCoefs(ccdc,3);
-
+var coeffs =buildCoefs(ccdc,3);
+Map.addLayer(coeffs)
 // var ccdcImage = buildCcdcImage(ccdc,9);
 // print(ccdcImage);
 // Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
