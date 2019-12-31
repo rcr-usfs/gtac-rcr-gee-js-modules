@@ -52,15 +52,15 @@ var buildMagnitude = function(fit, nSegments) {
     return out.addBands(fit.select(bn).toArray().arrayCat(ee.Image(ee.Array([ee.List.repeat(0, nSegments)])),0).arraySlice(0, 0, nSegments))
   },ee.Image(ee.Array([ee.List.repeat(0, nSegments)])));
   print(stack)
-  var segmentTag = buildSegmentTag(nSegments)
-  var magTag = buildBandTag('MAG')  
+  // var segmentTag = buildSegmentTag(nSegments)
+  // var magTag = buildBandTag('MAG')  
   
-  var zeros = ee.Image(ee.Array([ee.List.repeat(0, 7)]).repeat(0, nSegments));
-  Map.addLayer(zeros);
-  Map.addLayer(fit.select('.*magnitude'));
-  var magImg =fit.select('.*magnitude').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
+  // var zeros = ee.Image(ee.Array([ee.List.repeat(0, 7)]).repeat(0, nSegments));
+  // Map.addLayer(zeros);
+  // Map.addLayer(fit.select('.*magnitude'));
+  // var magImg =fit.select('.*magnitude').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
 
-  return magImg.arrayFlatten([segmentTag, magTag])
+  // return magImg.arrayFlatten([segmentTag, magTag])
 }
 
 /**
