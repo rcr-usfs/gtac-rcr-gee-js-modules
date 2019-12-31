@@ -24,26 +24,26 @@ var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
  */
 var buildSegmentTag = function(nSegments) {
   return ee.List.sequence(1, nSegments).map(function(i) {
-    return ee.String('S').cat(ee.Number(i).int())
-  })
-}
+    return ee.String('S').cat(ee.Number(i).int());
+  });
+};
 
 /**
  * create band tag
  */
 var buildBandTag = function(tag) {
-  var bands = ee.List(['B1','B2','B3','B4','B5','B7','B6'])
+  var bands = ee.List(['B1','B2','B3','B4','B5','B7','B6']);
   return bands.map(function(s) {
-    return ee.String(s).cat('_' + tag)
-  })
-}
+    return ee.String(s).cat('_' + tag);
+  });
+};
 function buildSegmentBandTag(nSegments,bands){
   var out = ee.List.sequence(1, nSegments).map(function(i) {
       return bands.map(function(bn){
-        return ee.String('S').cat(ee.Number(i).int()).cat('_').cat(bn)
-      })
-  })
-  return out.flatten()
+        return ee.String('S').cat(ee.Number(i).int()).cat('_').cat(bn);
+      });
+  });
+  return out.flatten();
 }
 /**
  * Extract CCDC magnitude image
@@ -80,7 +80,7 @@ var buildRMSE = function(fit, nSegments) {
  * 
  */
 var buildCoefs = function(fit, nSegments) {
-  var harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3']
+  var harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   
   var coeffs = fit.select(['.*_coefs']);
   
@@ -93,7 +93,7 @@ var buildCoefs = function(fit, nSegments) {
   coeffImg = coeffImg.arrayFlatten([segBns, harmonicTag]);
  
   return coeffImg;
-}
+};
 
 /**
  * Extract CCDC tStart, tEnd, tBreak, changeProb
@@ -122,7 +122,7 @@ var buildCcdcImage = function(fit, nSegments) {
   var change = buildStartEndBreakProb(ccdc, nSegments);
 
   return ee.Image.cat(coeffs, rmses, mags, change).float();
-}
+};
 
 //-------------------- END CCDC Helper Function -------------------//
 ///////////////////////////////////////////////////////////////////////////////
@@ -278,7 +278,8 @@ processedScenes = processedScenes.select(['blue','green','red','nir','swir1','sw
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0.002);
 print(ccdc)
 Map.addLayer(ccdc);
-
+var ccdcImg = buildCcdcImage(ccdc, 4);
+Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
 // var ccdcImage = buildCcdcImage(ccdc,9);
 // print(ccdcImage);
