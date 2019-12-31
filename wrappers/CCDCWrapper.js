@@ -91,9 +91,9 @@ var buildRMSE = function(fit, nSegments) {
   var segBns = buildSegmentBandTag(nSegments,bns);
   print(segBns)
   var totalLength = ee.Number(nSegments).multiply(bns.length());
-  var zeros = ee.Image(ee.Array([ee.List.repeat(0,totalLength)]));
+  var zeros = ee.Image(ee.Array(ee.List.repeat(0,totalLength)));
   
-  var rmseImg = rmses.toArray(0).arrayCat(zeros, 0)
+  var rmseImg = rmses.toArray(0).arrayCat(zeros, 0).arrayFlatten([segBns])
   Map.addLayer(rmses)
   Map.addLayer(rmseImg)
   // var zeros = ee.Image(ee.Array([ee.List.repeat(0, 7)]).repeat(0, nSegments))
