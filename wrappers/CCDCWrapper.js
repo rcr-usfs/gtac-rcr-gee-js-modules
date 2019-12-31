@@ -99,16 +99,16 @@ var buildCoefs = function(fit, nSegments) {
  * Extract CCDC tStart, tEnd, tBreak, changeProb
  * 
  */
-var buildStartEndBreakProb = function(fit, nSegments, tag) {
-  var segmentTag = buildSegmentTag(nSegments).map(function(s) {
-    return ee.String(s).cat('_'+tag)
-  })
+var buildStartEndBreakProb = function(fit, nSegments) {
+  // var segmentTag = buildSegmentTag(nSegments).map(function(s) {
+  //   return ee.String(s).cat('_'+tag)
+  // })
   
-  var zeros = ee.Array(0).repeat(0, nSegments)
+  // var zeros = ee.Array(0).repeat(0, nSegments)
                        
-  var magImg = fit.select(tag).arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
+  // var magImg = fit.select(tag).arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
 
-  return magImg.arrayFlatten([segmentTag])
+  // return magImg.arrayFlatten([segmentTag])
 }
 
 /**
@@ -288,7 +288,8 @@ var coeffs =buildCoefs(ccdc,3);
 var rmses = buildRMSE(ccdc, 3);
 Map.addLayer(rmses,{},'rmse')
 var mags = buildMagnitude(ccdc, 3);
-Map.addLayer(mags,{},'mags')
+Map.addLayer(mags,{},'mags');
+buildStartEndBreakProb(ccdc, 3)
 // var ccdcImage = buildCcdcImage(ccdc,9);
 // print(ccdcImage);
 // Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
