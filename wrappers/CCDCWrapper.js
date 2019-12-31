@@ -69,13 +69,16 @@ var buildMagnitude = function(fit, nSegments) {
 var buildRMSE = function(fit, nSegments) {
   var rmses = fit.select(['.*_rmse']);
   var bns = rmses.bandNames();
-  var segBns = buildSegmentBandTag(nSegments,bns);
+  print(bns)
+  var segBns = buildSegmentTag(nSegments);
 
   var totalLength = ee.Number(nSegments).multiply(bns.length());
-  var zeros = ee.Image(ee.Array(ee.List.repeat(0,totalLength)));
-  
-  var rmseImg = rmses.toArray(0).arrayCat(zeros, 0).arraySlice(0, 0, totalLength).arrayFlatten([segBns]);
-  return rmseImg;
+  // var zeros = ee.Image(ee.Array(ee.List.repeat(0,bns.length())).repeat(1,nSegments));
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments))
+  Map.addLayer(zeros)
+  var rmseImg = rmses.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
+  Map.addLayer(rmseImg)
+  // return rmseImg;
 };
 
 /**
@@ -289,8 +292,8 @@ print(ccdc)
 Map.addLayer(ccdc);
 var coeffs =buildCoefs(ccdc,3);
 var rmses = buildRMSE(ccdc, 3);
-Map.addLayer(rmses,{},'rmse')
-var mags = buildMagnitude(ccdc, 3);
+// Map.addLayer(rmses,{},'rmse')
+// var mags = buildMagnitude(ccdc, 3);
 // Map.addLayer(coeffs)
 // var ccdcImage = buildCcdcImage(ccdc,9);
 // print(ccdcImage);
