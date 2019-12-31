@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-121.25182074579925, 37.801990832970986],
-          [-121.25182074579925, 37.45612909911496],
-          [-119.98839301142425, 37.45612909911496],
-          [-119.98839301142425, 37.801990832970986]]], null, false);
+        [[[-151.1754011095, 60.81558232889408],
+          [-151.1754011095, 60.193550537732165],
+          [-148.758408922, 60.193550537732165],
+          [-148.758408922, 60.81558232889408]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -38,13 +38,13 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2016;
+var startYear = 2014;
 var endYear = 2018;
 
 // 4. Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
 // in a 3 year moving window
-var timebuffer = 1;
+var timebuffer = 2;
 
 
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
