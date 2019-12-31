@@ -121,7 +121,7 @@ var buildCcdcImage = function(fit, nSegments) {
   var mags = buildMagnitude(ccdc, nSegments);
   var change = buildStartEndBreakProb(ccdc, nSegments);
 
-  return ee.Image.cat(coeffs, rmses, mags, change).float()
+  return ee.Image.cat(coeffs, rmses, mags, change).float();
 }
 
 //-------------------- END CCDC Helper Function -------------------//
