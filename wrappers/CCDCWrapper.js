@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -279,6 +280,23 @@ var probs = ccdcImg.select(['.*_changeProb']);
 var change = probs.gt(0.6);
 breaks = breaks.updateMask(change.neq(0));
 Map.addLayer(breaks.reduce(ee.Reducer.max()),{min:startYear,max:endYear},'Change year')
+
+
+var sinCoeffs = ccdcImg.select(['.*_SIN']);
+var cosCoeffs = ccdcImg.select(['.*_COS']);
+var bands = ['S1_swir2.*','S1_nir.*','S1_red.*'];
+var band = 'B4.*';
+var phase = sinCoeffs.atan2(cosCoeffs)
+                    .unitScale(-Math.PI, Math.PI)
+                    // .regexpRename(regex, replacement, all)
+                    // .rename([outName.cat('_phase')]);
+  // print(phase);
+  // print(phase.regexpRename('.*_coef_SIN','.*_test.*'))
+  var amplitude = sinCoeffs.hypot(cosCoeffs)
+                    // .unitScale(0, 1)
+                    .multiply(2)
+  Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false)
+  Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',false)
 // var ccdcImage = buildCcdcImage(ccdc,9);
 // print(ccdcImage);
 // Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
