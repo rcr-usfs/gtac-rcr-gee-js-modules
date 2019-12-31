@@ -101,7 +101,11 @@ var buildCoefs = function(fit, nSegments) {
  */
 var buildStartEndBreakProb = function(fit, nSegments) {
   var change = fit.select(['.*tStart','.*tEnd','.*tBreak','.*changeProb']);
-  print(change)
+  
+  var bns = change.bandNames();
+  
+  change = change.toArray(1)
+  Map.addLayer(change)
   // var segmentTag = buildSegmentTag(nSegments).map(function(s) {
   //   return ee.String(s).cat('_'+tag)
   // })
@@ -288,9 +292,9 @@ print(ccdc)
 Map.addLayer(ccdc);
 var coeffs =buildCoefs(ccdc,3);
 var rmses = buildRMSE(ccdc, 3);
-Map.addLayer(rmses,{},'rmse')
+// Map.addLayer(rmses,{},'rmse')
 var mags = buildMagnitude(ccdc, 3);
-Map.addLayer(mags,{},'mags');
+// Map.addLayer(mags,{},'mags');
 buildStartEndBreakProb(ccdc, 3);
 
 // var ccdcImage = buildCcdcImage(ccdc,9);
