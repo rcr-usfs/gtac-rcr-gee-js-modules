@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-144.40221198644747, 60.43336937756652],
-          [-144.40221198644747, 59.3925300955549],
-          [-138.41466315832247, 59.3925300955549],
-          [-138.41466315832247, 60.43336937756652]]], null, false);
+        [[[-101.1114880219231, 25.72088104898123],
+          [-101.1114880219231, 24.844219947848828],
+          [-99.9524304047356, 24.844219947848828],
+          [-99.9524304047356, 25.72088104898123]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -38,13 +38,13 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2014;
+var startYear = 2016;
 var endYear = 2018;
 
 // 4. Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
 // in a 3 year moving window
-var timebuffer = 2;
+var timebuffer = 1;
 
 
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
@@ -176,7 +176,7 @@ var allScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,endYea
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels
-  ).select(indexNames);
+  );
   
 
 ////////////////////////////////////////////////////////////
@@ -189,6 +189,8 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   //Get scenes for those dates
   var allScenesT = allScenes.filter(ee.Filter.calendarRange(startYearT,endYearT,'year'));
   
+  var ndvi = allScenesT.select(['NDVI']).median();
+  allScenesT = allScenesT.select(indexNames);
   //Fit harmonic model
   var coeffsPredicted =getImageLib.getHarmonicCoefficientsAndFit(allScenesT,indexNames,whichHarmonics,detrend);
   
@@ -223,8 +225,8 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     
     // Turn the HSV data into an RGB image and add it to the map.
     var seasonality = ee.Image.cat(phases.select([0]), 
-                                    amplitudes.select([0]), 
-                                    vals.select([0])).hsvToRgb();
+                                    amplitudes.select([0]).multiply(2.5), 
+                                    ndvi).hsvToRgb();
   
     Map.addLayer(seasonality, {'min':0,'max':1}, nameStart+ '_Seasonality',false);
     
