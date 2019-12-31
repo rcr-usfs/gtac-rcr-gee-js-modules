@@ -45,16 +45,22 @@ var buildBandTag = function(tag) {
 var buildMagnitude = function(fit, nSegments) {
   fit = fit.select('.*magnitude');
   var bns = fit.bandNames();
-  var bands = bns.map(function(bn){return ee.String(ee.String(bn).split('_').get(0)).cat(ee.String('.*'))});
+  var bands = bns.map(function(bn){return ee.String(ee.String(bn).split('_').get(0))});
   print(bands)
-  var stack = bands.iterate(function(bn,out){
-    bn = ee.String(bn);
-    out = ee.Image(out);
-    return out.addBands(fit.select([bn]).toArray().arrayCat(ee.Image(ee.Array(ee.List.repeat(0, nSegments))),0).arraySlice(0, 0, nSegments))
-  },ee.Image(ee.Array(ee.List.repeat(0, nSegments))));
-  stack = ee.Image(stack)
-  stack = stack.select(ee.List.sequence(1,nSegments))
-  Map.addLayer(stack)
+  var segLabels = buildSegmentTag(nSegments);
+  print(segLabels);
+  Map.addLayer(fit.toArray(1))
+  // var stack = bands.iterate(function(bn,out){
+  //   bn = ee.String(bn);
+  //   var bnReg = bn.cat(ee.String('.*'));
+  //   out = ee.Image(out);
+  //   var outT = fit.select([bnReg]).toArray().arrayCat(ee.Image(ee.Array(ee.List.repeat(0, nSegments))),0).arraySlice(0, 0, nSegments);
+    
+  //   return out.addBands(outT);
+  // },ee.Image(ee.Array(ee.List.repeat(0, nSegments))));
+  // stack = ee.Image(stack)
+  // stack = stack.select(ee.List.sequence(1,nSegments))
+  // Map.addLayer(stack)
   // var segmentTag = buildSegmentTag(nSegments)
   // var magTag = buildBandTag('MAG')  
   
@@ -160,7 +166,7 @@ var endJulian = 365;
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
 var startYear = 2000;
-var endYear = 2019;
+var endYear = 2010;
 
 
 
