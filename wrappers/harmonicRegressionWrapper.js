@@ -160,7 +160,7 @@ var scale = null;
 var whichHarmonics = [2];
 
 //Which bands/indices to run harmonic regression across
-var indexNames =['swir2','nir','red'];//NDVI','NBR','swir1'];//,'NBR','NDMI','nir','swir1','swir2','tcAngleBG'];//['nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];//['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];
+var indexNames =['swir2','nir','red','NDVI'];//NDVI','NBR','swir1'];//,'NBR','NDMI','nir','swir1','swir2','tcAngleBG'];//['nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];//['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];
 
 //Whether to apply a linear detrending of data.  Can be useful if long-term change is not of interest
 var detrend = true;
@@ -222,7 +222,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     Map.addLayer(AUCs,{},nameStart+ '_AUCs',false);
     Map.addLayer(peakJulians,{'min':0,'max':365},nameStart+ '_peakJulians',false);
   
-    
+    print(phases)
     // Turn the HSV data into an RGB image and add it to the map.
     var seasonality = ee.Image.cat(phases.select([0]), 
                                     amplitudes.select([0]).multiply(2.5), 
