@@ -176,7 +176,7 @@ var allScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,endYea
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels
-  );
+  ).select(indexNames);
   
 
 ////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   var allScenesT = allScenes.filter(ee.Filter.calendarRange(startYearT,endYearT,'year'));
   
   var ndvi = allScenesT.select(['NDVI']).median();
-  allScenesT = allScenesT.select(indexNames);
+ 
   //Fit harmonic model
   var coeffsPredicted =getImageLib.getHarmonicCoefficientsAndFit(allScenesT,indexNames,whichHarmonics,detrend);
   
@@ -224,8 +224,8 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   
     print(phases)
     // Turn the HSV data into an RGB image and add it to the map.
-    var seasonality = ee.Image.cat(phases.select([0]), 
-                                    amplitudes.select([0]).multiply(2.5), 
+    var seasonality = ee.Image.cat(phases.select(['NDVI.*']), 
+                                    amplitudes.select(['NDVI.*']).multiply(2.5), 
                                     ndvi).hsvToRgb();
   
     Map.addLayer(seasonality, {'min':0,'max':1}, nameStart+ '_Seasonality',false);
