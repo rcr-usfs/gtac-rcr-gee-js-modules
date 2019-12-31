@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-111.70831406507818, 44.649052301447824],
-          [-111.70831406507818, 42.60559697372777],
-          [-108.35748398695318, 42.60559697372777],
-          [-108.35748398695318, 44.649052301447824]]], null, false);
+        [[[-114.28430031139885, 48.820702721836014],
+          [-114.28430031139885, 48.71321407309099],
+          [-113.87334297497307, 48.71321407309099],
+          [-113.87334297497307, 48.820702721836014]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -38,8 +38,8 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2015;
-var endYear = 2017;
+var startYear = 2000;
+var endYear = 2002;
 
 // 4. Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
@@ -163,7 +163,7 @@ var whichHarmonics = [2];
 var indexNames =['swir2','nir','red'];//NDVI','NBR','swir1'];//,'NBR','NDMI','nir','swir1','swir2','tcAngleBG'];//['nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];//['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];
 
 //Whether to apply a linear detrending of data.  Can be useful if long-term change is not of interest
-var detrend = false;
+var detrend = true;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -254,3 +254,36 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
 Map.setOptions('HYBRID');
 // // coeffCollection = ee.ImageCollection(coeffCollection);
 // // Map.addLayer(coeffCollection);
+
+///////////////////////////////////////////////////////////////////////
+
+//List of bands or indices to iterate across
+//Typically a list of spectral bands or computed indices
+//Can include: 'blue','green','red','nir','swir1','swir2'
+//'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
+// var indexList = ee.List(['nir','swir1']);
+var indexNames = ['B1','B2','B3','B4','B5','B7','B6'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
+
+
+///////////////////////////////////////////////////////////////////////
+// End user parameters
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+//Start function calls
+
+////////////////////////////////////////////////////////////////////////////////
+//Call on master wrapper function to get Landat scenes and composites
+var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,2010,2019,startJulian,endJulian,
+  toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
+  applyFmaskCloudShadowMask,applyFmaskSnowMask,
+  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
+  ).map(getImageLib.addSAVIandEVI);
+
+Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
+processedScenes = processedScenes.select(['blue','green','red','nir','swir1','swir2','temp'],['B1','B2','B3','B4','B5','B7','B6']);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['B2','B7']);
+print(ccdc)
+Map.addLayer(ccdc);
+var ccdcImage = ccdcLib.buildCcdcImage(ccdc,1);
+print(ccdcImage);
