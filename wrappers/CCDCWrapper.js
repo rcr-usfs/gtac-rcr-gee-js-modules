@@ -101,23 +101,14 @@ var buildCoefs = function(fit, nSegments) {
  */
 var buildStartEndBreakProb = function(fit, nSegments) {
   var change = fit.select(['.*tStart','.*tEnd','.*tBreak','.*changeProb']);
-  
   var bns = change.bandNames();
   var segBns = buildSegmentTag(nSegments);
   var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
   var changeImg = change.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
   
-  Map.addLayer(changeImg)
-  // var segmentTag = buildSegmentTag(nSegments).map(function(s) {
-  //   return ee.String(s).cat('_'+tag)
-  // })
+  return changeImg;
   
-  // var zeros = ee.Array(0).repeat(0, nSegments)
-                       
-  // var magImg = fit.select(tag).arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
-
-  // return magImg.arrayFlatten([segmentTag])
-}
+};
 
 /**
  * build a 74 x nSegments layer image
@@ -127,15 +118,12 @@ var buildStartEndBreakProb = function(fit, nSegments) {
 var buildCcdcImage = function(fit, nSegments) {
   var magnitude = buildMagnitude(fit, nSegments);
   print(magnitude);
-  // var rmse = buildRMSE(fit, nSegments)
-  // var coef = buildCoefs(fit, nSegments)
-  
-  // var tStart = buildStartEndBreakProb(fit, nSegments, 'tStart')
-  // var tEnd = buildStartEndBreakProb(fit, nSegments, 'tEnd')
-  // var tBreak = buildStartEndBreakProb(fit, nSegments, 'tBreak')
-  // var probs = buildStartEndBreakProb(fit, nSegments, 'changeProb').multiply(100)
+  var coeffs =buildCoefs(ccdc,3);
+  var rmses = buildRMSE(ccdc, 3);
+  var mags = buildMagnitude(ccdc, 3);
+  var change = buildStartEndBreakProb(ccdc, 3);
 
-  // return ee.Image.cat(coef, rmse, magnitude, tStart, tEnd, tBreak, probs).float()
+  return ee.Image.cat(coeffs, rmses, mags, change).float()
 }
 
 //-------------------- END CCDC Helper Function -------------------//
@@ -292,12 +280,7 @@ processedScenes = processedScenes.select(['blue','green','red','nir','swir1','sw
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0.002);
 print(ccdc)
 Map.addLayer(ccdc);
-var coeffs =buildCoefs(ccdc,3);
-var rmses = buildRMSE(ccdc, 3);
-// Map.addLayer(rmses,{},'rmse')
-var mags = buildMagnitude(ccdc, 3);
-// Map.addLayer(mags,{},'mags');
-buildStartEndBreakProb(ccdc, 3);
+
 
 // var ccdcImage = buildCcdcImage(ccdc,9);
 // print(ccdcImage);
