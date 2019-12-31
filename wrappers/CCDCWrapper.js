@@ -289,6 +289,7 @@ print(ccdc)
 Map.addLayer(ccdc);
 var coeffs =buildCoefs(ccdc,3);
 var rmses = buildRMSE(ccdc, 3);
+Map.addLayer(rmses,{},'rmse')
 var mags = buildMagnitude(ccdc, 3);
 // Map.addLayer(coeffs)
 // var ccdcImage = buildCcdcImage(ccdc,9);
