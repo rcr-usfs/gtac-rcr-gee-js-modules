@@ -216,7 +216,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     var AUCs = pap.select(['.*AUC']);
     
     Map.addLayer(phases,{},nameStart+ '_phases',false);
-    Map.addLayer(amplitudes,{min:0,max:0.6},nameStart+ '_amplitudes',false);
+    Map.addLayer(amplitudes,{min:0,max:0.6},nameStart+ '_amplitudes',true);
     Map.addLayer(AUCs,{},nameStart+ '_AUCs',false);
     Map.addLayer(peakJulians,{'min':0,'max':365},nameStart+ '_peakJulians',false);
   
@@ -257,33 +257,3 @@ Map.setOptions('HYBRID');
 
 ///////////////////////////////////////////////////////////////////////
 
-//List of bands or indices to iterate across
-//Typically a list of spectral bands or computed indices
-//Can include: 'blue','green','red','nir','swir1','swir2'
-//'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
-// var indexList = ee.List(['nir','swir1']);
-var indexNames = ['B1','B2','B3','B4','B5','B7','B6'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
-
-
-///////////////////////////////////////////////////////////////////////
-// End user parameters
-///////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
-//Start function calls
-
-////////////////////////////////////////////////////////////////////////////////
-//Call on master wrapper function to get Landat scenes and composites
-var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,2010,2019,startJulian,endJulian,
-  toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
-  applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
-  ).map(getImageLib.addSAVIandEVI);
-
-Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
-processedScenes = processedScenes.select(['blue','green','red','nir','swir1','swir2','temp'],['B1','B2','B3','B4','B5','B7','B6']);
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['B2','B7']);
-print(ccdc)
-Map.addLayer(ccdc);
-var ccdcImage = ccdcLib.buildCcdcImage(ccdc,1);
-print(ccdcImage);
