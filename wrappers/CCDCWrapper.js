@@ -28,15 +28,7 @@ var buildSegmentTag = function(nSegments) {
   });
 };
 
-/**
- * create band tag
- */
-var buildBandTag = function(tag) {
-  var bands = ee.List(['B1','B2','B3','B4','B5','B7','B6']);
-  return bands.map(function(s) {
-    return ee.String(s).cat('_' + tag);
-  });
-};
+
 function buildSegmentBandTag(nSegments,bands){
   var out = ee.List.sequence(1, nSegments).map(function(i) {
       return bands.map(function(bn){
@@ -85,6 +77,7 @@ var buildCoefs = function(fit, nSegments) {
   var coeffs = fit.select(['.*_coefs']);
   
   var bns = coeffs.bandNames();
+  print(bns)
   var segBns = buildSegmentBandTag(nSegments,bns);
   var totalLength = ee.Number(nSegments).multiply(bns.length());
   var zeros = ee.Image(ee.Array([ee.List.repeat(0,harmonicTag.length)]).repeat(0, totalLength));
