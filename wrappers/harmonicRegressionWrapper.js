@@ -7,10 +7,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-79.19687238749282, 40.74654990939514],
-          [-79.19687238749282, 39.934297342473656],
-          [-77.02157941874282, 39.934297342473656],
-          [-77.02157941874282, 40.74654990939514]]], null, false);
+        [[[-112.22766048539626, 41.00528981226773],
+          [-112.22766048539626, 37.36196727184352],
+          [-105.87756282914626, 37.36196727184352],
+          [-105.87756282914626, 41.00528981226773]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -224,8 +224,8 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     print(phases)
     // Turn the HSV data into an RGB image and add it to the map.
     var seasonality = ee.Image.cat(phases.select(['NDVI.*']).clamp(0,1), 
-                                    amplitudes.select(['NDVI.*']).unitScale(0,0.4).clamp(0,1),//.multiply(2.5), 
-                                    ndvi.unitScale(0,0.8).clamp(0,1)).hsvToRgb();
+                                    amplitudes.select(['NDVI.*']).unitScale(0,0.6).clamp(0,1),//.multiply(2.5), 
+                                    ndvi.unitScale(0,0.9).clamp(0,1)).hsvToRgb();
   
     Map.addLayer(seasonality, {'min':0,'max':1}, nameStart+ '_Seasonality',false);
     
