@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-114.28430031139885, 48.820702721836014],
-          [-114.28430031139885, 48.71321407309099],
-          [-113.87334297497307, 48.71321407309099],
-          [-113.87334297497307, 48.820702721836014]]], null, false);
+        [[[-121.0458270934555, 37.96457393928914],
+          [-121.0458270934555, 37.61947196257258],
+          [-119.7823993590805, 37.61947196257258],
+          [-119.7823993590805, 37.96457393928914]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -38,8 +38,8 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2000;
-var endYear = 2002;
+var startYear = 2016;
+var endYear = 2018;
 
 // 4. Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
