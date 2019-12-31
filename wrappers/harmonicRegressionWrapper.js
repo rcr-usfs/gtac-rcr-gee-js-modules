@@ -1,16 +1,17 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-112.22766048539626, 41.00528981226773],
-          [-112.22766048539626, 37.36196727184352],
-          [-105.87756282914626, 37.36196727184352],
-          [-105.87756282914626, 41.00528981226773]]], null, false);
+        [[[-121.28893309173702, 37.691382382198036],
+          [-121.28893309173702, 35.41027216404781],
+          [-118.07543211517452, 35.41027216404781],
+          [-118.07543211517452, 37.691382382198036]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
