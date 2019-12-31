@@ -50,34 +50,16 @@ function buildSegmentBandTag(nSegments,bands){
  * 
  */
 var buildMagnitude = function(fit, nSegments) {
-  fit = fit.select('.*magnitude');
-  var bns = fit.bandNames();
-  var bands = bns.map(function(bn){return ee.String(ee.String(bn).split('_').get(0))});
-  print(bands)
-  var segLabels = buildSegmentTag(nSegments);
-  print(segLabels);
-  Map.addLayer(fit.toArray(1))
-  // var stack = bands.iterate(function(bn,out){
-  //   bn = ee.String(bn);
-  //   var bnReg = bn.cat(ee.String('.*'));
-  //   out = ee.Image(out);
-  //   var outT = fit.select([bnReg]).toArray().arrayCat(ee.Image(ee.Array(ee.List.repeat(0, nSegments))),0).arraySlice(0, 0, nSegments);
-    
-  //   return out.addBands(outT);
-  // },ee.Image(ee.Array(ee.List.repeat(0, nSegments))));
-  // stack = ee.Image(stack)
-  // stack = stack.select(ee.List.sequence(1,nSegments))
-  // Map.addLayer(stack)
-  // var segmentTag = buildSegmentTag(nSegments)
-  // var magTag = buildBandTag('MAG')  
-  
-  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bands.length())]).repeat(0, nSegments));
-  Map.addLayer(zeros);
-  // Map.addLayer(fit.select('.*magnitude'));
-  // var magImg =fit.select('.*magnitude').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
+  var mags = fit.select(['.*_magnitude']);
+  var bns = mags.bandNames();
+  var segBns = buildSegmentBandTag(nSegments,bns);
 
-  // return magImg.arrayFlatten([segmentTag, magTag])
-}
+  var totalLength = ee.Number(nSegments).multiply(bns.length());
+  var zeros = ee.Image(ee.Array(ee.List.repeat(0,totalLength)));
+  
+  var magImg = mags.toArray(0).arrayCat(zeros, 0).arraySlice(0, 0, totalLength).arrayFlatten([segBns]);
+  return magImg;
+};
 
 /**
  * Extract CCDC RMSE image
