@@ -50,7 +50,7 @@ var buildMagnitude = function(fit, nSegments) {
   var stack = bands.iterate(function(bn,out){
     bn = ee.String(bn);
     out = ee.Image(out);
-    return out.addBands(fit.select([bn]).toArray().arrayCat(ee.Image(ee.Array([ee.List.repeat(0, nSegments)])),0).arraySlice(0, 0, nSegments))
+    return out.addBands(fit.select([bn]).toArray().arrayCat(ee.Image(ee.Array(ee.List.repeat(0, nSegments))),0).arraySlice(0, 0, nSegments))
   },ee.Image(ee.Array([ee.List.repeat(0, nSegments)])));
   print(stack)
   // var segmentTag = buildSegmentTag(nSegments)
