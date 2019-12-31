@@ -45,11 +45,12 @@ var buildBandTag = function(tag) {
 var buildMagnitude = function(fit, nSegments) {
   fit = fit.select('.*magnitude');
   var bns = fit.bandNames();
-  var bands = bns.map(function(bn){return ee.String('.*').cat(ee.String(bn).split('_').get(0))});
+  var bands = bns.map(function(bn){return ee.String(ee.String(bn).split('_').get(0)).cat(ee.String('.*'))});
   print(bands)
   var stack = bands.iterate(function(bn,out){
+    bn = ee.String(bn);
     out = ee.Image(out);
-    return out.addBands(fit.select(bn).toArray().arrayCat(ee.Image(ee.Array([ee.List.repeat(0, nSegments)])),0).arraySlice(0, 0, nSegments))
+    return out.addBands(fit.select([bn]).toArray().arrayCat(ee.Image(ee.Array([ee.List.repeat(0, nSegments)])),0).arraySlice(0, 0, nSegments))
   },ee.Image(ee.Array([ee.List.repeat(0, nSegments)])));
   print(stack)
   // var segmentTag = buildSegmentTag(nSegments)
