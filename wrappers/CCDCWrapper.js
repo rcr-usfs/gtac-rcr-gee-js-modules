@@ -103,8 +103,10 @@ var buildStartEndBreakProb = function(fit, nSegments) {
   var change = fit.select(['.*tStart','.*tEnd','.*tBreak','.*changeProb']);
   
   var bns = change.bandNames();
-  
-  change = change.toArray(1)
+  print(bns)
+  change = change.toArray(1);
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
+  Map.addLayer(zeros)
   Map.addLayer(change)
   // var segmentTag = buildSegmentTag(nSegments).map(function(s) {
   //   return ee.String(s).cat('_'+tag)
