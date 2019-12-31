@@ -51,7 +51,9 @@ var buildMagnitude = function(fit, nSegments) {
     bn = ee.String(bn);
     out = ee.Image(out);
     return out.addBands(fit.select([bn]).toArray().arrayCat(ee.Image(ee.Array(ee.List.repeat(0, nSegments))),0).arraySlice(0, 0, nSegments))
-  },ee.Image(ee.Array([ee.List.repeat(0, nSegments)])));
+  },ee.Image(ee.Array(ee.List.repeat(0, nSegments))));
+  stack = ee.Image(stack)
+  // stack = stack.select(1,nSegments)
   print(stack)
   // var segmentTag = buildSegmentTag(nSegments)
   // var magTag = buildBandTag('MAG')  
@@ -289,7 +291,7 @@ processedScenes = processedScenes.select(['blue','green','red','nir','swir1','sw
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['B2','B7']);
 print(ccdc)
 Map.addLayer(ccdc);
-var ccdcImage = buildCcdcImage(ccdc,4);
+var ccdcImage = buildCcdcImage(ccdc,7);
 // print(ccdcImage);
 // Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
 // print(ccdcImage)
