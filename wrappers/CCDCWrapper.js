@@ -274,7 +274,7 @@ var scale = null;
 //Can include: 'blue','green','red','nir','swir1','swir2'
 //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
 // var indexList = ee.List(['nir','swir1']);
-var indexNames = ['B1','B2','B3','B4','B5','B7','B6'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
+var indexNames = ['blue','green','red','nir','swir1','swir2','temp'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -293,8 +293,8 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
   ).map(getImageLib.addSAVIandEVI);
 
 Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
-processedScenes = processedScenes.select(['blue','green','red','nir','swir1','swir2','temp'],['B1','B2','B3','B4','B5','B7','B6']);
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['B2','B7'],6,0.99,1.33,1,0.002);
+processedScenes = processedScenes.select(['blue','green','red','nir','swir1','swir2','temp']);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0.002);
 print(ccdc)
 Map.addLayer(ccdc);
 
