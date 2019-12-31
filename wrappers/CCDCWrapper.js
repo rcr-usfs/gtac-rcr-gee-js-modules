@@ -64,8 +64,8 @@ var buildMagnitude = function(fit, nSegments) {
   // var segmentTag = buildSegmentTag(nSegments)
   // var magTag = buildBandTag('MAG')  
   
-  // var zeros = ee.Image(ee.Array([ee.List.repeat(0, 7)]).repeat(0, nSegments));
-  // Map.addLayer(zeros);
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bands.length())]).repeat(0, nSegments));
+  Map.addLayer(zeros);
   // Map.addLayer(fit.select('.*magnitude'));
   // var magImg =fit.select('.*magnitude').arrayCat(zeros, 0).arraySlice(0, 0, nSegments)
 
@@ -294,10 +294,13 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
 
 Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
 processedScenes = processedScenes.select(['blue','green','red','nir','swir1','swir2','temp'],['B1','B2','B3','B4','B5','B7','B6']);
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['B2','B7']);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['B2','B7'],6,0.99,1.33,1,0.002);
 print(ccdc)
 Map.addLayer(ccdc);
-var ccdcImage = buildCcdcImage(ccdc,7);
+
+var coeffs = ccdc.select(['.*_coefs']);
+Map.addLayer(coeffs)
+// var ccdcImage = buildCcdcImage(ccdc,9);
 // print(ccdcImage);
 // Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
 // print(ccdcImage)
