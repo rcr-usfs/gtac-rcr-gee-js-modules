@@ -116,12 +116,10 @@ var buildStartEndBreakProb = function(fit, nSegments) {
  * 
  */
 var buildCcdcImage = function(fit, nSegments) {
-  var magnitude = buildMagnitude(fit, nSegments);
-  print(magnitude);
-  var coeffs =buildCoefs(ccdc,3);
-  var rmses = buildRMSE(ccdc, 3);
-  var mags = buildMagnitude(ccdc, 3);
-  var change = buildStartEndBreakProb(ccdc, 3);
+  var coeffs =buildCoefs(ccdc,nSegments);
+  var rmses = buildRMSE(ccdc, nSegments);
+  var mags = buildMagnitude(ccdc, nSegments);
+  var change = buildStartEndBreakProb(ccdc, nSegments);
 
   return ee.Image.cat(coeffs, rmses, mags, change).float()
 }
