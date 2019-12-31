@@ -77,7 +77,7 @@ var buildCoefs = function(fit, nSegments) {
   var coeffs = fit.select(['.*_coefs']);
   
   var bns = coeffs.bandNames();
-  print(bns)
+ 
   var segBns = buildSegmentBandTag(nSegments,bns);
   var totalLength = ee.Number(nSegments).multiply(bns.length());
   var zeros = ee.Image(ee.Array([ee.List.repeat(0,harmonicTag.length)]).repeat(0, totalLength));
@@ -276,7 +276,7 @@ Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
 var breaks = ccdcImg.select(['.*_tBreak']);
 var probs = ccdcImg.select(['.*_changeProb']);
-var change = probs.eq(1);
+var change = probs.gt(0.6);
 breaks = breaks.updateMask(change.neq(0));
 Map.addLayer(breaks.reduce(ee.Reducer.max()),{min:startYear,max:endYear},'Change year')
 // var ccdcImage = buildCcdcImage(ccdc,9);
