@@ -58,6 +58,7 @@ var buildMagnitude = function(fit, nSegments) {
   var zeros = ee.Image(ee.Array(ee.List.repeat(0,totalLength)));
   
   var magImg = mags.toArray(0).arrayCat(zeros, 0).arraySlice(0, 0, totalLength).arrayFlatten([segBns]);
+  Map.addLayer(magImg);
   return magImg;
 };
 
