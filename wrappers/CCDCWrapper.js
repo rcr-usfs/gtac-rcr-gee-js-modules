@@ -50,15 +50,13 @@ function buildSegmentBandTag(nSegments,bands){
  * 
  */
 var buildMagnitude = function(fit, nSegments) {
-  var mags = fit.select(['.*_magnitude']);
-  var bns = mags.bandNames();
-  var segBns = buildSegmentBandTag(nSegments,bns);
+  var mag = fit.select(['.*_magnitude']);
+  var bns = mag.bandNames();
+  var segBns = buildSegmentTag(nSegments);
 
-  var totalLength = ee.Number(nSegments).multiply(bns.length());
-  var zeros = ee.Image(ee.Array(ee.List.repeat(0,totalLength)));
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
+  var magImg = mag.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
   
-  var magImg = mags.toArray(0).arrayCat(zeros, 0).arraySlice(0, 0, totalLength).arrayFlatten([segBns]);
-  Map.addLayer(magImg);
   return magImg;
 };
 
@@ -69,16 +67,12 @@ var buildMagnitude = function(fit, nSegments) {
 var buildRMSE = function(fit, nSegments) {
   var rmses = fit.select(['.*_rmse']);
   var bns = rmses.bandNames();
-  print(bns)
   var segBns = buildSegmentTag(nSegments);
 
-  var totalLength = ee.Number(nSegments).multiply(bns.length());
-  // var zeros = ee.Image(ee.Array(ee.List.repeat(0,bns.length())).repeat(1,nSegments));
-  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments))
-  Map.addLayer(zeros)
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
   var rmseImg = rmses.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
-  Map.addLayer(rmseImg)
-  // return rmseImg;
+  
+  return rmseImg;
 };
 
 /**
@@ -292,9 +286,9 @@ print(ccdc)
 Map.addLayer(ccdc);
 var coeffs =buildCoefs(ccdc,3);
 var rmses = buildRMSE(ccdc, 3);
-// Map.addLayer(rmses,{},'rmse')
-// var mags = buildMagnitude(ccdc, 3);
-// Map.addLayer(coeffs)
+Map.addLayer(rmses,{},'rmse')
+var mags = buildMagnitude(ccdc, 3);
+Map.addLayer(mags,{},'mags')
 // var ccdcImage = buildCcdcImage(ccdc,9);
 // print(ccdcImage);
 // Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
