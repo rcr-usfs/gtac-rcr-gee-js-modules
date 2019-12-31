@@ -140,8 +140,8 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2000;
-var endYear = 2002;
+var startYear = 2016;
+var endYear = 2018;
 
 
 
@@ -269,7 +269,7 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
 
 Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
 processedScenes = processedScenes.select(['blue','green','red','nir','swir1','swir2','temp']);
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0.002);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0);
 print(ccdc)
 Map.addLayer(ccdc,{},'raw ccdc',false);
 var ccdcImg = buildCcdcImage(ccdc, 4);
