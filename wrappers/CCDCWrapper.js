@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-114.50966081843637, 48.965044278041475],
-          [-114.50966081843637, 48.66481691441383],
-          [-113.58131609187387, 48.66481691441383],
-          [-113.58131609187387, 48.965044278041475]]], null, false);
+        [[[-121.0458270934555, 37.96457393928914],
+          [-121.0458270934555, 37.61947196257258],
+          [-119.7823993590805, 37.61947196257258],
+          [-119.7823993590805, 37.96457393928914]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -19,6 +19,104 @@ var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 // var ccdcLib = require('users/yang/CCDC:default');
 
 
+//-------------------- BEGIN CCDC Helper Function -------------------//
+/**
+ * create segment tab
+ */
+var buildSegmentTag = function(nSegments) {
+  return ee.List.sequence(1, nSegments).map(function(i) {
+    return ee.String('S').cat(ee.Number(i).int());
+  });
+};
+
+
+function buildSegmentBandTag(nSegments,bands){
+  var out = ee.List.sequence(1, nSegments).map(function(i) {
+      return bands.map(function(bn){
+        return ee.String('S').cat(ee.Number(i).int()).cat('_').cat(bn);
+      });
+  });
+  return out.flatten();
+}
+/**
+ * Extract CCDC magnitude image
+ * 
+ */
+var buildMagnitude = function(fit, nSegments) {
+  var mag = fit.select(['.*_magnitude']);
+  var bns = mag.bandNames();
+  var segBns = buildSegmentTag(nSegments);
+
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
+  var magImg = mag.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
+  
+  return magImg;
+};
+
+/**
+ * Extract CCDC RMSE image
+ * 
+ */
+var buildRMSE = function(fit, nSegments) {
+  var rmses = fit.select(['.*_rmse']);
+  var bns = rmses.bandNames();
+  var segBns = buildSegmentTag(nSegments);
+
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
+  var rmseImg = rmses.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
+  
+  return rmseImg;
+};
+
+/**
+ * Extract CCDC Coefficient image
+ * 
+ */
+var buildCoefs = function(fit, nSegments) {
+  var harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
+  
+  var coeffs = fit.select(['.*_coefs']);
+  
+  var bns = coeffs.bandNames();
+ 
+  var segBns = buildSegmentBandTag(nSegments,bns);
+  var totalLength = ee.Number(nSegments).multiply(bns.length());
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0,harmonicTag.length)]).repeat(0, totalLength));
+  
+  var coeffImg = coeffs.toArray(0).arrayCat(zeros, 0).arraySlice(0, 0, totalLength);
+  coeffImg = coeffImg.arrayFlatten([segBns, harmonicTag]);
+ 
+  return coeffImg;
+};
+
+/**
+ * Extract CCDC tStart, tEnd, tBreak, changeProb
+ * 
+ */
+var buildStartEndBreakProb = function(fit, nSegments) {
+  var change = fit.select(['.*tStart','.*tEnd','.*tBreak','.*changeProb']);
+  var bns = change.bandNames();
+  var segBns = buildSegmentTag(nSegments);
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
+  var changeImg = change.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
+  
+  return changeImg;
+  
+};
+
+/**
+ * build a 74 x nSegments layer image
+ * using int32 as output.
+ * 
+ */
+var buildCcdcImage = function(fit, nSegments) {
+  var coeffs =buildCoefs(ccdc,nSegments);
+  var rmses = buildRMSE(ccdc, nSegments);
+  var mags = buildMagnitude(ccdc, nSegments);
+  var change = buildStartEndBreakProb(ccdc, nSegments);
+
+  return ee.Image.cat(coeffs, rmses, mags, change).float();
+};
 
 //-------------------- END CCDC Helper Function -------------------//
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,7 +141,7 @@ var endJulian = 365;
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
 var startYear = 2000;
-var endYear = 2010;
+var endYear = 2002;
 
 
 
@@ -181,7 +279,7 @@ var breaks = ccdcImg.select(['.*_tBreak']);
 var probs = ccdcImg.select(['.*_changeProb']);
 var change = probs.gt(0.6);
 breaks = breaks.updateMask(change.neq(0));
-Map.addLayer(breaks.reduce(ee.Reducer.max()),{min:startYear,max:endYear},'Change year')
+Map.addLayer(breaks.reduce(ee.Reducer.max()),{min:startYear,max:endYear},'Change year',false);
 
 
 var sinCoeffs = ccdcImg.select(['.*_SIN']);
@@ -190,17 +288,11 @@ var bands = ['S1_swir2.*','S1_nir.*','S1_red.*'];
 var band = 'B4.*';
 var phase = sinCoeffs.atan2(cosCoeffs)
                     .unitScale(-Math.PI, Math.PI)
-                    // .regexpRename(regex, replacement, all)
-                    // .rename([outName.cat('_phase')]);
-  // print(phase);
-  // print(phase.regexpRename('.*_coef_SIN','.*_test.*'))
-  var amplitude = sinCoeffs.hypot(cosCoeffs)
+ 
+var amplitude = sinCoeffs.hypot(cosCoeffs)
                     // .unitScale(0, 1)
                     .multiply(2)
-  Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false)
-  Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',false)
-// var ccdcImage = buildCcdcImage(ccdc,9);
-// print(ccdcImage);
-// Map.addLayer(ccdcImage.select(['S1_tEnd']),{min:startYear,max:endYear},'CCDC end year')
-// print(ccdcImage)
-// Map.addLayer(ccdc,{},'cdc')
+  Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
+  Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
+
+Map.setOptions('HYBRID');
