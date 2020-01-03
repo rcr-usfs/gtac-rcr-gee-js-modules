@@ -57,6 +57,10 @@ var compositingMethod = 'medoid';
 //in dryer climates, terrain correction can remove some of the signal in dryer climates.  In higher latitudes terrain correction can fail.
 var toaOrSR = 'TOA';
 
+//Whether to convert S2 images from the military grid reference system(MGRS) tiles to daily mosaics to avoid arbitrary
+//MGRS tile artifacts or not. In most cases, it is best to set this to true.
+var convertToDailyMosaics = true;
+
 // // 8. Choose whether to include Landat 7
 // // Generally only included when data are limited
 // var includeSLCOffL7 = false;
@@ -134,7 +138,7 @@ var dilatePixels = 2.5;
 //If method other than 'near' is chosen, any map drawn on the fly that is not
 //reprojected, will appear blurred
 //Use .reproject to view the actual resulting image (this will slow it down)
-var resampleMethod = 'bicubic';
+var resampleMethod = 'near';
 
 // 12. correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
@@ -159,7 +163,7 @@ var exportPathRoot = 'users/ianhousman/test/changeCollection';
 //CRS- must be provided.  
 //Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
 //WGS84 UTM N hemisphere is EPSG:326+ zone number (zone 12 N would be EPSG:32612) and S hemisphere is EPSG:327+ zone number
-var crs = 'EPSG:32611';
+var crs = 'EPSG:5070';
 
 //Specify transform if scale is null and snapping to known grid is needed
 var transform = null;//[30,0,-2361915.0,0,-30,3177735.0];
@@ -177,7 +181,7 @@ var s2sAndTs =getImageLib.getSentinel2Wrapper(studyArea,startYear,endYear,startJ
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod);
+  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics);
   
 //Separate into scenes and composites for subsequent analysis
 var processedScenes = s2sAndTs[0];
