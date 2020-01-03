@@ -2365,7 +2365,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
     }
     var exportBands = exportBandDict[toaOrSR];
     exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
-    ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,'TOA',weights,
+    ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
                   applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,null);
   }
   
