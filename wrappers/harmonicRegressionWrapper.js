@@ -224,7 +224,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     Map.addLayer(AUCs,{min:0,max:0.3},nameStart+ '_AUCs',false);
     Map.addLayer(peakJulians,{'min':0,'max':365},nameStart+ '_peakJulians',false);
   
-    print(phases)
+   
     // Turn the HSV data into an RGB image and add it to the map.
     var seasonality = ee.Image.cat(phases.select(['NDVI.*']).clamp(0,1), 
                                     amplitudes.select(['NDVI.*']).unitScale(0,0.5).clamp(0,1),//.multiply(2.5), 
@@ -256,6 +256,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
 
 
 Map.setOptions('HYBRID');
+Map.centerObject(geometry);
 // // coeffCollection = ee.ImageCollection(coeffCollection);
 // // Map.addLayer(coeffCollection);
 
