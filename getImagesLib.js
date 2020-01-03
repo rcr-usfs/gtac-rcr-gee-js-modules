@@ -2299,6 +2299,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(outputName === undefined || outputName === null){outputName = 'Landsat-Composite'}
   if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/ianhousman/test'}
   if(crs === undefined || crs === null){crs = 'EPSG:5070'}
+  if((scale === undefined || scale === null) && (transform === undefined || transform === null)){scale = 20}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   
   var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
