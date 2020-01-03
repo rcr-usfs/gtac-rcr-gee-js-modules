@@ -30,7 +30,7 @@ var studyArea = geometry;
 
 //Date parameters
 var startYear = 1984;
-var endYear = 2018;
+var endYear = 2019;
 var startJulian = 190;
 var endJulian = 250;
 
