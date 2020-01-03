@@ -194,7 +194,7 @@ var s2sAndTs =getImageLib.getSentinel2Wrapper(studyArea,startYear,endYear,startJ
 //Separate into scenes and composites for subsequent analysis
 var processedScenes = s2sAndTs[0];
 var processedComposites = s2sAndTs[1];
-print(processedScenes)
+
 ////////////////////////////////////////////////////////////////////////////////
 // Load the study region, with a blue outline.
 // Create an empty image into which to paint the features, cast to byte.
