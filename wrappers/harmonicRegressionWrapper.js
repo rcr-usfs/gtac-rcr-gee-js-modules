@@ -126,8 +126,8 @@ var correctIllumination = false;
 var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
 //13. Export params
-//Whether to export composites
-var exportComposites = false;
+//Whether to export coefficients
+var exportCoefficients = false;
 
 //Set up Names for the export
 var outputName = 'Harmonic_Coefficients_';
