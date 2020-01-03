@@ -2307,7 +2307,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(correctIllumination === undefined || correctIllumination === null){correctIllumination = false}
   if(correctScale === undefined || correctScale === null){correctScale = 250}
   if(exportComposites === undefined || exportComposites === null){exportComposites = false}
-  if(outputName === undefined || outputName === null){outputName = 'S2-Composite'}
+  if(outputName === undefined || outputName === null){outputName = 'Sentinel2-Composite'}
   if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/ianhousman/test'}
   if(crs === undefined || crs === null){crs = 'EPSG:5070'}
   if((scale === undefined || scale === null) && (transform === undefined || transform === null)){scale = 20;transform = null;}
