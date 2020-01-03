@@ -2361,9 +2361,9 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
     print(ts.first())
     var exportBandDict = {
       'SR':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2'],
-      'TOA':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2']
+      'TOA':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2']
     }
-    var exportBands = ['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus','swir1', 'swir2'];
+    var exportBands = exportBandDict[toaOrSR];
     exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
     ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,'TOA',weights,
                   applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,null);
