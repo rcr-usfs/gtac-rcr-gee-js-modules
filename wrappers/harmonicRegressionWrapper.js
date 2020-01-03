@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -202,10 +203,10 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
             'startYearT':startYearT,
             'endYearT':endYearT,
             }).float();
-  Map.addLayer(coeffs,{},nameStart+ '_coeffs',false);
+  // Map.addLayer(coeffs,{},nameStart+ '_coeffs',false);
   //Get predicted values for visualization
   var predicted = coeffsPredicted[1];
-  Map.addLayer(predicted,{},nameStart+ '_predicted',false);
+  // Map.addLayer(predicted,{},nameStart+ '_predicted',false);
   
   //Optionally simplify coeffs to phase, amplitude, and date of peak
   if(whichHarmonics.indexOf(2) > -1){
@@ -218,9 +219,9 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     var peakJulians = pap.select(['.*peakJulianDay']);
     var AUCs = pap.select(['.*AUC']);
     
-    Map.addLayer(phases,{},nameStart+ '_phases',false);
+    // Map.addLayer(phases,{},nameStart+ '_phases',false);
     Map.addLayer(amplitudes,{min:0,max:0.6},nameStart+ '_amplitudes',false);
-    Map.addLayer(AUCs,{min:0,max:0.3},nameStart+ '_AUCs',false);
+    // Map.addLayer(AUCs,{min:0,max:0.3},nameStart+ '_AUCs',false);
     Map.addLayer(peakJulians,{'min':0,'max':365},nameStart+ '_peakJulians',false);
   
    
