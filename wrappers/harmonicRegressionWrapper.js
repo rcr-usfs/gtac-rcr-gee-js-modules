@@ -220,7 +220,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     var AUCs = pap.select(['.*AUC']);
     
     Map.addLayer(phases,{},nameStart+ '_phases',false);
-    Map.addLayer(amplitudes,{min:0,max:0.6},nameStart+ '_amplitudes',true);
+    Map.addLayer(amplitudes,{min:0,max:0.6},nameStart+ '_amplitudes',false);
     Map.addLayer(AUCs,{},nameStart+ '_AUCs',false);
     Map.addLayer(peakJulians,{'min':0,'max':365},nameStart+ '_peakJulians',false);
   
@@ -230,7 +230,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
                                     amplitudes.select(['NDVI.*']).unitScale(0,0.5).clamp(0,1),//.multiply(2.5), 
                                     ndvi.unitScale(0,0.8).clamp(0,1)).hsvToRgb();
   
-    Map.addLayer(seasonality, {'min':0,'max':1}, nameStart+ '_Seasonality',false);
+    Map.addLayer(seasonality, {'min':0,'max':1}, nameStart+ '_Seasonality',true);
     
   }
   
