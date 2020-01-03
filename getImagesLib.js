@@ -2312,6 +2312,8 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(crs === undefined || crs === null){crs = 'EPSG:5070'}
   if((scale === undefined || scale === null) && (transform === undefined || transform === null)){scale = 20;transform = null;}
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
+  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
+  if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
   
   var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
   applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
