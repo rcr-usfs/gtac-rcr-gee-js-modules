@@ -1,5 +1,17 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
+var geometry = 
+    /* color: #d63000 */
+    /* shown: false */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-123.69297147840575, 41.28292736193233],
+          [-123.69297147840575, 39.254547661350514],
+          [-120.61679960340575, 39.254547661350514],
+          [-120.61679960340575, 41.28292736193233]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -26,8 +38,8 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2016;
-var endYear = 2018;
+var startYear = 2017;
+var endYear = 2019;
 
 // 4. Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
@@ -213,8 +225,8 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     print(phases)
     // Turn the HSV data into an RGB image and add it to the map.
     var seasonality = ee.Image.cat(phases.select(['NDVI.*']).clamp(0,1), 
-                                    amplitudes.select(['NDVI.*']).unitScale(0,0.6).clamp(0,1),//.multiply(2.5), 
-                                    ndvi.unitScale(0,0.9).clamp(0,1)).hsvToRgb();
+                                    amplitudes.select(['NDVI.*']).unitScale(0,0.5).clamp(0,1),//.multiply(2.5), 
+                                    ndvi.unitScale(0,0.8).clamp(0,1)).hsvToRgb();
   
     Map.addLayer(seasonality, {'min':0,'max':1}, nameStart+ '_Seasonality',false);
     
