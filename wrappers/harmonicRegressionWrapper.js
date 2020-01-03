@@ -189,6 +189,8 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   //Get scenes for those dates
   var allScenesT = allScenes.filter(ee.Filter.calendarRange(startYearT,endYearT,'year'));
   
+  var composite = allScenesT.median();
+  Map.addLayer(composite,{'min':0.1,'max':0.4},nameStart+'_median_composite',false);
   var ndvi = allScenesT.select(['NDVI']).median();
  
   //Fit harmonic model
