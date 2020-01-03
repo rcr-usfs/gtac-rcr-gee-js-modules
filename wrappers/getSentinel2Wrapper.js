@@ -63,7 +63,7 @@ var compositingMethod = 'medoid';
 //SR S2 data also has a terrain correction applied which may or may not be best depending on how you are using the data
 //If using data from humid climates, terrain correction can be useful. Since vegetation types differ with respect to slope/aspect 
 //in dryer climates, terrain correction can remove some of the signal in dryer climates.  In higher latitudes terrain correction can fail.
-var toaOrSR = 'TOA';
+var toaOrSR = 'SR';
 
 //Whether to convert S2 images from the military grid reference system(MGRS) tiles to daily mosaics to avoid arbitrary
 //MGRS tile artifacts or not. In most cases, it is best to set this to true.
@@ -164,7 +164,7 @@ var outputName = 'S2_';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
-var exportPathRoot = 'users/ianhousman/test/changeCollection';
+var exportPathRoot = 'users/iwhousman/test/ChangeCollection';
 
 
 
