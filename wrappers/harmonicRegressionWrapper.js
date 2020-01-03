@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-122.42311118892655, 37.87841853083983],
-          [-122.42311118892655, 37.00615961202896],
-          [-118.63832114986405, 37.00615961202896],
-          [-118.63832114986405, 37.87841853083983]]], null, false);
+        [[[-122.0852815990828, 37.438653496957194],
+          [-122.0852815990828, 36.5833221112774],
+          [-119.3112337475203, 36.5833221112774],
+          [-119.3112337475203, 37.438653496957194]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -256,7 +256,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
 
 
 Map.setOptions('HYBRID');
-Map.centerObject(geometry,10);
+Map.centerObject(geometry,12);
 // // coeffCollection = ee.ImageCollection(coeffCollection);
 // // Map.addLayer(coeffCollection);
 
