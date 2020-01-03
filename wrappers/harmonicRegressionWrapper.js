@@ -1,17 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-123.69297147840575, 41.28292736193233],
-          [-123.69297147840575, 39.254547661350514],
-          [-120.61679960340575, 39.254547661350514],
-          [-120.61679960340575, 41.28292736193233]]], null, false);
+        [[[-122.42311118892655, 37.87841853083983],
+          [-122.42311118892655, 37.00615961202896],
+          [-118.63832114986405, 37.00615961202896],
+          [-118.63832114986405, 37.87841853083983]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -256,7 +255,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
 
 
 Map.setOptions('HYBRID');
-Map.centerObject(geometry);
+Map.centerObject(geometry,10);
 // // coeffCollection = ee.ImageCollection(coeffCollection);
 // // Map.addLayer(coeffCollection);
 
