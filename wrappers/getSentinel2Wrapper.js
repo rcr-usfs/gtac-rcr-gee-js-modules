@@ -26,13 +26,13 @@ var endJulian = 250;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2016;
-var endYear = 2018;
+var startYear = 2019;
+var endYear = 2019;
 
 // 4. Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
 // in a 3 year moving window
-var timebuffer =1;
+var timebuffer =0;
 
 // 5. Specify the weights to be used for the moving window created by timeBuffer
 //For example- if timeBuffer is 1, that is a 3 year moving window
@@ -40,7 +40,7 @@ var timebuffer =1;
 //In order to overweight the center year, you could specify the weights as
 //[1,5,1] which would duplicate the center year 5 times and increase its weight for
 //the compositing method
-var weights = [1,1,1];
+var weights = [1];
 
 
 
@@ -50,10 +50,12 @@ var weights = [1,1,1];
 // If not exporting indices with composites to save space, medoid should be used
 var compositingMethod = 'medoid';
 
-// // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
-// // Specify TOA or SR
-// // Current implementation does not support Fmask for TOA
-// var toaOrSR = 'SR';
+// 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
+// Specify TOA or SR
+//SR S2 data also has a terrain correction applied which may or may not be best depending on how you are using the data
+//If using data from humid climates, terrain correction can be useful. Since vegetation types differ with respect to slope/aspect 
+//in dryer climates, terrain correction can remove some of the signal in dryer climates.  In higher latitudes terrain correction can fail.
+var toaOrSR = 'TOA';
 
 // // 8. Choose whether to include Landat 7
 // // Generally only included when data are limited
