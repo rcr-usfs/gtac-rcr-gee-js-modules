@@ -288,7 +288,7 @@ function addToImage(img,howMuch){
 
 // Used when masking out pixels that don't have sufficient data for Landtrendr and Verdet
 function nullFinder(img, countMask){
-    m = img.mask();
+    var m = img.mask();
     //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
     m = m.or(countMask.not());
     img = img.mask(m);
