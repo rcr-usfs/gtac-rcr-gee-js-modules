@@ -1,17 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-114.8126495682767, 48.58524635048106],
-          [-114.8126495682767, 48.13631682610862],
-          [-113.5657013260892, 48.13631682610862],
-          [-113.5657013260892, 48.58524635048106]]], null, false);
+        [[[-114.29776978215034, 48.641828620134454],
+          [-114.29776978215034, 48.543731891438185],
+          [-114.02036499699409, 48.543731891438185],
+          [-114.02036499699409, 48.641828620134454]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for LANDTRENDR across an annual time series
 //Returns a thresholded LANDTRENDR output
