@@ -511,11 +511,12 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
     Map.addLayer(joinedTS,{},'Time Series',false);
   
     ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
-     
+      var showLossYear = false
+      if(i === 1){showLossYear = true}
       var lossStackI = lossStack.select(['.*_'+i.toString()]);
       var gainStackI = gainStack.select(['.*_'+i.toString()]);
       
-      Map.addLayer(lossStackI.select(['loss_yr.*']),vizParamsLossYear,i.toString()+' '+indexName +' Loss Year',false);
+      Map.addLayer(lossStackI.select(['loss_yr.*']),vizParamsLossYear,i.toString()+' '+indexName +' Loss Year',showLossYear);
       Map.addLayer(lossStackI.select(['loss_mag.*']),vizParamsLossMag,i.toString()+' '+indexName +' Loss Magnitude',false);
       Map.addLayer(lossStackI.select(['loss_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Loss Duration',false);
       
