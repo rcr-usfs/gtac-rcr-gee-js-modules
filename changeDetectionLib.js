@@ -26,7 +26,7 @@ function getR2(collection,coefficients,dependent,independents) {
   var squaredErrors = collection.map(function(image) {
     // Evalute predicted linear model
     var prediction = image.select(independents)
-        .multiply(coefficients)l
+        .multiply(coefficients)
         .reduce('sum');
     var actual = image.select(dependent);
     // Find squared residual error, (actual-predict)^2
