@@ -26,7 +26,7 @@ function getR2(collection,coefficients,dependent,independents) {
   var squaredErrors = collection.map(function(image) {
     // Evalute predicted linear model
     var prediction = image.select(independents)
-        .multiply(coefficients)
+        .multiply(coefficients)l
         .reduce('sum');
     var actual = image.select(dependent);
     // Find squared residual error, (actual-predict)^2
@@ -286,6 +286,15 @@ function addToImage(img,howMuch){
     return out;
   }
 
+// Used when masking out pixels that don't have sufficient data for Landtrendr and Verdet
+function nullFinder(img, countMask){
+    m = img.mask();
+    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
+    m = m.or(countMask.not());
+    img = img.mask(m);
+    img = img.where(countMask.not(), -32768);
+    return img;
+}
 ///////////////////////////////////////////////////////////////
 //Function to convert an image array object to collection
 function arrayToTimeSeries(tsArray,yearsArray,possibleYears,bandName){
@@ -542,13 +551,7 @@ function prepTimeSeriesForLandTrendr(ts,indexName, run_params){
   //Find areas with insufficient data to run LANDTRENDR
   var countMask = tsT.count().unmask().gte(maxSegments.add(1));
 
-  tsT = tsT.map(function(img){
-    var m = img.mask();
-    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
-    m = m.or(countMask.not());
-    img = img.mask(m);
-    img = img.where(countMask.not(),-32768);
-    return img});
+  tsT = tsT.map(function(img){return nullFinder(img, countMask)});
 
   run_params.timeSeries = tsT;
   var runMask = countMask.rename('insufficientDataMask');
@@ -1052,15 +1055,7 @@ function applyLinearInterp(composites, nYearsInterpolate){
     return outDict;
 }
 
-// Update Mask from LinearInterp step
-function updateVerdetMasks(img, linearInterpMasks){
-  var thisYear = ee.Date(img.get('system:time_start')).format('YYYY');
-  //thisYear_maskName = ee.String('mask_').cat(thisYear);
-  var thisYear_maskName = ee.String('.*_').cat(thisYear);
-  var thisMask = linearInterpMasks.select(thisYear_maskName);
-  img = img.updateMask(thisMask);
-  return img;
-}
+
 //----------------------------------------------------------------------------------------------------
 //        Verdet Functions
 //----------------------------------------------------------------------------------------------------
@@ -1082,7 +1077,17 @@ function undoVerdetScaling(fitted, indexName, correctionFactor){
   fitted = ee.Image(multBands(fitted, 1, -distDir)); // Finally, undo change in direction
   return fitted;
 }
- 
+
+// Update Mask from LinearInterp step
+function updateVerdetMasks(img, linearInterpMasks){
+  var thisYear = ee.Date(img.get('system:time_start')).format('YYYY');
+  //thisYear_maskName = ee.String('mask_').cat(thisYear);
+  var thisYear_maskName = ee.String('.*_').cat(thisYear);
+  var thisMask = linearInterpMasks.select(thisYear_maskName);
+  img = img.updateMask(thisMask);
+  return img;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // Function to prep data for Verdet. Will have to run Verdet and convert to stack after.
 // This step applies the Verdet Scaling. The scaling is undone in VERDETVertStack().
@@ -1099,13 +1104,7 @@ function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
   //VERDET currently requires all pixels have a value
   var countMask = tsT.count().unmask().gte(endYear.subtract(startYear).add(1));
 
-  tsT = tsT.map(function(img){
-    var m = img.mask();
-    //Allow areas with insufficient data to be included, but then set to a dummy value for later masking
-    m = m.or(countMask.not());
-    img = img.mask(m);
-    img = img.where(countMask.not(),-32768);
-    return img});
+  tsT = tsT.map(function(img){return nullFinder(img)});
 
   run_params.timeSeries = tsT;
   
