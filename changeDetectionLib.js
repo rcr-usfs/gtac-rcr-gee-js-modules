@@ -511,7 +511,7 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
     Map.addLayer(joinedTS,{},'Time Series',false);
   
     ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
-      var showLossYear = false
+      var showLossYear = false;
       if(i === 1){showLossYear = true}
       var lossStackI = lossStack.select(['.*_'+i.toString()]);
       var gainStackI = gainStack.select(['.*_'+i.toString()]);
