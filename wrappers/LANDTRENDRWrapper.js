@@ -7,10 +7,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-114.29776978215034, 48.641828620134454],
-          [-114.29776978215034, 48.543731891438185],
-          [-114.02036499699409, 48.543731891438185],
-          [-114.02036499699409, 48.641828620134454]]], null, false);
+        [[[-114.89071367722619, 48.87913410589321],
+          [-114.89071367722619, 48.206337851124374],
+          [-113.12191484910119, 48.206337851124374],
+          [-113.12191484910119, 48.87913410589321]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for LANDTRENDR across an annual time series
 //Returns a thresholded LANDTRENDR output
