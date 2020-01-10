@@ -232,7 +232,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     // Turn the HSV data into an RGB image and add it to the map.
     var seasonality = ee.Image.cat(phases.select([seasonalityVizIndexName+'.*']).clamp(0,1), 
                                     amplitudes.select([seasonalityVizIndexName+'.*']).unitScale(0,0.5).clamp(0,1),//.multiply(2.5), 
-                                    ndvi.unitScale(0,0.8).clamp(0,1)).hsvToRgb();
+                                    seasonalityMedian.unitScale(0,0.8).clamp(0,1)).hsvToRgb();
   
     Map.addLayer(seasonality, {'min':0,'max':1}, nameStart+ '_'+seasonalityVizIndexName+'_Seasonality',true);
     
