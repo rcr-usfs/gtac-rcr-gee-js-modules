@@ -1,17 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-1.046824176348764, 43.44060725155753],
-          [-1.046824176348764, 41.479417358601125],
-          [8.027882854901236, 41.479417358601125],
-          [8.027882854901236, 43.44060725155753]]], null, false);
+        [[[-121.38458374329343, 38.30575088562555],
+          [-121.38458374329343, 37.84739384151114],
+          [-120.74737671204343, 37.84739384151114],
+          [-120.74737671204343, 38.30575088562555]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -168,6 +167,9 @@ var seasonalityVizIndexName = 'NDVI';
 //Whether to apply a linear detrending of data.  Can be useful if long-term change is not of interest
 var detrend = true;
 ////////////////////////////////////////////////////////////////////////////////
+if(indexNames.indexOf(seasonalityVizIndexName) == -1){
+  indexNames.push(seasonalityVizIndexName);
+} 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //Function Calls
