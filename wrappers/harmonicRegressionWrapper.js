@@ -160,7 +160,7 @@ var scale = null;
 var whichHarmonics = [2];
 
 //Which bands/indices to run harmonic regression across
-var indexNames =['swir2','nir','red'];//NDVI','NBR','swir1'];//,'NBR','NDMI','nir','swir1','swir2','tcAngleBG'];//['nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];//['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];
+var indexNames =['swir2','nir','red','NDVI'];
 
 //Choose which band/index to use for visualizing seasonality in hue, saturation, value color space (generally NDVI works best)
 var seasonalityVizIndexName = 'NDVI';
@@ -168,9 +168,7 @@ var seasonalityVizIndexName = 'NDVI';
 //Whether to apply a linear detrending of data.  Can be useful if long-term change is not of interest
 var detrend = true;
 ////////////////////////////////////////////////////////////////////////////////
-if(indexNames.indexOf(seasonalityVizIndexName) == -1){
-  indexNames.push(seasonalityVizIndexName);
-} 
+if(indexNames.indexOf(seasonalityVizIndexName) == -1){indexNames.push(seasonalityVizIndexName)} 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //Function Calls
@@ -197,7 +195,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   
   var composite = allScenesT.median();
   Map.addLayer(composite,{'min':0.1,'max':0.4},nameStart+'_median_composite',false);
-  var ndvi = allScenesT.select(['NDVI']).median();
+  var seasonalityMedian = composite.select([seasonalityVizIndexName]);
  
   //Fit harmonic model
   var coeffsPredicted =getImageLib.getHarmonicCoefficientsAndFit(allScenesT,indexNames,whichHarmonics,detrend);
