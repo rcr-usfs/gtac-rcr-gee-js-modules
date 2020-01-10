@@ -162,6 +162,9 @@ var whichHarmonics = [2];
 //Which bands/indices to run harmonic regression across
 var indexNames =['swir2','nir','red','NDVI'];//NDVI','NBR','swir1'];//,'NBR','NDMI','nir','swir1','swir2','tcAngleBG'];//['nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];//['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];
 
+//Choose which band/index to use for visualizing seasonality in hue, saturation, value color space (generally NDVI works best)
+var seasonalityVizIndexName = 'NDVI';
+
 //Whether to apply a linear detrending of data.  Can be useful if long-term change is not of interest
 var detrend = true;
 ////////////////////////////////////////////////////////////////////////////////
