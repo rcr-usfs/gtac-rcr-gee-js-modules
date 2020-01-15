@@ -759,6 +759,10 @@ function cFmaskCloudShadow(img){
 // Adds a band that is a mask of pixels that are dark, and dark outliers.
 function simpleTDOM2(collection,zScoreThresh,shadowSumThresh,contractPixels,
   dilatePixels,shadowSumBands,irMean,irStdDev){
+  if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
+  if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
+  if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
+  if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
   if(shadowSumBands === null || shadowSumBands === undefined){
     shadowSumBands = ['nir','swir1'];
   }
