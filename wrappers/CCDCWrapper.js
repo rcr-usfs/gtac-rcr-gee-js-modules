@@ -270,7 +270,7 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
 Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
 processedScenes = processedScenes.select(['blue','green','red','nir','swir1','swir2','temp']);
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0.002,0);
-print(ccdc)
+print(ccdc);
 Map.addLayer(ccdc,{},'raw ccdc',false);
 var ccdcImg = buildCcdcImage(ccdc, 4);
 Map.addLayer(ccdcImg,{},'ccdcImg',false);
