@@ -1190,7 +1190,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
     }
     else {
       
-      composite = medoidMosaicMSD(lsT,['blue','green','red','nir','swir1','swir2']);
+      composite = medoidMosaicMSD(lsT,['green','red','nir','swir1','swir2']);
     }
 
     return composite.set({'system:time_start':ee.Date.fromYMD(year+ yearWithMajority,6,1).millis(),
