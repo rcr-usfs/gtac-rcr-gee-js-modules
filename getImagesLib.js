@@ -1905,7 +1905,7 @@ applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFm
       var composite10k = composite.select(compositeBands.removeAll(nonDivideBands))
       .multiply(10000);
       composite = composite10k.addBands(composite.select(nonDivideBands))
-      .select(compositeBands).int32();
+      .select(compositeBands).int16();
     }
     else{
       composite = composite.multiply(10000).int16();
