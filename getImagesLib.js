@@ -2087,7 +2087,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
       var exportBands = ['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','year','julianDay'];
       exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
       ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-                  applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','yearJulian']);
+                  applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','year','julianDay']);
     }else{
       var exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp'];
       exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
