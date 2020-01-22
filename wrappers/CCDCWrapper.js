@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-121.0458270934555, 37.96457393928914],
-          [-121.0458270934555, 37.61947196257258],
-          [-119.7823993590805, 37.61947196257258],
-          [-119.7823993590805, 37.96457393928914]]], null, false);
+        [[[-74.19414062499999, 43.216944938484936],
+          [-74.19414062499999, 41.26517132419739],
+          [-71.46953124999999, 41.26517132419739],
+          [-71.46953124999999, 43.216944938484936]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -140,8 +140,8 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2016;
-var endYear = 2018;
+var startYear = 2014;
+var endYear = 2019;
 
 
 
@@ -269,7 +269,7 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
 
 Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
 processedScenes = processedScenes.select(['blue','green','red','nir','swir1','swir2','temp']);
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0.002,0);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0.002);
 print(ccdc);
 Map.addLayer(ccdc,{},'raw ccdc',false);
 var ccdcImg = buildCcdcImage(ccdc, 4);
