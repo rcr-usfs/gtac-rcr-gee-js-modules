@@ -228,7 +228,11 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     Map.addLayer(AUCs,{min:0,max:0.3},nameStart+ '_AUCs',false);
     Map.addLayer(peakJulians,{'min':0,'max':365},nameStart+ '_peakJulians',false);
   
-   
+    //Create synthetic image for peak julian day according the the seasonalityVizIndexName band
+    var dateImage = ee.Image(yr).add(peakJulians.select([seasonalityVizIndexName + '_peakJulianDay']).divide(365));
+    var synth = getImageLib.synthImage(coeffs,dateImage,indexNames,whichHarmonics,detrend);
+    Map.addLayer(synth,{'min':0.1,'max':0.4},nameStart + '_Date_of_Max_'+seasonalityVizIndexName+'_Synth_Max_Image',false);
+    
     // Turn the HSV data into an RGB image and add it to the map.
     var seasonality = ee.Image.cat(phases.select([seasonalityVizIndexName+'.*']).clamp(0,1), 
                                     amplitudes.select([seasonalityVizIndexName+'.*']).unitScale(0,0.5).clamp(0,1),//.multiply(2.5), 
@@ -236,10 +240,6 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   
     Map.addLayer(seasonality, {'min':0,'max':1}, nameStart+ '_'+seasonalityVizIndexName+'_Seasonality',true);
     
-    //Create synthetic image for peak julian day according the the seasonalityVizIndexName band
-    var dateImage = ee.Image(yr).add(peakJulians.select([seasonalityVizIndexName + '_peakJulianDay']).divide(365));
-    var synth = getImageLib.synthImage(coeffs,dateImage,indexNames,whichHarmonics,detrend);
-    Map.addLayer(synth,getImageLib.vizParamsFalse,nameStart + '_Date_of_Max_'+seasonalityVizIndexName+'_Synthetic_Max_Image',false);
     
   }
   
