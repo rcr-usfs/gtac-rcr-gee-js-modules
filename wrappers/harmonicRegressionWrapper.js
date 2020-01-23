@@ -236,6 +236,9 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   
     Map.addLayer(seasonality, {'min':0,'max':1}, nameStart+ '_'+seasonalityVizIndexName+'_Seasonality',true);
     
+    var dateImage = ee.Image(year).add(peakJulians.select([seasonalityVizIndexName + '_peakJulianDay']).divide(365))
+    var synth = getImageLib.synthImage(coeffs,dateImage,indexNames,whichHarmonics,detrend);
+  Map.addLayer(synth,getImageLib.vizParamsFalse,'synthetic',false);
   }
   
   //Export image
@@ -249,8 +252,6 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   coeffsOut = coeffsOut.copyProperties(coeffs)
                         .copyProperties(coeffs,['system:time_start']);
   
-  var synth = getImageLib.synthImage(coeffs,ee.Image([2019.6]),indexNames,whichHarmonics,detrend);
-  Map.addLayer(synth,getImageLib.vizParamsFalse,'synthetic',false);
   var outName = outputName + startYearT.toString() + '_'+ endYearT.toString();
   var outPath = exportPathRoot + '/' + outName;
   getImageLib.exportToAssetWrapper(coeffs,outName,outPath,
