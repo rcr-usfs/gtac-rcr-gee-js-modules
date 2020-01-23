@@ -249,7 +249,8 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   coeffsOut = coeffsOut.copyProperties(coeffs)
                         .copyProperties(coeffs,['system:time_start']);
   
-
+  var synth = getImageLib.synthImage(coeffs,ee.Image([2019.6]),indexNames,whichHarmonics,detrend);
+  Map.addLayer(synth,getImageLib.vizParamsFalse,'synthetic',false);
   var outName = outputName + startYearT.toString() + '_'+ endYearT.toString();
   var outPath = exportPathRoot + '/' + outName;
   getImageLib.exportToAssetWrapper(coeffs,outName,outPath,
