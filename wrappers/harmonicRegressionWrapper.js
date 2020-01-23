@@ -236,7 +236,8 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   
     Map.addLayer(seasonality, {'min':0,'max':1}, nameStart+ '_'+seasonalityVizIndexName+'_Seasonality',true);
     
-    var dateImage = ee.Image(year).add(peakJulians.select([seasonalityVizIndexName + '_peakJulianDay']).divide(365))
+    //Create synthetic image for peak julian day according the the seasonalityVizIndexName band
+    var dateImage = ee.Image(yr).add(peakJulians.select([seasonalityVizIndexName + '_peakJulianDay']).divide(365));
     var synth = getImageLib.synthImage(coeffs,dateImage,indexNames,whichHarmonics,detrend);
   Map.addLayer(synth,getImageLib.vizParamsFalse,'synthetic',false);
   }
