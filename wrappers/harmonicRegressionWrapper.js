@@ -2,15 +2,11 @@
 var geometry = 
     /* color: #d63000 */
     /* shown: false */
-    ee.Feature(
-        ee.Geometry.Polygon(
-            [[[-121.72925686636518, 39.25666609688575],
-              [-121.72925686636518, 39.00526300299732],
-              [-121.09204983511518, 39.00526300299732],
-              [-121.09204983511518, 39.25666609688575]]]),
-        {
-          "system:index": "0"
-        });
+    ee.Geometry.Polygon(
+        [[[-121.72925686636518, 39.25666609688575],
+          [-121.72925686636518, 39.00526300299732],
+          [-121.09204983511518, 39.00526300299732],
+          [-121.09204983511518, 39.25666609688575]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 //Wrapper for running harmonic regression across a moving window of years
