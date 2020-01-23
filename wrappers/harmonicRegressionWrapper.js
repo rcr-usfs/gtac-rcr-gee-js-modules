@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-121.38458374329343, 38.30575088562555],
-          [-121.38458374329343, 37.84739384151114],
-          [-120.74737671204343, 37.84739384151114],
-          [-120.74737671204343, 38.30575088562555]]], null, false);
+        [[[-120.79818847962156, 38.37791688331429],
+          [-120.79818847962156, 37.92001392314041],
+          [-120.16098144837156, 37.92001392314041],
+          [-120.16098144837156, 38.37791688331429]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running harmonic regression across a moving window of years
 
@@ -239,7 +239,10 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     //Create synthetic image for peak julian day according the the seasonalityVizIndexName band
     var dateImage = ee.Image(yr).add(peakJulians.select([seasonalityVizIndexName + '_peakJulianDay']).divide(365));
     var synth = getImageLib.synthImage(coeffs,dateImage,indexNames,whichHarmonics,detrend);
-    Map.addLayer(synth,getImageLib.vizParamsFalse,nameStart + '_Synthetic_Image',false);
+    Map.addLayer(synth,getImageLib.vizParamsFalse,nameStart + '_Synthetic_Max_Image',false);
+    var dateImage = ee.Image(yr).add(peakJulians.select([seasonalityVizIndexName + '_peakJulianDay']).subtract(365/2).divide(365));
+    var synth = getImageLib.synthImage(coeffs,dateImage,indexNames,whichHarmonics,detrend);
+    Map.addLayer(synth,getImageLib.vizParamsFalse,nameStart + '_Synthetic_Min_Image',false);
   }
   
   //Export image
