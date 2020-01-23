@@ -157,7 +157,7 @@ var scale = null;
 //Typical assumption of 1 cycle/yr would be [2]
 //If trying to overfit, or expected bimodal phenology try adding a higher frequency as well
 //ex. [2,4]
-var whichHarmonics = [2];
+var whichHarmonics = [2,4];
 
 //Which bands/indices to run harmonic regression across
 var indexNames =['swir2','nir','red','NDVI'];
@@ -207,10 +207,10 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
             'startYearT':startYearT,
             'endYearT':endYearT,
             }).float();
-  // Map.addLayer(coeffs,{},nameStart+ '_coeffs',false);
+  Map.addLayer(coeffs,{},nameStart+ '_coeffs',false);
   //Get predicted values for visualization
   var predicted = coeffsPredicted[1];
-  // Map.addLayer(predicted,{},nameStart+ '_predicted',false);
+  Map.addLayer(predicted,{},nameStart+ '_predicted',false);
   
   //Optionally simplify coeffs to phase, amplitude, and date of peak
   if(whichHarmonics.indexOf(2) > -1){
