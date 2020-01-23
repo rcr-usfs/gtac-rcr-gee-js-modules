@@ -240,9 +240,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
     var dateImage = ee.Image(yr).add(peakJulians.select([seasonalityVizIndexName + '_peakJulianDay']).divide(365));
     var synth = getImageLib.synthImage(coeffs,dateImage,indexNames,whichHarmonics,detrend);
     Map.addLayer(synth,getImageLib.vizParamsFalse,nameStart + '_Synthetic_Max_Image',false);
-    var dateImage = ee.Image(yr).add(peakJulians.select([seasonalityVizIndexName + '_peakJulianDay']).subtract(365/2).divide(365));
-    var synth = getImageLib.synthImage(coeffs,dateImage,indexNames,whichHarmonics,detrend);
-    Map.addLayer(synth,getImageLib.vizParamsFalse,nameStart + '_Synthetic_Min_Image',false);
+    
   }
   
   //Export image
