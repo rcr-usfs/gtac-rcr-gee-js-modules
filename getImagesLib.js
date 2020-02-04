@@ -1526,8 +1526,9 @@ var multModisDict = {
   };
 /////////////////////////////////////////////////
 //Helper function to join two collections- Source: code.earthengine.google.com
-function joinCollections(c1,c2, maskAnyNullValues){
+function joinCollections(c1,c2, maskAnyNullValues,property){
   if(maskAnyNullValues === undefined || maskAnyNullValues === null){maskAnyNullValues = true}
+  if(property === undefined || property === null){property = 'system:time_start'}
   var MergeBands = function(element) {
     // A function to merge the bands together.
     // After a join, results are in 'primary' and 'secondary' properties.
@@ -1535,7 +1536,7 @@ function joinCollections(c1,c2, maskAnyNullValues){
   };
 
   var join = ee.Join.inner();
-  var filter = ee.Filter.equals('system:time_start', null, 'system:time_start');
+  var filter = ee.Filter.equals(property, null, property);
   var joined = ee.ImageCollection(join.apply(c1, c2, filter));
 
   joined = ee.ImageCollection(joined.map(MergeBands));
