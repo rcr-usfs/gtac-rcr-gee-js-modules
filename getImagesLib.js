@@ -549,11 +549,8 @@ function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     lsTOAFMASK = ee.ImageCollection(l4sTOAFMASK.merge(l5sTOAFMASK).merge(l7sTOAFMASK).merge(l8sTOAFMASK));
     //Join the TOA with SR QA bands
     print('Joining TOA with SR QA bands');
-    print(ls,lsTOAFMASK)
+   
     ls = joinCollections(ls.select([0,1,2,3,4,5,6]),lsTOAFMASK,false,'system:index');
-    
-    
-    print(ls.size())
   }
   
   
