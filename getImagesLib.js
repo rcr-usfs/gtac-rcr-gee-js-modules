@@ -551,7 +551,9 @@ function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
     print('Joining TOA with SR QA bands');
     print(ls,lsTOAFMASK)
     ls = joinCollections(ls.select([0,1,2,3,4,5,6]),lsTOAFMASK);
-    print(ls.size())
+    
+    var ls2 =smartJoin(ls.select([0,1,2,3,4,5,6]),lsTOAFMASK,12)
+    print(ls.size(),ls2.size())
   }
   
   
