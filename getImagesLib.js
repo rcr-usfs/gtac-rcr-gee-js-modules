@@ -1536,11 +1536,12 @@ function joinCollections(c1,c2, maskAnyNullValues,property){
   var join = ee.Join.inner();
   var filter = ee.Filter.equals(property, null, property);
   var joined = ee.ImageCollection(join.apply(c1, c2, filter));
-  print(joined)
+
   joined = ee.ImageCollection(joined.map(MergeBands));
   if(maskAnyNullValues){
     joined = joined.map(function(img){return img.mask(img.mask().and(img.reduce(ee.Reducer.min()).neq(0)))});
   }
+  print(joined)
   return joined;
 }
 
