@@ -1541,7 +1541,6 @@ function joinCollections(c1,c2, maskAnyNullValues,property){
   if(maskAnyNullValues){
     joined = joined.map(function(img){return img.mask(img.mask().and(img.reduce(ee.Reducer.min()).neq(0)))});
   }
-
   return joined;
 }
 
