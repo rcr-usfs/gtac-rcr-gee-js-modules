@@ -2341,9 +2341,9 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
  
   // Add common indices- can use addIndices for comprehensive indices 
   //or simpleAddIndices for only common indices
-  s2s = s2s.map(simpleAddIndices)
-          .map(getTasseledCap)
-          .map(simpleAddTCAngles);
+  // s2s = s2s.map(simpleAddIndices)
+          // .map(getTasseledCap)
+          // .map(simpleAddTCAngles);
   
   // Create composite time series
   var ts = compositeTimeSeries(s2s,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
