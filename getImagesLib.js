@@ -341,7 +341,7 @@ function dailyMosaics(imgs){
   
   //Find the unique days
   var days = uniqueValues(imgs,'simpleTime');
-  
+  print(days)
   imgs = days.map(function(d){
     d = ee.Number.parse(d);
     d = ee.Date(d);
