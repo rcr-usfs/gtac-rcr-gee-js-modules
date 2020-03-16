@@ -340,9 +340,7 @@ function dailyMosaics(imgs){
   });
   
   //Find the unique days
-  var days = uniqueValues(imgs,'simpleTime');
-  print(days)
-  print(ee.Dictionary(imgs.aggregate_histogram('simpleTime')).keys())
+  var days = ee.Dictionary(imgs.aggregate_histogram('simpleTime')).keys();
   imgs = days.map(function(d){
     d = ee.Number.parse(d);
     d = ee.Date(d);
