@@ -715,6 +715,7 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
         .reduce(ee.Reducer.percentile([cloudScorePctl]));
       // Map.addLayer(minCloudScore,{'min':0,'max':30},'minCloudScore',false);
     }else{
+      print('Using pre-computed cloudScore offset')
       minCloudScore = preComputedCloudScoreOffset.rename(['cloudScore']);
     }
   }else{
