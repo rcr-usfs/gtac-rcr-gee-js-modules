@@ -697,9 +697,9 @@ function landsatCloudScore(img) {
 }
 ////////////////////////////////////////////////////////////////////////////////
 //Wrapper for applying cloudScore function
-function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset){
+function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset,preComputedCloudScoreOffset){
   if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
-  
+  if(preComputedCloudScoreOffset === undefined || preComputedCloudScoreOffset === null){preComputedCloudScoreOffset = null};
   // Add cloudScore
   var collection = collection.map(function(img){
     var cs = cloudScoreFunction(img).rename(['cloudScore']);
@@ -707,11 +707,16 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
   });
   
   if(performCloudScoreOffset){
-    print('Computing cloudScore offset');
-    // Find low cloud score pctl for each pixel to avoid comission errors
-    var minCloudScore = collection.select(['cloudScore'])
-      .reduce(ee.Reducer.percentile([cloudScorePctl]));
-    // Map.addLayer(minCloudScore,{'min':0,'max':30},'minCloudScore',false);
+    var minCloudScore;
+    if(preComputedCloudScoreOffset !== null){
+      print('Computing cloudScore offset');
+      // Find low cloud score pctl for each pixel to avoid comission errors
+      minCloudScore = collection.select(['cloudScore'])
+        .reduce(ee.Reducer.percentile([cloudScorePctl]));
+      // Map.addLayer(minCloudScore,{'min':0,'max':30},'minCloudScore',false);
+    }else{
+      minCloudScore = preComputedCloudScoreOffset.rename(['cloudScore']);
+    }
   }else{
     print('Not computing cloudScore offset');
     var minCloudScore = ee.Image(0).rename(['cloudScore']);
