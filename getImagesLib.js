@@ -708,7 +708,7 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
   
   if(performCloudScoreOffset){
     var minCloudScore;
-    if(preComputedCloudScoreOffset !== null){
+    if(preComputedCloudScoreOffset === null){
       print('Computing cloudScore offset');
       // Find low cloud score pctl for each pixel to avoid comission errors
       minCloudScore = collection.select(['cloudScore'])
