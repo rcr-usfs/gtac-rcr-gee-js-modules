@@ -80,7 +80,7 @@ var buildCoefs = function(fit, nSegments) {
   var bns = coeffs.bandNames();
   
   var segBns = ee.List.sequence(1,nSegments).map(function(n){return ee.String('S').cat(ee.Number(n).byte().format())});
-  // var segBns = buildSegmentBandTag(nSegments,bns);
+
   var otherBns =bns.map(function(bn){
     bn = ee.String(bn);
     return harmonicTag.map(function(harm){
@@ -89,8 +89,8 @@ var buildCoefs = function(fit, nSegments) {
     });
   }).flatten();
   
-  // var totalLength = ee.Number(nSegments).multiply(bns.length());
-  var zeros = ee.Image(ee.Array([ee.List.repeat(0,ee.Number(harmonicTag.length).multiply(bns.length()))]).repeat(0, nSegments));
+  var totalLength = ee.Number(harmonicTag.length).multiply(bns.length());
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0,totalLength)]).repeat(0, nSegments));
   
   var coeffImg = coeffs.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments);
 
