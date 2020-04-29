@@ -1,7 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -31,8 +30,8 @@ var buildSegmentTag = function(nSegments) {
 
 
 function buildSegmentBandTag(nSegments,bands){
-  var out = ee.List.sequence(1, nSegments).map(function(i) {
-      return bands.map(function(bn){
+  var out = bands.map(function(bn){
+      return ee.List.sequence(1, nSegments).map(function(i) {
         return ee.String('S').cat(ee.Number(i).int()).cat('_').cat(bn);
       });
   });
@@ -78,13 +77,23 @@ var buildCoefs = function(fit, nSegments) {
   var coeffs = fit.select(['.*_coefs']);
   
   var bns = coeffs.bandNames();
- 
-  var segBns = buildSegmentBandTag(nSegments,bns);
-  var totalLength = ee.Number(nSegments).multiply(bns.length());
-  var zeros = ee.Image(ee.Array([ee.List.repeat(0,harmonicTag.length)]).repeat(0, totalLength));
   
-  var coeffImg = coeffs.toArray(0).arrayCat(zeros, 0).arraySlice(0, 0, totalLength);
-  coeffImg = coeffImg.arrayFlatten([segBns, harmonicTag]);
+  var segBns = ee.List.sequence(1,nSegments).map(function(n){return ee.String('S').cat(ee.Number(n).byte().format())});
+  // var segBns = buildSegmentBandTag(nSegments,bns);
+  var otherBns =bns.map(function(bn){
+    bn = ee.String(bn);
+    return harmonicTag.map(function(harm){
+      harm = ee.String(harm);
+      return bn.cat('_').cat(harm);
+    });
+  }).flatten();
+  
+  // var totalLength = ee.Number(nSegments).multiply(bns.length());
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0,ee.Number(harmonicTag.length).multiply(bns.length()))]).repeat(0, nSegments));
+  
+  var coeffImg = coeffs.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments);
+
+  coeffImg = coeffImg.arrayFlatten([segBns,otherBns]);
  
   return coeffImg;
 };
