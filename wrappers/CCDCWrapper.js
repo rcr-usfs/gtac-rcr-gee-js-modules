@@ -297,7 +297,7 @@ var cosCoeffs = ccdcImg.select(['.*_COS']);
 var bands = ['S1_swir2.*','S1_nir.*','S1_red.*'];
 var band = 'B4.*';
 var phase = sinCoeffs.atan2(cosCoeffs)
-                    .unitScale(-Math.PI, Math.PI)
+                    .unitScale(-Math.PI, Math.PI);
  
 var amplitude = sinCoeffs.hypot(cosCoeffs)
                     // .unitScale(0, 1)
