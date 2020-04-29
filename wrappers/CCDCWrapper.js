@@ -1,17 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #d63000 */
-    /* shown: false */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[-74.19414062499999, 43.216944938484936],
-          [-74.19414062499999, 41.26517132419739],
-          [-71.46953124999999, 41.26517132419739],
-          [-71.46953124999999, 43.216944938484936]]], null, false);
+var geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -151,7 +139,7 @@ var endJulian = 365;
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
 var startYear = 2014;
-var endYear = 2019;
+var endYear = 2020;
 
 
 
