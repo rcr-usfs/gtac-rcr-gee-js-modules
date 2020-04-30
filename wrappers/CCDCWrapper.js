@@ -14,7 +14,7 @@ var geometry =
           [-105.76374794182315, 40.18578729628127]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 // var ccdcLib = require('users/yang/CCDC:default');
 
@@ -143,7 +143,7 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag){
   if(harmonicTag === null || harmonicTag === undefined){
     harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
-   getCCDCSeg(img,ccdcImg)
+   getCCDCSeg(ee.Image(ts.first()),ccdcImg)
   var bns = ee.Image(ts.first()).bandNames();
   print(ccdcImg)
 }
@@ -290,11 +290,11 @@ var indexNames = ['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];
 
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
-var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
+var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
-  ).map(getImageLib.addSAVIandEVI);
+  ).map(getImagesLib.addSAVIandEVI);
 
 Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
 processedScenes = processedScenes.select(indexNames);
