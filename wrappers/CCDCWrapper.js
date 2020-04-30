@@ -337,8 +337,7 @@ var cloudBands = null;//['green','swir1']
 // Map.addLayer(ccdc,{},'raw ccdc',false);
 // var ccdcImg = buildCcdcImage(ccdc, 4);
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
-var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test')
-;
+var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test');
 print(ccdcImg)
 // predictCCDC(ccdcImg,processedScenes)
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
