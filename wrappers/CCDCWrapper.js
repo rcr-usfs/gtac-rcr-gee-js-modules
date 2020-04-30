@@ -178,7 +178,7 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   var bns = ee.Image(ts.first()).bandNames();
   ts = ts.limit(20).map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
   Map.addLayer(ts)
-  getCCDCPrediction(ee.Image(ts.limit(20).sort('system:time_start',false).first()))
+  getCCDCPrediction(ee.Image(ts.sort('system:time_start',false).first()))
   print(ccdcImg)
 }
 //-------------------- END CCDC Helper Function -------------------//
