@@ -1,17 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-105.947425615163, 40.18578729628127],
-          [-105.947425615163, 40.12543526681618],
-          [-105.76374794182315, 40.12543526681618],
-          [-105.76374794182315, 40.18578729628127]]], null, false);
+        [[[-105.8433988207294, 40.189328031358066],
+          [-105.8433988207294, 40.103774187243715],
+          [-105.6676175707294, 40.103774187243715],
+          [-105.6676175707294, 40.189328031358066]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -336,6 +335,8 @@ var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, 
 print(ccdc);
 Map.addLayer(ccdc,{},'raw ccdc',false);
 var ccdcImg = buildCcdcImage(ccdc, 4);
+Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
+
 predictCCDC(ccdcImg,processedScenes)
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
