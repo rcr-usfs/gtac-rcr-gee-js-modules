@@ -127,7 +127,7 @@ var buildCcdcImage = function(fit, nSegments) {
 
   return ee.Image.cat(coeffs, rmses, mags, change).float();
 };
-
+function predictCCDC(cc)
 //-------------------- END CCDC Helper Function -------------------//
 ///////////////////////////////////////////////////////////////////////////////
 dLib.getExistingChangeData();
@@ -283,26 +283,27 @@ var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, 
 print(ccdc);
 Map.addLayer(ccdc,{},'raw ccdc',false);
 var ccdcImg = buildCcdcImage(ccdc, 4);
-Map.addLayer(ccdcImg,{},'ccdcImg',false);
+predictCCDC(ccdcImg)
+// Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
-var breaks = ccdcImg.select(['.*_tBreak']);
-var probs = ccdcImg.select(['.*_changeProb']);
-var change = probs.gt(0.6);
-breaks = breaks.updateMask(change.neq(0));
-Map.addLayer(breaks.reduce(ee.Reducer.max()),{min:startYear,max:endYear},'Change year',false);
+// var breaks = ccdcImg.select(['.*_tBreak']);
+// var probs = ccdcImg.select(['.*_changeProb']);
+// var change = probs.gt(0.6);
+// breaks = breaks.updateMask(change.neq(0));
+// Map.addLayer(breaks.reduce(ee.Reducer.max()),{min:startYear,max:endYear},'Change year',false);
 
 
-var sinCoeffs = ccdcImg.select(['.*_SIN']);
-var cosCoeffs = ccdcImg.select(['.*_COS']);
-var bands = ['S1_swir2.*','S1_nir.*','S1_red.*'];
-var band = 'B4.*';
-var phase = sinCoeffs.atan2(cosCoeffs)
-                    .unitScale(-Math.PI, Math.PI);
+// var sinCoeffs = ccdcImg.select(['.*_SIN']);
+// var cosCoeffs = ccdcImg.select(['.*_COS']);
+// var bands = ['S1_swir2.*','S1_nir.*','S1_red.*'];
+// var band = 'B4.*';
+// var phase = sinCoeffs.atan2(cosCoeffs)
+//                     .unitScale(-Math.PI, Math.PI);
  
-var amplitude = sinCoeffs.hypot(cosCoeffs)
-                    // .unitScale(0, 1)
-                    .multiply(2)
-  Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
-  Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
+// var amplitude = sinCoeffs.hypot(cosCoeffs)
+//                     // .unitScale(0, 1)
+//                     .multiply(2)
+//   Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
+//   Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
 
 Map.setOptions('HYBRID');
