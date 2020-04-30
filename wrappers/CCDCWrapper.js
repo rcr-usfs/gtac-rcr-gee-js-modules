@@ -162,24 +162,22 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   return img;//.updateMask(img.mask().reduce(ee.Reducer.min()));
   }
 function getCCDCPrediction(img){
-  //Get date image from decimal years to days
-  var tfit = img.select(['year'])
-  
+  var tImg = img.select(['year']);
+  var coeffs = img.select(['.*_coefs_.*'])
   //Unit of each harmonic (1 cycle)
   var omega = 2.0 * Math.PI;
   
   //Constant raster for each coefficient
   //Constant, slope, first harmonic, second harmonic, and third harmonic
-  var imageT = ee.Image([1, tfit,
-                                tfit.multiply(omega).cos(),
-                                tfit.multiply(omega).sin(),
-                                tfit.multiply(omega * 2).cos(),
-                                tfit.multiply(omega * 2).sin(),
-                                tfit.multiply(omega * 3).cos(),
-                                tfit.multiply(omega * 3).sin()]);
+  var harmImg = ee.Image([1, tImg,
+                                tImg.multiply(omega).cos(),
+                                tImg.multiply(omega).sin(),
+                                tImg.multiply(omega * 2).cos(),
+                                tImg.multiply(omega * 2).sin(),
+                                tImg.multiply(omega * 3).cos(),
+                                tImg.multiply(omega * 3).sin()]);
                                 
-  // harmonicImg = harmonicImg.addBands(ee.Image([Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
-  
+  Map.addLayer(harmImg)
 }
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   if(nSegments === null || nSegments === undefined){
