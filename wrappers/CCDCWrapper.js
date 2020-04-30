@@ -142,6 +142,7 @@ function getCCDCSegCoeffs(img,ccdcImg){
   var nSegs = segMask.bandNames().length();
   
   var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
+    prev = ee.Image(prev);
     var segBN = ee.String('S').cat(ee.Number(n).byte().format());
     var segCoeffs = ccdcImg.select([segBN]);
     segCoeffs = segCoeffs.select(['.*_coefs_.*']);
