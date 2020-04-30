@@ -137,9 +137,9 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   if(harmonicTag === null || harmonicTag === undefined){
     harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
-  var coeffs =  ccdcImg.select('.*_coefs_.*')
+  var coeffs =  ccdcImg.select('.*_coefs_.*');
   var coeffBns = coeffs.bandNames();
-  var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')})
+  var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
   
   
   var tStarts = ccdcImg.select(['.*tStart']);
@@ -177,10 +177,17 @@ function getCCDCPrediction(img){
                                 tImg.multiply(omega * 3).cos(),
                                 tImg.multiply(omega * 3).sin()]);
                                 
-  Map.addLayer(harmImg);
-   Map.addLayer(coeffs);
+  
    var indices = coeffs.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
-   print(indices)
+  var bns = ee.Dictionary(indices.reduce(ee.Reducer.frequencyHistogram())).keys();
+  var bnsOut = bns.map(function(bn){return ee.String(bn).cat('_predicted')});
+  var predicted = ee.ImageCollection(bns.map(function(bn){
+    bn = ee.String(bn);
+    var predictedT = coeffs.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
+    return predictedT;
+  })).toBands().rename(bnsOut);
+  
+  return img.addBands(predicted);
 }
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   if(nSegments === null || nSegments === undefined){
@@ -195,9 +202,12 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   }
   var bns = ee.Image(ts.first()).bandNames();
   // ts = ts.map(getImagesLib.addYearYearFractionBand)
+  var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+  Map.addLayer(count,{min:1,max:2},'count')
   ts = ts.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
   Map.addLayer(ts)
-  getCCDCPrediction(ee.Image(ts.limit(20).sort('system:time_start',false).first()))
+  ts = ts.map(getCCDCPrediction);
+  Map.addLayer(ts.select(['.*_predicted']))
   print(ccdcImg);
 }
 //-------------------- END CCDC Helper Function -------------------//
@@ -358,7 +368,7 @@ var cloudBands = null;//['green','swir1']
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test');
 print(ccdcImg)
-var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.1).map(function(n){
+var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.05).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n).float().rename(['year']);
   var y = n.int16();
