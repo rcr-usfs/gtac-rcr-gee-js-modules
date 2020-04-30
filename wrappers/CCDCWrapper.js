@@ -140,7 +140,7 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   var coeffBns = coeffs.bandNames();
   var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')})
   
-  img = getImagesLib.addYearYearFractionBand(img);
+  
   var tStarts = ccdcImg.select(['.*tStart']);
   var tEnds = ccdcImg.select(['.*tEnd']);
   var tBand = img.select(['year']);
@@ -175,6 +175,7 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
     harmonicImg = ee.Image([1,1,Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
   var bns = ee.Image(ts.first()).bandNames();
+  ts = ts.map(getImagesLib.addYearYearFractionBand)
   ts = ts.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
   Map.addLayer(ts)
   getCCDCPrediction(ee.Image(ts.limit(20).sort('system:time_start',false).first()))
