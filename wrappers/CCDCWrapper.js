@@ -140,9 +140,16 @@ function getCCDCSegCoeffs(img,ccdcImg){
   var tBand = img.select(['year'])
   var segMask  = tBand.gte(tStarts).and(tBand.lte(tEnds));
   var nSegs = segMask.bandNames().length();
-  // var out = ee.List.sequence(1,nSegs).iterate(function(n,prev){
-  //   var segCoeffs = ccdcImg.select([ee.String('S')])
-  // },ee.Image(ee.List.repeat(0,nSegs)))
+  
+  var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
+    var segBN = ee.String('S').cat(ee.Number(n).byte().format());
+    var segCoeffs = ccdcImg.select([segBN]);
+    segCoeffs = segCoeffs.select(['.*_coefs_.*']);
+    var segMaskT = segMask.select([segBN]);
+    segCoeffs = segCoeffs.updateMask(segMaskT);
+    return prev.where(segCoeffs.mask(),segCoeffs)
+  },ee.Image(ee.List.repeat(0,nSegs))));
+  Map.addLayer(out)
   Map.addLayer(ccdcImg);
   Map.addLayer(segMask);
   Map.addLayer(tStarts);
