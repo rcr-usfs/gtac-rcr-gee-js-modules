@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -204,7 +205,7 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
   Map.addLayer(count,{min:1,max:2},'count')
   ts = ts.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
-  Map.addLayer(ts)
+  // Map.addLayer(ts)
   ts = ts.map(getCCDCPrediction);
   print(ts)
   Map.addLayer(ts.select(['NBR','NDVI','.*_predicted']))
@@ -359,7 +360,7 @@ var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear
   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
   ).map(getImagesLib.addSAVIandEVI);
 
-Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
+// Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
 processedScenes = processedScenes.select(indexNames);
 // var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
 // print(ccdc);
@@ -376,7 +377,7 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.05).m
   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
   return img.set('system:time_start',d)
 }));
-Map.addLayer(yearImages)
+// Map.addLayer(yearImages)
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
 predictCCDC(ccdcImg,processedScenes)
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
