@@ -133,6 +133,9 @@ var buildCcdcImage = function(fit, nSegments) {
 
   return ee.Image.cat(coeffs, rmses, mags, change).float();
 };
+function getCCDCSeg(img,ccdcImg){
+    
+  }
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag){
   if(nSegments === null || nSegments === undefined){
     nSegments = 4;
@@ -140,6 +143,7 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag){
   if(harmonicTag === null || harmonicTag === undefined){
     harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
+  
   var bns = ee.Image(ts.first()).bandNames();
   print(ccdcImg)
 }
@@ -293,12 +297,12 @@ var processedScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,
   ).map(getImageLib.addSAVIandEVI);
 
 Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
-// processedScenes = processedScenes.select(['blue','green','red','nir','swir1','swir2','temp']);
+processedScenes = processedScenes.select(indexNames);
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0.002);
 print(ccdc);
 Map.addLayer(ccdc,{},'raw ccdc',false);
 var ccdcImg = buildCcdcImage(ccdc, 4);
-predictCCDC(ccdcImg)
+predictCCDC(ccdcImg,processedScenes)
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
 // var breaks = ccdcImg.select(['.*_tBreak']);
