@@ -72,8 +72,11 @@ var buildRMSE = function(fit, nSegments) {
  * Extract CCDC Coefficient image
  * 
  */
-var buildCoefs = function(fit, nSegments) {
-  var harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
+var buildCoefs = function(fit, nSegments,harmonicTag) {
+  if(harmonicTag === null || harmonicTag === undefined){
+    harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
+  }
+  
   
   var coeffs = fit.select(['.*_coefs']);
   
@@ -128,7 +131,7 @@ var buildCcdcImage = function(fit, nSegments) {
   return ee.Image.cat(coeffs, rmses, mags, change).float();
 };
 function predictCCDC(ccdcImg,ts,nSegments){
-  var tns = ee.Image(ts.first()).bandNames();
+  var bns = ee.Image(ts.first()).bandNames();
   print(ccdcImg)
 }
 //-------------------- END CCDC Helper Function -------------------//
