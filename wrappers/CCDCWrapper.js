@@ -153,7 +153,7 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
     segCoeffs = segCoeffs.updateMask(segMaskT);
     return prev.where(segCoeffs.mask(),segCoeffs);
   },ee.Image.constant(ee.List.repeat(0,harmonicTag.length)).rename(harmonicTag)));
-  return out.updateMask(img.mask().reduce(ee.Reducer.min()));
+  return img.updateBands(out.updateMask(img.mask().reduce(ee.Reducer.min())));
   }
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   if(nSegments === null || nSegments === undefined){
