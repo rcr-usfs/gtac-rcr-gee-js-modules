@@ -156,7 +156,8 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
     var segMaskT = segMask.select([segBN]);
     segCoeffs = segCoeffs.updateMask(segMaskT);
     return prev.where(segCoeffs.mask(),segCoeffs);
-  },ee.Image.constant(ee.List.repeat(0,outBns.length())).rename(outBns)));
+  },ee.Image.constant(ee.List.repeat(-9999,outBns.length())).rename(outBns)));
+  out = out.updateMask(out.neq(-9999));
   img = img.addBands(out);
   return img.updateMask(img.mask().reduce(ee.Reducer.min()));
   }
