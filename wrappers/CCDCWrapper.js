@@ -162,6 +162,12 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   return img;//.updateMask(img.mask().reduce(ee.Reducer.min()));
   }
 function getCCDCPrediction(img){
+  var harmonicImg = ee.Image([1,1]);
+  var harms = ee.Image([2*Math.PI,4*Math.PI,6*Math.PI]);
+  harms = harms.multiply(img.select(['year']))
+  var cosHarms = harms.cos()
+  Map.addLayer(harms)
+  // harmonicImg = harmonicImg.addBands(ee.Image([Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   
 }
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
@@ -345,11 +351,11 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.1).map(
   var img = ee.Image(n).float().rename(['year']);
   var y = n.int16();
   var fraction = n.subtract(y);
-  var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year');
-  return img//.set('system:time_start',d)
+  var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
+  return img.set('system:time_start',d)
 }));
-Map.addLayer(yearImages)
-// predictCCDC(ccdcImg,processedScenes)
+
+predictCCDC(ccdcImg,yearImages)
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
 // var breaks = ccdcImg.select(['.*_tBreak']);
