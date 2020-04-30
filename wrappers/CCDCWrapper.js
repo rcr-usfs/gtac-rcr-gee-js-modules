@@ -133,7 +133,7 @@ var buildCcdcImage = function(fit, nSegments) {
 
   return ee.Image.cat(coeffs, rmses, mags, change).float();
 };
-function getCCDCSegCoeffs(img,ccdcImg,harmonicImg){
+function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   if(harmonicTag === null || harmonicTag === undefined){
     harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
