@@ -166,8 +166,9 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
     
     harmonicImg = ee.Image([1,1,Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
-   getCCDCSegCoeffs(ee.Image(ts.limit(20).sort('system:time_start',false).first()),ccdcImg,harmonicTag)
   var bns = ee.Image(ts.first()).bandNames();
+   ts = ts.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
+  
   print(ccdcImg)
 }
 //-------------------- END CCDC Helper Function -------------------//
