@@ -342,11 +342,11 @@ var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test');
 print(ccdcImg)
 var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.1).map(function(n){
   n = ee.Number(n);
-  var img = ee.Image(n);
+  var img = ee.Image(n).float().rename(['year']);
   var y = n.int16();
   var fraction = n.subtract(y);
   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year');
-  return img.float().set('system:time_start',d).rename('year')
+  return img//.set('system:time_start',d)
 }));
 Map.addLayer(yearImages)
 // predictCCDC(ccdcImg,processedScenes)
