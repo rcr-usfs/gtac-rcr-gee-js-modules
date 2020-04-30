@@ -156,6 +156,7 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   img = img.addBands(out);
   return img.updateMask(img.mask().reduce(ee.Reducer.min()));
   }
+// function getCCDCPrediction
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   if(nSegments === null || nSegments === undefined){
     nSegments = 4;
@@ -170,6 +171,7 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   var bns = ee.Image(ts.first()).bandNames();
   ts = ts.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
   Map.addLayer(ts)
+  
   print(ccdcImg)
 }
 //-------------------- END CCDC Helper Function -------------------//
@@ -303,7 +305,7 @@ var scale = null;
 //Can include: 'blue','green','red','nir','swir1','swir2'
 //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
 // var indexList = ee.List(['nir','swir1']);
-var indexNames = ['NBR'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
+var indexNames = ['NBR','NDVI'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
 
 var cloudBands = null;//['green','swir1']
 ///////////////////////////////////////////////////////////////////////
