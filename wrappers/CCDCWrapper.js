@@ -134,7 +134,8 @@ var buildCcdcImage = function(fit, nSegments) {
   return ee.Image.cat(coeffs, rmses, mags, change).float();
 };
 function getCCDCSeg(img,ccdcImg){
-    
+  img = getImagesLib.addYearBand(img);
+  
   }
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag){
   if(nSegments === null || nSegments === undefined){
@@ -278,9 +279,9 @@ var scale = null;
 //Can include: 'blue','green','red','nir','swir1','swir2'
 //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
 // var indexList = ee.List(['nir','swir1']);
-var indexNames = ['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
+var indexNames = ['NBR'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
 
-
+var cloudBands = null;//['green','swir1']
 ///////////////////////////////////////////////////////////////////////
 // End user parameters
 ///////////////////////////////////////////////////////////////////////
@@ -298,7 +299,7 @@ var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear
 
 Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
 processedScenes = processedScenes.select(indexNames);
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, ['green','swir1'],6,0.99,1.33,1,0.002);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
 print(ccdc);
 Map.addLayer(ccdc,{},'raw ccdc',false);
 var ccdcImg = buildCcdcImage(ccdc, 4);
