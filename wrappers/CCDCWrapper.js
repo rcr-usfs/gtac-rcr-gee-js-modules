@@ -201,13 +201,14 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
     harmonicImg = ee.Image([1,1,Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
   var bns = ee.Image(ts.first()).bandNames();
-  // ts = ts.map(getImagesLib.addYearYearFractionBand)
+  
   var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
   Map.addLayer(count,{min:1,max:2},'count')
   ts = ts.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
   Map.addLayer(ts)
   ts = ts.map(getCCDCPrediction);
-  Map.addLayer(ts.select(['.*_predicted']))
+  print(ts)
+  Map.addLayer(ts.select(['NBR','NDVI','.*_predicted']))
   print(ccdcImg);
 }
 //-------------------- END CCDC Helper Function -------------------//
@@ -377,6 +378,7 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.05).m
   return img.set('system:time_start',d)
 }));
 Map.addLayer(yearImages)
+processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
 predictCCDC(ccdcImg,processedScenes)
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
