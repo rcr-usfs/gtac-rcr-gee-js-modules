@@ -163,9 +163,11 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   }
 function getCCDCPrediction(img){
   var harmonicImg = ee.Image([1,1]);
-  var harms = ee.Image([2*Math.PI,4*Math.PI,6*Math.PI]);
+  var harms = ee.Image([1,2*Math.PI,4*Math.PI,6*Math.PI]);
+  
   harms = harms.multiply(img.select(['year']))
-  var cosHarms = harms.cos()
+  var cosHarms = harms.cos();
+  var sinHarms = harms.cos();
   Map.addLayer(harms)
   // harmonicImg = harmonicImg.addBands(ee.Image([Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   
