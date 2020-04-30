@@ -339,14 +339,14 @@ var cloudBands = null;//['green','swir1']
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test');
 print(ccdcImg)
-var yearImages = ee.List.sequence(startYear,endYear,0.1).map(function(n){
+var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.1).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n);
   var y = n.int16();
   var fraction = n.subtract(y);
   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year');
   return img.set('system:time_start',d)
-});
+}));
 Map.addLayer(yearImages)
 // predictCCDC(ccdcImg,processedScenes)
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
