@@ -138,7 +138,7 @@ function getCCDCSeg(img,ccdcImg){
   var tStarts = ccdcImg.select(['.*tStart']);
   var tEnds = ccdcImg.select(['.*tEnd']);
   var tBand = img.select(['year'])
-  segMask  = tBand.gte(tStarts).and(tBand.lte(tEnds));
+  var segMask  = tBand.gte(tStarts).and(tBand.lte(tEnds));
   Map.addLayer(segMask)
   }
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
