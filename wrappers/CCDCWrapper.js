@@ -1,17 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-105.8433988207294, 40.189328031358066],
-          [-105.8433988207294, 40.103774187243715],
-          [-105.6676175707294, 40.103774187243715],
-          [-105.6676175707294, 40.189328031358066]]], null, false);
+        [[[-106.23939412562189, 40.35853013448848],
+          [-106.23939412562189, 39.72139814741314],
+          [-105.20393269984064, 39.72139814741314],
+          [-105.20393269984064, 40.35853013448848]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -233,8 +232,8 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2005;
-var endYear = 2010;
+var startYear = 1984;
+var endYear = 2020;
 
 
 
