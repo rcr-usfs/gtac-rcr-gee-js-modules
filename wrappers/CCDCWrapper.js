@@ -73,6 +73,9 @@ var buildRMSE = function(fit, nSegments) {
  * 
  */
 var buildCoefs = function(fit, nSegments,harmonicTag) {
+  if(nSegments === null || nSegments === undefined){
+    nSegments = 4;
+  }
   if(harmonicTag === null || harmonicTag === undefined){
     harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
@@ -130,7 +133,13 @@ var buildCcdcImage = function(fit, nSegments) {
 
   return ee.Image.cat(coeffs, rmses, mags, change).float();
 };
-function predictCCDC(ccdcImg,ts,nSegments){
+function predictCCDC(ccdcImg,ts,nSegments,harmonicTag){
+  if(nSegments === null || nSegments === undefined){
+    nSegments = 4;
+  }
+  if(harmonicTag === null || harmonicTag === undefined){
+    harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
+  }
   var bns = ee.Image(ts.first()).bandNames();
   print(ccdcImg)
 }
