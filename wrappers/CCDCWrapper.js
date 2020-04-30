@@ -140,7 +140,7 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   img = getImagesLib.addYearYearFractionBand(img);
   var tStarts = ccdcImg.select(['.*tStart']);
   var tEnds = ccdcImg.select(['.*tEnd']);
-  var tBand = img.select(['year'])
+  var tBand = img.select(['year']);
   var segMask  = tBand.gte(tStarts).and(tBand.lte(tEnds));
   var nSegs = segMask.bandNames().length();
   
@@ -151,13 +151,9 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
     segCoeffs = segCoeffs.select(['.*_coefs_.*']);
     var segMaskT = segMask.select([segBN]);
     segCoeffs = segCoeffs.updateMask(segMaskT);
-    return prev.where(segCoeffs.mask(),segCoeffs)
+    return prev.where(segCoeffs.mask(),segCoeffs);
   },ee.Image.constant(ee.List.repeat(0,harmonicTag.length)).rename(harmonicTag)));
-  Map.addLayer(out)
-  Map.addLayer(ccdcImg);
-  Map.addLayer(segMask);
-  Map.addLayer(tStarts);
-  Map.addLayer(tEnds);
+  return out.updateMask(img.mask().reduce(ee.Reducer.min()));
   }
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   if(nSegments === null || nSegments === undefined){
