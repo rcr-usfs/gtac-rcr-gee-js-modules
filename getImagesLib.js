@@ -221,6 +221,15 @@ function addYearFractionBand(img){
   db = db;//.updateMask(img.select([0]).mask())
   return img.addBands(db);
 }
+function addYearYearFractionBand(img){
+  var d = ee.Date(img.get('system:time_start'));
+  var y = d.get('year');
+  // d = y.add(d.getFraction('year'));
+  d=d.getFraction('year');
+  var db = ee.Image.constant(y).add(ee.Image.constant(d)).rename(['year']).float();
+  db = db;//.updateMask(img.select([0]).mask())
+  return img.addBands(db);
+}
 function addYearBand(img){
   var d = ee.Date(img.get('system:time_start'));
   var y = d.get('year');
