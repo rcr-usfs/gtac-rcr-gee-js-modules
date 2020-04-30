@@ -161,7 +161,9 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   img = img.addBands(out);
   return img;//.updateMask(img.mask().reduce(ee.Reducer.min()));
   }
-// function getCCDCPrediction
+function getCCDCPrediction(img){
+  
+}
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   if(nSegments === null || nSegments === undefined){
     nSegments = 4;
@@ -174,9 +176,9 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
     harmonicImg = ee.Image([1,1,Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
   var bns = ee.Image(ts.first()).bandNames();
-  ts = ts.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
+  ts = ts.limit(20).map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
   Map.addLayer(ts)
-  
+  getCCDCPrediction(ee.Image(ts.limit(20).sort('system:time_start',false).first()))
   print(ccdcImg)
 }
 //-------------------- END CCDC Helper Function -------------------//
