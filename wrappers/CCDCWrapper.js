@@ -340,7 +340,7 @@ var cloudBands = null;//['green','swir1']
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test');
 print(ccdcImg)
 var yearImages = ee.List.sequence(startYear,endYear,0.1).map(function(n){
-  n = ee.Number();
+  n = ee.Number(n);
   var img = ee.Image(n);
   var y = n.int16();
   var fraction = n.subtract(y);
