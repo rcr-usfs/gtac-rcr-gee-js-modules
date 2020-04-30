@@ -139,6 +139,7 @@ function getCCDCSeg(img,ccdcImg){
   var tEnds = ccdcImg.select(['.*tEnd']);
   var tBand = img.select(['year'])
   var segMask  = tBand.gte(tStarts).and(tBand.lte(tEnds));
+  Map.addLayer(tBand);
   Map.addLayer(segMask);
   Map.addLayer(tStarts);
   Map.addLayer(tEnds);
