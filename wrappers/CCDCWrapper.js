@@ -149,7 +149,7 @@ function getCCDCSegCoeffs(img,ccdcImg){
     var segMaskT = segMask.select([segBN]);
     segCoeffs = segCoeffs.updateMask(segMaskT);
     return prev.where(segCoeffs.mask(),segCoeffs)
-  },ee.Image.constant(ee.List.repeat(0,nSegs))));
+  },ee.Image.constant(ee.List.repeat(0,8))));
   Map.addLayer(out)
   Map.addLayer(ccdcImg);
   Map.addLayer(segMask);
