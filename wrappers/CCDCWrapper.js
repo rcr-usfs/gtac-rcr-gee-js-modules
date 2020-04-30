@@ -134,8 +134,8 @@ var buildCcdcImage = function(fit, nSegments) {
   return ee.Image.cat(coeffs, rmses, mags, change).float();
 };
 function getCCDCSeg(img,ccdcImg){
-  img = getImagesLib.addYearBand(img);
-  
+  img = getImagesLib.addYearFractionBand(img);
+  Map.addLayer(img)
   }
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   if(nSegments === null || nSegments === undefined){
