@@ -167,7 +167,7 @@ function getCCDCPrediction(img){
   
   harms = harms.multiply(img.select(['year']))
   var cosHarms = harms.cos();
-  var sinHarms = harms.cos();
+  var sinHarms = harms.sin();
   Map.addLayer(harms)
   // harmonicImg = harmonicImg.addBands(ee.Image([Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   
