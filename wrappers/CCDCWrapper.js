@@ -14,7 +14,7 @@ var geometry =
           [-105.6676175707294, 40.189328031358066]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
-// var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 // var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 // var ccdcLib = require('users/yang/CCDC:default');
 
@@ -351,16 +351,16 @@ var cloudBands = null;//['green','swir1']
 ///////////////////////////////////////////////////////////////////////
 //Start function calls
 
-// ////////////////////////////////////////////////////////////////////////////////
-// //Call on master wrapper function to get Landat scenes and composites
-// var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
-//   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
-//   applyFmaskCloudShadowMask,applyFmaskSnowMask,
-//   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
-//   ).map(getImagesLib.addSAVIandEVI);
+////////////////////////////////////////////////////////////////////////////////
+//Call on master wrapper function to get Landat scenes and composites
+var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
+  toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
+  applyFmaskCloudShadowMask,applyFmaskSnowMask,
+  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
+  ).map(getImagesLib.addSAVIandEVI);
 
-// Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
-// processedScenes = processedScenes.select(indexNames);
+Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
+processedScenes = processedScenes.select(indexNames);
 // var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
 // print(ccdc);
 // Map.addLayer(ccdc,{},'raw ccdc',false);
@@ -368,7 +368,7 @@ var cloudBands = null;//['green','swir1']
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test');
 print(ccdcImg)
-var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.05).map(function(n){
+var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.05).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n).float().rename(['year']);
   var y = n.int16();
@@ -376,8 +376,8 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.05).map
   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
   return img.set('system:time_start',d)
 }));
-
-predictCCDC(ccdcImg,yearImages)
+Map.addLayer(yearImages)
+predictCCDC(ccdcImg,processedScenes)
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
 // var breaks = ccdcImg.select(['.*_tBreak']);
