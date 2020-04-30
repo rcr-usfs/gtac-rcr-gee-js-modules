@@ -177,7 +177,10 @@ function getCCDCPrediction(img){
                                 tImg.multiply(omega * 3).cos(),
                                 tImg.multiply(omega * 3).sin()]);
                                 
-  Map.addLayer(harmImg)
+  Map.addLayer(harmImg);
+   Map.addLayer(coeffs);
+   var indices = coeffs.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
+   print(indices)
 }
 function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   if(nSegments === null || nSegments === undefined){
