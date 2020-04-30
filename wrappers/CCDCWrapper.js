@@ -139,7 +139,7 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   }
   var coeffs =  ccdcImg.select('.*_coefs_.*')
   var coeffBns = coeffs.bandNames();
-  var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return bn.split('_').slice(1,null).join('_')})
+  var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')})
   
   img = getImagesLib.addYearYearFractionBand(img);
   var tStarts = ccdcImg.select(['.*tStart']);
