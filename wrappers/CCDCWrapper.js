@@ -137,12 +137,16 @@ function getCCDCSeg(img,ccdcImg){
   img = getImagesLib.addYearBand(img);
   
   }
-function predictCCDC(ccdcImg,ts,nSegments,harmonicTag){
+function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
   if(nSegments === null || nSegments === undefined){
     nSegments = 4;
   }
   if(harmonicTag === null || harmonicTag === undefined){
     harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
+  }
+  if(harmonicImg === null || harmonicImg === undefined){
+    
+    harmonicImg = ee.Image([1,1,Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
    getCCDCSeg(ee.Image(ts.first()),ccdcImg)
   var bns = ee.Image(ts.first()).bandNames();
