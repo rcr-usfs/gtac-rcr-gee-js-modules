@@ -133,7 +133,10 @@ var buildCcdcImage = function(fit, nSegments) {
 
   return ee.Image.cat(coeffs, rmses, mags, change).float();
 };
-function getCCDCSegCoeffs(img,ccdcImg){
+function getCCDCSegCoeffs(img,ccdcImg,harmonicImg){
+  if(harmonicTag === null || harmonicTag === undefined){
+    harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
+  }
   img = getImagesLib.addYearYearFractionBand(img);
   var tStarts = ccdcImg.select(['.*tStart']);
   var tEnds = ccdcImg.select(['.*tEnd']);
@@ -149,7 +152,7 @@ function getCCDCSegCoeffs(img,ccdcImg){
     var segMaskT = segMask.select([segBN]);
     segCoeffs = segCoeffs.updateMask(segMaskT);
     return prev.where(segCoeffs.mask(),segCoeffs)
-  },ee.Image.constant(ee.List.repeat(0,8))));
+  },ee.Image.constant(ee.List.repeat(0,harmonicTag.length).rename(harmonicTag))));
   Map.addLayer(out)
   Map.addLayer(ccdcImg);
   Map.addLayer(segMask);
@@ -167,7 +170,7 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
     
     harmonicImg = ee.Image([1,1,Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
-   getCCDCSegCoeffs(ee.Image(ts.limit(20).sort('system:time_start',false).first()),ccdcImg)
+   getCCDCSegCoeffs(ee.Image(ts.limit(20).sort('system:time_start',false).first()),ccdcImg,harmonicTag)
   var bns = ee.Image(ts.first()).bandNames();
   print(ccdcImg)
 }
