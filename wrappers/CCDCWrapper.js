@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -13,8 +14,8 @@ var geometry =
           [-105.6676175707294, 40.189328031358066]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
-var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+// var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+// var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 // var ccdcLib = require('users/yang/CCDC:default');
 
 
@@ -175,7 +176,7 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
     harmonicImg = ee.Image([1,1,Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
   var bns = ee.Image(ts.first()).bandNames();
-  ts = ts.map(getImagesLib.addYearYearFractionBand)
+  // ts = ts.map(getImagesLib.addYearYearFractionBand)
   ts = ts.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
   Map.addLayer(ts)
   getCCDCPrediction(ee.Image(ts.limit(20).sort('system:time_start',false).first()))
@@ -183,7 +184,7 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
 }
 //-------------------- END CCDC Helper Function -------------------//
 ///////////////////////////////////////////////////////////////////////////////
-dLib.getExistingChangeData();
+// dLib.getExistingChangeData();
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 
@@ -345,7 +346,7 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.1).map(
   var y = n.int16();
   var fraction = n.subtract(y);
   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year');
-  return img.set('system:time_start',d)
+  return img.float().set('system:time_start',d).rename('year')
 }));
 Map.addLayer(yearImages)
 // predictCCDC(ccdcImg,processedScenes)
