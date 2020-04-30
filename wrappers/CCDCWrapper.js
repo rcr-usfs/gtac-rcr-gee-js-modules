@@ -143,7 +143,7 @@ function predictCCDC(ccdcImg,ts,nSegments,harmonicTag){
   if(harmonicTag === null || harmonicTag === undefined){
     harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
-  
+   getCCDCSeg(img,ccdcImg)
   var bns = ee.Image(ts.first()).bandNames();
   print(ccdcImg)
 }
