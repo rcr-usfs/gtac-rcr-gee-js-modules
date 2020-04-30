@@ -127,7 +127,10 @@ var buildCcdcImage = function(fit, nSegments) {
 
   return ee.Image.cat(coeffs, rmses, mags, change).float();
 };
-function predictCCDC(cc)
+function predictCCDC(ccdcImg,ts,nSegments){
+  var tns = ee.Image(ts.first()).bandNames();
+  print(ccdcImg)
+}
 //-------------------- END CCDC Helper Function -------------------//
 ///////////////////////////////////////////////////////////////////////////////
 dLib.getExistingChangeData();
