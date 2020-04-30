@@ -137,6 +137,10 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   if(harmonicTag === null || harmonicTag === undefined){
     harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
+  var coeffs =  ccdcImg.select('.*_coefs_.*')
+  var coeffBns = coeffs.bandNames();
+  var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return bn.split('_').slice(1,null).join('_')})
+  
   img = getImagesLib.addYearYearFractionBand(img);
   var tStarts = ccdcImg.select(['.*tStart']);
   var tEnds = ccdcImg.select(['.*tEnd']);
@@ -152,7 +156,7 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
     var segMaskT = segMask.select([segBN]);
     segCoeffs = segCoeffs.updateMask(segMaskT);
     return prev.where(segCoeffs.mask(),segCoeffs);
-  },ee.Image.constant(ee.List.repeat(0,harmonicTag.length)).rename(harmonicTag)));
+  },ee.Image.constant(ee.List.repeat(0,outBns.length())).rename(outBns)));
   img = img.addBands(out);
   return img.updateMask(img.mask().reduce(ee.Reducer.min()));
   }
