@@ -32,7 +32,7 @@ function getCCDCChange(ccdcImg,changeDirBand){
   var startDates = ccdcImg.select(['.*_tStart']);
   var endDates = ccdcImg.select(['.*_tEnd']);
   var segMask = startDates.selfMask();
-  
+  print(nSegs)
   // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
   var predicted = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).getInfo().map(function(n){
     n = ee.Number(n).byte();
@@ -44,12 +44,14 @@ function getCCDCChange(ccdcImg,changeDirBand){
     var segMaskLeftT = segMask.select([segLeftName]);
     var segMaskRightT = segMask.select([segRightName]);
     
-    Map.addLayer(segMaskT,{},'seg mask ',false)
-    var coeffsT = coeffs.select([segName]).updateMask(segMaskT);
-    var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')})
-    coeffsT = coeffsT.rename(bnsT)
-    var startDateT = startDates.select([segName]).rename(['year']).updateMask(segMaskT);
-    return dLib.getCCDCPrediction(startDateT,coeffsT);
+    // Map.addLayer(segMaskT,{},'seg mask ',false)
+    var coeffsLeftT = coeffs.select([segLeftName]).updateMask(segMaskLeftT);
+    var coeffsLeftT = coeffs.select([segLeftName]).updateMask(segMaskLeftT);
+    
+    // var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')})
+    // coeffsT = coeffsT.rename(bnsT)
+    // var startDateT = startDates.select([segName]).rename(['year']).updateMask(segMaskT);
+    // return dLib.getCCDCPrediction(startDateT,coeffsT);
   }))//.toBands();
   // var bns = predicted.select(['.*_predicted']).bandNames()
   // //   dummyYears.map(function(img){return dLib.getCCDCPrediction(img,ccdcImg.select(['.*_coef.*']))})
