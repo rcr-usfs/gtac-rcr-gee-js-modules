@@ -379,10 +379,15 @@ var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear
 processedScenes = processedScenes.select(indexNames);
 Map.addLayer(processedScenes,{},'Raw Time Series',false);
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
-print(ccdc);
-// Map.addLayer(ccdc,{},'raw ccdc',false);
+
+
 var ccdcImg = buildCcdcImage(ccdc, 9);
-print(ccdcImg)
+
+
+processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
+indexNames = indexNames.push('.*_predicted')
+var predicted = predictCCDC(ccdcImg,processedScenes).select(indexNames);
+Map.addLayer(predictedSmall,{},'Predicted CCDC');
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
 // var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
 // // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
@@ -425,8 +430,8 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
 // Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 // Map.addLayer(ccdcImgSmall.select(['.*tEnd']).selfMask().reduce(ee.Reducer.max()),{min:endYear-1,max:endYear},'Last Year');
   
-var predictedSmall = predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
-Map.addLayer(predictedSmall,{},'Predicted Small')
+// var predictedSmall = predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
+// Map.addLayer(predictedSmall,{},'Predicted Small')
 // Map.addLayer(ccdcImg)
 // var predictedCONUS = predictCCDC(ccdcImg,yearImages2).select(['.*_predicted'])//.map(function(img){return img.divide(100000).copyProperties(img,['system:time_start'])});
 // Map.addLayer(predictedCONUS,{},'Predicted CONUS')
