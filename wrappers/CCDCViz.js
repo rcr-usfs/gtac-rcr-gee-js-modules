@@ -55,10 +55,11 @@ function getCCDCChange(ccdcImg,changeDirBand){
     coeffsRightT = coeffsLeftT.rename(bnsT);
     var endDatesT = endDates.select([segLeftName]).rename(['year']).updateMask(segMaskLeftT);
     var startDatesT = startDates.select([segRightName]).rename(['year']).updateMask(segMaskRightT);
-    Map.addLayer(endDatesT)
-    Map.addLayer(startDatesT)
+   
     var predLeft = dLib.getCCDCPrediction(endDatesT,coeffsLeftT).select(['.*_predicted']);
     var predRight = dLib.getCCDCPrediction(startDatesT,coeffsRightT).select(['.*_predicted']);
+     Map.addLayer(predLeft)
+    Map.addLayer(predRight)
     var diff = predRight.subtract(predLeft);
     // return dLib.getCCDCPrediction(startDateT,coeffsT);
   })).toBands();
