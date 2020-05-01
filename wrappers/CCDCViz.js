@@ -37,8 +37,8 @@ function getCCDCChange(ccdcImg){
     
     var segMaskT = segMask.select([segName]);
     var coeffsT = coeffs.select([segName]);
-    var dummyYear = ee.Image(2000.7).updateMask(segMaskT);
-    return dLib.getCCDCPrediction(dummyYear,coeffsT)
+    var dummyYear = ee.Image(2000.7).rename(['year']).updateMask(segMaskT);
+    return dLib.getCCDCPrediction(dummyYear,coeffsT);
   })
   //   dummyYears.map(function(img){return dLib.getCCDCPrediction(img,ccdcImg.select(['.*_coef.*']))})
   print(predicted)
