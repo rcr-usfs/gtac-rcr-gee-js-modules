@@ -2014,7 +2014,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
     return predictedT;
   })).toBands().rename(bnsOut);
  
-  return timeImg.addBands(predicted);
+  return timeImg.addBands(predicted).updateMask(tBand.mask());
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to take a given CCDC results stack and predict values for a given time series
