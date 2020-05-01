@@ -183,8 +183,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   if(detrended === null || detrended === undefined){detrended = true}
   if(whichHarmonics === null || whichHarmonics === undefined){whichHarmonics = [1,2,3]}
   
-  var timeImgT = timeImg.select([timeBandName]);
-
+  var tBand = timeImg.select([timeBandName]);
   
   //Unit of each harmonic (1 cycle)
   var omega = ee.Number(2.0).multiply(Math.PI);
@@ -192,9 +191,9 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   //Constant raster for each coefficient
   //Constant, slope, first harmonic, second harmonic, and third harmonic
   var harmImg = ee.Image([1]);
-  harmImg = ee.Algorithms.If(coeffImg, harmImg.addBands(timeImgT),harmImg);
+  harmImg = ee.Algorithms.If(coeffImg, harmImg.addBands(tBand),harmImg);
   harmImg = ee.Image(ee.List(whichHarmonics).iterate(function(n,prev){
-    var omImg = timeImgT.multiply(omega.multiply(n));
+    var omImg = tBand.multiply(omega.multiply(n));
     return ee.Image(prev).addBands(omImg.cos()).addBands(omImg.sin());
   },harmImg));
 
@@ -218,16 +217,16 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
 //each segment. 
 //It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
 function predictCCDC(ccdcImg,timeSeries,nSegments,harmonicTag){
-  var bns = ee.Image(timeSeries.first()).bandNames();
-  var nSegments = ccdcImg.select(['.*tStart']).bandNames().length().getInfo();
-
-  var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
-  Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
   
-  // timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
+  //Add the segment-appropriate coefficients to each time image
+  timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)});
+  //Predict out the values for each image 
+  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*']))});
+  
+  return timeSeries;
   // // Map.addLayer(ts)
-  var img = ee.Image(timeSeries.first());
-  getCCDCSegCoeffs(img,ccdcImg,harmonicTag)
+  // var img = ee.Image(timeSeries.first());
+  // getCCDCSegCoeffs(img,ccdcImg,harmonicTag)
   // getCCDCPrediction(img.select(['year']),img.select(['.*_coef.*']))
   // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img.select(['year']),img.select(['.*_coef.*']))});
   // print(timeSeries)
@@ -414,6 +413,12 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
 }));
 Map.addLayer(ccdcImg)
 // processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
+// var bns = ee.Image(timeSeries.first()).bandNames();
+var nSegments = ccdcImg.select(['.*tStart']).bandNames().length().getInfo();
+//Visualize the number of segments
+var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
+  
 predictCCDC(ccdcImg,yearImages)
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
