@@ -425,7 +425,7 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 var predictedSmall = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
 Map.addLayer(predictedSmall,{},'Predicted Small')
 Map.addLayer(ccdcImg)
-var predictedCONUS = predictCCDC(ccdcImg,yearImages).select(['.*_predicted']).map(function(img){return img.divide(10000).copyProperties(img,['system:time_start'])});
+var predictedCONUS = predictCCDC(ccdcImg,yearImages).select(['.*_predicted']).map(function(img){return img.divide(100000).copyProperties(img,['system:time_start'])});
 Map.addLayer(predictedCONUS,{},'Predicted CONUS')
   // print(ccdcImg);
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
