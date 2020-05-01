@@ -363,12 +363,12 @@ var tmaskBands = null;//['green','swir1']//The name or index of the bands to use
 var minObservations = 6;//Factors of minimum number of years to apply new fitting.
 var chiSquareProbability = 0.99;//The chi-square probability threshold for change detection in the range of [0, 1]
 var minNumOfYearsScaler = 1.33;//Factors of minimum number of years to apply new fitting.
-var  lambda = 0.002;//Lambda for LASSO regression fitting. If set to 0, regular OLS is used instead of LASSO
+var lambda = 0.002;//Lambda for LASSO regression fitting. If set to 0, regular OLS is used instead of LASSO
 var maxIterations = 25000;//Maximum number of runs for LASSO regression convergence. If set to 0, regular OLS is used instead of LASSO.
 
 //How many segments to export
 //Agricultural and wetland areas generally will need about 1 for every 2-5 years
-//Other areas need about 1 for every 10-25 years
+//Other areas need about 1 for every 10-30 years
 var nSegments = 9;
 ///////////////////////////////////////////////////////////////////////
 // End user parameters
@@ -388,7 +388,7 @@ var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear
 
 processedScenes = processedScenes.select(indexNames);
 Map.addLayer(processedScenes,{},'Raw Time Series',false);
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, tmaskBands,minObservations,chiSquareProbability,minNumOfYearsScaler,1,lambda,);
 
 
 var ccdcImg = buildCcdcImage(ccdc, nSegments);
@@ -402,7 +402,7 @@ var predicted = predictCCDC(ccdcImg,processedScenes).select(indexNames);
 Map.addLayer(predicted,{},'Predicted CCDC',false);
 
 
-Export.image.toAsset(ccdcImg.float(), outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13)
+Export.image.toAsset(ccdcImg.float(), outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13,maxIterations)
 // var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
 // // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // // var coeffBns = ccdcImgCoeffs.bandNames();
