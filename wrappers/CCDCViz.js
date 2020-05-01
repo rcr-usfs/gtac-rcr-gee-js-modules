@@ -31,8 +31,8 @@ function getCCDCChange(ccdcImg,changeDirBand){
   var coeffs = ccdcImg.select(['.*'+changeDirBand+'_coef.*']);
   var startDates = ccdcImg.select(['.*_tStart']);
   var endDates = ccdcImg.select(['.*_tEnd']);
-  var segMaskLeft = startDates.selfMask();
-  var segMaskRight = endDates.selfMask();
+  var segMaskLeft = endDates.selfMask();
+  var segMaskRight = startDates.selfMask();
   // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
   var predicted = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).getInfo().map(function(n){
     n = ee.Number(n).byte();
@@ -53,7 +53,11 @@ function getCCDCChange(ccdcImg,changeDirBand){
     print(bnsT)
     coeffsLeftT = coeffsLeftT.rename(bnsT);
     coeffsRightT = coeffsLeftT.rename(bnsT);
-    // var startDateT = startDates.select([segName]).rename(['year']).updateMask(segMaskT);
+    var endDatesT = endDates.select([segLeftName]).rename(['year']).updateMask(segMaskLeftT);
+    var startDatesT = startDates.select([segRightName]).rename(['year']).updateMask(segMaskRightT);
+    var predLeft = dLib.getCCDCPrediction(endDatesT,coeffsLeftT).select(['.*_predicted']);
+    var predRight = dLib.getCCDCPrediction(startDatesT,coeffsRightT).select(['.*_predicted']);
+    var diff = predRight.subtract(predLeft);
     // return dLib.getCCDCPrediction(startDateT,coeffsT);
   }))//.toBands();
   // var bns = predicted.select(['.*_predicted']).bandNames()
