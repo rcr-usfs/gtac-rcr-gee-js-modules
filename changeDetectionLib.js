@@ -1930,7 +1930,7 @@ var buildStartEndBreakProb = function(fit, nSegments) {
  * using int32 as output.
  * 
  */
-var buildCcdcImage = function(fit, nSegments) {
+var buildCcdcImage = function(ccdc, nSegments) {
   var coeffs =buildCoefs(ccdc,nSegments);
   var rmses = buildRMSE(ccdc, nSegments);
   var mags = buildMagnitude(ccdc, nSegments);
