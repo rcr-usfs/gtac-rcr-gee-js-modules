@@ -47,7 +47,8 @@ function getCCDCChange(ccdcImg,changeDirBand){
     // Map.addLayer(segMaskT,{},'seg mask ',false)
     var coeffsLeftT = coeffs.select([segLeftName]).updateMask(segMaskLeftT);
     var coeffsRightT = coeffs.select([segRightName]).updateMask(segMaskRightT);
-    
+    Map.addLayer(segMaskLeftT)
+    Map.addLayer(segMaskRightT)
     var bnsT = coeffsLeftT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')})
     
     print(bnsT)
