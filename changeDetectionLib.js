@@ -2066,7 +2066,7 @@ exports.runEWMACD = runEWMACD;
 exports.CCDCFitMagSlopeCollection = CCDCFitMagSlopeCollection;
 
 // exports.getSegmentParamsForYear = getSegmentParamsForYear;
-exports.getSyntheticForYear = getSyntheticForYear;
+// exports.getSyntheticForYear = getSyntheticForYear;
 
 exports.pairwiseSlope = pairwiseSlope;
 exports.thresholdChange = thresholdChange;
