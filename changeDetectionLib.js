@@ -2060,7 +2060,7 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
       var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
       coeffsT = coeffsT.rename(bnsT);
       var dateImgT = endDates.select([segName]).selfMask().rename(['year']); 
-      var leftPred = dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
+      var leftPred = getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
       
       //Find the predicted value at the beginning of the next
       n = n.add(1).byte();
@@ -2069,7 +2069,7 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
       bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
       coeffsT = coeffsT.rename(bnsT);
       dateImgT = startDates.select([segName]).selfMask().rename(['year']); 
-      var rightPred =dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
+      var rightPred =getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
       
       //Return the difference
       return rightPred.subtract(leftPred);
