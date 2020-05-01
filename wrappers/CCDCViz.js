@@ -52,8 +52,11 @@ function getCCDCChange(ccdcImg,changeDirBand){
       var dateImgT = startDates.select([segName]).rename(['year']); 
       return dLib.getCCDCPrediction(dateImgT,coeffsT);
   });
-  
-  print(endPreds.zip(startPreds))
+  var diffs = endPreds.zip(startPreds).map(function(l){
+    l = ee.List(l);
+    return l.get(1).subtract(l.get(0))
+  })
+  print(diffs)
   // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
   // var diffs = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).getInfo().map(function(n){
   //   n = ee.Number(n).byte();
