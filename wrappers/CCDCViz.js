@@ -25,7 +25,7 @@ function getCCDCChange(ccdcImg){
   var nSegs = ccdcImg.select(['.*_changeProb']).bandNames().length();
   var changeMask = ccdcImg.select(['.*_changeProb']).gt(0).selfMask();
   var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
-  var dummyYears =  ee.List.repeat(2000,nSegs);
+  var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.6,nSegs).map(function(n){return ee.Image(n).rename(['year'])}));
   print(dummyYears)
   Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
   
