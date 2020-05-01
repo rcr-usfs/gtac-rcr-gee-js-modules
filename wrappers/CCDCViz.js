@@ -34,11 +34,14 @@ function getCCDCChange(ccdcImg,changeDirBand){
   var segMaskLeft = endDates.selfMask();
   var segMaskRight = startDates.selfMask();
   
-  var endPreds = ee.List.sequence(1,nSegs.subtract(1)).getInfo().map(function(n){
+  var endPreds = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).getInfo().map(function(n){
       n = ee.Number(n).byte();
       var segName = ee.String('S').cat(n.format()).cat('_.*');
-      print(segName)
-  })
+      var coeffsT = coeffs.select([segName]);
+      var dateImgT = endDates.select([segName]).rename(['year']); 
+      return dLib.getCCDCPrediction(dateImgT,coeffsT);
+  }));
+  Map.addLayer(endPreds)
   // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
   // var diffs = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).getInfo().map(function(n){
   //   n = ee.Number(n).byte();
