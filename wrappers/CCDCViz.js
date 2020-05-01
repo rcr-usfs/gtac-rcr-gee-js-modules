@@ -21,8 +21,13 @@ var startYear = 1984;
 var endYear = 2020;
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2').reproject('EPSG:5070',null,30);
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
-function getCCDCChange(ccdcImg,changeDirBand){
+//Function to pull change out of the CCDC output
+//Separates the loss and gain from within the harmonic models
+//Currently it does this with a single band that is provided
+//It is assumes that a loss of vegetation is a negative difference in values between the end and start of two segments
+function getCCDCChange(ccdcImg,changeDirBand,changeDir){
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
+  if(changeDir === null || changeDir === undefined){changeDir = -1}
   var nSegs = ccdcImg.select(['.*_changeProb']).bandNames().length();
   var changeMask = ccdcImg.select(['.*_changeProb']).gt(0).selfMask();
   var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
@@ -31,8 +36,7 @@ function getCCDCChange(ccdcImg,changeDirBand){
   var coeffs = ccdcImg.select(['.*'+changeDirBand+'_coef.*']);
   var startDates = ccdcImg.select(['.*_tStart']);
   var endDates = ccdcImg.select(['.*_tEnd']);
-  var segMaskLeft = endDates.selfMask();
-  var segMaskRight = startDates.selfMask();
+ 
   
   var diffs = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).map(function(n){
       n = ee.Number(n).byte();
@@ -52,9 +56,14 @@ function getCCDCChange(ccdcImg,changeDirBand){
       var rightPred =dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
       return rightPred.subtract(leftPred);
   })).toBands().addBands(ee.Image(0).selfMask());
-
-  var negativeChangeYears = changeYears.updateMask(diffs.lt(0));
-  var positiveChangeYears = changeYears.updateMask(diffs.gt(0));
+  var negativeChangeYears;var positiveChangeYears;
+  if(changeDir === -1){
+    negativeChangeYears = changeYears.updateMask(diffs.lt(0));
+    positiveChangeYears = changeYears.updateMask(diffs.gt(0));
+  }else{
+    negativeChangeYears = changeYears.updateMask(diffs.gt(0));
+    positiveChangeYears = changeYears.updateMask(diffs.lt(0));
+  }
   
   Map.addLayer(negativeChangeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'negativeChangeYears');
   Map.addLayer(positiveChangeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'888,080'},'positiveChangeYears');
