@@ -56,6 +56,7 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
       var rightPred =dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
       return rightPred.subtract(leftPred);
   })).toBands().addBands(ee.Image(0).selfMask());
+  
   var negativeChangeYears;var positiveChangeYears;
   if(changeDir === -1){
     negativeChangeYears = changeYears.updateMask(diffs.lt(0));
