@@ -26,11 +26,15 @@ function getCCDCChange(ccdcImg){
   var changeMask = ccdcImg.select(['.*_changeProb']).gt(0).selfMask();
   var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
   changeYears = changeYears.updateMask(changeMask);
-  
-  var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
-  var predicted = dummyYears.map(function(img){return dLib.getCCDCPrediction(img,ccdcImg.select(['.*_coef.*']))})
-  print(predicted)
-  Map.addLayer(predicted)
+  print(ccdcImg.select(['.*_coef.*']))
+  // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
+  // var predicted = ee.List.sequence(1,nSegs){
+  //   var dummyYear = ee.Image(2000.7);
+    
+  // }
+  //   dummyYears.map(function(img){return dLib.getCCDCPrediction(img,ccdcImg.select(['.*_coef.*']))})
+  // print(predicted)
+  // Map.addLayer(predicted)
   Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
   
 }
