@@ -41,7 +41,7 @@ function getCCDCChange(ccdcImg,changeDirBand){
       var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
       coeffsT = coeffsT.rename(bnsT);
       var dateImgT = endDates.select([segName]).rename(['year']); 
-      return dLib.getCCDCPrediction(dateImgT,coeffsT);
+      return dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
   });
   var startPreds = ee.List.sequence(2,nSegs).map(function(n){
       n = ee.Number(n).byte();
@@ -50,7 +50,7 @@ function getCCDCChange(ccdcImg,changeDirBand){
       var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
       coeffsT = coeffsT.rename(bnsT);
       var dateImgT = startDates.select([segName]).rename(['year']); 
-      return dLib.getCCDCPrediction(dateImgT,coeffsT);
+      return dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
   });
   var diffs = ee.ImageCollection(endPreds.zip(startPreds).map(function(l){
     l = ee.List(l);
