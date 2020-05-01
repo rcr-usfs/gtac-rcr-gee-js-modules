@@ -50,10 +50,16 @@ function getCCDCChange(ccdcImg,changeDirBand){
   var predictedLeft = predicted.select(bns.slice(0,bns.length().subtract(1)));
   var predictedRight = predicted.select(bns.slice(1,null));
   var diff = predictedRight.subtract(predictedLeft)
-  
+  var negativeChangeYears = changeYears.updateMask(diff.lt(0));
+  var positiveChangeYears = changeYears.updateMask(diff.gt(0))
   Map.addLayer(predicted,{},'pred ',false);
   Map.addLayer(diff,{},'diff ',false)
-  Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
+  Map.addLayer(changeYears,{min:startYear,max:endYear},'Change Years')
+  
+  Map.addLayer(negativeChangeYears,{min:startYear,max:endYear},'negativeChangeYears')
+  Map.addLayer(positiveChangeYears,{min:startYear,max:endYear},'positiveChangeYears')
+  
+  // Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
   
 }
 getCCDCChange(ccdcImg)
