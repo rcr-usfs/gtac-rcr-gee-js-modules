@@ -66,8 +66,8 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
     positiveChangeYears = changeYears.updateMask(diffs.lt(0));
   }
   
-  return {lossYears:negativeChangeYears,gainYears:positiveChangeYears}''
-};
+  return {lossYears:negativeChangeYears,gainYears:positiveChangeYears};
+}
 var changeYears = getCCDCChange(ccdcImg);
 Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'negativeChangeYears');
 Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'888,080'},'positiveChangeYears');
