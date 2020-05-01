@@ -2006,7 +2006,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
   actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
   var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
-  
+  print(actualBandNames)
   //Apply respective coeffs for each of those bands to predict 
   var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
     bn = ee.String(bn);
