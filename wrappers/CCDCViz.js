@@ -26,12 +26,18 @@ function getCCDCChange(ccdcImg){
   var changeMask = ccdcImg.select(['.*_changeProb']).gt(0).selfMask();
   var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
   changeYears = changeYears.updateMask(changeMask);
+  
   var coeffs = ccdcImg.select(['.*_coef.*']);
+  var segMask = ccdcImg.select(['.*_tStart']).selfMask();
+  
   // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
-  var predicted = ee.List.sequence(1,nSegs){
+  var predicted = ee.List.sequence(1,nSegs).map(function(n){
+    n = ee.Number(n).byte();
+    var segName = ee.String('S').cat(n.format())
     var dummyYear = ee.Image(2000.7);
-    var coeffsT = 
-  // }
+    var segMaskT = segMask.select
+    var coeffsT = d
+  })
   //   dummyYears.map(function(img){return dLib.getCCDCPrediction(img,ccdcImg.select(['.*_coef.*']))})
   // print(predicted)
   // Map.addLayer(predicted)
