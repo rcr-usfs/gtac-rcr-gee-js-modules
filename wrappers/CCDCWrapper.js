@@ -400,6 +400,20 @@ var predicted = predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpoin
 Map.addLayer(predicted,{},'Predicted CCDC',false);
 
 
+var sinCoeffs = ccdcImg.select(['.*_SIN']);
+var cosCoeffs = ccdcImg.select(['.*_COS']);
+var bands = ['S1_swir2.*','S1_nir.*','S1_red.*'];
+// var band = 'B4.*';
+var phase = sinCoeffs.atan2(cosCoeffs)
+                    .unitScale(-Math.PI, Math.PI);
+ 
+var amplitude = sinCoeffs.hypot(cosCoeffs)
+                    // .unitScale(0, 1)
+                    .multiply(2)
+  Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
+  Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
+
+
 Export.image.toAsset(ccdcImg.float(), outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13)
 // var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
 // // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
@@ -417,14 +431,14 @@ Export.image.toAsset(ccdcImg.float(), outputName, exportPathRoot +outputName , n
 
 // ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
 // // Map.addLayer(ccdcImg)
-var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
-  n = ee.Number(n);
-  var img = ee.Image(n).float().rename(['year']);
-  var y = n.int16();
-  var fraction = n.subtract(y);
-  var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
-  return img.set('system:time_start',d)
-}));
+// var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
+//   n = ee.Number(n);
+//   var img = ee.Image(n).float().rename(['year']);
+//   var y = n.int16();
+//   var fraction = n.subtract(y);
+//   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
+//   return img.set('system:time_start',d)
+// }));
 // var yearImages2 = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
 //   n = ee.Number(n);
 //   var img = ee.Image(n).float().rename(['year']);
@@ -456,18 +470,5 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
 // breaks = breaks.updateMask(change.neq(0));
 // Map.addLayer(breaks.reduce(ee.Reducer.max()),{min:startYear,max:endYear},'Change year',false);
 
-
-// var sinCoeffs = ccdcImg.select(['.*_SIN']);
-// var cosCoeffs = ccdcImg.select(['.*_COS']);
-// var bands = ['S1_swir2.*','S1_nir.*','S1_red.*'];
-// var band = 'B4.*';
-// var phase = sinCoeffs.atan2(cosCoeffs)
-//                     .unitScale(-Math.PI, Math.PI);
- 
-// var amplitude = sinCoeffs.hypot(cosCoeffs)
-//                     // .unitScale(0, 1)
-//                     .multiply(2)
-//   Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
-//   Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
 
 Map.setOptions('HYBRID');
