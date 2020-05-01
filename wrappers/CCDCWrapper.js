@@ -224,14 +224,7 @@ function predictCCDC(ccdcImg,timeSeries,nSegments,harmonicTag){
   timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*']))});
   
   return timeSeries;
-  // // Map.addLayer(ts)
-  // var img = ee.Image(timeSeries.first());
-  // getCCDCSegCoeffs(img,ccdcImg,harmonicTag)
-  // getCCDCPrediction(img.select(['year']),img.select(['.*_coef.*']))
-  // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img.select(['year']),img.select(['.*_coef.*']))});
-  // print(timeSeries)
-  // Map.addLayer(ts.select(['.*_predicted']))
-  // print(ccdcImg);
+ 
 }
 //-------------------- END CCDC Helper Function -------------------//
 ///////////////////////////////////////////////////////////////////////////////
