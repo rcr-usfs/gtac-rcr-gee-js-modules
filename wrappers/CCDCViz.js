@@ -50,17 +50,17 @@ function getCCDCChange(ccdcImg,changeDirBand){
       coeffsT = coeffsT.rename(bnsT);
       dateImgT = startDates.select([segName]).selfMask().rename(['year']); 
       var rightPred =dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
-      return rightPred.subtract(leftPred)
+      return rightPred.subtract(leftPred);
   })).toBands().addBands(ee.Image(0).selfMask());
 
   var negativeChangeYears = changeYears.updateMask(diffs.lt(0));
   var positiveChangeYears = changeYears.updateMask(diffs.gt(0));
   
-  Map.addLayer(negativeChangeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'negativeChangeYears')
-  Map.addLayer(positiveChangeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'888,0F0'},'positiveChangeYears')
+  Map.addLayer(negativeChangeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'negativeChangeYears');
+  Map.addLayer(positiveChangeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'888,080'},'positiveChangeYears');
  
 }
-getCCDCChange(ccdcImg)
+getCCDCChange(ccdcImg);
 // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // var coeffBns = ccdcImgCoeffs.bandNames();
 // print(coeffBns)
