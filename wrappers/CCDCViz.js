@@ -37,7 +37,7 @@ function getCCDCChange(ccdcImg){
     // print(segName)
     var segMaskT = segMask.select([segName]);
     Map.addLayer(segMaskT,{},'seg mask ',false)
-    var coeffsT = coeffs.select([segName]);
+    var coeffsT = coeffs.select([segName]).updateMask(segMaskT);
     var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')})
     coeffsT = coeffsT.rename(bnsT)
     var dummyYear = ee.Image(2000.7).rename(['year']).updateMask(segMaskT);
