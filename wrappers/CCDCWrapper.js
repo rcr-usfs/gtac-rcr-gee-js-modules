@@ -385,7 +385,7 @@ var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear
   ).map(getImagesLib.addSAVIandEVI);
 
 
-processedScenes = processedScenes.select(indexNames);
+processedScenes = processedScenes.select(ccdcParams.breakpointBands);
 Map.addLayer(processedScenes,{},'Raw Time Series',false);
 
 ccdcParams.dateFormat = 1;
@@ -398,9 +398,9 @@ var ccdcImg = buildCcdcImage(ccdc, nSegments);
 var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
-indexNames.push('.*_predicted');
+ccdcParams.breakpointBand.push('.*_predicted');
 
-var predicted = predictCCDC(ccdcImg,processedScenes).select(indexNames);
+var predicted = predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBand);
 Map.addLayer(predicted,{},'Predicted CCDC',false);
 
 
