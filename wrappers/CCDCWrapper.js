@@ -393,9 +393,11 @@ var ccdcImg = ee.ImageCollection('projects/CCDC/USA')
           .filterBounds(geometry)
           .mosaic();
 // print(ccdcImg)
-var ccdcImgCoeffs = ccdcImg.select(['.*B2_coef_.*','.*B4_coef_.*']).divide(100);
+var ccdcImgCoeffs = ccdcImg.select(['.*B2_coef_.*','.*B4_coef_.*'])//.divide(10000);
 var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd']).divide(365.25);
-ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT)
+
+ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
+Map.addLayer(ccdcImg)
 var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n).float().rename(['year']);
