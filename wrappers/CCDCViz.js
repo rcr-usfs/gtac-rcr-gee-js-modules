@@ -47,8 +47,7 @@ function getCCDCChange(ccdcImg,changeDirBand){
     // Map.addLayer(segMaskT,{},'seg mask ',false)
     var coeffsLeftT = coeffs.select([segLeftName]).updateMask(segMaskLeftT);
     var coeffsRightT = coeffs.select([segRightName]).updateMask(segMaskRightT);
-    Map.addLayer(coeffsLeftT)
-    Map.addLayer(coeffsRightT)
+    
     var bnsT = coeffsLeftT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')})
     
     print(bnsT)
@@ -56,6 +55,8 @@ function getCCDCChange(ccdcImg,changeDirBand){
     coeffsRightT = coeffsLeftT.rename(bnsT);
     var endDatesT = endDates.select([segLeftName]).rename(['year']).updateMask(segMaskLeftT);
     var startDatesT = startDates.select([segRightName]).rename(['year']).updateMask(segMaskRightT);
+    Map.addLayer(endDatesT)
+    Map.addLayer(startDatesT)
     var predLeft = dLib.getCCDCPrediction(endDatesT,coeffsLeftT).select(['.*_predicted']);
     var predRight = dLib.getCCDCPrediction(startDatesT,coeffsRightT).select(['.*_predicted']);
     var diff = predRight.subtract(predLeft);
