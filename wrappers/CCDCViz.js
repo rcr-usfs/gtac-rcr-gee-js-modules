@@ -44,7 +44,7 @@ function getCCDCChange(ccdcImg){
   }));
   //   dummyYears.map(function(img){return dLib.getCCDCPrediction(img,ccdcImg.select(['.*_coef.*']))})
   print(predicted)
-  Map.addLayer(predicted)
+  Map.addLayer(predicted.select(['.*_predicted']),{},'diff ',false)
   Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
   
 }
