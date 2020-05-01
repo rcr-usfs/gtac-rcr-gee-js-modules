@@ -28,6 +28,8 @@ Map.addLayer(ccdcImg,{},'CCDC Img',false);
 function getCCDCChange(ccdcImg,changeDirBand,changeDir){
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
   if(changeDir === null || changeDir === undefined){changeDir = -1}
+  
+  //Pull apart ccdcImg into parts
   var nSegs = ccdcImg.select(['.*_changeProb']).bandNames().length();
   var changeMask = ccdcImg.select(['.*_changeProb']).gt(0).selfMask();
   var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
@@ -37,8 +39,10 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
   var startDates = ccdcImg.select(['.*_tStart']);
   var endDates = ccdcImg.select(['.*_tEnd']);
  
-  
+  //Iterate across each segment pair to find differences between the predicted value
+  //at the end of the first segment, and predicted value at the beginning of the next segment
   var diffs = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).map(function(n){
+      //Find the predicted value at the end of a given segment
       n = ee.Number(n).byte();
       var segName = ee.String('S').cat(n.format()).cat('_.*');
       var coeffsT = coeffs.select([segName]);
@@ -47,6 +51,7 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
       var dateImgT = endDates.select([segName]).selfMask().rename(['year']); 
       var leftPred = dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
       
+      //Find the predicted value at the beginning of the next
       n = n.add(1).byte();
       segName = ee.String('S').cat(n.format()).cat('_.*');
       coeffsT = coeffs.select([segName]);
@@ -54,19 +59,22 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
       coeffsT = coeffsT.rename(bnsT);
       dateImgT = startDates.select([segName]).selfMask().rename(['year']); 
       var rightPred =dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
+      
+      //Return the difference
       return rightPred.subtract(leftPred);
   })).toBands().addBands(ee.Image(0).selfMask());
   
+  //Pull out loss and gain
   var negativeChangeYears;var positiveChangeYears;
   if(changeDir === -1){
-    negativeChangeYears = changeYears.updateMask(diffs.lt(0));
-    positiveChangeYears = changeYears.updateMask(diffs.gt(0));
+    lossChangeYears = changeYears.updateMask(diffs.lt(0));
+    gainChangeYears = changeYears.updateMask(diffs.gt(0));
   }else{
-    negativeChangeYears = changeYears.updateMask(diffs.gt(0));
-    positiveChangeYears = changeYears.updateMask(diffs.lt(0));
+    lossChangeYears = changeYears.updateMask(diffs.gt(0));
+    gainChangeYears = changeYears.updateMask(diffs.lt(0));
   }
   
-  return {lossYears:negativeChangeYears,gainYears:positiveChangeYears};
+  return {lossYears:lossChangeYears,gainYears:gainChangeYears};
 }
 var changeYears = getCCDCChange(ccdcImg);
 Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'negativeChangeYears');
