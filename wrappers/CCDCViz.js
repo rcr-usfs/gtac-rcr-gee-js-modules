@@ -24,7 +24,7 @@ Map.addLayer(ccdcImg,{},'CCDC Img',false);
 var changeMask = ccdcImg.select(['.*_changeProb']).selfMask();
 var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
 changeYears =  changeYears.updateMask(changeMask);
-Map.addLayer(changeYears,{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
+Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
 // // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // // var coeffBns = ccdcImgCoeffs.bandNames();
 // // print(coeffBns)
