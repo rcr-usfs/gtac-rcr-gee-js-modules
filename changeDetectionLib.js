@@ -2065,7 +2065,7 @@ exports.getEWMA = getEWMA;
 exports.runEWMACD = runEWMACD;
 exports.CCDCFitMagSlopeCollection = CCDCFitMagSlopeCollection;
 
-exports.getSegmentParamsForYear = getSegmentParamsForYear;
+// exports.getSegmentParamsForYear = getSegmentParamsForYear;
 exports.getSyntheticForYear = getSyntheticForYear;
 
 exports.pairwiseSlope = pairwiseSlope;
