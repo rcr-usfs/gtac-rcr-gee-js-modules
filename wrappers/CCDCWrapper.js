@@ -16,10 +16,8 @@ var geometry =
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
-// var ccdcLib = require('users/yang/CCDC:default');
 
-
-// dLib.getExistingChangeData();
+dLib.getExistingChangeData();
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 
