@@ -399,10 +399,10 @@ ccdcParams.breakpointBands.push('.*_predicted');
 var predicted = predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
 Map.addLayer(predicted,{},'Predicted CCDC',false);
 
-
-var sinCoeffs = ccdcImg.select(['.*_SIN']);
-var cosCoeffs = ccdcImg.select(['.*_COS']);
-var bands = ['S1_swir2.*','S1_nir.*','S1_red.*'];
+var seg1 = ccdcImg.select(['S1.*']);
+var sinCoeffs = seg1.select(['.*_SIN']);
+var cosCoeffs = seg1.select(['.*_COS']);
+var bands = ['.*swir2.*','.*nir.*','.*red.*'];
 // var band = 'B4.*';
 var phase = sinCoeffs.atan2(cosCoeffs)
                     .unitScale(-Math.PI, Math.PI);
