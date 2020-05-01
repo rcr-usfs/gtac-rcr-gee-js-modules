@@ -154,7 +154,7 @@ var ccdcParams ={
   minNumOfYearsScaler: 1.33,//Factors of minimum number of years to apply new fitting.,\
   lambda: 0.002,//Lambda for LASSO regression fitting. If set to 0, regular OLS is used instead of LASSO
   maxIterations : 25000 //Maximum number of runs for LASSO regression convergence. If set to 0, regular OLS is used instead of LASSO.
-} 
+}; 
 
 ///////////////////////////////////////////////////////////////////////
 // End user parameters
