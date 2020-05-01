@@ -133,21 +133,32 @@ var buildCcdcImage = function(fit, nSegments) {
 
   return ee.Image.cat(coeffs, rmses, mags, change).float();
 };
-function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
-  if(harmonicTag === null || harmonicTag === undefined){
-    harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
-  }
+////////////////////////////////////////////////////////////////////////////////////////
+//Function to find the corresponding CCDC coefficients for a given time image
+//The timeImg can have other bands in it that will be retained in the image that
+//is returned.  This is useful if plotting actual and predicted values is of interest
+function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName){
+  if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
+  
+  //Pop off the coefficients and find the output band names
   var coeffs =  ccdcImg.select('.*_coef.*');
   var coeffBns = coeffs.bandNames();
   var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
   
-  
+  //Find the start and end time for the segments
   var tStarts = ccdcImg.select(['.*tStart']);
   var tEnds = ccdcImg.select(['.*tEnd']);
-  var tBand = img.select(['year']);
+  
+  //Get the time for the given timeImg
+  var tBand = timeImg.select([timeBandName]);
+  
+  //Mask out segments that the time does not intersect
   var segMask  = tBand.gte(tStarts).and(tBand.lte(tEnds));
+  
+  //Find how many segments there are
   var nSegs = segMask.bandNames().length();
   
+  //Iterate through each segment to pull the correct values
   var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
     prev = ee.Image(prev);
     var segBN = ee.String('S').cat(ee.Number(n).byte().format()).cat('.*');
@@ -158,8 +169,9 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
     return prev.where(segCoeffs.mask(),segCoeffs);
   },ee.Image.constant(ee.List.repeat(-9999,outBns.length())).rename(outBns)));
   out = out.updateMask(out.neq(-9999));
-  img = img.addBands(out);
-  return img;//.updateMask(img.mask().reduce(ee.Reducer.min()));
+  
+  timeImg = timeImg.addBands(out);
+  return timeImg;
   }
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to get prediced value from a set of harmonic coefficients and a time band
@@ -212,11 +224,12 @@ function predictCCDC(ccdcImg,timeSeries,nSegments,harmonicTag){
   var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
   Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
   
-  timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
+  // timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
   // // Map.addLayer(ts)
-  var img = ee.Image(timeSeries.first())
+  var img = ee.Image(timeSeries.first());
+  getCCDCSegCoeffs(img,ccdcImg,harmonicTag)
   // getCCDCPrediction(img.select(['year']),img.select(['.*_coef.*']))
-  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img.select(['year']),img.select(['.*_coef.*']))});
+  // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img.select(['year']),img.select(['.*_coef.*']))});
   // print(timeSeries)
   // Map.addLayer(ts.select(['.*_predicted']))
   // print(ccdcImg);
