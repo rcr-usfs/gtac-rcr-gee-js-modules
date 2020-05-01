@@ -180,14 +180,14 @@ ccdcParams.collection = processedScenes;
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
 
-var ccdcImg = buildCcdcImage(ccdc, nSegments);
+var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
 
 var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
 ccdcParams.breakpointBands.push('.*_predicted');
 
-var predicted = predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
+var predicted = dLib.predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
 Map.addLayer(predicted,{},'Predicted CCDC',false);
 
 var seg1 = ccdcImg.select(['S1.*']);
