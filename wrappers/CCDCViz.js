@@ -40,7 +40,7 @@ function getCCDCChange(ccdcImg,changeDirBand){
       var coeffsT = coeffs.select([segName]);
       var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
       coeffsT = coeffsT.rename(bnsT);
-      var dateImgT = endDates.select([segName]).rename(['year']); 
+      var dateImgT = endDates.select([segName]).selfMask().rename(['year']); 
       return dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
   });
   var startPreds = ee.List.sequence(2,nSegs).map(function(n){
@@ -49,12 +49,12 @@ function getCCDCChange(ccdcImg,changeDirBand){
       var coeffsT = coeffs.select([segName]);
       var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
       coeffsT = coeffsT.rename(bnsT);
-      var dateImgT = startDates.select([segName]).rename(['year']); 
+      var dateImgT = startDates.select([segName]).selfMask().rename(['year']); 
       return dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
   });
   var diffs = ee.ImageCollection(endPreds.zip(startPreds).map(function(l){
     l = ee.List(l);
-    return ee.Image(l.get(1)).subtract(ee.Image(l.get(0)))
+    return ee.Image(l.get(1)).subtract(ee.Image(l.get(0))).rename([changeDirBand + '_diff'])
   })).toBands();
   Map.addLayer(diffs)
   print(diffs)
