@@ -398,9 +398,9 @@ var ccdcImg = buildCcdcImage(ccdc, nSegments);
 var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
-ccdcParams.breakpointBand.push('.*_predicted');
+ccdcParams.breakpointBands.push('.*_predicted');
 
-var predicted = predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBand);
+var predicted = predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
 Map.addLayer(predicted,{},'Predicted CCDC',false);
 
 
