@@ -41,8 +41,8 @@ function getCCDCChange(ccdcImg,changeDirBand){
     
     
     print(segLeftName,segRightName)
-    var segMaskLeftT = segMask.select([segLeftName]);
-    var segMaskRightT = segMask.select([segRightName]);
+    var segMaskLeftT = segMaskLeft.select([segLeftName]);
+    var segMaskRightT = segMaskRight.select([segRightName]);
     
     // Map.addLayer(segMaskT,{},'seg mask ',false)
     var coeffsLeftT = coeffs.select([segLeftName]).updateMask(segMaskLeftT);
