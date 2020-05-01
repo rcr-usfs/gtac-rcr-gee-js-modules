@@ -2083,3 +2083,4 @@ exports.thresholdSubtleChange = thresholdSubtleChange;
 exports.buildCcdcImage = buildCcdcImage;
 exports.predictCCDC = predictCCDC;
 exports.getCCDCSegCoeffs = getCCDCSegCoeffs;
+exports.getCCDCPrediction = getCCDCPrediction;
