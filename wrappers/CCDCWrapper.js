@@ -389,7 +389,7 @@ processedScenes = processedScenes.select(indexNames);
 Map.addLayer(processedScenes,{},'Raw Time Series',false);
 
 ccdcParams.dateFormat = 1;
-ccdcParams.collection = processedScenes
+ccdcParams.collection = processedScenes;
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
 
