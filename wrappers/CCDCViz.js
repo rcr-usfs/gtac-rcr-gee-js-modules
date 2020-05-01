@@ -31,7 +31,7 @@ function getCCDCChange(ccdcImg){
   var segMask = ccdcImg.select(['.*_tStart']).selfMask();
   
   // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
-  var predicted = ee.List.sequence(1,nSegs).getInfo().map(function(n){
+  var predicted = ee.ImageCollection(ee.List.sequence(1,nSegs).getInfo().map(function(n){
     n = ee.Number(n).byte();
     var segName = ee.String('S').cat(n.format()).cat('_.*');
     // print(segName)
@@ -41,7 +41,7 @@ function getCCDCChange(ccdcImg){
     coeffsT = coeffsT.rename(bnsT)
     var dummyYear = ee.Image(2000.7).rename(['year']).updateMask(segMaskT);
     return dLib.getCCDCPrediction(dummyYear,coeffsT);
-  })
+  }));
   //   dummyYears.map(function(img){return dLib.getCCDCPrediction(img,ccdcImg.select(['.*_coef.*']))})
   print(predicted)
   Map.addLayer(predicted)
