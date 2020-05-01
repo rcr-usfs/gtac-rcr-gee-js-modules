@@ -21,13 +21,14 @@ var startYear = 1984;
 var endYear = 2020;
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2').reproject('EPSG:5070',null,30);
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
-function getCCDCChange(ccdcImg){
+function getCCDCChange(ccdcImg,changeDirBand){
+  if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
   var nSegs = ccdcImg.select(['.*_changeProb']).bandNames().length();
   var changeMask = ccdcImg.select(['.*_changeProb']).gt(0).selfMask();
   var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
   changeYears = changeYears.updateMask(changeMask);
   
-  var coeffs = ccdcImg.select(['.*_coef.*']);
+  var coeffs = ccdcImg.select(['.*'+changeDirBand+'_coef.*']);
   var segMask = ccdcImg.select(['.*_tStart']).selfMask();
   
   // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
