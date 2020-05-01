@@ -54,7 +54,7 @@ function getCCDCChange(ccdcImg,changeDirBand){
   });
   var diffs = endPreds.zip(startPreds).map(function(l){
     l = ee.List(l);
-    return l.get(1).subtract(l.get(0))
+    return ee.Image(l.get(1)).subtract(ee.Image(l.get(0)))
   })
   print(diffs)
   // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
