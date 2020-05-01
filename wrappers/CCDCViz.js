@@ -65,7 +65,7 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
   })).toBands().addBands(ee.Image(0).selfMask());
   
   //Pull out loss and gain
-  var negativeChangeYears;var positiveChangeYears;
+  var lossChangeYears;var gainChangeYears;
   if(changeDir === -1){
     lossChangeYears = changeYears.updateMask(diffs.lt(0));
     gainChangeYears = changeYears.updateMask(diffs.gt(0));
