@@ -191,12 +191,12 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   //Constant raster for each coefficient
   //Constant, slope, first harmonic, second harmonic, and third harmonic
   var harmImg = ee.Image([1]);
-  harmImg = ee.Algorithms.If(coeffImg, harmImg.addBands(tBand),harmImg);
+  harmImg = ee.Algorithms.If(detrended, harmImg.addBands(tBand),harmImg);
   harmImg = ee.Image(ee.List(whichHarmonics).iterate(function(n,prev){
     var omImg = tBand.multiply(omega.multiply(n));
     return ee.Image(prev).addBands(omImg.cos()).addBands(omImg.sin());
   },harmImg));
-
+  
   //Parse through bands to find individual bands that need predicted
   var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
   actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
@@ -382,22 +382,22 @@ var cloudBands = null;//['green','swir1']
 // Map.addLayer(ccdc,{},'raw ccdc',false);
 // var ccdcImg = buildCcdcImage(ccdc, 4);
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
-// var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
+var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
 // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // var coeffBns = ccdcImgCoeffs.bandNames();
 // print(coeffBns)
 // var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd']);
 // ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT)
-// Map.addLayer(ccdcImg)
+// // Map.addLayer(ccdcImg)
 var ccdcImg = ee.ImageCollection('projects/CCDC/USA')
           .filterBounds(geometry)
           .mosaic();
-// print(ccdcImg)
+// // print(ccdcImg)
 var ccdcImgCoeffs = ccdcImg.select(['.*B2_coef_.*','.*B4_coef_.*'])//.divide(10000);
 var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd']).divide(365.25);
 
 ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
-Map.addLayer(ccdcImg)
+// Map.addLayer(ccdcImg)
 var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n).float().rename(['year']);
@@ -409,13 +409,15 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
 Map.addLayer(ccdcImg)
 // processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
 // var bns = ee.Image(timeSeries.first()).bandNames();
-var nSegments = ccdcImg.select(['.*tStart']).bandNames().length().getInfo();
+var nSegments = ccdcImgSmall.select(['.*tStart']).bandNames().length().getInfo();
 //Visualize the number of segments
-var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+var count = ccdcImgSmall.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
   
-var predicted = predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
-Map.addLayer(predicted)
+var predictedSmall = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
+Map.addLayer(predictedSmall,{},'Predicted Small')
+var predictedCONUS = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
+Map.addLayer(predictedCONUS,{},'Predicted CONUS')
   // print(ccdcImg);
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
