@@ -388,7 +388,7 @@ var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear
 
 processedScenes = processedScenes.select(indexNames);
 Map.addLayer(processedScenes,{},'Raw Time Series',false);
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, tmaskBands,minObservations,chiSquareProbability,minNumOfYearsScaler,1,lambda,);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, tmaskBands,minObservations,chiSquareProbability,minNumOfYearsScaler,1,lambda,maxIterations);
 
 
 var ccdcImg = buildCcdcImage(ccdc, nSegments);
@@ -402,7 +402,7 @@ var predicted = predictCCDC(ccdcImg,processedScenes).select(indexNames);
 Map.addLayer(predicted,{},'Predicted CCDC',false);
 
 
-Export.image.toAsset(ccdcImg.float(), outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13,maxIterations)
+Export.image.toAsset(ccdcImg.float(), outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13)
 // var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
 // // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // // var coeffBns = ccdcImgCoeffs.bandNames();
