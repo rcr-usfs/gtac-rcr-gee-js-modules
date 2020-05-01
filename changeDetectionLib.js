@@ -2031,6 +2031,63 @@ function predictCCDC(ccdcImg,timeSeries,nSegments,harmonicTag){
   return timeSeries;
  
 }
+////////////////////////////////////////////////////////////////////////////////////////
+//Function to pull change out of the CCDC output
+//Separates the loss and gain from within the harmonic models
+//Currently it does this with a single band that is provided
+//It is assumes that a loss of vegetation is a negative difference in values between the end and start of two segments
+function getCCDCChange(ccdcImg,changeDirBand,changeDir){
+  if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
+  if(changeDir === null || changeDir === undefined){changeDir = -1}
+  
+  //Pull apart ccdcImg into parts
+  var nSegs = ccdcImg.select(['.*_changeProb']).bandNames().length();
+  var changeMask = ccdcImg.select(['.*_changeProb']).gt(0).selfMask();
+  var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
+  changeYears = changeYears.updateMask(changeMask);
+  
+  var coeffs = ccdcImg.select(['.*'+changeDirBand+'_coef.*']);
+  var startDates = ccdcImg.select(['.*_tStart']);
+  var endDates = ccdcImg.select(['.*_tEnd']);
+ 
+  //Iterate across each segment pair to find differences between the predicted value
+  //at the end of the first segment, and predicted value at the beginning of the next segment
+  var diffs = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).map(function(n){
+      //Find the predicted value at the end of a given segment
+      n = ee.Number(n).byte();
+      var segName = ee.String('S').cat(n.format()).cat('_.*');
+      var coeffsT = coeffs.select([segName]);
+      var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
+      coeffsT = coeffsT.rename(bnsT);
+      var dateImgT = endDates.select([segName]).selfMask().rename(['year']); 
+      var leftPred = dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
+      
+      //Find the predicted value at the beginning of the next
+      n = n.add(1).byte();
+      segName = ee.String('S').cat(n.format()).cat('_.*');
+      coeffsT = coeffs.select([segName]);
+      bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
+      coeffsT = coeffsT.rename(bnsT);
+      dateImgT = startDates.select([segName]).selfMask().rename(['year']); 
+      var rightPred =dLib.getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
+      
+      //Return the difference
+      return rightPred.subtract(leftPred);
+  })).toBands().addBands(ee.Image(0).selfMask());
+  
+  //Pull out loss and gain
+  var lossChangeYears;var gainChangeYears;
+  if(changeDir === -1){
+    lossChangeYears = changeYears.updateMask(diffs.lt(0));
+    gainChangeYears = changeYears.updateMask(diffs.gt(0));
+  }else{
+    lossChangeYears = changeYears.updateMask(diffs.gt(0));
+    gainChangeYears = changeYears.updateMask(diffs.lt(0));
+  }
+  
+  return {lossYears:lossChangeYears,gainYears:gainChangeYears};
+}
+///////////////////////////////////////////////////////////////////////////////
 //-------------------- END CCDC Helper Function -------------------//
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -2084,3 +2141,4 @@ exports.buildCcdcImage = buildCcdcImage;
 exports.predictCCDC = predictCCDC;
 exports.getCCDCSegCoeffs = getCCDCSegCoeffs;
 exports.getCCDCPrediction = getCCDCPrediction;
+exports.getCCDCChange = getCCDCChange;
