@@ -29,7 +29,8 @@ function getCCDCChange(ccdcImg,changeDirBand){
   changeYears = changeYears.updateMask(changeMask);
   
   var coeffs = ccdcImg.select(['.*'+changeDirBand+'_coef.*']);
-  var segMask = ccdcImg.select(['.*_tStart']).selfMask();
+  var startDates = ccdcImg.select(['.*_tStart'])
+  var segMask = startDates.selfMask();
   
   // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
   var predicted = ee.ImageCollection(ee.List.sequence(1,nSegs).getInfo().map(function(n){
@@ -41,7 +42,7 @@ function getCCDCChange(ccdcImg,changeDirBand){
     var coeffsT = coeffs.select([segName]).updateMask(segMaskT);
     var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')})
     coeffsT = coeffsT.rename(bnsT)
-    var dummyYear = ee.Image(2000.7).rename(['year']).updateMask(segMaskT);
+    var startDateT = startDates.select([segName]).rename(['year']).updateMask(segMaskT);
     return dLib.getCCDCPrediction(dummyYear,coeffsT);
   })).select(['.*_predicted']).toBands();
   var bns = predicted.bandNames()
