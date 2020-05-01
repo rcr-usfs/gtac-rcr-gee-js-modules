@@ -181,7 +181,7 @@ var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
 
 var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
-
+print(ccdcImg)
 var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
