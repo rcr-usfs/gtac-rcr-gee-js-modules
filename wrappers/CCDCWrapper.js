@@ -406,7 +406,7 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
   return img.set('system:time_start',d)
 }));
-Map.addLayer(ccdcImg)
+// Map.addLayer(ccdcImg)
 // processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
 // var bns = ee.Image(timeSeries.first()).bandNames();
 var nSegments = ccdcImgSmall.select(['.*tStart']).bandNames().length().getInfo();
@@ -416,7 +416,7 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
   
 var predictedSmall = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
 Map.addLayer(predictedSmall,{},'Predicted Small')
-var predictedCONUS = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
+var predictedCONUS = predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
 Map.addLayer(predictedCONUS,{},'Predicted CONUS')
   // print(ccdcImg);
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
