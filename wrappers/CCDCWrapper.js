@@ -161,39 +161,46 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   img = img.addBands(out);
   return img;//.updateMask(img.mask().reduce(ee.Reducer.min()));
   }
+////////////////////////////////////////////////////////////////////////////////////////
 //Function to get prediced value from a set of harmonic coefficients and a time band
 //The time band is assumed to be in a yyyy.ff where the .ff is the proportion of the year
-function getCCDCPrediction(timeImg,coeffImg,detrended,whichHarmonics){
+//The timeImg can have other bands in it that will be retained in the image that
+//is returned.  This is useful if plotting actual and predicted values is of interest
+function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonics){
+  if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
   if(detrended === null || detrended === undefined){detrended = true}
   if(whichHarmonics === null || whichHarmonics === undefined){whichHarmonics = [1,2,3]}
   
-  var coeffBands = coeffImg.bandNames();
-  print(coeffBands)
+  var timeImgT = timeImg.select([timeBandName]);
+
   
   //Unit of each harmonic (1 cycle)
   var omega = ee.Number(2.0).multiply(Math.PI);
   
   //Constant raster for each coefficient
   //Constant, slope, first harmonic, second harmonic, and third harmonic
-  var harmImg = ee.Image([1]).addBands(timeImg);
+  var harmImg = ee.Image([1]);
+  harmImg = ee.Algorithms.If(coeffImg, harmImg.addBands(timeImgT),harmImg);
   harmImg = ee.Image(ee.List(whichHarmonics).iterate(function(n,prev){
-    var omImg = timeImg.multiply(omega.multiply(n));
+    var omImg = timeImgT.multiply(omega.multiply(n));
     return ee.Image(prev).addBands(omImg.cos()).addBands(omImg.sin());
   },harmImg));
 
-  
+  //Parse through bands to find individual bands that need predicted
   var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
   actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
   var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
-  print(bnsOut)
-  // var predicted = ee.ImageCollection(bns.map(function(bn){
-  //   bn = ee.String(bn);
-  //   var predictedT = coeffs.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
-  //   return predictedT;
-  // })).toBands().rename(bnsOut);
   
-  // return img.addBands(predicted);
+  //Apply respective coeffs for each of those bands to predict 
+  var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
+    bn = ee.String(bn);
+    var predictedT = coeffImg.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
+    return predictedT;
+  })).toBands().rename(bnsOut);
+ 
+  return timeImg.addBands(predicted);
 }
+////////////////////////////////////////////////////////////////////////////////////////
 function predictCCDC(ccdcImg,timeSeries,nSegments,harmonicTag){
   var bns = ee.Image(timeSeries.first()).bandNames();
   
