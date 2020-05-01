@@ -409,9 +409,9 @@ var phase = sinCoeffs.atan2(cosCoeffs)
  
 var amplitude = sinCoeffs.hypot(cosCoeffs)
                     // .unitScale(0, 1)
-                    .multiply(2)
-  Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
-  Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
+                    .multiply(2);
+Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
+Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
 
 
 Export.image.toAsset(ccdcImg.float(), outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13)
