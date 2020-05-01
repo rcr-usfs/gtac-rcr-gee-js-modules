@@ -21,10 +21,17 @@ var startYear = 1984;
 var endYear = 2020;
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2').reproject('EPSG:5070',null,30);
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
-var changeMask = ccdcImg.select(['.*_changeProb']).gt(0).selfMask();
-var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
-changeYears =  changeYears.updateMask(changeMask);
-Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
+function getCCDCChange(ccdcImg){
+  var nSegs = ccdcImg.select(['.*_changeProb']).bandNames().length();
+  var changeMask = ccdcImg.select(['.*_changeProb']).gt(0).selfMask();
+  var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
+  var dummyYears =  ee.List.repeat(2000,nSegs);
+  print(dummyYears)
+  Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
+  
+  var yearsForFit = ccdcImg.select(['.*tStart']).add(0.01)
+}
+getCCDCChange(ccdcImg)
 // // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // // var coeffBns = ccdcImgCoeffs.bandNames();
 // // print(coeffBns)
