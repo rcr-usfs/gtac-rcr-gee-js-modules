@@ -1727,100 +1727,102 @@ function thresholdZAndTrendSubtle(zAndTrendCollection,zThreshLow,zThreshHigh,slo
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
-//Function for getting CCDC coefficients for a given date raster
-//Date raster is expected to be decimal year (e.g. 2000.5  or 1999.25...etc)
-function getSegmentParamsForYear(ccdc,yearImg){
+//Older CCDC Code
+// //Function for getting CCDC coefficients for a given date raster
+// //Date raster is expected to be decimal year (e.g. 2000.5  or 1999.25...etc)
+// function getSegmentParamsForYear(ccdc,yearImg){
   
-  //Get the start and end and convert to decimal years
-  var start = ccdc.select('.*tStart').divide(365.25).selfMask(); //segment start data
-  var end = ccdc.select('.*tEnd').divide(365.25).selfMask();    //segment end date
+//   //Get the start and end and convert to decimal years
+//   var start = ccdc.select('.*tStart').divide(365.25).selfMask(); //segment start data
+//   var end = ccdc.select('.*tEnd').divide(365.25).selfMask();    //segment end date
   
-  //Get the band names and set up a blank raster with the indices of the segments
-  var bandNames = start.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
-  var segIndices = bandNames.map(function(bn){return ee.Number.parse(ee.String(bn).slice(1,null))});
-  var blankRaster = ee.Image.constant(segIndices);
-  var firstBandName = ee.String(bandNames.get(0));
-  var outBandNames = ccdc.select([firstBandName.cat('.*coef.*'),firstBandName.cat('.*RMSE')]).bandNames().map(function(bn){return ee.String(bn).split('S1_').get(1)});
+//   //Get the band names and set up a blank raster with the indices of the segments
+//   var bandNames = start.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
+//   var segIndices = bandNames.map(function(bn){return ee.Number.parse(ee.String(bn).slice(1,null))});
+//   var blankRaster = ee.Image.constant(segIndices);
+//   var firstBandName = ee.String(bandNames.get(0));
+//   var outBandNames = ccdc.select([firstBandName.cat('.*coef.*'),firstBandName.cat('.*RMSE')]).bandNames().map(function(bn){return ee.String(bn).split('S1_').get(1)});
 
-  //Find areas where the date is less than the end of the segment
-  var yearMask  = end.gte(yearImg);//start.lte(yearImg).and(end.gte(yearImg));
+//   //Find areas where the date is less than the end of the segment
+//   var yearMask  = end.gte(yearImg);//start.lte(yearImg).and(end.gte(yearImg));
   
-  //Handle no segments at target date
-  //If date is after latest segment, force to use last segment coeffs
-  var validPixels = yearMask.reduce(ee.Reducer.max());
-  yearMask = yearMask.where(end.eq(end.reduce(ee.Reducer.max())).and(validPixels.not()),1);
+//   //Handle no segments at target date
+//   //If date is after latest segment, force to use last segment coeffs
+//   var validPixels = yearMask.reduce(ee.Reducer.max());
+//   yearMask = yearMask.where(end.eq(end.reduce(ee.Reducer.max())).and(validPixels.not()),1);
   
-  //Apply mask to blank raster and then pull the first valid value (earliest segment that ends after target date)
-  blankRaster = blankRaster.updateMask(yearMask);
-  var firstValid = blankRaster.reduce(ee.Reducer.min());
-  blankRaster = blankRaster.updateMask(blankRaster.eq(firstValid));
-  yearMask = yearMask.updateMask(blankRaster);
+//   //Apply mask to blank raster and then pull the first valid value (earliest segment that ends after target date)
+//   blankRaster = blankRaster.updateMask(yearMask);
+//   var firstValid = blankRaster.reduce(ee.Reducer.min());
+//   blankRaster = blankRaster.updateMask(blankRaster.eq(firstValid));
+//   yearMask = yearMask.updateMask(blankRaster);
 
   
-  //Set up blank raster
-  var out = ee.Image.constant(ee.List.repeat(0,outBandNames.length())).rename(outBandNames);
-  //Iterate across each segment and unmask coefficients if they're the valid segment
-  out = ee.Image(bandNames.iterate(function(bn, out) {
-    out = ee.Image(out);
-    bn = ee.String(bn);
+//   //Set up blank raster
+//   var out = ee.Image.constant(ee.List.repeat(0,outBandNames.length())).rename(outBandNames);
+//   //Iterate across each segment and unmask coefficients if they're the valid segment
+//   out = ee.Image(bandNames.iterate(function(bn, out) {
+//     out = ee.Image(out);
+//     bn = ee.String(bn);
     
-    //Include both the coefficients and RMSE
-    var coeffs = ccdc.select([bn.cat('.*coef.*'),bn.cat('.*RMSE')]);
+//     //Include both the coefficients and RMSE
+//     var coeffs = ccdc.select([bn.cat('.*coef.*'),bn.cat('.*RMSE')]);
     
-    //Select the year mask corresponding to the relevant segment
-    var yearMaskT = yearMask.select(bn.cat('.*'));
+//     //Select the year mask corresponding to the relevant segment
+//     var yearMaskT = yearMask.select(bn.cat('.*'));
     
-    //Apply mask
-    coeffs = coeffs.updateMask(yearMaskT);
-    out = out.where(coeffs.mask(),coeffs);
-    return out;
-  }, out));
+//     //Apply mask
+//     coeffs = coeffs.updateMask(yearMaskT);
+//     out = out.where(coeffs.mask(),coeffs);
+//     return out;
+//   }, out));
 
  
- return out;
-}
-///////////////////////////////////////////////////////////////////////
-//Function for predicting band values for CCDC output
-//Adapted from 'users/yang/CCDC:default'
-function getSyntheticForYear(ccdc, yearImg,bands) {
-  // var epoch = ee.Date('1970-01-01')
-  // var days = 719529
+// return out;
+// }
+// ///////////////////////////////////////////////////////////////////////
+// //Function for predicting band values for CCDC output
+// //Adapted from 'users/yang/CCDC:default'
+// function getSyntheticForYear(ccdc, yearImg,bands) {
+//   // var epoch = ee.Date('1970-01-01')
+//   // var days = 719529
   
-  //Get date image from decimal years to days
-  var tfit = yearImg.multiply(365.25);//ee.Date.fromYMD(year, month, day).difference(epoch, 'day').add(days)
+//   //Get date image from decimal years to days
+//   var tfit = yearImg.multiply(365.25);//ee.Date.fromYMD(year, month, day).difference(epoch, 'day').add(days)
   
-  //Unit of each harmonic (1 cycle / 365.25 days)
-  var omega = 2.0 * Math.PI / 365.25;
+//   //Unit of each harmonic (1 cycle / 365.25 days)
+//   var omega = 2.0 * Math.PI / 365.25;
   
-  //Constant raster for each coefficient
-  //Constant, slope, first harmonic, second harmonic, and third harmonic
-  var imageT = ee.Image([1, tfit,
-                                tfit.multiply(omega).cos(),
-                                tfit.multiply(omega).sin(),
-                                tfit.multiply(omega * 2).cos(),
-                                tfit.multiply(omega * 2).sin(),
-                                tfit.multiply(omega * 3).cos(),
-                                tfit.multiply(omega * 3).sin()]);
+//   //Constant raster for each coefficient
+//   //Constant, slope, first harmonic, second harmonic, and third harmonic
+//   var imageT = ee.Image([1, tfit,
+//                                 tfit.multiply(omega).cos(),
+//                                 tfit.multiply(omega).sin(),
+//                                 tfit.multiply(omega * 2).cos(),
+//                                 tfit.multiply(omega * 2).sin(),
+//                                 tfit.multiply(omega * 3).cos(),
+//                                 tfit.multiply(omega * 3).sin()]);
   
-  //Get CCDC coefficients for given date
-  var params = getSegmentParamsForYear(ccdc, yearImg);
+//   //Get CCDC coefficients for given date
+//   var params = getSegmentParamsForYear(ccdc, yearImg);
   
-  //Predict values for each band                    
-  var out = ee.Image(1);
-  out = ee.Image(ee.List(bands).iterate(function(bn, out) {
-    bn = ee.String(bn);
-    //Select coeffs for that band
-    var paramsBn = params.select(ee.String('.*').cat(bn).cat('_coef.*'));
+//   //Predict values for each band                    
+//   var out = ee.Image(1);
+//   out = ee.Image(ee.List(bands).iterate(function(bn, out) {
+//     bn = ee.String(bn);
+//     //Select coeffs for that band
+//     var paramsBn = params.select(ee.String('.*').cat(bn).cat('_coef.*'));
     
-    var predicted = imageT.multiply(paramsBn).reduce('sum').rename(bn);
-    return ee.Image(out).addBands(predicted);
-  },out));
+//     var predicted = imageT.multiply(paramsBn).reduce('sum').rename(bn);
+//     return ee.Image(out).addBands(predicted);
+//   },out));
   
-  out = out.select(ee.List.sequence(1, out.bandNames().size().subtract(1)));
+//   out = out.select(ee.List.sequence(1, out.bandNames().size().subtract(1)));
  
-  return out;
+//   return out;
   
-}
+// }
+//Newer CCDC Code
 //////////////////////////////////////////////////////////////////////////
 
 exports.getR2 = getR2;
