@@ -348,13 +348,12 @@ var transform = [30,0,-2361915.0,0,-30,3177735.0];
 //Specify scale if transform is null
 var scale = null;
 
-
-////////////////////////////////////////////////////////////
+//How many segments to export
+//Agricultural and wetland areas generally will need about 1 for every 2-5 years
+//Other areas need about 1 for every 10-30 years
+var nSegments = 9;
 ///////////////////////////////////////////////////////////////////////
-
-//List of bands or indices to iterate across
-//Typically a list of spectral bands or computed indices
-
+//CCDC Parsams
 var ccdcParams ={
   breakpointBands:['red','nir','swir1','swir2','NDVI','NBR'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
                                                               //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
@@ -365,10 +364,7 @@ var ccdcParams ={
   lambda: 0.002,//Lambda for LASSO regression fitting. If set to 0, regular OLS is used instead of LASSO
   maxIterations : 25000 //Maximum number of runs for LASSO regression convergence. If set to 0, regular OLS is used instead of LASSO.
 } 
-//How many segments to export
-//Agricultural and wetland areas generally will need about 1 for every 2-5 years
-//Other areas need about 1 for every 10-30 years
-var nSegments = 9;
+
 ///////////////////////////////////////////////////////////////////////
 // End user parameters
 ///////////////////////////////////////////////////////////////////////
