@@ -388,7 +388,7 @@ processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
 indexNames = indexNames.push('.*_predicted');
 print(indexNames)
 var predicted = predictCCDC(ccdcImg,processedScenes).select(indexNames);
-Map.addLayer(predictedSmall,{},'Predicted CCDC');
+Map.addLayer(predicted,{},'Predicted CCDC');
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
 // var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
 // // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
