@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -375,13 +376,13 @@ var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear
   ).map(getImagesLib.addSAVIandEVI);
 
 // Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
-processedScenes = processedScenes.select(indexNames);
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
-print(ccdc);
+// processedScenes = processedScenes.select(indexNames);
+// var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
+// print(ccdc);
 // Map.addLayer(ccdc,{},'raw ccdc',false);
 // var ccdcImg = buildCcdcImage(ccdc, 4);
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
-// var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
+var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
 // // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // // var coeffBns = ccdcImgCoeffs.bandNames();
 // // print(coeffBns)
@@ -416,10 +417,11 @@ print(ccdc);
 // // Map.addLayer(ccdcImg)
 // // processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
 // // var bns = ee.Image(timeSeries.first()).bandNames();
-// var nSegments = ccdcImgSmall.select(['.*tStart']).bandNames().length().getInfo();
+var nSegments = ccdcImgSmall.select(['.*tStart']).bandNames().length().getInfo();
 // //Visualize the number of segments
-// var count = ccdcImgSmall.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
-// Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
+var count = ccdcImgSmall.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
+Map.addLayer(ccdcImgSmall.select(['.*tEnd']).selfMask().reduce(ee.Reducer.max()),{min:endYear-1,max:endYear},'Last Year');
   
 // var predictedSmall = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
 // Map.addLayer(predictedSmall,{},'Predicted Small')
