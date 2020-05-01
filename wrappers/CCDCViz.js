@@ -34,14 +34,26 @@ function getCCDCChange(ccdcImg,changeDirBand){
   var segMaskLeft = endDates.selfMask();
   var segMaskRight = startDates.selfMask();
   
-  var endPreds = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).getInfo().map(function(n){
+  var endPreds = ee.List.sequence(1,nSegs.subtract(1)).map(function(n){
       n = ee.Number(n).byte();
       var segName = ee.String('S').cat(n.format()).cat('_.*');
       var coeffsT = coeffs.select([segName]);
+      var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
+      coeffsT = coeffsT.rename(bnsT);
       var dateImgT = endDates.select([segName]).rename(['year']); 
       return dLib.getCCDCPrediction(dateImgT,coeffsT);
-  }));
-  Map.addLayer(endPreds)
+  });
+  var startPreds = ee.List.sequence(2,nSegs).map(function(n){
+      n = ee.Number(n).byte();
+      var segName = ee.String('S').cat(n.format()).cat('_.*');
+      var coeffsT = coeffs.select([segName]);
+      var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
+      coeffsT = coeffsT.rename(bnsT);
+      var dateImgT = startDates.select([segName]).rename(['year']); 
+      return dLib.getCCDCPrediction(dateImgT,coeffsT);
+  });
+  
+  print(endPreds.zip(startPreds))
   // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
   // var diffs = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).getInfo().map(function(n){
   //   n = ee.Number(n).byte();
