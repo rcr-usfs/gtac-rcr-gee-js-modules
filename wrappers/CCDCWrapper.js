@@ -412,7 +412,9 @@ var nSegments = ccdcImg.select(['.*tStart']).bandNames().length().getInfo();
 var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
   
-predictCCDC(ccdcImg,yearImages)
+var predicted = predictCCDC(ccdcImg,yearImages);
+Map.addLayer(predicted.select(['.*_predicted']))
+  // print(ccdcImg);
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
 // var breaks = ccdcImg.select(['.*_tBreak']);
