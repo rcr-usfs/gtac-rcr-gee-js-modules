@@ -2080,4 +2080,5 @@ exports.thresholdZAndTrend = thresholdZAndTrend;
 exports.thresholdZAndTrendSubtle = thresholdZAndTrendSubtle;
 exports.thresholdSubtleChange = thresholdSubtleChange;
 
+exports.buildCcdcImage = buildCcdcImage;
 exports.predictCCDC = predictCCDC;
