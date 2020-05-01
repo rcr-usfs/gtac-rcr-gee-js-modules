@@ -1,17 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-106.09400088404944, 40.177414676828164],
-          [-106.09400088404944, 40.05033504067853],
-          [-105.68270022486975, 40.05033504067853],
-          [-105.68270022486975, 40.177414676828164]]], null, false);
+        [[[-108.28163961476221, 39.25451132142729],
+          [-108.28163961476221, 36.68265794564914],
+          [-104.55727438038721, 36.68265794564914],
+          [-104.55727438038721, 39.25451132142729]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -334,7 +333,7 @@ var outputName = 'CCDC_Test3';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
-var exportPathRoot = 'users/ianhousman/test/CCDC_Collection/';
+var exportPathRoot = 'users/iwhousman/test/CCDC_Collection/';
 
 // var exportPathRoot = 'projects/USFS/LCMS-NFS/R4/BT/Base-Learners/Base-Learners-Collection';
 //CRS- must be provided.  
