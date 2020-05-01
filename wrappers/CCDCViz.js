@@ -47,6 +47,9 @@ function getCCDCChange(ccdcImg,changeDirBand){
   var bns = predicted.bandNames()
   //   dummyYears.map(function(img){return dLib.getCCDCPrediction(img,ccdcImg.select(['.*_coef.*']))})
   print(bns)
+  var predictedLeft = predicted.select(bns.slice(0,bns.length().subtract(1)));
+  var predictedRight = predicted.select(bns.slice(1,null));
+  print(predictedLeft,predictedRight)
   Map.addLayer(predicted,{},'diff ',false)
   Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
   
