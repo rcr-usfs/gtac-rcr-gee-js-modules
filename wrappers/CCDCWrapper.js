@@ -1,20 +1,19 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-106.23939412562189, 40.35853013448848],
-          [-106.23939412562189, 39.72139814741314],
-          [-105.20393269984064, 39.72139814741314],
-          [-105.20393269984064, 40.35853013448848]]], null, false);
+        [[[-116.64329619138385, 45.67848732886218],
+          [-116.64329619138385, 34.49199285908291],
+          [-102.09739775388385, 34.49199285908291],
+          [-102.09739775388385, 45.67848732886218]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
-// var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 // var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 // var ccdcLib = require('users/yang/CCDC:default');
 
@@ -248,8 +247,8 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2005;
-var endYear = 2015;
+var startYear = 1984;
+var endYear = 2020;
 
 
 
@@ -357,7 +356,7 @@ var scale = null;
 //Can include: 'blue','green','red','nir','swir1','swir2'
 //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
 // var indexList = ee.List(['nir','swir1']);
-var indexNames = ['NBR','NDVI'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
+var indexNames = ['red','nir','swir1','swir2','NDVI','NBR'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
 
 var cloudBands = null;//['green','swir1']
 ///////////////////////////////////////////////////////////////////////
@@ -369,64 +368,64 @@ var cloudBands = null;//['green','swir1']
 
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
-// var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
-//   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
-//   applyFmaskCloudShadowMask,applyFmaskSnowMask,
-//   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
-//   ).map(getImagesLib.addSAVIandEVI);
+var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
+  toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
+  applyFmaskCloudShadowMask,applyFmaskSnowMask,
+  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
+  ).map(getImagesLib.addSAVIandEVI);
 
-// // Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
-// processedScenes = processedScenes.select(indexNames);
-// var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
-// print(ccdc);
+// Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
+processedScenes = processedScenes.select(indexNames);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
+print(ccdc);
 // Map.addLayer(ccdc,{},'raw ccdc',false);
 // var ccdcImg = buildCcdcImage(ccdc, 4);
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
-var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
-// var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
-// var coeffBns = ccdcImgCoeffs.bandNames();
-// print(coeffBns)
-// var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd']);
-// ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT)
-// // Map.addLayer(ccdcImg)
-var ccdcImg = ee.ImageCollection('projects/CCDC/USA')
-          .filterBounds(geometry)
-          .mosaic();
-// // print(ccdcImg)
-var ccdcImgCoeffs = ccdcImg.select(['.*B2_coef_.*','.*B4_coef_.*']).divide(365.25);
-var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd']).divide(365.25);
+// var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
+// // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
+// // var coeffBns = ccdcImgCoeffs.bandNames();
+// // print(coeffBns)
+// // var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd']);
+// // ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT)
+// // // Map.addLayer(ccdcImg)
+// var ccdcImg = ee.ImageCollection('projects/CCDC/USA')
+//           .filterBounds(geometry)
+//           .mosaic();
+// // // print(ccdcImg)
+// var ccdcImgCoeffs = ccdcImg.select(['.*B2_coef_.*','.*B4_coef_.*'])//.divide(365.25);
+// var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd'])//.divide(365.25);
 
-ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
-// Map.addLayer(ccdcImg)
-var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
-  n = ee.Number(n);
-  var img = ee.Image(n).float().rename(['year']);
-  var y = n.int16();
-  var fraction = n.subtract(y);
-  var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
-  return img.set('system:time_start',d)
-}));
-var yearImages2 = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
-  n = ee.Number(n);
-  var img = ee.Image(n).float().rename(['year']);
-  var y = n.int16();
-  var fraction = n.subtract(y);
-  var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
-  return img.multiply(365.25).set('system:time_start',d)
-}));
-// Map.addLayer(ccdcImg)
-// processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
-// var bns = ee.Image(timeSeries.first()).bandNames();
-var nSegments = ccdcImgSmall.select(['.*tStart']).bandNames().length().getInfo();
-//Visualize the number of segments
-var count = ccdcImgSmall.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
-Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
+// ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
+// // Map.addLayer(ccdcImg)
+// var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
+//   n = ee.Number(n);
+//   var img = ee.Image(n).float().rename(['year']);
+//   var y = n.int16();
+//   var fraction = n.subtract(y);
+//   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
+//   return img.set('system:time_start',d)
+// }));
+// var yearImages2 = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
+//   n = ee.Number(n);
+//   var img = ee.Image(n).float().rename(['year']);
+//   var y = n.int16();
+//   var fraction = n.subtract(y);
+//   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
+//   return img.multiply(365.25).set('system:time_start',d)
+// }));
+// // Map.addLayer(ccdcImg)
+// // processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
+// // var bns = ee.Image(timeSeries.first()).bandNames();
+// var nSegments = ccdcImgSmall.select(['.*tStart']).bandNames().length().getInfo();
+// //Visualize the number of segments
+// var count = ccdcImgSmall.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+// Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
   
-var predictedSmall = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
-Map.addLayer(predictedSmall,{},'Predicted Small')
-Map.addLayer(ccdcImg)
-var predictedCONUS = predictCCDC(ccdcImg,yearImages).select(['.*_predicted'])//.map(function(img){return img.divide(100000).copyProperties(img,['system:time_start'])});
-Map.addLayer(predictedCONUS,{},'Predicted CONUS')
+// var predictedSmall = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
+// Map.addLayer(predictedSmall,{},'Predicted Small')
+// Map.addLayer(ccdcImg)
+// var predictedCONUS = predictCCDC(ccdcImg,yearImages2).select(['.*_predicted'])//.map(function(img){return img.divide(100000).copyProperties(img,['system:time_start'])});
+// Map.addLayer(predictedCONUS,{},'Predicted CONUS')
   // print(ccdcImg);
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
