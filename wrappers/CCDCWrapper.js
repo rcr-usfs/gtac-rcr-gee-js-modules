@@ -201,17 +201,22 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   return timeImg.addBands(predicted);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
+//Function to take a given CCDC results stack and predict values for a given time series
+//The ccdcImg is assumed to have coefficients for a set of segments and a tStart and tEnd for 
+//each segment. 
+//It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
 function predictCCDC(ccdcImg,timeSeries,nSegments,harmonicTag){
   var bns = ee.Image(timeSeries.first()).bandNames();
-  
+  var nSegments = ccdcImg.select(['.*tStart']).bandNames().length().getInfo();
+
   var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
   Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
   
   timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
   // // Map.addLayer(ts)
   var img = ee.Image(timeSeries.first())
-  getCCDCPrediction(img.select(['year']),img.select(['.*_coef.*']))
-  // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img.select(['year']),img.select(['.*_coef.*']))});
+  // getCCDCPrediction(img.select(['year']),img.select(['.*_coef.*']))
+  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img.select(['year']),img.select(['.*_coef.*']))});
   // print(timeSeries)
   // Map.addLayer(ts.select(['.*_predicted']))
   // print(ccdcImg);
