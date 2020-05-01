@@ -394,7 +394,7 @@ var ccdcImg = ee.ImageCollection('projects/CCDC/USA')
           .mosaic();
 // // print(ccdcImg)
 var ccdcImgCoeffs = ccdcImg.select(['.*B2_coef_.*','.*B4_coef_.*'])//.divide(10000);
-var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd']).multiply(365.25);
+var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd']).divide(365.25);
 
 ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
 // Map.addLayer(ccdcImg)
@@ -425,7 +425,7 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 var predictedSmall = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
 Map.addLayer(predictedSmall,{},'Predicted Small')
 Map.addLayer(ccdcImg)
-var predictedCONUS = predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
+var predictedCONUS = predictCCDC(ccdcImg,yearImages).select(['.*_predicted']).map(function(img){return img.divide(10000).copyProperties(img,['system:time_start'])});
 Map.addLayer(predictedCONUS,{},'Predicted CONUS')
   // print(ccdcImg);
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
