@@ -19,7 +19,7 @@ var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 1984;
 var endYear = 2020;
-var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
+var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2').reproject('EPSG:5070',null,30);
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 var changeMask = ccdcImg.select(['.*_changeProb']).selfMask();
 var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
