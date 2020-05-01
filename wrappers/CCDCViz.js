@@ -43,10 +43,11 @@ function getCCDCChange(ccdcImg,changeDirBand){
     coeffsT = coeffsT.rename(bnsT)
     var dummyYear = ee.Image(2000.7).rename(['year']).updateMask(segMaskT);
     return dLib.getCCDCPrediction(dummyYear,coeffsT);
-  }));
+  })).select(['.*_predicted']).toBands();
+  var bns = predicted.bandNames()
   //   dummyYears.map(function(img){return dLib.getCCDCPrediction(img,ccdcImg.select(['.*_coef.*']))})
-  print(predicted)
-  Map.addLayer(predicted.select(['.*_predicted']),{},'diff ',false)
+  print(bns)
+  Map.addLayer(predicted,{},'diff ',false)
   Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
   
 }
