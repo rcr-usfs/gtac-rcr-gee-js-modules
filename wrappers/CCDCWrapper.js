@@ -375,8 +375,9 @@ var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear
   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
   ).map(getImagesLib.addSAVIandEVI);
 
-// Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
-// processedScenes = processedScenes.select(indexNames);
+
+processedScenes = processedScenes.select(indexNames);
+Map.addLayer(processedScenes,{},'Raw Time Series',false);
 // var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
 // print(ccdc);
 // Map.addLayer(ccdc,{},'raw ccdc',false);
@@ -392,20 +393,20 @@ var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
 // var ccdcImg = ee.ImageCollection('projects/CCDC/USA')
 //           .filterBounds(geometry)
 //           .mosaic();
-// // // print(ccdcImg)
+// print(ccdcImg)
 // var ccdcImgCoeffs = ccdcImg.select(['.*B2_coef_.*','.*B4_coef_.*'])//.divide(365.25);
 // var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd'])//.divide(365.25);
 
 // ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
 // // Map.addLayer(ccdcImg)
-var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
-  n = ee.Number(n);
-  var img = ee.Image(n).float().rename(['year']);
-  var y = n.int16();
-  var fraction = n.subtract(y);
-  var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
-  return img.set('system:time_start',d)
-}));
+// var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
+//   n = ee.Number(n);
+//   var img = ee.Image(n).float().rename(['year']);
+//   var y = n.int16();
+//   var fraction = n.subtract(y);
+//   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
+//   return img.set('system:time_start',d)
+// }));
 // var yearImages2 = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
 //   n = ee.Number(n);
 //   var img = ee.Image(n).float().rename(['year']);
@@ -417,14 +418,14 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
 // // Map.addLayer(ccdcImg)
 // // processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
 // // var bns = ee.Image(timeSeries.first()).bandNames();
-var nSegments = ccdcImgSmall.select(['.*tStart']).bandNames().length().getInfo();
+// var nSegments = ccdcImgSmall.select(['.*tStart']).bandNames().length().getInfo();
 // //Visualize the number of segments
-var count = ccdcImgSmall.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
-Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
-Map.addLayer(ccdcImgSmall.select(['.*tEnd']).selfMask().reduce(ee.Reducer.max()),{min:endYear-1,max:endYear},'Last Year');
+// var count = ccdcImgSmall.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+// Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
+// Map.addLayer(ccdcImgSmall.select(['.*tEnd']).selfMask().reduce(ee.Reducer.max()),{min:endYear-1,max:endYear},'Last Year');
   
-var predictedSmall = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
-Map.addLayer(predictedSmall,{},'Predicted Small')
+// var predictedSmall = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
+// Map.addLayer(predictedSmall,{},'Predicted Small')
 // Map.addLayer(ccdcImg)
 // var predictedCONUS = predictCCDC(ccdcImg,yearImages2).select(['.*_predicted'])//.map(function(img){return img.divide(100000).copyProperties(img,['system:time_start'])});
 // Map.addLayer(predictedCONUS,{},'Predicted CONUS')
