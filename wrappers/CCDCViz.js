@@ -28,11 +28,11 @@ function getCCDCChange(ccdcImg){
   changeYears = changeYears.updateMask(changeMask);
   
   var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
-  var predicted = dummyYears.map(function(img){return getCCDCPrediction(img,ccdcImg.select(['.*_coef.*']))})
+  var predicted = dummyYears.map(function(img){return dLib.getCCDCPrediction(img,ccdcImg.select(['.*_coef.*']))})
+  print(predicted)
   Map.addLayer(predicted)
   Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
   
-  var yearsForFit = ccdcImg.select(['.*tStart']).add(0.01)
 }
 getCCDCChange(ccdcImg)
 // // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
