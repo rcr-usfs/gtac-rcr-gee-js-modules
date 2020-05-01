@@ -1823,6 +1823,216 @@ function thresholdZAndTrendSubtle(zAndTrendCollection,zThreshLow,zThreshHigh,slo
   
 // }
 //Newer CCDC Code
+
+//-------------------- BEGIN CCDC Helper Function -------------------//
+/**
+ * create segment tab
+ */
+var buildSegmentTag = function(nSegments) {
+  return ee.List.sequence(1, nSegments).map(function(i) {
+    return ee.String('S').cat(ee.Number(i).int());
+  });
+};
+
+
+function buildSegmentBandTag(nSegments,bands){
+  var out = bands.map(function(bn){
+      return ee.List.sequence(1, nSegments).map(function(i) {
+        return ee.String('S').cat(ee.Number(i).int()).cat('_').cat(bn);
+      });
+  });
+  return out.flatten();
+}
+/**
+ * Extract CCDC magnitude image
+ * 
+ */
+var buildMagnitude = function(fit, nSegments) {
+  var mag = fit.select(['.*_magnitude']);
+  var bns = mag.bandNames();
+  var segBns = buildSegmentTag(nSegments);
+
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
+  var magImg = mag.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
+  
+  return magImg;
+};
+
+/**
+ * Extract CCDC RMSE image
+ * 
+ */
+var buildRMSE = function(fit, nSegments) {
+  var rmses = fit.select(['.*_rmse']);
+  var bns = rmses.bandNames();
+  var segBns = buildSegmentTag(nSegments);
+
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
+  var rmseImg = rmses.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
+  
+  return rmseImg;
+};
+
+/**
+ * Extract CCDC Coefficient image
+ * 
+ */
+var buildCoefs = function(fit, nSegments,harmonicTag) {
+  if(nSegments === null || nSegments === undefined){
+    nSegments = 4;
+  }
+  if(harmonicTag === null || harmonicTag === undefined){
+    harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
+  }
+  
+  
+  var coeffs = fit.select(['.*_coefs']);
+  
+  var bns = coeffs.bandNames();
+  
+  var segBns = ee.List.sequence(1,nSegments).map(function(n){return ee.String('S').cat(ee.Number(n).byte().format())});
+
+  var otherBns =bns.map(function(bn){
+    bn = ee.String(bn);
+    return harmonicTag.map(function(harm){
+      harm = ee.String(harm);
+      return bn.cat('_').cat(harm);
+    });
+  }).flatten();
+  
+  var totalLength = ee.Number(harmonicTag.length).multiply(bns.length());
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0,totalLength)]).repeat(0, nSegments));
+  
+  var coeffImg = coeffs.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments);
+
+  coeffImg = coeffImg.arrayFlatten([segBns,otherBns]);
+ 
+  return coeffImg;
+};
+
+/**
+ * Extract CCDC tStart, tEnd, tBreak, changeProb
+ * 
+ */
+var buildStartEndBreakProb = function(fit, nSegments) {
+  var change = fit.select(['.*tStart','.*tEnd','.*tBreak','.*changeProb']);
+  var bns = change.bandNames();
+  var segBns = buildSegmentTag(nSegments);
+  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
+  var changeImg = change.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
+  
+  return changeImg;
+  
+};
+
+/**
+ * build a 74 x nSegments layer image
+ * using int32 as output.
+ * 
+ */
+var buildCcdcImage = function(fit, nSegments) {
+  var coeffs =buildCoefs(ccdc,nSegments);
+  var rmses = buildRMSE(ccdc, nSegments);
+  var mags = buildMagnitude(ccdc, nSegments);
+  var change = buildStartEndBreakProb(ccdc, nSegments);
+
+  return ee.Image.cat(coeffs, rmses, mags, change).float();
+};
+////////////////////////////////////////////////////////////////////////////////////////
+//Function to find the corresponding CCDC coefficients for a given time image
+//The timeImg can have other bands in it that will be retained in the image that
+//is returned.  This is useful if plotting actual and predicted values is of interest
+function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName){
+  if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
+  
+  //Pop off the coefficients and find the output band names
+  var coeffs =  ccdcImg.select('.*_coef.*');
+  var coeffBns = coeffs.bandNames();
+  var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
+  
+  //Find the start and end time for the segments
+  var tStarts = ccdcImg.select(['.*tStart']);
+  var tEnds = ccdcImg.select(['.*tEnd']);
+  
+  //Get the time for the given timeImg
+  var tBand = timeImg.select([timeBandName]);
+  
+  //Mask out segments that the time does not intersect
+  var segMask  = tBand.gte(tStarts).and(tBand.lte(tEnds));
+  
+  //Find how many segments there are
+  var nSegs = segMask.bandNames().length();
+  
+  //Iterate through each segment to pull the correct values
+  var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
+    prev = ee.Image(prev);
+    var segBN = ee.String('S').cat(ee.Number(n).byte().format()).cat('.*');
+    var segCoeffs = ccdcImg.select([segBN]);
+    segCoeffs = segCoeffs.select(['.*_coef.*']);
+    var segMaskT = segMask.select([segBN]);
+    segCoeffs = segCoeffs.updateMask(segMaskT);
+    return prev.where(segCoeffs.mask(),segCoeffs);
+  },ee.Image.constant(ee.List.repeat(-9999,outBns.length())).rename(outBns)));
+  out = out.updateMask(out.neq(-9999));
+  
+  timeImg = timeImg.addBands(out);
+  return timeImg;
+  }
+////////////////////////////////////////////////////////////////////////////////////////
+//Function to get prediced value from a set of harmonic coefficients and a time band
+//The time band is assumed to be in a yyyy.ff where the .ff is the proportion of the year
+//The timeImg can have other bands in it that will be retained in the image that
+//is returned.  This is useful if plotting actual and predicted values is of interest
+function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonics){
+  if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
+  if(detrended === null || detrended === undefined){detrended = true}
+  if(whichHarmonics === null || whichHarmonics === undefined){whichHarmonics = [1,2,3]}
+  
+  var tBand = timeImg.select([timeBandName]);
+  
+  //Unit of each harmonic (1 cycle)
+  var omega = ee.Number(2.0).multiply(Math.PI);
+  
+  //Constant raster for each coefficient
+  //Constant, slope, first harmonic, second harmonic, and third harmonic
+  var harmImg = ee.Image([1]);
+  harmImg = ee.Algorithms.If(detrended, harmImg.addBands(tBand),harmImg);
+  harmImg = ee.Image(ee.List(whichHarmonics).iterate(function(n,prev){
+    var omImg = tBand.multiply(omega.multiply(n));
+    return ee.Image(prev).addBands(omImg.cos()).addBands(omImg.sin());
+  },harmImg));
+  
+  //Parse through bands to find individual bands that need predicted
+  var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
+  actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
+  var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
+  
+  //Apply respective coeffs for each of those bands to predict 
+  var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
+    bn = ee.String(bn);
+    var predictedT = coeffImg.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
+    return predictedT;
+  })).toBands().rename(bnsOut);
+ 
+  return timeImg.addBands(predicted);
+}
+////////////////////////////////////////////////////////////////////////////////////////
+//Function to take a given CCDC results stack and predict values for a given time series
+//The ccdcImg is assumed to have coefficients for a set of segments and a tStart and tEnd for 
+//each segment. 
+//It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
+function predictCCDC(ccdcImg,timeSeries,nSegments,harmonicTag){
+  
+  //Add the segment-appropriate coefficients to each time image
+  timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)});
+  //Predict out the values for each image 
+  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*']))});
+  
+  return timeSeries;
+ 
+}
+//-------------------- END CCDC Helper Function -------------------//
+///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
 exports.getR2 = getR2;
@@ -1869,3 +2079,5 @@ exports.zAndTrendChangeDetection = zAndTrendChangeDetection;
 exports.thresholdZAndTrend = thresholdZAndTrend;
 exports.thresholdZAndTrendSubtle = thresholdZAndTrendSubtle;
 exports.thresholdSubtleChange = thresholdSubtleChange;
+
+exports.predictCCDC = predictCCDC;
