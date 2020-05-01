@@ -81,7 +81,7 @@ var buildCoefs = function(fit, nSegments,harmonicTag) {
   }
   
   
-  var coeffs = fit.select(['.*_coefs']);
+  var coeffs = fit.select(['.*_coef']);
   
   var bns = coeffs.bandNames();
   
@@ -137,7 +137,7 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   if(harmonicTag === null || harmonicTag === undefined){
     harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
-  var coeffs =  ccdcImg.select('.*_coefs_.*');
+  var coeffs =  ccdcImg.select('.*_coef_.*');
   var coeffBns = coeffs.bandNames();
   var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
   
@@ -152,7 +152,7 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
     prev = ee.Image(prev);
     var segBN = ee.String('S').cat(ee.Number(n).byte().format()).cat('.*');
     var segCoeffs = ccdcImg.select([segBN]);
-    segCoeffs = segCoeffs.select(['.*_coefs_.*']);
+    segCoeffs = segCoeffs.select(['.*_coef_.*']);
     var segMaskT = segMask.select([segBN]);
     segCoeffs = segCoeffs.updateMask(segMaskT);
     return prev.where(segCoeffs.mask(),segCoeffs);
@@ -163,7 +163,7 @@ function getCCDCSegCoeffs(img,ccdcImg,harmonicTag){
   }
 function getCCDCPrediction(img){
   var tImg = img.select(['year']);
-  var coeffs = img.select(['.*_coefs_.*'])
+  var coeffs = img.select(['.*_coef_.*'])
   //Unit of each harmonic (1 cycle)
   var omega = 2.0 * Math.PI;
   
@@ -189,26 +189,23 @@ function getCCDCPrediction(img){
   
   return img.addBands(predicted);
 }
-function predictCCDC(ccdcImg,ts,nSegments,harmonicTag,harmonicImg){
+function predictCCDC(ccdcImg,ts,nSegments,harmonicTag){
   if(nSegments === null || nSegments === undefined){
     nSegments = 4;
   }
   if(harmonicTag === null || harmonicTag === undefined){
     harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
   }
-  if(harmonicImg === null || harmonicImg === undefined){
-    
-    harmonicImg = ee.Image([1,1,Math.cos(2*Math.PI),Math.cos(2*Math.PI),Math.cos(4*Math.PI),Math.cos(4*Math.PI),Math.cos(6*Math.PI),Math.cos(6*Math.PI)]);//['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
-  }
+  
   var bns = ee.Image(ts.first()).bandNames();
   
   var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
-  Map.addLayer(count,{min:1,max:2},'count')
+  Map.addLayer(count,{min:1,max:nSegments},'Segment Count')
   ts = ts.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)})
   // Map.addLayer(ts)
   ts = ts.map(getCCDCPrediction);
   print(ts)
-  Map.addLayer(ts.select(['NBR','NDVI','.*_predicted']))
+  Map.addLayer(ts.select(['.*_predicted']))
   print(ccdcImg);
 }
 //-------------------- END CCDC Helper Function -------------------//
@@ -233,8 +230,8 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2005;
-var endYear = 2010;
+var startYear = 1984;
+var endYear = 2020;
 
 
 
@@ -354,22 +351,29 @@ var cloudBands = null;//['green','swir1']
 
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
-var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
-  toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
-  applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
-  ).map(getImagesLib.addSAVIandEVI);
+// var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
+//   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
+//   applyFmaskCloudShadowMask,applyFmaskSnowMask,
+//   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
+//   ).map(getImagesLib.addSAVIandEVI);
 
-// Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
-processedScenes = processedScenes.select(indexNames);
+// // Map.addLayer(processedScenes.select(['NDVI']),{},'ts',false);
+// processedScenes = processedScenes.select(indexNames);
 // var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
 // print(ccdc);
 // Map.addLayer(ccdc,{},'raw ccdc',false);
 // var ccdcImg = buildCcdcImage(ccdc, 4);
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
-var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test');
+var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
+Map.addLayer(ccdcImg)
+var ccdcImg = ee.ImageCollection('projects/CCDC/USA')
+          // .filterBounds(geometry)
+          .mosaic();
 print(ccdcImg)
-var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.05).map(function(n){
+var ccdcImgCoeffs = ccdcImg.select(['.*_coef_.*']).divide(1000);
+var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd']).divide(365.25);
+ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT)
+var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n).float().rename(['year']);
   var y = n.int16();
@@ -377,9 +381,9 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.05).m
   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
   return img.set('system:time_start',d)
 }));
-// Map.addLayer(yearImages)
-processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
-predictCCDC(ccdcImg,processedScenes)
+Map.addLayer(ccdcImg)
+// processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
+predictCCDC(ccdcImg,yearImages)
 // Map.addLayer(ccdcImg,{},'ccdcImg',false);
 
 // var breaks = ccdcImg.select(['.*_tBreak']);
