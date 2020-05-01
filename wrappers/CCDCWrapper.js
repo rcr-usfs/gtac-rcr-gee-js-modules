@@ -360,6 +360,8 @@ var scale = null;
 var indexNames = ['red','nir','swir1','swir2','NDVI','NBR'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
 
 var cloudBands = null;//['green','swir1']
+
+var nSegments = 9;
 ///////////////////////////////////////////////////////////////////////
 // End user parameters
 ///////////////////////////////////////////////////////////////////////
@@ -381,14 +383,17 @@ Map.addLayer(processedScenes,{},'Raw Time Series',false);
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
 
 
-var ccdcImg = buildCcdcImage(ccdc, 9);
+var ccdcImg = buildCcdcImage(ccdc, nSegments);
 
-
+var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
 indexNames = indexNames.push('.*_predicted');
 print(indexNames)
 var predicted = predictCCDC(ccdcImg,processedScenes).select(indexNames);
 Map.addLayer(predicted,{},'Predicted CCDC');
+
+
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
 // var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
 // // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
