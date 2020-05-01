@@ -390,7 +390,7 @@ processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
 indexNames.push('.*_predicted');
 
 var predicted = predictCCDC(ccdcImg,processedScenes).select(indexNames);
-Map.addLayer(predicted,{},'Predicted CCDC');
+Map.addLayer(predicted,{},'Predicted CCDC',false);
 
 
 Export.image.toAsset(ccdcImg.float(), outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13)
