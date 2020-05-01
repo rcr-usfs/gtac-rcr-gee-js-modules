@@ -378,10 +378,10 @@ var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear
 
 processedScenes = processedScenes.select(indexNames);
 Map.addLayer(processedScenes,{},'Raw Time Series',false);
-// var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(processedScenes, indexNames, cloudBands,6,0.99,1.33,1,0.002);
 // print(ccdc);
 // Map.addLayer(ccdc,{},'raw ccdc',false);
-// var ccdcImg = buildCcdcImage(ccdc, 4);
+var ccdcImg = buildCcdcImage(ccdc, 9);
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
 var ccdcImgSmall = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2');
 // // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
