@@ -57,8 +57,8 @@ function getCCDCChange(ccdcImg,changeDirBand){
   Map.addLayer(diff,{},'diff ',false)
   Map.addLayer(changeYears,{min:startYear,max:endYear},'Change Years')
   
-  Map.addLayer(negativeChangeYears,{min:startYear,max:endYear},'negativeChangeYears')
-  Map.addLayer(positiveChangeYears,{min:startYear,max:endYear},'positiveChangeYears')
+  Map.addLayer(negativeChangeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'negativeChangeYears')
+  Map.addLayer(positiveChangeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'888,0F0'},'positiveChangeYears')
   
   // Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
   
