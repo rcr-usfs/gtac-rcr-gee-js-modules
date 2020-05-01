@@ -357,7 +357,7 @@ var scale = null;
 //Can include: 'blue','green','red','nir','swir1','swir2'
 //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
 // var indexList = ee.List(['nir','swir1']);
-var indexNames = ['red','nir','swir1','swir2','NDVI','NBR'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
+// var indexNames = ['red','nir','swir1','swir2','NDVI','NBR'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['green','red','nir','swir1','swir2','NBR','NDVI','tcAngleBG'];//['NBR','blue','green','red','nir','swir1','swir2','NDMI','NDVI','wetness','greenness','brightness','tcAngleBG'];
 
 var tmaskBands = null;//['green','swir1']//The name or index of the bands to use for iterative TMask cloud detection. These are typically the green band and the SWIR2 band. If unspecified, TMask is not used. If specified, 'tmaskBands' must be included in 'breakpointBands'.
 var minObservations = 6;//Factors of minimum number of years to apply new fitting.
@@ -365,7 +365,15 @@ var chiSquareProbability = 0.99;//The chi-square probability threshold for chang
 var minNumOfYearsScaler = 1.33;//Factors of minimum number of years to apply new fitting.
 var lambda = 0.002;//Lambda for LASSO regression fitting. If set to 0, regular OLS is used instead of LASSO
 var maxIterations = 25000;//Maximum number of runs for LASSO regression convergence. If set to 0, regular OLS is used instead of LASSO.
-
+var ccdcParams ={
+  breakpointBands:['red','nir','swir1','swir2','NDVI','NBR'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.
+  tmaskBands : null,//['green','swir1']//The name or index of the bands to use for iterative TMask cloud detection. These are typically the green band and the SWIR2 band. If unspecified, TMask is not used. If specified, 'tmaskBands' must be included in 'breakpointBands'., 
+  minObservations: 6,//Factors of minimum number of years to apply new fitting.
+  chiSquareProbability: 0.99,//The chi-square probability threshold for change detection in the range of [0, 1],
+  minNumOfYearsScaler: 1.33,//Factors of minimum number of years to apply new fitting.,\
+  lambda: 0.002,//Lambda for LASSO regression fitting. If set to 0, regular OLS is used instead of LASSO
+  maxIterations
+} 
 //How many segments to export
 //Agricultural and wetland areas generally will need about 1 for every 2-5 years
 //Other areas need about 1 for every 10-30 years
