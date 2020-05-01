@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-116.64329619138385, 45.67848732886218],
-          [-116.64329619138385, 34.49199285908291],
-          [-102.09739775388385, 34.49199285908291],
-          [-102.09739775388385, 45.67848732886218]]], null, false);
+        [[[-106.09400088404944, 40.177414676828164],
+          [-106.09400088404944, 40.05033504067853],
+          [-105.68270022486975, 40.05033504067853],
+          [-105.68270022486975, 40.177414676828164]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -388,8 +388,8 @@ var ccdcImg = buildCcdcImage(ccdc, nSegments);
 var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
-indexNames = indexNames.push('.*_predicted');
-print(indexNames)
+indexNames.push('.*_predicted');
+print('hello',indexNames)
 var predicted = predictCCDC(ccdcImg,processedScenes).select(indexNames);
 Map.addLayer(predicted,{},'Predicted CCDC');
 
