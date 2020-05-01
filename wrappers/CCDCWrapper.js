@@ -394,7 +394,7 @@ var ccdcImg = ee.ImageCollection('projects/CCDC/USA')
           .mosaic();
 // // print(ccdcImg)
 var ccdcImgCoeffs = ccdcImg.select(['.*B2_coef_.*','.*B4_coef_.*'])//.divide(10000);
-var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd']).divide(365.25);
+var ccdcImgT = ccdcImg.select(['.*tStart','.*tEnd']).multiply(365.25);
 
 ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
 // Map.addLayer(ccdcImg)
@@ -406,6 +406,14 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
   return img.set('system:time_start',d)
 }));
+var yearImages2 = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
+  n = ee.Number(n);
+  var img = ee.Image(n).float().rename(['year']);
+  var y = n.int16();
+  var fraction = n.subtract(y);
+  var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
+  return img.multiply(365.25).set('system:time_start',d)
+}));
 // Map.addLayer(ccdcImg)
 // processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
 // var bns = ee.Image(timeSeries.first()).bandNames();
@@ -416,6 +424,7 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
   
 var predictedSmall = predictCCDC(ccdcImgSmall,yearImages).select(['.*_predicted']);
 Map.addLayer(predictedSmall,{},'Predicted Small')
+Map.addLayer(ccdcImg)
 var predictedCONUS = predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
 Map.addLayer(predictedCONUS,{},'Predicted CONUS')
   // print(ccdcImg);
