@@ -169,25 +169,32 @@ var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear
   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
   ).map(getImagesLib.addSAVIandEVI);
 
-
+//Set up time series
 processedScenes = processedScenes.select(ccdcParams.breakpointBands);
 Map.addLayer(processedScenes,{},'Raw Time Series',false);
 
 ccdcParams.dateFormat = 1;
 ccdcParams.collection = processedScenes;
+
+//Run CCDC
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
-
+//Convert to image stack
 var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
 
+//Find the segment count for each pixel
 var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
+
+//Set up time series for predicting values
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
 ccdcParams.breakpointBands.push('.*_predicted');
 
+//Predict CCDC model and visualize the actual vs. predicted
 var predicted = dLib.predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
 Map.addLayer(predicted,{},'Predicted CCDC',false);
 
+//Visualize the seasonality of the first segment
 var seg1 = ccdcImg.select(['S1.*']);
 var sinCoeffs = seg1.select(['.*_SIN']);
 var cosCoeffs = seg1.select(['.*_COS']);
@@ -202,7 +209,11 @@ var amplitude = sinCoeffs.hypot(cosCoeffs)
 Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
 Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
 
+//Set export asset properties
+ccdcImg = ccdcImg.set(ccdcParams).float();
+ccdcImg = ccdcImg.set({'startYear':startYear,'endYear':endYear}).float();
 
-Export.image.toAsset(ccdcImg.float(), outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13)
+//Export output
+Export.image.toAsset(ccdcImg, outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13);
 
 Map.setOptions('HYBRID');
