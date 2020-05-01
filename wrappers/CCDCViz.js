@@ -32,7 +32,7 @@ function getCCDCChange(ccdcImg,changeDirBand){
   var startDates = ccdcImg.select(['.*_tStart']);
   var endDates = ccdcImg.select(['.*_tEnd']);
   var segMask = startDates.selfMask();
-  print(nSegs)
+  print(ccdcImg.select(['.*_changeProb']).bandNames())
   // var dummyYears =  ee.ImageCollection(ee.List.repeat(2000.7,nSegs).map(function(n){n = ee.Number(n);return ee.Image(n).float().rename(['year'])}));
   var predicted = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).getInfo().map(function(n){
     n = ee.Number(n).byte();
