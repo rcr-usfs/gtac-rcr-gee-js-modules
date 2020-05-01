@@ -385,7 +385,8 @@ var ccdcImg = buildCcdcImage(ccdc, 9);
 
 
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
-indexNames = indexNames.push('.*_predicted')
+indexNames = indexNames.push('.*_predicted');
+print(indexNames)
 var predicted = predictCCDC(ccdcImg,processedScenes).select(indexNames);
 Map.addLayer(predictedSmall,{},'Predicted CCDC');
 // Export.image.toAsset(ccdcImg.float(), 'CCCDC_Test', 'users/iwhousman/test/CCDC_Collection/CCDC_Test', null, null, geometry, 30, 'EPSG:5070', null, 1e13)
