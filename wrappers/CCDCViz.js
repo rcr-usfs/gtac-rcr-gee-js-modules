@@ -60,7 +60,7 @@ var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Red
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 // Map.addLayer(ccdcImgSmall.select(['.*tEnd']).selfMask().reduce(ee.Reducer.max()),{min:endYear-1,max:endYear},'Last Year');
   
-var predicted = predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
+var predicted = dLib.predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
 Map.addLayer(predicted,{},'Predicted',false)
 // Map.addLayer(ccdcImg)
 // var predictedCONUS = predictCCDC(ccdcImg,yearImages2).select(['.*_predicted'])//.map(function(img){return img.divide(100000).copyProperties(img,['system:time_start'])});
