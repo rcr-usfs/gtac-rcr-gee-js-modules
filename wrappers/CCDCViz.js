@@ -21,7 +21,7 @@ var startYear = 1984;
 var endYear = 2020;
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test2').reproject('EPSG:5070',null,30);
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
-var changeMask = ccdcImg.select(['.*_changeProb']).selfMask();
+var changeMask = ccdcImg.select(['.*_changeProb']).gt(0).selfMask();
 var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
 changeYears =  changeYears.updateMask(changeMask);
 Map.addLayer(changeYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:'FF0,F00'},'Change Year')
