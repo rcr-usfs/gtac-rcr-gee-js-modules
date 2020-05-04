@@ -69,7 +69,7 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
   
 var predicted = dLib.predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
 predicted = predicted.map(function(img){
-  var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NDVI_predicted_from_bands'])
+  var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
   var ndvi = img.normalizedDifference(['nir_predicted','swir2_predicted']).rename(['NDVI_predicted_from_bands'])
   return img.addBands(ndvi).addBands(nbr)
   
