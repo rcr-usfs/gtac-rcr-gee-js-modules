@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-107.40635163727661, 37.78367027351129],
-          [-107.40635163727661, 37.672337930727],
-          [-107.22576386872193, 37.672337930727],
-          [-107.22576386872193, 37.78367027351129]]], null, false);
+        [[[-107.24187573506356, 37.665220753122654],
+          [-107.24187573506356, 37.073683842873855],
+          [-106.22838696553231, 37.073683842873855],
+          [-106.22838696553231, 37.665220753122654]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -37,7 +37,7 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 1984;
+var startYear = 2010;
 var endYear = 2020;
 
 
@@ -138,11 +138,11 @@ var scale = null;
 //How many segments to export
 //Agricultural and wetland areas generally will need about 1 for every 2-5 years
 //Other areas need about 1 for every 10-30 years
-var nSegments = 9;
+var nSegments = 5;
 ///////////////////////////////////////////////////////////////////////
 //CCDC Parsams
 var ccdcParams ={
-  breakpointBands:['blue','green','red','nir','swir1','swir2','NDVI','NBR'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
+  breakpointBands:['NDVI','NBR'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
                                                               //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
   tmaskBands : null,//['green','swir2'],//The name or index of the bands to use for iterative TMask cloud detection. These are typically the green band and the SWIR2 band. If unspecified, TMask is not used. If specified, 'tmaskBands' must be included in 'breakpointBands'., 
   minObservations: 6,//Factors of minimum number of years to apply new fitting.
@@ -192,6 +192,11 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
 ccdcParams.breakpointBands.push('.*_predicted');
 
+var changeYears = dLib.getCCDCChange(ccdcImg);
+Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
+Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year');
+// Export.Image.toDrive(changeYears.lossYears.reduce(ee.Reducer.max()),)  
+  
 //Predict CCDC model and visualize the actual vs. predicted
 var predicted = dLib.predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
 Map.addLayer(predicted,{},'Predicted CCDC',false);
