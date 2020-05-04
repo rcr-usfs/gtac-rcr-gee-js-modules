@@ -1988,7 +1988,9 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   if(detrended === null || detrended === undefined){detrended = true}
   if(whichHarmonics === null || whichHarmonics === undefined){whichHarmonics = [1,2,3]}
   
+  //Ensure just coeffs for ccdc coeffs
   coeffImg = coeffImg.select(['.*_coef.*']);
+  
   var tBand = timeImg.select([timeBandName]);
   
   //Unit of each harmonic (1 cycle)
