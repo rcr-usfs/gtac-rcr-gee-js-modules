@@ -172,8 +172,8 @@ var processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear
 //Set up time series
 processedScenes = processedScenes.select(ccdcParams.breakpointBands);
 processedScenes = processedScenes.map(function(img){
-  var lte1 = img.lte(1);
-  return img.updateMask(lte1)
+  var lte1 = img.lte(1).reduce(ee.Reducer.min());
+  return img.updateMask(lte1);
 })
 Map.addLayer(processedScenes,{},'Raw Time Series',false);
 
