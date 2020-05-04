@@ -23,8 +23,8 @@ var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test3').reproj
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 
 var changeYears = dLib.getCCDCChange(ccdcImg);
-Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'negativeChangeYears');
-Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'positiveChangeYears');
+Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
+Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year');
   
 // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // var coeffBns = ccdcImgCoeffs.bandNames();
