@@ -75,7 +75,7 @@ predicted = predicted.map(function(img){
   
   
 })
-Map.addLayer(predicted,{},'Predicted',false)
+Map.addLayer(predicted.select(['NBR.*','NDVI.*']),{},'Predicted',false)
 
 
 // Map.addLayer(ccdcImg)
