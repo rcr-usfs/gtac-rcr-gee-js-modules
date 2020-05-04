@@ -19,7 +19,7 @@ var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 2005;
 var endYear = 2020;
-var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test3').reproject('EPSG:5070',null,30);
+var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test3')//.reproject('EPSG:5070',null,30);
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 
 var changeYears = dLib.getCCDCChange(ccdcImg);
@@ -75,7 +75,7 @@ predicted = predicted.map(function(img){
   
   
 })
-Map.addLayer(predicted.select(['NBR.*','NDVI.*']),{},'Predicted',false)
+Map.addLayer(predicted,{},'Predicted',false)
 
 
 // Map.addLayer(ccdcImg)
