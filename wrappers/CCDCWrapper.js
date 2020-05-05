@@ -191,7 +191,7 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 //Set up time series for predicting values
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
 ccdcParams.breakpointBands.push('.*_predicted');
-
+print(ccdcParams)
 // var changeYears = dLib.getCCDCChange(ccdcImg);
 // Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year',false);
 // Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year',false);
