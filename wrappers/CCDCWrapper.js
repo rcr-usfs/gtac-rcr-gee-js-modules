@@ -138,7 +138,7 @@ var scale = null;
 //How many segments to export
 //Agricultural and wetland areas generally will need about 1 for every 2-5 years
 //Other areas need about 1 for every 10-30 years
-var nSegments = 10;
+var nSegments = 9;
 ///////////////////////////////////////////////////////////////////////
 //CCDC Parsams
 var ccdcParams ={
@@ -191,8 +191,8 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 //Set up time series for predicting values
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
 ccdcParams.breakpointBands.push('.*_predicted');
-print(ccdcParams)
-var changeYears = dLib.getCCDCChange(ccdcImg);
+
+var changeYears = dLib.getCCDCChange(ccdcImg,'NBR');
 Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year',false);
 Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year',false);
 // Export.Image.toDrive(changeYears.lossYears.reduce(ee.Reducer.max()),)  
