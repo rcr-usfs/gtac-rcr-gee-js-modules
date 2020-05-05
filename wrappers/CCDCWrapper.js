@@ -1,17 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #d63000 */
-    /* shown: false */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[-107.24187573506356, 37.665220753122654],
-          [-107.24187573506356, 37.073683842873855],
-          [-106.22838696553231, 37.073683842873855],
-          [-106.22838696553231, 37.665220753122654]]], null, false);
+var geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -37,7 +25,7 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2010;
+var startYear = 1984;
 var endYear = 2020;
 
 
@@ -117,7 +105,7 @@ var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 var exportComposites = false;
 
 //Set up Names for the export
-var outputName = 'CCDC_Test3';
+var outputName = 'CCDC_Test4';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
@@ -138,7 +126,7 @@ var scale = null;
 //How many segments to export
 //Agricultural and wetland areas generally will need about 1 for every 2-5 years
 //Other areas need about 1 for every 10-30 years
-var nSegments = 5;
+var nSegments = 10;
 ///////////////////////////////////////////////////////////////////////
 //CCDC Parsams
 var ccdcParams ={
