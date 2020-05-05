@@ -1,5 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
+var geometry = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-106.59641999791761, 37.15963566079131],
+          [-106.59641999791761, 37.01886781309286],
+          [-106.27850312780042, 37.01886781309286],
+          [-106.27850312780042, 37.15963566079131]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
