@@ -2028,6 +2028,7 @@ function predictCCDC(ccdcImg,timeSeries,nSegments,harmonicTag){
   
   //Add the segment-appropriate coefficients to each time image
   timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)});
+  print(timeSeries.first());
   //Predict out the values for each image 
   timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*']))});
   
