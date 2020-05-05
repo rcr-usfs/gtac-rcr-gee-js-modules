@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -191,7 +192,7 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
 ccdcParams.breakpointBands.push('.*_predicted');
 
-var changeYears = dLib.getCCDCChange(ccdcImg,'NBR');
+var changeYears = dLib.getCCDCChange(ccdcImg);
 Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year',false);
 Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year',false);
 // Export.Image.toDrive(changeYears.lossYears.reduce(ee.Reducer.max()),)  
