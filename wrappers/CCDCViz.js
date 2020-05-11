@@ -23,15 +23,18 @@ var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test3').reproj
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 
 
-var changeYears1 = dLib.getCCDCChange(ccdcImg);
+// var changeYears1 = dLib.getCCDCChange(ccdcImg);
 var changeYears2 = dLib.getCCDCChange2(ccdcImg);
 
 
-Map.addLayer(changeYears1.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year 1');
-Map.addLayer(changeYears1.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year 1');
+// Map.addLayer(changeYears1.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year 1');
+// Map.addLayer(changeYears1.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year 1');
 
-Map.addLayer(changeYears2.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year 2');
-Map.addLayer(changeYears2.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year 2');
+Map.addLayer(changeYears2.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
+Map.addLayer(changeYears2.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year');
+
+Map.addLayer(changeYears2.lossMags.reduce(ee.Reducer.max()),{min:-0.6,max:-0.005,palette:dLib.lossMagPalette},'Largest Mag Loss');
+Map.addLayer(changeYears2.gainMags.reduce(ee.Reducer.max()),{min:0.005,max:0.6,palette:dLib.gainMagPalette},'Largest Mag Gain');
   
 // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // var coeffBns = ccdcImgCoeffs.bandNames();
