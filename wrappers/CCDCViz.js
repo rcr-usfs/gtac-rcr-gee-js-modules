@@ -21,13 +21,8 @@ var startYear = 2010;
 var endYear = 2020;
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test3').reproject('EPSG:5070',null,30);
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
-function getCCDCChangeMagnitude(ccdcImg){
-  var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
-  var changeMags = ccdcImg.select(['.*_magnitude']).updateMask(changeYears.mask());
-  Map.addLayer(changeYears)
-  Map.addLayer(changeMags)
-}
-getCCDCChangeMagnitude(ccdcImg)
+
+getCCDCChangeMagnitude2(ccdcImg)
 // var changeYears = dLib.getCCDCChange(ccdcImg);
 // var diffs = changeYears.diffs;
 // Map.addLayer(diffs,{min:-0.5,max:0.5},'Diffs');
