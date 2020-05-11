@@ -2090,9 +2090,24 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
   
   return {lossYears:lossChangeYears,gainYears:gainChangeYears,diffs:diffs};
 }
-function getCCDCChangeMagnitude(ccdcImg){
+function getCCDCChangeMagnitude2(ccdcImg,changeDirBand,changeDir){
+  if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
+  if(changeDir === null || changeDir === undefined){changeDir = -1}
+  
   var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
-  var changeMags = ccdcImg.select(['.*_magnitude']).updateMask(changeYears.mask());
+  var diffs = ccdcImg.select(['.*'+changeDirBand+'_magnitude']).updateMask(changeYears.mask());
+  
+  //Pull out loss and gain
+  var lossChangeYears;var gainChangeYears;
+  if(changeDir === -1){
+    lossChangeYears = changeYears.updateMask(diffs.lt(0));
+    gainChangeYears = changeYears.updateMask(diffs.gt(0));
+  }else{
+    lossChangeYears = changeYears.updateMask(diffs.gt(0));
+    gainChangeYears = changeYears.updateMask(diffs.lt(0));
+  }
+  
+  return {lossYears:lossChangeYears,gainYears:gainChangeYears,diffs:diffs};
 }
 ///////////////////////////////////////////////////////////////////////////////
 //-------------------- END CCDC Helper Function -------------------//
@@ -2149,3 +2164,4 @@ exports.predictCCDC = predictCCDC;
 exports.getCCDCSegCoeffs = getCCDCSegCoeffs;
 exports.getCCDCPrediction = getCCDCPrediction;
 exports.getCCDCChange = getCCDCChange;
+exports.getCCDCChangeMagnitude2 = getCCDCChangeMagnitude2;
