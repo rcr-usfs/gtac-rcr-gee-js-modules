@@ -2100,16 +2100,14 @@ function getCCDCChange2(ccdcImg,changeDirBand,changeDir,tBreakEnding,magnitudeEn
   var diffs = ccdcImg.select(['.*'+changeDirBand+magnitudeEnding]).updateMask(changeYears.mask());
   
   //Pull out loss and gain
-  var lossChangeYears;var gainChangeYears;
-  if(changeDir === -1){
-    lossChangeYears = changeYears.updateMask(diffs.lt(0));
-    gainChangeYears = changeYears.updateMask(diffs.gt(0));
-  }else{
-    lossChangeYears = changeYears.updateMask(diffs.gt(0));
-    gainChangeYears = changeYears.updateMask(diffs.lt(0));
+  if(changeDir === 1){
+    diffs = diffs.multiply(-1);
   }
-  
-  return {lossYears:lossChangeYears,gainYears:gainChangeYears,diffs:diffs};
+  var lossYears = changeYears.updateMask(diffs.lt(0));
+  var gainYears = changeYears.updateMask(diffs.gt(0));
+  var lossMags = diffs.updateMask(diffs.lt(0));
+  var gainMags = diffs.updateMask(diffs.gt(0));
+  return {lossYears:lossYears,gainYears:gainYears,lossMags:lossMags,gainMags:gainMags};
 }
 ///////////////////////////////////////////////////////////////////////////////
 //-------------------- END CCDC Helper Function -------------------//
