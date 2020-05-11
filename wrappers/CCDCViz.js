@@ -24,7 +24,7 @@ Map.addLayer(ccdcImg,{},'CCDC Img',false);
 
 
 var changeYears = dLib.getCCDCChange(ccdcImg);
-var diffs = charngeYears.diffs;
+var diffs = changeYears.diffs;
 Map.addLayer(diffs,{min:-0.5,max:0.5},'Diffs');
 
 Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
