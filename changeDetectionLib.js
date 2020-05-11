@@ -2088,7 +2088,7 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
     gainChangeYears = changeYears.updateMask(diffs.lt(0));
   }
   
-  return {lossYears:lossChangeYears,gainYears:gainChangeYears};
+  return {lossYears:lossChangeYears,gainYears:gainChangeYears,diffs:diffs};
 }
 ///////////////////////////////////////////////////////////////////////////////
 //-------------------- END CCDC Helper Function -------------------//
