@@ -2090,6 +2090,10 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
   
   return {lossYears:lossChangeYears,gainYears:gainChangeYears,diffs:diffs};
 }
+function getCCDCChangeMagnitude(ccdcImg){
+  var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
+  var changeMags = ccdcImg.select(['.*_magnitude']).updateMask(changeYears.mask());
+}
 ///////////////////////////////////////////////////////////////////////////////
 //-------------------- END CCDC Helper Function -------------------//
 ///////////////////////////////////////////////////////////////////////////////
