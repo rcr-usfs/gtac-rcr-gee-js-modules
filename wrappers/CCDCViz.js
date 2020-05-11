@@ -29,6 +29,9 @@ var changeYears2 = dLib.getCCDCChange2(ccdcImg);
 
 Map.addLayer(changeYears1.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year 1');
 Map.addLayer(changeYears1.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year 1');
+
+Map.addLayer(changeYears2.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year 2');
+Map.addLayer(changeYears2.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year 2');
   
 // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // var coeffBns = ccdcImgCoeffs.bandNames();
