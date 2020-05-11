@@ -15,7 +15,7 @@ var geometry =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 // var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+// var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 2010;
 var endYear = 2020;
@@ -23,12 +23,12 @@ var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test3').reproj
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 
 
-var changeYears = dLib.getCCDCChange(ccdcImg);
-var diffs = changeYears.diffs;
-Map.addLayer(diffs,{min:-0.5,max:0.5},'Diffs');
+// var changeYears = dLib.getCCDCChange(ccdcImg);
+// var diffs = changeYears.diffs;
+// Map.addLayer(diffs,{min:-0.5,max:0.5},'Diffs');
 
-Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
-Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year');
+// Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
+// Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year');
   
 // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // var coeffBns = ccdcImgCoeffs.bandNames();
@@ -65,21 +65,21 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
 // // Map.addLayer(ccdcImg)
 // // processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
 // // var bns = ee.Image(timeSeries.first()).bandNames();
-var nSegments = ccdcImg.select(['.*tStart']).bandNames().length().getInfo();
-// //Visualize the number of segments
-var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
-Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
-// Map.addLayer(ccdcImgSmall.select(['.*tEnd']).selfMask().reduce(ee.Reducer.max()),{min:endYear-1,max:endYear},'Last Year');
+// var nSegments = ccdcImg.select(['.*tStart']).bandNames().length().getInfo();
+// // //Visualize the number of segments
+// var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+// Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
+// // Map.addLayer(ccdcImgSmall.select(['.*tEnd']).selfMask().reduce(ee.Reducer.max()),{min:endYear-1,max:endYear},'Last Year');
   
-var predicted = dLib.predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
-predicted = predicted.map(function(img){
-  var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
-  var ndvi = img.normalizedDifference(['nir_predicted','swir2_predicted']).rename(['NDVI_predicted_from_bands'])
-  return img.addBands(ndvi).addBands(nbr)
+// var predicted = dLib.predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
+// predicted = predicted.map(function(img){
+//   var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
+//   var ndvi = img.normalizedDifference(['nir_predicted','swir2_predicted']).rename(['NDVI_predicted_from_bands'])
+//   return img.addBands(ndvi).addBands(nbr)
   
   
-})
-Map.addLayer(predicted,{},'Predicted',false)
+// })
+// Map.addLayer(predicted,{},'Predicted',false)
 
 
 // Map.addLayer(ccdcImg)
@@ -96,18 +96,18 @@ Map.addLayer(predicted,{},'Predicted',false)
 
 
 //Visualize the seasonality of the first segment
-var seg1 = ccdcImg.select(['S1.*']);
-var sinCoeffs = seg1.select(['.*_SIN']);
-var cosCoeffs = seg1.select(['.*_COS']);
-var bands = ['.*swir2.*','.*nir.*','.*red.*'];
-// var band = 'B4.*';
-var phase = sinCoeffs.atan2(cosCoeffs)
-                    .unitScale(-Math.PI, Math.PI);
+// var seg1 = ccdcImg.select(['S1.*']);
+// var sinCoeffs = seg1.select(['.*_SIN']);
+// var cosCoeffs = seg1.select(['.*_COS']);
+// var bands = ['.*swir2.*','.*nir.*','.*red.*'];
+// // var band = 'B4.*';
+// var phase = sinCoeffs.atan2(cosCoeffs)
+//                     .unitScale(-Math.PI, Math.PI);
  
-var amplitude = sinCoeffs.hypot(cosCoeffs)
-                    // .unitScale(0, 1)
-                    .multiply(2);
-Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
-Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
+// var amplitude = sinCoeffs.hypot(cosCoeffs)
+//                     // .unitScale(0, 1)
+//                     .multiply(2);
+// Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
+// Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
 
 Map.setOptions('HYBRID');
