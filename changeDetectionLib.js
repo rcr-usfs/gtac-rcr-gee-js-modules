@@ -2090,12 +2090,13 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
   
   return {lossYears:lossChangeYears,gainYears:gainChangeYears,diffs:diffs};
 }
-function getCCDCChange2(ccdcImg,changeDirBand,changeDir){
+function getCCDCChange2(ccdcImg,changeDirBand,changeDir,magnitudeEnding){
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
-  if(changeDir === null || changeDir === undefined){changeDir = -1}
+  if(changeDir === null || changeDir === undefined){changeDir = getImagesLib.changeDirDict[changeDirBand]}
+  if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
   
   var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
-  var diffs = ccdcImg.select(['.*'+changeDirBand+'_magnitude']).updateMask(changeYears.mask());
+  var diffs = ccdcImg.select(['.*'+changeDirBand+magnitudeEnding]).updateMask(changeYears.mask());
   
   //Pull out loss and gain
   var lossChangeYears;var gainChangeYears;
