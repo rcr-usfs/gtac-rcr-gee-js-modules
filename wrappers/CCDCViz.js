@@ -15,20 +15,20 @@ var geometry =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 // var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-// var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 2010;
 var endYear = 2020;
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test3').reproject('EPSG:5070',null,30);
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 
-getCCDCChangeMagnitude2(ccdcImg)
-// var changeYears = dLib.getCCDCChange(ccdcImg);
-// var diffs = changeYears.diffs;
-// Map.addLayer(diffs,{min:-0.5,max:0.5},'Diffs');
 
-// Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
-// Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year');
+var changeYears1 = dLib.getCCDCChange(ccdcImg);
+var changeYears2 = dLib.getCCDCChange2(ccdcImg);
+
+
+Map.addLayer(changeYears1.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year 1');
+Map.addLayer(changeYears1.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year 1');
   
 // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // var coeffBns = ccdcImgCoeffs.bandNames();
