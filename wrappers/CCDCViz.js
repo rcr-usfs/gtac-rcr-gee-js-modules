@@ -19,7 +19,7 @@ var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 1984;
 var endYear = 2021;
-var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test3').reproject('EPSG:5070',null,30);
+var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test3');//.reproject('EPSG:5070',null,30);
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 
 
@@ -71,10 +71,10 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
 // // Map.addLayer(ccdcImg)
 // // processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand)
 // // var bns = ee.Image(timeSeries.first()).bandNames();
-// var nSegments = ccdcImg.select(['.*tStart']).bandNames().length().getInfo();
-// // //Visualize the number of segments
-// var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
-// Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
+var nSegments = ccdcImg.select(['.*tStart']).bandNames().length().getInfo();
+// //Visualize the number of segments
+var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 // // Map.addLayer(ccdcImgSmall.select(['.*tEnd']).selfMask().reduce(ee.Reducer.max()),{min:endYear-1,max:endYear},'Last Year');
   
 var predicted = dLib.predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
