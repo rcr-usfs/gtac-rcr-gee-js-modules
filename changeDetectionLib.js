@@ -2090,13 +2090,22 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
   
   return {lossYears:lossChangeYears,gainYears:gainChangeYears,diffs:diffs};
 }
-function getCCDCChange2(ccdcImg,changeDirBand,changeDir,tBreakEnding,magnitudeEnding){
+function getCCDCChange2(ccdcImg,changeDirBand,changeDir,tBreakEnding,magnitudeEnding,changeProbEnding,changeProbThresh,divideTimeBy,startYear,endYear){
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
   if(changeDir === null || changeDir === undefined){changeDir = getImagesLib.changeDirDict[changeDirBand]}
   if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
   if(tBreakEnding === null || tBreakEnding === undefined){tBreakEnding = '_tBreak'}
-  
-  var changeYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask();
+  if(changeProbEnding === null || changeProbEnding === undefined){changeProbEnding = '_changeProb'}
+  if(changeProbThresh === null || changeProbThresh === undefined){changeProbThresh = 0.8}
+  if(divideTimeBy === null || divideTimeBy === undefined){divideTimeBy = 1}
+  if(startYear === null || startYear === undefined){startYear = 0}
+  if(endYear === null || endYear === undefined){endYear = 3000}
+
+  var changeProbs = ccdcImg.select(['.*'+changeProbEnding]).selfMask();
+  changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
+
+  var changeYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy);
+  changeYears = changeYears.updateMask(changeYears.gte(startYear).and(changeYears.lte(endYear)).and(changeProbs.mask()));
   var diffs = ccdcImg.select(['.*'+changeDirBand+magnitudeEnding]).updateMask(changeYears.mask());
   
   //Pull out loss and gain
@@ -2107,6 +2116,7 @@ function getCCDCChange2(ccdcImg,changeDirBand,changeDir,tBreakEnding,magnitudeEn
   var gainYears = changeYears.updateMask(diffs.gt(0));
   var lossMags = diffs.updateMask(diffs.lt(0));
   var gainMags = diffs.updateMask(diffs.gt(0));
+  
   return {lossYears:lossYears,gainYears:gainYears,lossMags:lossMags,gainMags:gainMags};
 }
 ///////////////////////////////////////////////////////////////////////////////
