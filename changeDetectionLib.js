@@ -2113,7 +2113,7 @@ function getCCDCChange2(ccdcImg,changeDirBand,changeDir,tBreakEnding,magnitudeEn
 //-------------------- END CCDC Helper Function -------------------//
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-
+//
 exports.getR2 = getR2;
 exports.extractDisturbance = extractDisturbance;
 exports.landtrendrWrapper = landtrendrWrapper;
