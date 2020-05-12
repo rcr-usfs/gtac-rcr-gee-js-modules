@@ -1852,7 +1852,7 @@ var buildMagnitude = function(fit, nSegments) {
   var bns = mag.bandNames();
   var segBns = buildSegmentTag(nSegments);
 
-  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
+  var zeros = ee.Image(ee.Array([ee.List.repeat(-32768, bns.length())]).repeat(-32768, nSegments));
   var magImg = mag.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
   
   return magImg;
@@ -1867,7 +1867,7 @@ var buildRMSE = function(fit, nSegments) {
   var bns = rmses.bandNames();
   var segBns = buildSegmentTag(nSegments);
 
-  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
+  var zeros = ee.Image(ee.Array([ee.List.repeat(-32768, bns.length())]).repeat(-32768, nSegments));
   var rmseImg = rmses.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
   
   return rmseImg;
@@ -1901,7 +1901,7 @@ var buildCoefs = function(fit, nSegments,harmonicTag) {
   }).flatten();
   
   var totalLength = ee.Number(harmonicTag.length).multiply(bns.length());
-  var zeros = ee.Image(ee.Array([ee.List.repeat(0,totalLength)]).repeat(0, nSegments));
+  var zeros = ee.Image(ee.Array([ee.List.repeat(-32768,totalLength)]).repeat(-32768, nSegments));
   
   var coeffImg = coeffs.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments);
 
@@ -1918,7 +1918,7 @@ var buildStartEndBreakProb = function(fit, nSegments) {
   var change = fit.select(['.*tStart','.*tEnd','.*tBreak','.*changeProb']);
   var bns = change.bandNames();
   var segBns = buildSegmentTag(nSegments);
-  var zeros = ee.Image(ee.Array([ee.List.repeat(0, bns.length())]).repeat(0, nSegments));
+  var zeros = ee.Image(ee.Array([ee.List.repeat(-32768, bns.length())]).repeat(-32768, nSegments));
   var changeImg = change.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
   
   return changeImg;
