@@ -1,17 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #d63000 */
-    /* shown: false */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[-106.59641999791761, 37.15963566079131],
-          [-106.59641999791761, 37.01886781309286],
-          [-106.27850312780042, 37.01886781309286],
-          [-106.27850312780042, 37.15963566079131]]], null, false);
+var geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -117,7 +105,7 @@ var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 var exportComposites = false;
 
 //Set up Names for the export
-var outputName = 'CCDC_Test4';
+var outputName = 'CCDC_Test5';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
