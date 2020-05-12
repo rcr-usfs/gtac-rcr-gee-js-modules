@@ -37,7 +37,7 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 1984;
+var startYear = 2000;
 var endYear = 2020;
 
 
@@ -183,7 +183,8 @@ var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
 //Convert to image stack
 var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
-
+ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
+Map.addLayer(ccdcImg)
 //Find the segment count for each pixel
 var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
