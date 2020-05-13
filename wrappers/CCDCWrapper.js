@@ -171,7 +171,7 @@ var processedLandsatScenes = getImagesLib.getProcessedLandsatScenes(studyArea,st
 var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian)
   .select(ccdcParams.breakpointBands)
 
-var processedScenes = processedLandsatScenes.merge(processedSentinel2Scenes)
+var processedScenes = processedLandsatScenes.merge(processedSentinel2Scenes);
 //Set up time series
 processedScenes = processedScenes;
 processedScenes = processedScenes.map(function(img){
