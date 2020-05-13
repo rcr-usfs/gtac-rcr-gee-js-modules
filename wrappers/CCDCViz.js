@@ -14,7 +14,7 @@ var geometry =
           [-104.55727438038721, 39.25451132142729]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
-// var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 1984;
@@ -81,7 +81,13 @@ bns = bns.map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_
 print(bns)
 coeffs = coeffs.rename(bns)
 // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
-var predicted = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted']);
+var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted']);
+var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
+var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2]).select(['.*_predicted']);
+var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3]).select(['.*_predicted']);
+var joined = getImagesLib.joinCollections(predicted0,predicted1);
+joined = getImagesLib.joinCollections(joined,predicted2)
+joined = getImagesLib.joinCollections(joined,predicted3)
 print(predicted)
 // predicted = predicted.map(function(img){
 //   var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
@@ -90,7 +96,7 @@ print(predicted)
   
   
 // })
-Map.addLayer(predicted,{},'Predicted',false)
+Map.addLayer(joined,{},'Predicted',false)
 
 
 // Map.addLayer(ccdcImg)
