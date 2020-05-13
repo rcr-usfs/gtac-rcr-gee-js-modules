@@ -115,6 +115,7 @@ var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 //Whether to use Sentinel 2 along with Landsat
 //If using Sentinel 2, be sure to select SR for Landsat toaOrSR
 var useS2 = true;
+
 //Set up Names for the export
 var outputName = 'CCDC_Test6';
 
