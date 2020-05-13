@@ -82,6 +82,7 @@ print(bns)
 coeffs = coeffs.rename(bns)
 // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
 var predicted = dLib.predictCCDC(ccdcImg,yearImages,null,'year',false,[1]).select(['.*_predicted']);
+print(predicted)
 // predicted = predicted.map(function(img){
 //   var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
 //   var ndvi = img.normalizedDifference(['nir_predicted','swir2_predicted']).rename(['NDVI_predicted_from_bands'])
