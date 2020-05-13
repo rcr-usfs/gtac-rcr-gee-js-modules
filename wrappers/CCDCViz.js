@@ -88,7 +88,7 @@ var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3]).s
 var joined = getImagesLib.joinCollections(predicted0,predicted1);
 joined = getImagesLib.joinCollections(joined,predicted2)
 joined = getImagesLib.joinCollections(joined,predicted3)
-print(predicted)
+// print(predicted)
 // predicted = predicted.map(function(img){
 //   var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
 //   var ndvi = img.normalizedDifference(['nir_predicted','swir2_predicted']).rename(['NDVI_predicted_from_bands'])
