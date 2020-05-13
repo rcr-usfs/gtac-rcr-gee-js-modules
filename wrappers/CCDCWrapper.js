@@ -168,12 +168,14 @@ var processedLandsatScenes = getImagesLib.getProcessedLandsatScenes(studyArea,st
   ).map(getImagesLib.addSAVIandEVI)
   .select(ccdcParams.breakpointBands);
 
-var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian)
-  .select(ccdcParams.breakpointBands);
 
 var processedScenes = processedLandsatScenes;
 
 if(useS2){
+  print('Acquiring Sentinel 2 data');
+  var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian)
+  .select(ccdcParams.breakpointBands);
+
   processedScenes = processedScenes.merge(processedSentinel2Scenes);
 }
 //Set up time series
