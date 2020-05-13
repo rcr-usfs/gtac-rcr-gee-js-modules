@@ -2036,7 +2036,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
 //The ccdcImg is assumed to have coefficients for a set of segments and a tStart and tEnd for 
 //each segment. 
 //It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
-function predictCCDC(ccdcImg,timeSeries,nSegments,harmonicTag){
+function predictCCDC(ccdcImg,timeSeries,nSegments,harmonicTag,timeBandName,detrended,whichHarmonics){
   
   //Add the segment-appropriate coefficients to each time image
   timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,harmonicTag)});
