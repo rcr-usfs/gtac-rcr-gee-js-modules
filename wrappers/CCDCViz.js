@@ -15,7 +15,7 @@ var geometry =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 // var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+// var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 1984;
 var endYear = 2021;
@@ -24,17 +24,15 @@ Map.addLayer(ccdcImg,{},'CCDC Img',false);
 
 
 // var changeYears1 = dLib.getCCDCChange(ccdcImg);
-var changeYears2 = dLib.getCCDCChange2(ccdcImg);
+// var changeYears2 = dLib.getCCDCChange2(ccdcImg);
 
 
-// Map.addLayer(changeYears1.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year 1');
-// Map.addLayer(changeYears1.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year 1');
 
-Map.addLayer(changeYears2.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
-Map.addLayer(changeYears2.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year');
+// Map.addLayer(changeYears2.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
+// Map.addLayer(changeYears2.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year');
 
-Map.addLayer(changeYears2.lossMags.reduce(ee.Reducer.max()),{min:-0.6,max:-0.2,palette:dLib.lossMagPalette},'Largest Mag Loss');
-Map.addLayer(changeYears2.gainMags.reduce(ee.Reducer.max()),{min:0.1,max:0.3,palette:dLib.gainMagPalette},'Largest Mag Gain');
+// Map.addLayer(changeYears2.lossMags.reduce(ee.Reducer.max()),{min:-0.6,max:-0.2,palette:dLib.lossMagPalette},'Largest Mag Loss');
+// Map.addLayer(changeYears2.gainMags.reduce(ee.Reducer.max()),{min:0.1,max:0.3,palette:dLib.gainMagPalette},'Largest Mag Gain');
   
 // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // var coeffBns = ccdcImgCoeffs.bandNames();
@@ -76,8 +74,58 @@ var nSegments = ccdcImg.select(['.*tStart']).bandNames().length().getInfo();
 var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 // // Map.addLayer(ccdcImgSmall.select(['.*tEnd']).selfMask().reduce(ee.Reducer.max()),{min:endYear-1,max:endYear},'Last Year');
-
-var predicted = dLib.getCCDCPrediction(ee.Image(yearImages.first()),ccdcImg,'year',true,[1,2,3])
+////////////////////////////////////////////////////////////////////////////////////////
+//Function to get prediced value from a set of harmonic coefficients and a time band
+//The time band is assumed to be in a yyyy.ff where the .ff is the proportion of the year
+//The timeImg can have other bands in it that will be retained in the image that
+//is returned.  This is useful if plotting actual and predicted values is of interest
+function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonics){
+  if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
+  if(detrended === null || detrended === undefined){detrended = true}
+  if(whichHarmonics === null || whichHarmonics === undefined){whichHarmonics = [1,2,3]}
+  
+  //Ensure just coeffs for ccdc coeffs
+  coeffImg = coeffImg.select(['.*_coef.*']);
+  print(coeffImg)
+  var tBand = timeImg.select([timeBandName]);
+  var neededCoeffs = ee.List([]);
+  //Unit of each harmonic (1 cycle)
+  var omega = ee.Number(2.0).multiply(Math.PI);
+  
+  //Constant raster for each coefficient
+  //Constant, slope, first harmonic, second harmonic, and third harmonic
+  var harmImg = ee.Image([1]);
+  neededCoeffs = neededCoeffs.cat(['.*_INTP']);
+  harmImg = ee.Algorithms.If(detrended, harmImg.addBands(tBand),harmImg);
+  neededCoeffs = ee.Algorithms.If(detrended, neededCoeffs.cat(['.*_SLP']),neededCoeffs);
+  
+  
+  harmImg = ee.Image(ee.List(whichHarmonics).iterate(function(n,prev){
+    var omImg = tBand.multiply(omega.multiply(n));
+    return ee.Image(prev).addBands(omImg.cos()).addBands(omImg.sin());
+  },harmImg));
+  print(harmImg)
+  //Parse through bands to find individual bands that need predicted
+  var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
+  actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
+  var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
+  print(actualBandNames)
+  //Apply respective coeffs for each of those bands to predict 
+  var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
+    bn = ee.String(bn);
+    var predictedT = coeffImg.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
+    return predictedT;
+  })).toBands().rename(bnsOut);
+ 
+  return timeImg.addBands(predicted).updateMask(tBand.mask());
+}
+////////////////////////////////////////////////////////////////////////////////////////
+var coeffs = ccdcImg.select('S1.*');
+var bns = coeffs.bandNames();
+bns = bns.map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
+print(bns)
+coeffs = coeffs.rename(bns)
+var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1,2,3])
 // var predicted = dLib.predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
 // predicted = predicted.map(function(img){
 //   var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
