@@ -1,17 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-107.3928343257382, 38.21413192607716],
-          [-107.3928343257382, 37.09211174777096],
-          [-106.1843382319882, 37.09211174777096],
-          [-106.1843382319882, 38.21413192607716]]], null, false);
+        [[[-106.89449583480005, 37.69361375289257],
+          [-106.89449583480005, 37.62838466666174],
+          [-106.76677977034693, 37.62838466666174],
+          [-106.76677977034693, 37.69361375289257]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -117,7 +116,7 @@ var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 var useS2 = true;
 
 //Set up Names for the export
-var outputName = 'CCDC_Test6';
+var outputName = 'CCDC_Test7';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
@@ -130,7 +129,7 @@ var exportPathRoot = 'users/iwhousman/test/CCDC_Collection/';
 var crs = 'EPSG:5070';
 
 //Specify transform if scale is null and snapping to known grid is needed
-var transform = [30,0,-2361915.0,0,-30,3177735.0];
+var transform = [10,0,-2361915.0,0,-10,3177735.0];
 
 //Specify scale if transform is null
 var scale = null;
