@@ -45,7 +45,7 @@ var endYear = 2020;
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 // Specify TOA or SR
 // Current implementation does not support Fmask for TOA
-var toaOrSR = 'SR';
+var toaOrSR = 'TOA';
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
@@ -112,10 +112,9 @@ var dilatePixels = 2.5;
 var correctIllumination = false;
 var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
-//13. Export params
-//Whether to export composites
-var exportComposites = false;
-
+//Whether to use Sentinel 2 along with Landsat
+//If using Sentinel 2, be sure to select SR for Landsat toaOrSR
+var useS2 = true;
 //Set up Names for the export
 var outputName = 'CCDC_Test6';
 
@@ -171,7 +170,11 @@ var processedLandsatScenes = getImagesLib.getProcessedLandsatScenes(studyArea,st
 var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian)
   .select(ccdcParams.breakpointBands);
 
-var processedScenes = processedLandsatScenes.merge(processedSentinel2Scenes);
+var processedScenes = processedLandsatScenes;
+
+if(useS2){
+  processedScenes = processedScenes.merge(processedSentinel2Scenes);
+}
 //Set up time series
 processedScenes = processedScenes;
 processedScenes = processedScenes.map(function(img){
