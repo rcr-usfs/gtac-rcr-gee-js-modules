@@ -165,12 +165,15 @@ var processedLandsatScenes = getImagesLib.getProcessedLandsatScenes(studyArea,st
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
-  ).map(getImagesLib.addSAVIandEVI);
+  ).map(getImagesLib.addSAVIandEVI)
+  .select(ccdcParams.breakpointBands);
 
 var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian)
-print(processedSentinel2Scenes)
+  .select(ccdcParams.breakpointBands)
+
+var processedScenes = processedLandsatScenes.merge(processedSentinel2Scenes)
 //Set up time series
-processedScenes = processedScenes.select(ccdcParams.breakpointBands);
+processedScenes = processedScenes;
 processedScenes = processedScenes.map(function(img){
   var lte1 = img.lte(1).reduce(ee.Reducer.min());
   return img.updateMask(lte1);
