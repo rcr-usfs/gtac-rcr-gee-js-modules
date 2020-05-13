@@ -37,7 +37,7 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2000;
+var startYear = 1984;
 var endYear = 2020;
 
 
@@ -49,7 +49,7 @@ var toaOrSR = 'SR';
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
-var includeSLCOffL7 = false;
+var includeSLCOffL7 = true;
 
 //9. Whether to defringe L5
 //Landsat 5 data has fringes on the edges that can introduce anomalies into 
@@ -117,7 +117,7 @@ var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 var exportComposites = false;
 
 //Set up Names for the export
-var outputName = 'CCDC_Test5';
+var outputName = 'CCDC_Test6';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
