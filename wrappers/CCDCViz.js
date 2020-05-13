@@ -15,7 +15,7 @@ var geometry =
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 // var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-// var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 1984;
 var endYear = 2021;
@@ -81,7 +81,7 @@ bns = bns.map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_
 print(bns)
 coeffs = coeffs.rename(bns)
 // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
-var predicted = dLib.predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
+var predicted = dLib.predictCCDC(ccdcImg,yearImages,null,'year',false,[1]).select(['.*_predicted']);
 // predicted = predicted.map(function(img){
 //   var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
 //   var ndvi = img.normalizedDifference(['nir_predicted','swir2_predicted']).rename(['NDVI_predicted_from_bands'])
@@ -89,7 +89,7 @@ var predicted = dLib.predictCCDC(ccdcImg,yearImages).select(['.*_predicted']);
   
   
 // })
-// Map.addLayer(predicted,{},'Predicted',false)
+Map.addLayer(predicted,{},'Predicted',false)
 
 
 // Map.addLayer(ccdcImg)
