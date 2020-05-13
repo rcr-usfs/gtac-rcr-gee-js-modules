@@ -80,6 +80,7 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 //The timeImg can have other bands in it that will be retained in the image that
 //is returned.  This is useful if plotting actual and predicted values is of interest
 function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonics){
+  var harmDict = ee.Dictionary({1:'',2:'2',3:'3',4:'4'})
   if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
   if(detrended === null || detrended === undefined){detrended = true}
   if(whichHarmonics === null || whichHarmonics === undefined){whichHarmonics = [1,2,3]}
@@ -96,6 +97,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   //Constant, slope, first harmonic, second harmonic, and third harmonic
   var harmImg = ee.Image([1]);
   neededCoeffs = neededCoeffs.cat(['.*_INTP']);
+  
   harmImg = ee.Algorithms.If(detrended, harmImg.addBands(tBand),harmImg);
   neededCoeffs = ee.Algorithms.If(detrended, neededCoeffs.cat(['.*_SLP']),neededCoeffs);
   
@@ -104,7 +106,12 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
     var omImg = tBand.multiply(omega.multiply(n));
     return ee.Image(prev).addBands(omImg.cos()).addBands(omImg.sin());
   },harmImg));
-  print(harmImg)
+  
+  neededCoeffs = ee.List(whichHarmonics).iterate(function(n,prev){
+    prev = ee.List(prev);
+    return prev.cat([ee.String('.*_COS').cat(harmDict.get(n)),ee.String('.*_SIN').cat(harmDict.get(n))]);
+  },neededCoeffs);
+  
   //Parse through bands to find individual bands that need predicted
   var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
   actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
