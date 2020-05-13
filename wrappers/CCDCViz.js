@@ -81,7 +81,7 @@ bns = bns.map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_
 print(bns)
 coeffs = coeffs.rename(bns)
 // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
-var predicted = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
+var predicted = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted']);
 print(predicted)
 // predicted = predicted.map(function(img){
 //   var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
