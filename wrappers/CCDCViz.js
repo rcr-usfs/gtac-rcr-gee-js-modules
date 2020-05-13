@@ -17,8 +17,8 @@ var geometry =
 // var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
-var startYear = 2013;
-var endYear = 2015;
+var startYear = 1984;
+var endYear = 2021;
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test6');//.reproject('EPSG:5070',null,30);
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 
@@ -81,7 +81,7 @@ bns = bns.map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_
 print(bns)
 coeffs = coeffs.rename(bns)
 // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
-var predicted = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3]).select(['.*_predicted']);
+var predicted = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
 print(predicted)
 // predicted = predicted.map(function(img){
 //   var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
