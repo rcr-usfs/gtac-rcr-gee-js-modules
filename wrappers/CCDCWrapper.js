@@ -113,10 +113,15 @@ var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
 //Whether to use Sentinel 2 along with Landsat
 //If using Sentinel 2, be sure to select SR for Landsat toaOrSR
-var useS2 = true;
+var useS2 = false;
+
+//Whether to offset the years so the intercept values aren't all weird
+//Set to something close to your -startYear if you want to utilize this functionality
+//Set to 0 if you want the years to remain as they are
+var nYearOffset = -1970;
 
 //Set up Names for the export
-var outputName = 'CCDC_Test7';
+var outputName = 'CCDC_Test8';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
@@ -189,6 +194,10 @@ Map.addLayer(processedScenes,{},'Raw Time Series',false);
 ccdcParams.dateFormat = 1;
 ccdcParams.collection = processedScenes;
 
+///Apply year offset
+processedScenes = processedScenes.map(function(img){
+  return getImagesLib.offsetImageDate(img,nYearOffset,'year');
+});
 //Run CCDC
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
