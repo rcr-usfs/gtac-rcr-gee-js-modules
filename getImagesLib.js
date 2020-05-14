@@ -224,6 +224,7 @@ function addYearFractionBand(img){
 function offsetImageDate(img,n,unit){
   var date = ee.Date(img.get('system:time_start'));
   date = date.advance(n,unit);
+  date = ee.Date.fromYMD(0,date.get('month'),date.get('day'))
   return img.set('system:time_start',date.millis());
 }
 function addYearYearFractionBand(img){
