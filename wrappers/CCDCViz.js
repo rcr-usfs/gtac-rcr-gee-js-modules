@@ -17,7 +17,7 @@ var geometry =
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
-var startYear = 2000;
+var startYear = 2008;
 var endYear = 2021;
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test9');//.reproject('EPSG:5070',null,30);
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
@@ -74,11 +74,11 @@ var count = ccdcImg.select(['.*']).select(['.*tStart']).selfMask().reduce(ee.Red
 Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 // // Map.addLayer(ccdcImgSmall.select(['.*tEnd']).selfMask().reduce(ee.Reducer.max()),{min:endYear-1,max:endYear},'Last Year');
 
-var coeffs = ccdcImg.select('S1.*');
-var bns = coeffs.bandNames();
-bns = bns.map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
-print(bns)
-coeffs = coeffs.rename(bns)
+// var coeffs = ccdcImg.select('S1.*');
+// var bns = coeffs.bandNames();
+// bns = bns.map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
+
+// coeffs = coeffs.rename(bns)
 // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
 var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted']);
 var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
