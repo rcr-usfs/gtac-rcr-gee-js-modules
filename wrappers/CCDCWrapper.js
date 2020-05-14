@@ -135,7 +135,7 @@ var exportPathRoot = 'users/iwhousman/test/CCDC_Collection/';
 var crs = 'EPSG:5070';
 
 //Specify transform if scale is null and snapping to known grid is needed
-var transform = [10,0,-2361915.0,0,-10,3177735.0];
+var transform = [30,0,-2361915.0,0,-30,3177735.0];
 
 //Specify scale if transform is null
 var scale = null;
@@ -193,14 +193,16 @@ processedScenes = processedScenes.map(function(img){
   return img.updateMask(lte1);
 })
 
-Map.addLayer(processedScenes,{},'Raw Time Series',false);
 
-ccdcParams.dateFormat = 1;
-ccdcParams.collection = processedScenes;
+
 ///Apply year offset
 processedScenes = processedScenes.map(function(img){
   return getImagesLib.offsetImageDate(img,nYearOffset,'year');
 });
+Map.addLayer(processedScenes,{},'Raw Time Series',false);
+ccdcParams.dateFormat = 1;
+
+ccdcParams.collection = processedScenes;
 //Run CCDC
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
