@@ -116,10 +116,11 @@ var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 //If using Sentinel 2, be sure to select SR for Landsat toaOrSR
 var useS2 = false;
 
-//Whether to offset the years so the intercept values aren't all weird
-//Set to something close to your -startYear if you want to utilize this functionality
+//Whether to offset the years so the intercept values aren't too large
+//Set to -1900 if you want intercepts to be closer to the mean of the value of the band/index
+//Any pixel with a steep slope will have a very high/low intercept
 //Set to 0 if you want the years to remain as they are
-var nYearOffset = -2010;
+var nYearOffset = 0;
 
 //Set up Names for the export
 var outputName = 'CCDC_Test8';
