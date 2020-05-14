@@ -37,7 +37,7 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2010;
+var startYear = 2016;
 var endYear = 2020;
 
 
@@ -114,7 +114,7 @@ var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
 //Whether to use Sentinel 2 along with Landsat
 //If using Sentinel 2, be sure to select SR for Landsat toaOrSR
-var useS2 = false;
+var useS2 = true;
 
 //Whether to offset the years so the intercept values aren't too large
 //Set to -1900 if you want intercepts to be closer to the mean of the value of the band/index
