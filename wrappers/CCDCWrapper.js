@@ -37,7 +37,7 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2016;
+var startYear = 1984;
 var endYear = 2020;
 
 
@@ -148,7 +148,7 @@ var nSegments = 9;
 ///////////////////////////////////////////////////////////////////////
 //CCDC Parsams
 var ccdcParams ={
-  breakpointBands:['NDVI','NBR'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
+  breakpointBands:['blue','green','red','nir','swir1','swir2','NDVI','NBR'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
                                                               //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
   tmaskBands : null,//['green','swir2'],//The name or index of the bands to use for iterative TMask cloud detection. These are typically the green band and the SWIR2 band. If unspecified, TMask is not used. If specified, 'tmaskBands' must be included in 'breakpointBands'., 
   minObservations: 6,//Factors of minimum number of years to apply new fitting.
