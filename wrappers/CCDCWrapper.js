@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -36,7 +37,7 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 1984;
+var startYear = 2010;
 var endYear = 2020;
 
 
@@ -185,15 +186,17 @@ if(useS2){
 }
 //Set up time series
 processedScenes = processedScenes;
+
+//Remove any extremely high band/index values
 processedScenes = processedScenes.map(function(img){
   var lte1 = img.lte(1).reduce(ee.Reducer.min());
   return img.updateMask(lte1);
 })
+
 Map.addLayer(processedScenes,{},'Raw Time Series',false);
 
 ccdcParams.dateFormat = 1;
 ccdcParams.collection = processedScenes;
-
 ///Apply year offset
 processedScenes = processedScenes.map(function(img){
   return getImagesLib.offsetImageDate(img,nYearOffset,'year');
