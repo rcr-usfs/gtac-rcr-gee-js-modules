@@ -123,7 +123,7 @@ var useS2 = true;
 var nYearOffset = 0;
 
 //Set up Names for the export
-var outputName = 'CCDC_Test8';
+var outputName = 'CCDC_Test9';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
