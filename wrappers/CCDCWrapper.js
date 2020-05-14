@@ -119,7 +119,7 @@ var useS2 = false;
 //Whether to offset the years so the intercept values aren't all weird
 //Set to something close to your -startYear if you want to utilize this functionality
 //Set to 0 if you want the years to remain as they are
-var nYearOffset = -1970;
+var nYearOffset = -2010;
 
 //Set up Names for the export
 var outputName = 'CCDC_Test8';
@@ -201,7 +201,6 @@ processedScenes = processedScenes.map(function(img){
 });
 Map.addLayer(processedScenes,{},'Raw Time Series',false);
 ccdcParams.dateFormat = 1;
-
 ccdcParams.collection = processedScenes;
 //Run CCDC
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
