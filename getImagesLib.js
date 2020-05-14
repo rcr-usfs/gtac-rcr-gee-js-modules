@@ -221,6 +221,11 @@ function addYearFractionBand(img){
   db = db;//.updateMask(img.select([0]).mask())
   return img.addBands(db);
 }
+function offsetImageDate(img,n,unit){
+  var date = ee.Date(img.get('system:time_start'));
+  date = date.advance(n,unit);
+  return img.set('system:time_start',date.millis());
+}
 function addYearYearFractionBand(img){
   var d = ee.Date(img.get('system:time_start'));
   var y = d.get('year');
@@ -2917,6 +2922,7 @@ exports.addYearYearFractionBand = addYearYearFractionBand;
 exports.addYearBand = addYearBand;
 exports.addDateBand = addDateBand;
 exports.addYearJulianDayBand = addYearJulianDayBand;
+exports.offsetImageDate = offsetImageDate;
 exports.addFullYearJulianDayBand = addFullYearJulianDayBand;
 exports.wrapDates = wrapDates;
 exports.collectionToImage = collectionToImage;
