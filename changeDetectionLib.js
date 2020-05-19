@@ -1942,25 +1942,27 @@ var buildCcdcImage = function(ccdc, nSegments) {
 //Function to find the corresponding CCDC coefficients for a given time image
 //The timeImg can have other bands in it that will be retained in the image that
 //is returned.  This is useful if plotting actual and predicted values is of interest
-function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments){
+function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegment,tStartKey,tEndKey,coeffKey){
   if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
   if(fillGapBetweenSegments === null || fillGapBetweenSegments === undefined){fillGapBetweenSegments = 1}
-  
+  if(tStartKey === null || tStartKey === undefined){tStartKey = '.*tStart'}
+  if(tEndKey === null || tEndKey === undefined){tEndKey = '.*tBreak'}
+  if(coeffKey === null || coeffKey === undefined){coeffKey = '.*_coef.*'}
   //Pop off the coefficients and find the output band names
-  var coeffs =  ccdcImg.select('.*_coef.*');
+  var coeffs =  ccdcImg.select(coeffKey);
   var coeffBns = coeffs.bandNames();
   var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
   
   //Find the start and end time for the segments
   // var tStarts = ccdcImg.select(['.*tStart']);
-  var tEnds = ccdcImg.select(['.*tBreak']);
+  var tEnds = ccdcImg.select([tEndKey]);
   
   //Get the time for the given timeImg
   var tBand = timeImg.select([timeBandName]);
   
   
   //Find how many segments there are
-  var nSegs = ccdcImg.select(['.*tStart']).bandNames().length();
+  var nSegs = ccdcImg.select([tStartKey]).bandNames().length();
   
   //Iterate through each segment to pull the correct values
   var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
@@ -1970,15 +1972,15 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments){
     var segBNBefore = ee.String('S').cat(ee.Number(n).subtract(1).byte().format()).cat('.*');
     
     var segCoeffs = ccdcImg.select([segBN]);
-    segCoeffs = segCoeffs.select(['.*_coef.*']);
+    segCoeffs = segCoeffs.select([coeffKey]);
     
     //Handle whether to go back to breakpoint for any segement after the first
     var tStarts1 = ccdcImg.select([segBN]);
-    tStarts1 = tStarts1.select(['.*tStart']);
+    tStarts1 = tStarts1.select([tStartKey]);
     
     //Go back to previous breakpont if the segment n is > 1
     var tStartsGT1T = ccdcImg.select([segBNBefore]);
-    tStartsGT1T = tStartsGT1T.select(['.*tBreak']);
+    tStartsGT1T = tStartsGT1T.select([tEndKey]);
     var tStartsT =ee.Algorithms.If(n.gt(1).and(ee.Number(fillGapBetweenSegments).eq(1)),tStartsGT1T,tStarts1);
     
     var tEndsT = tEnds.select([segBN]);
