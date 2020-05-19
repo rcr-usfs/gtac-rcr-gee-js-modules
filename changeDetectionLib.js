@@ -1942,7 +1942,7 @@ var buildCcdcImage = function(ccdc, nSegments) {
 //Function to find the corresponding CCDC coefficients for a given time image
 //The timeImg can have other bands in it that will be retained in the image that
 //is returned.  This is useful if plotting actual and predicted values is of interest
-function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegment,tStartKey,tEndKey,coeffKey){
+function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,tStartKey,tEndKey,coeffKey){
   if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
   if(fillGapBetweenSegments === null || fillGapBetweenSegments === undefined){fillGapBetweenSegments = 1}
   if(tStartKey === null || tStartKey === undefined){tStartKey = '.*tStart'}
