@@ -1944,7 +1944,7 @@ var buildCcdcImage = function(ccdc, nSegments) {
 //is returned.  This is useful if plotting actual and predicted values is of interest
 function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments){
   if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
-  if(fillGapBetweenSegments === null || fillGapBetweenSegments === undefined){fillGapBetweenSegments = true}
+  if(fillGapBetweenSegments === null || fillGapBetweenSegments === undefined){fillGapBetweenSegments = 1}
   
   //Pop off the coefficients and find the output band names
   var coeffs =  ccdcImg.select('.*_coef.*');
@@ -1979,7 +1979,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments){
     //Go back to previous breakpont if the segment n is > 1
     var tStartsGT1T = ccdcImg.select([segBNBefore]);
     tStartsGT1T = tStartsGT1T.select(['.*tBreak']);
-    var tStartsT =ee.Algorithms.If(n.gt(1).and(fillGapBetweenSegments),tStartsGT1T,tStarts1);
+    var tStartsT =ee.Algorithms.If(n.gt(1).and(ee.Number(fillGapBetweenSegments).eq(1)),tStartsGT1T,tStarts1);
     
     var tEndsT = tEnds.select([segBN]);
     //Mask out segments that the time does not intersect
