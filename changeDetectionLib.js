@@ -1951,25 +1951,37 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName){
   var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
   
   //Find the start and end time for the segments
-  var tStarts = ccdcImg.select(['.*tStart']);
+  // var tStarts = ccdcImg.select(['.*tStart']);
   var tEnds = ccdcImg.select(['.*tBreak']);
   
   //Get the time for the given timeImg
   var tBand = timeImg.select([timeBandName]);
   
-  //Mask out segments that the time does not intersect
-  var segMask  = tBand.gte(tStarts).and(tBand.lte(tEnds));
   
   //Find how many segments there are
   var nSegs = ccdcImg.select(['.*tStart']).bandNames().length();
   
   //Iterate through each segment to pull the correct values
   var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
+    n = ee.Number(n);
     prev = ee.Image(prev);
     var segBN = ee.String('S').cat(ee.Number(n).byte().format()).cat('.*');
+    var segBNBefore = ee.String('S').cat(ee.Number(n).subtract(1).byte().format()).cat('.*');
+    
     var segCoeffs = ccdcImg.select([segBN]);
     segCoeffs = segCoeffs.select(['.*_coef.*']);
-    var segMaskT = segMask.select([segBN]);
+    
+    var tStarts1 = ccdcImg.select([segBN]);
+    tStarts1 = tStarts1.select(['.*tStart']);
+    var tStartsGT1T = ccdcImg.select([segBNBefore]);
+    tStartsGT1T = tStartsGT1T.select(['.*tBreak']);
+    var tStartsT =ee.Algorithms.If(n.eq(1),tStarts1,tStartsGT1T);
+    var tEndsT = tEnds.select([segBN]);
+    //Mask out segments that the time does not intersect
+    var segMaskT  = tBand.gte(tStartsT).and(tBand.lte(tEndsT));
+  
+  
+    // var segMaskT = segMask.select([segBN]);
     segCoeffs = segCoeffs.updateMask(segMaskT);
     return prev.where(segCoeffs.mask(),segCoeffs);
   },ee.Image.constant(ee.List.repeat(-9999,outBns.length())).rename(outBns)));
