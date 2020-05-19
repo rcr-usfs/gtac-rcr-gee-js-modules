@@ -1952,7 +1952,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName){
   
   //Find the start and end time for the segments
   var tStarts = ccdcImg.select(['.*tStart']);
-  var tEnds = ccdcImg.select(['.*tEnd']);
+  var tEnds = ccdcImg.select(['.*tBreak']);
   
   //Get the time for the given timeImg
   var tBand = timeImg.select([timeBandName]);
@@ -1961,7 +1961,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName){
   var segMask  = tBand.gte(tStarts).and(tBand.lte(tEnds));
   
   //Find how many segments there are
-  var nSegs = segMask.bandNames().length();
+  var nSegs = ccdcImg.select(['.*tStart']).bandNames().length();
   
   //Iterate through each segment to pull the correct values
   var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
