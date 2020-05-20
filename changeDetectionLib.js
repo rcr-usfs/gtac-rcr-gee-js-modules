@@ -2121,9 +2121,9 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
   
   return {lossYears:lossChangeYears,gainYears:gainChangeYears,diffs:diffs};
 }
-function getCCDCChange2(ccdcImg,changeDirBand,changeDir,tBreakEnding,magnitudeEnding,changeProbEnding,changeProbThresh,divideTimeBy,startYear,endYear){
+function getCCDCChange2(ccdcImg,changeDirBand,lossDir,tBreakEnding,magnitudeEnding,changeProbEnding,changeProbThresh,divideTimeBy,startYear,endYear){
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
-  if(changeDir === null || changeDir === undefined){changeDir = getImagesLib.changeDirDict[changeDirBand]}
+  if(lossDir === null || lossDir === undefined){lossDir = getImagesLib.changeDirDict[changeDirBand]}
   if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
   if(tBreakEnding === null || tBreakEnding === undefined){tBreakEnding = '_tBreak'}
   if(changeProbEnding === null || changeProbEnding === undefined){changeProbEnding = '_changeProb'}
@@ -2140,7 +2140,7 @@ function getCCDCChange2(ccdcImg,changeDirBand,changeDir,tBreakEnding,magnitudeEn
   var diffs = ccdcImg.select(['.*'+changeDirBand+magnitudeEnding]).updateMask(changeYears.mask());
   
   //Pull out loss and gain
-  if(changeDir === 1){
+  if(lossDir === 1){
     diffs = diffs.multiply(-1);
   }
   var lossYears = changeYears.updateMask(diffs.lt(0));
