@@ -25,7 +25,7 @@ var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test10');//.re
 var selectBands = bands.map(function(b){return '.*'+b+'.*'});
 
 selectBands = selectBands.concat(['.*tStart','.*tEnd','.*_changeProb','.*_tBreak']);
-
+print(selectBands)
 ccdcImg = ccdcImg.select(selectBands)
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 var change = dLib.getCCDCChange2(ccdcImg);
@@ -65,6 +65,7 @@ Map.addLayer(change.gainMags.reduce(ee.Reducer.max()),{min:0.1,max:0.3,palette:d
 var studyArea =ccdcImg.geometry();
 var yearImages = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,1,365)
 .map(getImagesLib.addSAVIandEVI)
+.map(getImagesLib.addYearFractionBand)
 .select(bands);
 //   .select(ccdcParams.breakpointBands);
 // var yearImages2 = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
