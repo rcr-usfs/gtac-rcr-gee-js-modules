@@ -20,7 +20,7 @@ var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 var startYear = 2010;
 var endYear = 2020;
 var bands = ['NDVI'];
-var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test10');//.reproject('EPSG:5070',null,30);
+var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test11');//.reproject('EPSG:5070',null,30);
 
 var selectBands = bands.map(function(b){return '.*'+b+'.*'});
 
@@ -96,7 +96,8 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 // var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted']);
 // var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
 // var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2]).select(['.*_predicted']);
-var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3]).select(['.*_predicted']);
+var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3]).select(bands.concat(['.*_predicted']));
+
 // var joined = getImagesLib.joinCollections(predicted0,predicted1);
 // joined = getImagesLib.joinCollections(joined,predicted2)
 // joined = getImagesLib.joinCollections(joined,predicted3)
