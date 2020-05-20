@@ -19,15 +19,15 @@ var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 2008;
 var endYear = 2021;
-var bands = ['NDVI']
-var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test9');//.reproject('EPSG:5070',null,30);
-Map.addLayer(ccdcImg,{},'CCDC Img',false);
-bands = bands.map(function(b){return '.*'+b+'.*'})
+var bands = ['NDVI'];
+var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test10');//.reproject('EPSG:5070',null,30);
+
+bands = bands.map(function(b){return '.*'+b+'.*'});
 var selectBands = ['.*tStart','.*tEnd','.*_changeProb','.*_tBreak'];
 selectBands = selectBands.concat(bands);
 
 ccdcImg = ccdcImg.select(selectBands)
-
+Map.addLayer(ccdcImg,{},'CCDC Img',false);
 var change = dLib.getCCDCChange2(ccdcImg);
 
 
