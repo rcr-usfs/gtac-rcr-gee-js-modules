@@ -17,14 +17,14 @@ var geometry =
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
-var startYear = 2000;
-var endYear = 2021;
+var startYear = 2010;
+var endYear = 2020;
 var bands = ['NDVI'];
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test10');//.reproject('EPSG:5070',null,30);
 
-bands = bands.map(function(b){return '.*'+b+'.*'});
-var selectBands = ['.*tStart','.*tEnd','.*_changeProb','.*_tBreak'];
-selectBands = bands.concat(selectBands);
+var selectBands = bands.map(function(b){return '.*'+b+'.*'});
+
+selectBands = selectBands.concat(['.*tStart','.*tEnd','.*_changeProb','.*_tBreak']);
 
 ccdcImg = ccdcImg.select(selectBands)
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
@@ -62,6 +62,10 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
   return img.set('system:time_start',d)
 }));
+var studyArea =ccdcImg.geometry();
+var processedLandsatScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,1,365)
+.map(getImagesLib.addSAVIandEVI)
+//   .select(ccdcParams.breakpointBands);
 // var yearImages2 = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
 //   n = ee.Number(n);
 //   var img = ee.Image(n).float().rename(['year']);
