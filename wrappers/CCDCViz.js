@@ -17,14 +17,14 @@ var geometry =
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
-var startYear = 2008;
+var startYear = 2000;
 var endYear = 2021;
 var bands = ['NDVI'];
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test10');//.reproject('EPSG:5070',null,30);
 
 bands = bands.map(function(b){return '.*'+b+'.*'});
 var selectBands = ['.*tStart','.*tEnd','.*_changeProb','.*_tBreak'];
-selectBands = selectBands.concat(bands);
+selectBands = bands.concat(selectBands);
 
 ccdcImg = ccdcImg.select(selectBands)
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
@@ -85,23 +85,23 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 // timeBandName,detrended,whichHarmonics,fillGapBetweenSegments
 // coeffs = coeffs.rename(bns)
 // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
-var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted']);
-var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
-var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2]).select(['.*_predicted']);
+// var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted']);
+// var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
+// var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2]).select(['.*_predicted']);
 var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3]).select(['.*_predicted']);
-var joined = getImagesLib.joinCollections(predicted0,predicted1);
-joined = getImagesLib.joinCollections(joined,predicted2)
-joined = getImagesLib.joinCollections(joined,predicted3)
-Map.addLayer(joined,{},'Predicted With Filling',false)
+// var joined = getImagesLib.joinCollections(predicted0,predicted1);
+// joined = getImagesLib.joinCollections(joined,predicted2)
+// joined = getImagesLib.joinCollections(joined,predicted3)
+Map.addLayer(predicted3,{},'Predicted With Filling',false)
 // ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments
-var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[],0).select(['.*_predicted']);
-var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1],0).select(['.*_predicted']);
-var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2],0).select(['.*_predicted']);
-var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3],0).select(['.*_predicted']);
-var joined = getImagesLib.joinCollections(predicted0,predicted1);
-joined = getImagesLib.joinCollections(joined,predicted2)
-joined = getImagesLib.joinCollections(joined,predicted3)
-Map.addLayer(joined,{},'Predicted Without Filling',false)
+// var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[],0).select(['.*_predicted']);
+// var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1],0).select(['.*_predicted']);
+// var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2],0).select(['.*_predicted']);
+// var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3],0).select(['.*_predicted']);
+// var joined = getImagesLib.joinCollections(predicted0,predicted1);
+// joined = getImagesLib.joinCollections(joined,predicted2)
+// joined = getImagesLib.joinCollections(joined,predicted3)
+// Map.addLayer(joined,{},'Predicted Without Filling',false)
 // print(predicted)
 // predicted = predicted.map(function(img){
 //   var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
