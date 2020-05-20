@@ -1946,7 +1946,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
   if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
   if(fillGapBetweenSegments === null || fillGapBetweenSegments === undefined){fillGapBetweenSegments = 1}
   if(tStartKey === null || tStartKey === undefined){tStartKey = '.*tStart'}
-  if(tEndKey === null || tEndKey === undefined){tEndKey = '.*tBreak'}
+  if(tEndKey === null || tEndKey === undefined){tEndKey = '.*tEnd'}
   if(coeffKey === null || coeffKey === undefined){coeffKey = '.*_coef.*'}
   //Pop off the coefficients and find the output band names
   var coeffs =  ccdcImg.select(coeffKey);
