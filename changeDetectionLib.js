@@ -2019,7 +2019,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   if(detrended === null || detrended === undefined){detrended = true}
   if(whichHarmonics === null || whichHarmonics === undefined){whichHarmonics = [1,2,3]}
   if(addRMSE === null || addRMSE === undefined){addRMSE = true}
-  if(rmseImg === null || rmseImg === undefined){rmseImg = true}
+  // if(rmseImg === null || rmseImg === undefined){rmseImg = true}
   if(nRMSEs === null || nRMSEs === undefined){nRMSEs = [1,2,3]}
   var tBand = timeImg.select([timeBandName]);
   var neededCoeffs = ee.List([]);
