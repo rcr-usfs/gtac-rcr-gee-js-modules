@@ -2086,7 +2086,7 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
   timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
  
   //Predict out the values for each image 
-  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
+  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*']),timeBandName,detrended,whichHarmonics,addRMSE,img.select(['.*_rmse']),nRMSEs)});
   
   return timeSeries;
  
