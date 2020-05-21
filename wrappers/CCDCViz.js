@@ -33,7 +33,7 @@ tBreaks = tBreaks.where(tBreaks.eq(0),tEnds);
 ccdcImg = ccdcImg.select(selectBands);
 
 ccdcImg = ee.Image.cat([ccdcImg,tEnds,tBreaks])
-print(ccdcImg.bandNames())
+// print(ccdcImg.bandNames())
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 var change = dLib.getCCDCChange2(ccdcImg);
 
