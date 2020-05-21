@@ -1952,14 +1952,15 @@ var buildCcdcImage = function(ccdc, nSegments) {
 //Function to find the corresponding CCDC coefficients for a given time image
 //The timeImg can have other bands in it that will be retained in the image that
 //is returned.  This is useful if plotting actual and predicted values is of interest
-function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,tStartKey,tEndKey,coeffKey){
+function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,tStartKey,tEndKey,coeffKey,rmseKey){
   if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
   if(fillGapBetweenSegments === null || fillGapBetweenSegments === undefined){fillGapBetweenSegments = 1}
   if(tStartKey === null || tStartKey === undefined){tStartKey = '.*tStart'}
   if(tEndKey === null || tEndKey === undefined){tEndKey = '.*tBreak'}
   if(coeffKey === null || coeffKey === undefined){coeffKey = '.*_coef.*'}
+  if(rmseKey === null || rmseKey === undefined){rmseKey = '.*_rmse'}
   //Pop off the coefficients and find the output band names
-  var coeffs =  ccdcImg.select(coeffKey);
+  var coeffs =  ccdcImg.select([coeffKey,rmseKey]);
   var coeffBns = coeffs.bandNames();
   var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
   
@@ -1982,7 +1983,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
     var segBNBefore = ee.String('S').cat(ee.Number(n).subtract(1).byte().format()).cat('.*');
     
     var segCoeffs = ccdcImg.select([segBN]);
-    segCoeffs = segCoeffs.select([coeffKey]);
+    segCoeffs = segCoeffs.select([coeffKey,rmseKey]);
     
     //Handle whether to go back to breakpoint for any segement after the first
     var tStarts1 = ccdcImg.select([segBN]);
@@ -2012,13 +2013,14 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
 //The time band is assumed to be in a yyyy.ff where the .ff is the proportion of the year
 //The timeImg can have other bands in it that will be retained in the image that
 //is returned.  This is useful if plotting actual and predicted values is of interest
-function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonics){
+function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs){
   var harmDict = ee.Dictionary({1:'',2:'2',3:'3',4:'4'});
   if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
   if(detrended === null || detrended === undefined){detrended = true}
   if(whichHarmonics === null || whichHarmonics === undefined){whichHarmonics = [1,2,3]}
-  
-  
+  if(addRMSE === null || addRMSE === undefined){addRMSE = true}
+  if(rmseImg === null || rmseImg === undefined){rmseImg = true}
+  if(nRMSEs === null || nRMSEs === undefined){nRMSEs = [1,2,3]}
   var tBand = timeImg.select([timeBandName]);
   var neededCoeffs = ee.List([]);
   //Unit of each harmonic (1 cycle)
@@ -2065,12 +2067,12 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
 //The ccdcImg is assumed to have coefficients for a set of segments and a tStart and tEnd for 
 //each segment. 
 //It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
-function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments){
+function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   
   //Add the segment-appropriate coefficients to each time image
   timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
   //Predict out the values for each image 
-  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*']),timeBandName,detrended,whichHarmonics)});
+  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
   
   return timeSeries;
  
