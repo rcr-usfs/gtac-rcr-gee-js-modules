@@ -2090,7 +2090,7 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
  
   //Predict out the values for each image 
   timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*']),timeBandName,detrended,whichHarmonics,addRMSE,img.select(['.*_rmse']),nRMSEs)});
-  
+  print(timeSeries.first())
   return timeSeries;
  
 }
