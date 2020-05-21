@@ -2067,6 +2067,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
       var minusBns = bnsOut.map(function(bn){return ee.String(bn).cat('_Minus_').cat(n.format()).cat('_RMSEs')});
       var plus = predicted.add(rmseImg.multiply(n)).rename(plusBns);
       var minus = predicted.subtract(rmseImg.multiply(n)).rename(minusBns);
+      return plus.addBands(minus)
     },ee.Image()));
     var rmsesBns = rmses.bandNames().slice(1,null);
     rmses = rmses.select(rmsesBns);
