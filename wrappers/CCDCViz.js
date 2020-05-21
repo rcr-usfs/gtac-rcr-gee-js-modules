@@ -24,9 +24,16 @@ var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test11');//.re
 
 var selectBands = bands.map(function(b){return '.*'+b+'.*'});
 
-selectBands = selectBands.concat(['.*tStart','.*tEnd','.*_changeProb','.*_tBreak']);
+selectBands = selectBands.concat(['.*tStart','.*_changeProb']);
 
-ccdcImg = ccdcImg.select(selectBands)
+var tEnds = ccdcImg.select(['.*tEnd']);
+var tBreaks = ccdcImg.select(['.*tBreak']);
+tBreaks = tBreaks.where(tBreaks.eq(0),tEnds);
+
+ccdcImg = ccdcImg.select(selectBands);
+
+ccdcImg = ee.Image.cat([ccdcImg,tEnds,tBreaks])
+
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 var change = dLib.getCCDCChange2(ccdcImg);
 
