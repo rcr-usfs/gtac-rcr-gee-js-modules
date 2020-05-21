@@ -208,7 +208,7 @@ var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
 //Convert to image stack
 var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
-ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
+// ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
 Map.addLayer(ccdcImg)
 //Find the segment count for each pixel
 var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
