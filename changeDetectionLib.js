@@ -1921,6 +1921,14 @@ var buildStartEndBreakProb = function(fit, nSegments) {
   var zeros = ee.Image(ee.Array([ee.List.repeat(-32768, bns.length())]).repeat(0, nSegments));
   var changeImg = change.toArray(1).arrayCat(zeros, 0).arraySlice(0, 0, nSegments).arrayFlatten([segBns,bns]);
   
+  var tStart = changeImg.select(['.*tStart']);
+  var changeProbs = changeImg.select(['.*changeProb']);
+  var tEnds = changeImg.select(['.*tEnd']);
+  var tBreaks = changeImg.select(['.*tBreak']);
+  tBreaks = tBreaks.where(tBreaks.eq(0),tEnds);
+  
+  
+  changeImg = ee.Image.cat([tStart,tEnds,tBreaks,changeProbs]);
   return changeImg;
   
 };
