@@ -2060,6 +2060,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
     return predictedT;
   })).toBands().rename(bnsOut);
   
+  //Add rmses if specified
   if(addRMSE){
     var rmses = ee.Image(ee.List(nRMSEs).iterate(function(n,prev){
       n = ee.Number(n);
@@ -2073,7 +2074,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
     rmses = rmses.select(rmsesBns);
   }
   var out = timeImg.addBands(predicted);
-  out = ee.Algorithms.If(addRMSE,out.addBands(rmses),out)
+  out = ee.Image(ee.Algorithms.If(addRMSE,out.addBands(rmses),out));
   return out.updateMask(tBand.mask());
 }
 ////////////////////////////////////////////////////////////////////////////////////////
