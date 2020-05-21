@@ -1944,7 +1944,9 @@ var buildCcdcImage = function(ccdc, nSegments) {
   var mags = buildMagnitude(ccdc, nSegments);
   var change = buildStartEndBreakProb(ccdc, nSegments);
 
-  return ee.Image.cat(coeffs, rmses, mags, change).float();
+  var ccdcImg = ee.Image.cat(coeffs, rmses, mags, change).float();
+  ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
+  return ccdcImg;
 };
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to find the corresponding CCDC coefficients for a given time image
