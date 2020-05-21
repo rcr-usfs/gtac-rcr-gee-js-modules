@@ -2071,7 +2071,9 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
     var rmsesBns = rmses.bandNames().slice(1,null);
     rmses = rmses.select(rmsesBns);
   }
-  return timeImg.addBands(predicted).updateMask(tBand.mask());
+  var out = timeImg.addBands(predicted);
+  out = ee.Algorithms.If(addRMSE,out.addBands(rmses),out)
+  return out.updateMask(tBand.mask());
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to take a given CCDC results stack and predict values for a given time series
