@@ -61,21 +61,21 @@ Map.addLayer(change.gainMags.reduce(ee.Reducer.max()),{min:0.1,max:0.3,palette:d
 // ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
 // Map.addLayer(ccdcImg)
 
-// var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
-//   n = ee.Number(n);
-//   var img = ee.Image(n).float().rename(['year']);
-//   var y = n.int16();
-//   var fraction = n.subtract(y);
-//   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
-//   return img.set('system:time_start',d)
-// }));
+var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
+  n = ee.Number(n);
+  var img = ee.Image(n).float().rename(['year']);
+  var y = n.int16();
+  var fraction = n.subtract(y);
+  var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
+  return img.set('system:time_start',d)
+}));
 var studyArea =ccdcImg.geometry();
-var yearImages = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,1,365)
+// var yearImages = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,1,365)
 // .map(getImagesLib.addSAVIandEVI)
-.select(bands)
-.map(getImagesLib.addYearYearFractionBand)
+// .select(bands)
+// .map(getImagesLib.addYearYearFractionBand)
 
-print(yearImages.limit(5))
+// print(yearImages.limit(5))
 //   .select(ccdcParams.breakpointBands);
 // var yearImages2 = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
 //   n = ee.Number(n);
