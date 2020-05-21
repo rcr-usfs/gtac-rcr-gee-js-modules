@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-106.89449583480005, 37.69361375289257],
-          [-106.89449583480005, 37.62838466666174],
-          [-106.76677977034693, 37.62838466666174],
-          [-106.76677977034693, 37.69361375289257]]], null, false);
+        [[[-72.5166585737098, 42.31625621058699],
+          [-72.5166585737098, 41.379222307113515],
+          [-71.4125325971473, 41.379222307113515],
+          [-71.4125325971473, 42.31625621058699]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -37,7 +37,7 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 1984;
+var startYear = 2010;
 var endYear = 2020;
 
 
@@ -45,11 +45,11 @@ var endYear = 2020;
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 // Specify TOA or SR
 // Current implementation does not support Fmask for TOA
-var toaOrSR = 'TOA';
+var toaOrSR = 'SR';
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
-var includeSLCOffL7 = true;
+var includeSLCOffL7 = false;
 
 //9. Whether to defringe L5
 //Landsat 5 data has fringes on the edges that can introduce anomalies into 
@@ -114,7 +114,7 @@ var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
 //Whether to use Sentinel 2 along with Landsat
 //If using Sentinel 2, be sure to select SR for Landsat toaOrSR
-var useS2 = true;
+var useS2 = false;
 
 //Whether to offset the years so the intercept values aren't too large
 //Set to -1900 if you want intercepts to be closer to the mean of the value of the band/index
@@ -123,7 +123,7 @@ var useS2 = true;
 var nYearOffset = 0;
 
 //Set up Names for the export
-var outputName = 'CCDC_Test9';
+var outputName = 'CCDC_Test11';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
@@ -148,11 +148,11 @@ var nSegments = 9;
 ///////////////////////////////////////////////////////////////////////
 //CCDC Parsams
 var ccdcParams ={
-  breakpointBands:['blue','green','red','nir','swir1','swir2','NDVI','NBR'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
+  breakpointBands:['red','nir','swir1','swir2','NDVI','NBR'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
                                                               //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
   tmaskBands : null,//['green','swir2'],//The name or index of the bands to use for iterative TMask cloud detection. These are typically the green band and the SWIR2 band. If unspecified, TMask is not used. If specified, 'tmaskBands' must be included in 'breakpointBands'., 
   minObservations: 6,//Factors of minimum number of years to apply new fitting.
-  chiSquareProbability: 0.99,//The chi-square probability threshold for change detection in the range of [0, 1],
+  chiSquareProbability: 0.95,//The chi-square probability threshold for change detection in the range of [0, 1],
   minNumOfYearsScaler: 1.33,//Factors of minimum number of years to apply new fitting.,\
   lambda: 0.002,//Lambda for LASSO regression fitting. If set to 0, regular OLS is used instead of LASSO
   maxIterations : 25000 //Maximum number of runs for LASSO regression convergence. If set to 0, regular OLS is used instead of LASSO.
