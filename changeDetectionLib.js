@@ -2018,7 +2018,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   if(whichHarmonics === null || whichHarmonics === undefined){whichHarmonics = [1,2,3]}
   if(addRMSE === null || addRMSE === undefined){addRMSE = true}
   if(rmseImg === null || rmseImg === undefined){rmseImg = coeffImg.select(['.*_rmse'])}
-  if(nRMSEs === null || nRMSEs === undefined){nRMSEs = [1,2,3]}
+  if(nRMSEs === null || nRMSEs === undefined){nRMSEs = [2]}
   var tBand = timeImg.select([timeBandName]);
   var neededCoeffs = ee.List([]);
   //Unit of each harmonic (1 cycle)
