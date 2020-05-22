@@ -1934,9 +1934,7 @@ var buildStartEndBreakProb = function(fit, nSegments) {
 };
 
 /**
- * build a 74 x nSegments layer image
- * using int32 as output.
- * 
+Build CCDC output stack from array image
  */
 var buildCcdcImage = function(ccdc, nSegments) {
   var coeffs =buildCoefs(ccdc,nSegments);
@@ -2089,7 +2087,7 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
   timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
  
   //Predict out the values for each image 
-  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*']),timeBandName,detrended,whichHarmonics,addRMSE,img.select(['.*_rmse']),nRMSEs)});
+  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
   print(timeSeries.first())
   return timeSeries;
  
