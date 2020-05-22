@@ -1994,7 +1994,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
     
     var tEndsT = tEnds.select([segBN]);
     //Mask out segments that the time does not intersect
-    var segMaskT  = tBand.gt(tStartsT).and(tBand.lte(tEndsT));
+    var segMaskT  = tBand.gte(tStartsT).and(tBand.lt(tEndsT));
   
   
     // var segMaskT = segMask.select([segBN]);
