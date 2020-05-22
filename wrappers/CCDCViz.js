@@ -19,7 +19,7 @@ var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 2010;
 var endYear = 2020;
-var bands = ['NDVI'];
+var bands = ['NDVI','NBR'];
 var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test11');//.reproject('EPSG:5070',null,30);
 
 var selectBands = bands.map(function(b){return '.*'+b+'.*'});
