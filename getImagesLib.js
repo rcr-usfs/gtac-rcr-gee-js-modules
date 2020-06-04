@@ -2088,7 +2088,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   // Create composite time series
   var ts = compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
   
-  
+  print(ts)
   // Correct illumination
   if (correctIllumination){
     var f = ee.Image(ts.first());
