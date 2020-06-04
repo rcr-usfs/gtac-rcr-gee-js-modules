@@ -1161,7 +1161,6 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
   var dummyImage = ee.Image(ls.first());
   
   var dateWrapping = wrapDates(startJulian,endJulian);
-  print('dr',dateWrapping)
   var wrapOffset = dateWrapping[0];
   var yearWithMajority = dateWrapping[1];
   
@@ -1176,7 +1175,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
     var endDateT = ee.Date.fromYMD(endYearT,1,1).advance(endJulian-1+wrapOffset,'day');
     
   
-    
+    // print(year,startDateT,endDateT);
     
     //Set up weighted moving widow
     var yearsT = ee.List.sequence(startYearT,endYearT);
@@ -1189,12 +1188,12 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
     // print('Weighted composite years for year:',year,yearsTT);
     //Iterate across each year in list
     // LSC 4/4/19: Does this need to be yearsTT.getInfo()??
-    var images = yearsTT.getInfo().map(function(yr){
+    var images = yearsTT.map(function(yr){
       // Set up dates
       
       var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
       var endDateT = ee.Date.fromYMD(yr,1,1).advance(endJulian-1+wrapOffset,'day');
-      print(year,startDateT,endDateT,startJulian-1,endJulian-1+wrapOffset);
+      
       // Filter images for given date range
       var lsT = ls.filterDate(startDateT,endDateT);
       lsT = fillEmptyCollections(lsT,dummyImage);
