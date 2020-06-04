@@ -1161,6 +1161,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
   var dummyImage = ee.Image(ls.first());
   
   var dateWrapping = wrapDates(startJulian,endJulian);
+  print('dr',dateWrapping)
   var wrapOffset = dateWrapping[0];
   var yearWithMajority = dateWrapping[1];
   
