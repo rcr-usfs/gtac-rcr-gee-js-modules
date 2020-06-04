@@ -1189,7 +1189,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
     // print('Weighted composite years for year:',year,yearsTT);
     //Iterate across each year in list
     // LSC 4/4/19: Does this need to be yearsTT.getInfo()??
-    var images = yearsTT.map(function(yr){
+    var images = yearsTT.getInfo().map(function(yr){
       // Set up dates
       
       var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
