@@ -1904,15 +1904,26 @@ applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFm
     nonDivideBands = ['temp'];
   }
   collection = collection.select(exportBands);
+  
+   //Take care of date wrapping
+  var dateWrapping = wrapDates(startJulian,endJulian);
+  var wrapOffset = dateWrapping[0];
+  var yearWithMajority = dateWrapping[1];
+  
+  //Clean up output name
+  outputName = outputName.replace(/\s+/g,'-');
+  outputName = outputName.replace(/\//g,'-');
+  
+  
   var years = ee.List.sequence(startYear+timebuffer,endYear-timebuffer).getInfo()
     .map(function(year){
       
     // Set up dates
     var startYearT = year-timebuffer;
-    var endYearT = year+timebuffer;
+    var endYearT = year+timebuffer+yearWithMajority;
     
     // Get yearly composite
-    var composite = collection.filter(ee.Filter.calendarRange(year,year,'year'));
+    var composite = collection.filter(ee.Filter.calendarRange(year+yearWithMajority,year+yearWithMajority,'year'));
     composite = ee.Image(composite.first());
     
     // Display the Landsat composite
@@ -2088,7 +2099,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   // Create composite time series
   var ts = compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
   
-  print(ts)
+  
   // Correct illumination
   if (correctIllumination){
     var f = ee.Image(ts.first());
