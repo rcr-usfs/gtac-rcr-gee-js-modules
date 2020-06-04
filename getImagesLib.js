@@ -1176,7 +1176,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
     var endDateT = ee.Date.fromYMD(endYearT,1,1).advance(endJulian-1+wrapOffset,'day');
     
   
-    print(year,startDateT,endDateT,startJulian-1,endJulian-1+wrapOffset);
+    
     
     //Set up weighted moving widow
     var yearsT = ee.List.sequence(startYearT,endYearT);
@@ -1194,7 +1194,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
       
       var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
       var endDateT = ee.Date.fromYMD(yr,1,1).advance(endJulian-1+wrapOffset,'day');
-      
+      print(year,startDateT,endDateT,startJulian-1,endJulian-1+wrapOffset);
       // Filter images for given date range
       var lsT = ls.filterDate(startDateT,endDateT);
       lsT = fillEmptyCollections(lsT,dummyImage);
