@@ -658,7 +658,7 @@ function applyDistDir_vertStack(stack, distDir, verdet_or_landtrendr){
   //   var rmse = stack.select('rmse');
   //   out = out.addBands(rmse); 
   // }
-  out = ee.Algorithms.If(ee.String(verdet_or_landtrendr).eq('landtrendr'),out.addBands(stack.select('rmse')),out);
+  out = ee.Algorithms.If(ee.String(verdet_or_landtrendr).compareTo('landtrendr').eq(0),out.addBands(stack.select('rmse')),out);
   out = ee.Image(out);
   out  = out.copyProperties(stack,['system:time_start'])
             .copyProperties(stack);
