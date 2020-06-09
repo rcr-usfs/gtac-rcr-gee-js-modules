@@ -206,6 +206,15 @@ ccdcParams.collection = processedScenes;
 //Run CCDC
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
+//Run EWMACD 
+var ewmacd = ee.Algorithms.TemporalSegmentation.Ewmacd({
+    timeSeries: processedScenes.select(['NDVI']), 
+    vegetationThreshold: -1, 
+    trainingStartYear: startYear, 
+    trainingEndYear: startYear+1, 
+    harmonicCount: 2
+  });
+Map.addLayer(ewmacd,{},'ewmacd',false)
 //Convert to image stack
 var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
 // ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
