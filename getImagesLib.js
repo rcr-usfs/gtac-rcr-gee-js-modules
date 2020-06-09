@@ -1211,7 +1211,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
       composite = lsT.median();
     }
     else {
-      print('lsT', lsT.limit(5))
+
       composite = medoidMosaicMSD(lsT,['green','red','nir','swir1','swir2']);
     }
 
