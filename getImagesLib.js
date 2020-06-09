@@ -720,7 +720,7 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
     var cs = cloudScoreFunction(img).rename(['cloudScore']);
     return img.addBands(cs);
   });
-  print('preComputedCloudScoreOffset', preComputedCloudScoreOffset)
+
   if(performCloudScoreOffset){
     var minCloudScore;
     if(preComputedCloudScoreOffset === null){
@@ -1187,7 +1187,6 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
     }).flatten();
     // print('Weighted composite years for year:',year,yearsTT);
     //Iterate across each year in list
-    // LSC 4/4/19: Does this need to be yearsTT.getInfo()??
     var images = yearsTT.map(function(yr){
       // Set up dates
       
@@ -1210,7 +1209,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
       composite = lsT.median();
     }
     else {
-      
+      print('lsT', lsT)
       composite = medoidMosaicMSD(lsT,['green','red','nir','swir1','swir2']);
     }
 
