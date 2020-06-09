@@ -1090,7 +1090,9 @@ function addZenithAzimuth(img,toaOrSR,zenithDict,azimuthDict){
 function medoidMosaicMSD(inCollection,medoidIncludeBands) {
   // Find band names in first image
   var f = ee.Image(inCollection.first());
+  print('f', f)
   var bandNames = f.bandNames();
+  print('bandNames', bandNames)
   //var bandNumbers = ee.List.sequence(1,bandNames.length());
   
   if (medoidIncludeBands === undefined || medoidIncludeBands === null) {
@@ -1209,7 +1211,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
       composite = lsT.median();
     }
     else {
-      print('lsT', lsT)
+      print('lsT', lsT.limit(5))
       composite = medoidMosaicMSD(lsT,['green','red','nir','swir1','swir2']);
     }
 
