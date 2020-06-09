@@ -1090,9 +1090,7 @@ function addZenithAzimuth(img,toaOrSR,zenithDict,azimuthDict){
 function medoidMosaicMSD(inCollection,medoidIncludeBands) {
   // Find band names in first image
   var f = ee.Image(inCollection.first());
-  print('f', f)
   var bandNames = f.bandNames();
-  print('bandNames', bandNames)
   //var bandNumbers = ee.List.sequence(1,bandNames.length());
   
   if (medoidIncludeBands === undefined || medoidIncludeBands === null) {
