@@ -720,7 +720,7 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
     var cs = cloudScoreFunction(img).rename(['cloudScore']);
     return img.addBands(cs);
   });
-  
+  print('preComputedCloudScoreOffset', preComputedCloudScoreOffset)
   if(performCloudScoreOffset){
     var minCloudScore;
     if(preComputedCloudScoreOffset === null){
@@ -1989,7 +1989,9 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod){
+  exportComposites,outputName,exportPathRoot,
+  crs,transform,scale,resampleMethod, 
+  preComputedCloudScoreOffset){
     
     
   if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
@@ -2046,7 +2048,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   // Apply relevant cloud masking methods
   if(applyCloudScore){
     print('Applying cloudScore');
-    ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset); 
+    ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset, preComputedCloudScoreOffset); 
   }
   
   if(applyFmaskCloudMask){
