@@ -2154,6 +2154,7 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,tBreakEnding,magnitudeEndi
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
   if(lossDir === null || lossDir === undefined){lossDir = getImagesLib.changeDirDict[changeDirBand]}
   if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
+  if(coeffEnding === null || coeffEnding === undefined){coeffEnding = '.*_coefs_.*'}
   if(slopeEnding === null || slopeEnding === undefined){slopeEnding = '_SLP'}
   if(tBreakEnding === null || tBreakEnding === undefined){tBreakEnding = '_tBreak'}
   if(changeProbEnding === null || changeProbEnding === undefined){changeProbEnding = '_changeProb'}
@@ -2163,7 +2164,9 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,tBreakEnding,magnitudeEndi
   if(divideTimeBy === null || divideTimeBy === undefined){divideTimeBy = 1}
   if(startYear === null || startYear === undefined){startYear = 0}
   if(endYear === null || endYear === undefined){endYear = 3000}
-
+  
+  var coeffs = ccdcImg.select(['.*'+changeDirBand+coeffEnding]);
+  
   var changeProbs = ccdcImg.select(['.*'+changeProbEnding]).selfMask();
   changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
 
