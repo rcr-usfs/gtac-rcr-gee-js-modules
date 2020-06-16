@@ -104,7 +104,7 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 // var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
 // var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2]).select(['.*_predicted']);
 var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3]).select(bands.concat(['.*_predicted','.*_RMSEs']));
-
+print(predicted3)
 // var joined = getImagesLib.joinCollections(predicted0,predicted3);
 // joined = getImagesLib.joinCollections(joined,predicted2)
 // joined = getImagesLib.joinCollections(joined,predicted3)
