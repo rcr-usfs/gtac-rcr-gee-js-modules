@@ -2150,7 +2150,7 @@ function getCCDCChange(ccdcImg,changeDirBand,changeDir){
   
   return {lossYears:lossChangeYears,gainYears:gainChangeYears,diffs:diffs};
 }
-function getCCDCChange2(ccdcImg,changeDirBand,lossDir,tBreakEnding,magnitudeEnding,changeProbEnding,changeProbThresh,magThresh,slopeThresh,divideTimeBy,startYear,endYear){
+function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEnding,slopeEnding,tBreakEnding,changeProbEnding,changeProbThresh,segMagThresh,segSlopeThresh,divideTimeBy,startYear,endYear){
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
   if(lossDir === null || lossDir === undefined){lossDir = getImagesLib.changeDirDict[changeDirBand]}
   if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
