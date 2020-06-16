@@ -2154,11 +2154,12 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,tBreakEnding,magnitudeEndi
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
   if(lossDir === null || lossDir === undefined){lossDir = getImagesLib.changeDirDict[changeDirBand]}
   if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
+  if(slopeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_SLP'}
   if(tBreakEnding === null || tBreakEnding === undefined){tBreakEnding = '_tBreak'}
   if(changeProbEnding === null || changeProbEnding === undefined){changeProbEnding = '_changeProb'}
   if(changeProbThresh === null || changeProbThresh === undefined){changeProbThresh = 0.8}
-  if(magThresh === null || magThresh === undefined){magThresh = 0.2}
-  if(slopeThresh === null || slopeThresh === undefined){slopeThresh = 0.2}
+  if(segMagThresh === null || segMagThresh === undefined){segMagThresh = 0.2}
+  if(segSlopeThresh === null || segSlopeThresh === undefined){segSlopeThresh = 0.2}
   if(divideTimeBy === null || divideTimeBy === undefined){divideTimeBy = 1}
   if(startYear === null || startYear === undefined){startYear = 0}
   if(endYear === null || endYear === undefined){endYear = 3000}
