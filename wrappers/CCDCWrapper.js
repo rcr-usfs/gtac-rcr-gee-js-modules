@@ -45,7 +45,7 @@ var endYear = 2020;
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 // Specify TOA or SR
 // Current implementation does not support Fmask for TOA
-var toaOrSR = 'SR';
+var toaOrSR = 'TOA';
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
@@ -112,6 +112,19 @@ var dilatePixels = 2.5;
 var correctIllumination = false;
 var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
+//Choose the resampling method: 'near', 'bilinear', or 'bicubic'
+//Defaults to 'near'
+//If method other than 'near' is chosen, any map drawn on the fly that is not
+//reprojected, will appear blurred
+//Use .reproject to view the actual resulting image (this will slow it down)
+var resampleMethod = 'near';
+
+//Choose whether to harmonize S2 and OLI
+var harmonizeOLI = false;
+
+
+var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic();
+
 //Whether to use Sentinel 2 along with Landsat
 //If using Sentinel 2, be sure to select SR for Landsat toaOrSR
 var useS2 = false;
@@ -170,71 +183,71 @@ var ccdcParams ={
 var processedLandsatScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels
+  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,resampleMethod,harmonizeOLI,preComputedCloudScoreOffset
   ).map(getImagesLib.addSAVIandEVI)
   .select(ccdcParams.breakpointBands);
 
 
-var processedScenes = processedLandsatScenes;
+// var processedScenes = processedLandsatScenes;
 
-if(useS2){
-  print('Acquiring Sentinel 2 data');
-  var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian)
+// if(useS2){
+//   print('Acquiring Sentinel 2 data');
+//   var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian)
   
-  Map.addLayer(processedSentinel2Scenes.median(),getImagesLib.vizParamsFalse,'S2');
-  processedSentinel2Scenes = processedSentinel2Scenes.select(ccdcParams.breakpointBands);
-  processedScenes = processedScenes.merge(processedSentinel2Scenes);
-}
-//Set up time series
-processedScenes = processedScenes;
+//   Map.addLayer(processedSentinel2Scenes.median(),getImagesLib.vizParamsFalse,'S2');
+//   processedSentinel2Scenes = processedSentinel2Scenes.select(ccdcParams.breakpointBands);
+//   processedScenes = processedScenes.merge(processedSentinel2Scenes);
+// }
+// //Set up time series
+// processedScenes = processedScenes;
 
-//Remove any extremely high band/index values
-processedScenes = processedScenes.map(function(img){
-  var lte1 = img.lte(1).reduce(ee.Reducer.min());
-  return img.updateMask(lte1);
-})
+// //Remove any extremely high band/index values
+// processedScenes = processedScenes.map(function(img){
+//   var lte1 = img.lte(1).reduce(ee.Reducer.min());
+//   return img.updateMask(lte1);
+// })
 
 
 
-///Apply year offset
-processedScenes = processedScenes.map(function(img){
-  return getImagesLib.offsetImageDate(img,nYearOffset,'year');
-});
-Map.addLayer(processedScenes,{},'Raw Time Series',false);
-ccdcParams.dateFormat = 1;
-ccdcParams.collection = processedScenes;
-//Run CCDC
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
+// ///Apply year offset
+// processedScenes = processedScenes.map(function(img){
+//   return getImagesLib.offsetImageDate(img,nYearOffset,'year');
+// });
+// Map.addLayer(processedScenes,{},'Raw Time Series',false);
+// ccdcParams.dateFormat = 1;
+// ccdcParams.collection = processedScenes;
+// //Run CCDC
+// var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
-//Run EWMACD 
-var ewmacd = ee.Algorithms.TemporalSegmentation.Ewmacd({
-    timeSeries: processedScenes.select(['NDVI']), 
-    vegetationThreshold: -1, 
-    trainingStartYear: startYear, 
-    trainingEndYear: startYear+1, 
-    harmonicCount: 2
-  });
-Map.addLayer(ewmacd,{},'ewmacd',false)
-//Convert to image stack
-var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
-// ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
-Map.addLayer(ccdcImg)
-//Find the segment count for each pixel
-var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
-Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
+// // //Run EWMACD 
+// // var ewmacd = ee.Algorithms.TemporalSegmentation.Ewmacd({
+// //     timeSeries: processedScenes.select(['NDVI']), 
+// //     vegetationThreshold: -1, 
+// //     trainingStartYear: startYear, 
+// //     trainingEndYear: startYear+1, 
+// //     harmonicCount: 2
+// //   });
+// // Map.addLayer(ewmacd,{},'ewmacd',false)
+// //Convert to image stack
+// var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
+// // ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
+// Map.addLayer(ccdcImg)
+// //Find the segment count for each pixel
+// var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+// Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 
-//Set up time series for predicting values
-processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
-ccdcParams.breakpointBands.push('.*_predicted');
+// //Set up time series for predicting values
+// processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
+// ccdcParams.breakpointBands.push('.*_predicted');
 
-var changeYears = dLib.getCCDCChange2(ccdcImg);
-Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year',false);
-Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year',false);
-// Export.Image.toDrive(changeYears.lossYears.reduce(ee.Reducer.max()),)  
+// var changeYears = dLib.getCCDCChange2(ccdcImg);
+// Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year',false);
+// Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year',false);
+// // Export.Image.toDrive(changeYears.lossYears.reduce(ee.Reducer.max()),)  
   
-//Predict CCDC model and visualize the actual vs. predicted
-var predicted = dLib.predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
-Map.addLayer(predicted,{},'Predicted CCDC',false);
+// //Predict CCDC model and visualize the actual vs. predicted
+// var predicted = dLib.predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
+// Map.addLayer(predicted,{},'Predicted CCDC',false);
 
 // //Visualize the seasonality of the first segment
 // var seg1 = ccdcImg.select(['S1.*']);
