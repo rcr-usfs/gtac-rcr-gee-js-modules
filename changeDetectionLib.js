@@ -2192,7 +2192,7 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEndin
   var loss = diffs.lt(0).or(mags.lt(-segMagThresh)).or(slopes.lt(-segSlopeThresh));
   var gain = diffs.gt(0).or(mags.gt(segMagThresh)).or(slopes.gt(segSlopeThresh))
   var lossYears = changeYears.updateMask(loss);
-  var gainYears = changeYears.updateMask(diffs.gt(0));
+  var gainYears = changeYears.updateMask(gain);
   var lossMags = diffs.updateMask(diffs.lt(0));
   var gainMags = diffs.updateMask(diffs.gt(0));
   
