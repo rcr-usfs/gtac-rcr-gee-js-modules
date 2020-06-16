@@ -2139,7 +2139,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,harmonizeOLI
+  contractPixels,dilatePixels,resampleMethod,harmonizeOLI,preComputedCloudScoreOffset
   ){
     
     
@@ -2199,7 +2199,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   // Apply relevant cloud masking methods
   if(applyCloudScore){
     print('Applying cloudScore');
-    ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset); 
+    ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset,preComputedCloudScoreOffset); 
     
   }
   
@@ -2243,7 +2243,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   cloudHeights,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics
+  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,preComputedCloudScoreOffset
   ){
   
   
@@ -2285,7 +2285,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   }
   if(applyCloudScore){
     print('Applying cloudScore');
-     s2s = applyCloudScoreAlgorithm(s2s,sentinel2CloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset);
+     s2s = applyCloudScoreAlgorithm(s2s,sentinel2CloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset,preComputedCloudScoreOffset);
     // Map.addLayer(s2s.mosaic(),{min:0.05,max:0.4,bands:'swir1,nir,red'},'Cloud score cloud masked');
   }
   if(applyShadowShift){
