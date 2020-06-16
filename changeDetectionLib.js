@@ -2166,7 +2166,7 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,tBreakEnding,magnitudeEndi
   if(endYear === null || endYear === undefined){endYear = 3000}
   
   var coeffs = ccdcImg.select(['.*'+changeDirBand+coeffEnding]);
-  
+  print(coeffs)
   var changeProbs = ccdcImg.select(['.*'+changeProbEnding]).selfMask();
   changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
 
