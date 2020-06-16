@@ -19,9 +19,9 @@ var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 2010;
 var endYear = 2020;
-var bands = ['NDVI','NBR'];
-var ccdcImg = ee.Image('users/iwhousman/test/CCDC_Collection/CCDC_Test11');//.reproject('EPSG:5070',null,30);
-
+var bands = ['NDVI'];
+var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test12');//.reproject('EPSG:5070',null,30);
+print(ccdcImg)
 var selectBands = bands.map(function(b){return '.*'+b+'.*'});
 
 selectBands = selectBands.concat(['.*tStart','.*_changeProb']);
@@ -61,19 +61,19 @@ Map.addLayer(change.gainMags.reduce(ee.Reducer.max()),{min:0.1,max:0.3,palette:d
 // ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
 // Map.addLayer(ccdcImg)
 
-// var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
-//   n = ee.Number(n);
-//   var img = ee.Image(n).float().rename(['year']);
-//   var y = n.int16();
-//   var fraction = n.subtract(y);
-//   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
-//   return img.set('system:time_start',d)
-// }));
+var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
+  n = ee.Number(n);
+  var img = ee.Image(n).float().rename(['year']);
+  var y = n.int16();
+  var fraction = n.subtract(y);
+  var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
+  return img.set('system:time_start',d)
+}));
 var studyArea =ccdcImg.geometry();
-var yearImages = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,1,365)
-.map(getImagesLib.addSAVIandEVI)
-.select(bands)
-.map(getImagesLib.addYearYearFractionBand)
+// var yearImages = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,1,365)
+// .map(getImagesLib.addSAVIandEVI)
+// .select(bands)
+// .map(getImagesLib.addYearYearFractionBand)
 
 // print(yearImages.limit(5))
 //   .select(ccdcParams.breakpointBands);
@@ -100,12 +100,12 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 // timeBandName,detrended,whichHarmonics,fillGapBetweenSegments
 // coeffs = coeffs.rename(bns)
 // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
-var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted','.*_RMSEs']);
+// var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted','.*_RMSEs']);
 // var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
 // var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2]).select(['.*_predicted']);
 var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3]).select(bands.concat(['.*_predicted','.*_RMSEs']));
 
-var joined = getImagesLib.joinCollections(predicted0,predicted3);
+// var joined = getImagesLib.joinCollections(predicted0,predicted3);
 // joined = getImagesLib.joinCollections(joined,predicted2)
 // joined = getImagesLib.joinCollections(joined,predicted3)
 Map.addLayer(predicted3,{},'Predicted With Filling',false)
