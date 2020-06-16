@@ -2172,12 +2172,9 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEndin
   var slopes = coeffs.select(['.*'+slopeEnding]);
   var tStarts = ccdcImg.select(['.*'+tStartEnding]);
   var tEnds = ccdcImg.select(['.*'+tEndEnding]);
-  print(tStarts,tEnds)
   var durs = tEnds.subtract(tStarts);
-  var mags = durs.multiply(slopes)
-  Map.addLayer(durs,{},'durs');
-  Map.addLayer(slopes,{},'slopes')
-  Map.addLayer(mags,{},'mags')
+  var mags = durs.multiply(slopes);
+  
   
   var changeProbs = ccdcImg.select(['.*'+changeProbEnding]).selfMask();
   changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
@@ -2189,8 +2186,12 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEndin
   //Pull out loss and gain
   if(lossDir === 1){
     diffs = diffs.multiply(-1);
+    mags = mags.multiply(-1);
+    slopes = slopes.multiply(-1);
   }
-  var lossYears = changeYears.updateMask(diffs.lt(0));
+  var loss = diffs.lt(0).or(mags.lt(-segMagThresh)).or(slopes.lt(-segSlopeThresh));
+  var gain = diffs.gt(0).or(mags.gt(segMagThresh)).or(slopes.gt(segSlopeThresh))
+  var lossYears = changeYears.updateMask(loss);
   var gainYears = changeYears.updateMask(diffs.gt(0));
   var lossMags = diffs.updateMask(diffs.lt(0));
   var gainMags = diffs.updateMask(diffs.gt(0));
