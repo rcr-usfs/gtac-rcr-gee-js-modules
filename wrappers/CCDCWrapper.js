@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-72.5166585737098, 42.31625621058699],
-          [-72.5166585737098, 41.379222307113515],
-          [-71.4125325971473, 41.379222307113515],
-          [-71.4125325971473, 42.31625621058699]]], null, false);
+        [[[-107.28502557958218, 37.95180391281335],
+          [-107.28502557958218, 37.57181970608451],
+          [-106.70549677098843, 37.57181970608451],
+          [-106.70549677098843, 37.95180391281335]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -139,7 +139,7 @@ var useS2 = true;
 var nYearOffset = 0;
 
 //Set up Names for the export
-var outputName = 'CCDC_Test11';
+var outputName = 'CCDC_Test12';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
@@ -164,7 +164,7 @@ var nSegments = 9;
 ///////////////////////////////////////////////////////////////////////
 //CCDC Parsams
 var ccdcParams ={
-  breakpointBands:['red','nir','swir1','swir2','NDVI','NBR'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
+  breakpointBands:['green','red','nir','swir1','swir2','NDVI'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
                                                               //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
   tmaskBands : null,//['green','swir2'],//The name or index of the bands to use for iterative TMask cloud detection. These are typically the green band and the SWIR2 band. If unspecified, TMask is not used. If specified, 'tmaskBands' must be included in 'breakpointBands'., 
   minObservations: 6,//Factors of minimum number of years to apply new fitting.
@@ -215,10 +215,10 @@ if(useS2){
 }
 
 //Remove any extremely high band/index values
-// processedScenes = processedScenes.map(function(img){
-//   var lte1 = img.lte(1).reduce(ee.Reducer.min());
-//   return img.updateMask(lte1);
-// });
+processedScenes = processedScenes.map(function(img){
+  var lte1 = img.lte(1).reduce(ee.Reducer.min());
+  return img.updateMask(lte1);
+});
 
 
 // ///Apply year offset
@@ -226,10 +226,10 @@ if(useS2){
 //   return getImagesLib.offsetImageDate(img,nYearOffset,'year');
 // });
 Map.addLayer(processedScenes,{},'Raw Time Series',false);
-// ccdcParams.dateFormat = 1;
-// ccdcParams.collection = processedScenes;
-// //Run CCDC
-// var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
+ccdcParams.dateFormat = 1;
+ccdcParams.collection = processedScenes;
+//Run CCDC
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
 // // //Run EWMACD 
 // // var ewmacd = ee.Algorithms.TemporalSegmentation.Ewmacd({
@@ -240,26 +240,26 @@ Map.addLayer(processedScenes,{},'Raw Time Series',false);
 // //     harmonicCount: 2
 // //   });
 // // Map.addLayer(ewmacd,{},'ewmacd',false)
-// //Convert to image stack
-// var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
-// // ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
-// Map.addLayer(ccdcImg)
-// //Find the segment count for each pixel
-// var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
-// Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
+//Convert to image stack
+var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
+// ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
+Map.addLayer(ccdcImg)
+//Find the segment count for each pixel
+var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 
-// //Set up time series for predicting values
-// processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
-// ccdcParams.breakpointBands.push('.*_predicted');
+//Set up time series for predicting values
+processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
+ccdcParams.breakpointBands.push('.*_predicted');
 
-// var changeYears = dLib.getCCDCChange2(ccdcImg);
-// Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year',false);
-// Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year',false);
+var changeYears = dLib.getCCDCChange2(ccdcImg);
+Map.addLayer(changeYears.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year',false);
+Map.addLayer(changeYears.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year',false);
 // // Export.Image.toDrive(changeYears.lossYears.reduce(ee.Reducer.max()),)  
   
-// //Predict CCDC model and visualize the actual vs. predicted
-// var predicted = dLib.predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
-// Map.addLayer(predicted,{},'Predicted CCDC',false);
+//Predict CCDC model and visualize the actual vs. predicted
+var predicted = dLib.predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
+Map.addLayer(predicted,{},'Predicted CCDC',false);
 
 // //Visualize the seasonality of the first segment
 // var seg1 = ccdcImg.select(['S1.*']);
