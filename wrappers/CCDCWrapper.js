@@ -213,16 +213,14 @@ if(useS2){
   }
   
 }
-//Set up time series
-processedScenes = processedScenes;
 
 //Remove any extremely high band/index values
-processedScenes = processedScenes.map(function(img){
-  var lte1 = img.lte(1).reduce(ee.Reducer.min());
-  return img.updateMask(lte1);
-})
+// processedScenes = processedScenes.map(function(img){
+//   var lte1 = img.lte(1).reduce(ee.Reducer.min());
+//   return img.updateMask(lte1);
+// });
 
-
+print(processedScenes.limit(2))
 
 // ///Apply year offset
 // processedScenes = processedScenes.map(function(img){
