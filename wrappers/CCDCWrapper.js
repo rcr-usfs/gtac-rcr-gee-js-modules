@@ -277,10 +277,10 @@ Map.addLayer(predicted,{},'Predicted CCDC',false);
 // Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
 
 //Set export asset properties
-// ccdcImg = ccdcImg.set(ccdcParams).float();
-// ccdcImg = ccdcImg.set({'startYear':startYear,'endYear':endYear}).float();
+ccdcImg = ccdcImg.set(ccdcParams).float();
+ccdcImg = ccdcImg.set({'startYear':startYear,'endYear':endYear}).float();
 
 //Export output
-// Export.image.toAsset(ccdcImg, outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13);
+Export.image.toAsset(ccdcImg, outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13);
 
 Map.setOptions('HYBRID');
