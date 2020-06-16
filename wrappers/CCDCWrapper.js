@@ -201,8 +201,8 @@ if(useS2){
   null,null,null,
   null,
   null,null,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,false,sentinel2PreComputedCloudScoreOffset);
-  
+  contractPixels,dilatePixels,resampleMethod,toaOrSR,true,sentinel2PreComputedCloudScoreOffset);
+
   Map.addLayer(processedSentinel2Scenes.median(),getImagesLib.vizParamsFalse,'S2');
   processedSentinel2Scenes = processedSentinel2Scenes.select(ccdcParams.breakpointBands);
   
@@ -220,7 +220,6 @@ if(useS2){
 //   return img.updateMask(lte1);
 // });
 
-print(processedScenes.limit(2))
 
 // ///Apply year offset
 // processedScenes = processedScenes.map(function(img){
