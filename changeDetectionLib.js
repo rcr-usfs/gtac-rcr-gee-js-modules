@@ -2174,7 +2174,8 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEndin
   var tEnds = coeffs.select(['.*'+tEndEnding]);
   
   var durs = tEnds.subtract(tStarts);
-  Map.addLayer(durs,{},'durs')
+  Map.addLayer(durs,{},'durs');
+  Map.addLayer(slopes,{},'slopes')
   
   var changeProbs = ccdcImg.select(['.*'+changeProbEnding]).selfMask();
   changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
