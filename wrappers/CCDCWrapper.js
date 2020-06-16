@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -36,8 +37,8 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2010;
-var endYear = 2020;
+var startYear = 2012;
+var endYear = 2017;
 
 
 
@@ -194,24 +195,24 @@ var processedScenes = processedLandsatScenes;
 if(useS2){
   print('Acquiring Sentinel 2 data');
   var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
-  null,null,null,null,
+  null,null,null,false,
   null,null,null,
   null,
   null,null,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,null,sentinel2PreComputedCloudScoreOffset);
+  contractPixels,dilatePixels,resampleMethod,toaOrSR,false,sentinel2PreComputedCloudScoreOffset);
   
   Map.addLayer(processedSentinel2Scenes.median(),getImagesLib.vizParamsFalse,'S2');
-//   processedSentinel2Scenes = processedSentinel2Scenes.select(ccdcParams.breakpointBands);
-//   processedScenes = processedScenes.merge(processedSentinel2Scenes);
+  processedSentinel2Scenes = processedSentinel2Scenes.select(ccdcParams.breakpointBands);
+  processedScenes = processedScenes.merge(processedSentinel2Scenes);
 }
-// //Set up time series
-// processedScenes = processedScenes;
+//Set up time series
+processedScenes = processedScenes;
 
-// //Remove any extremely high band/index values
-// processedScenes = processedScenes.map(function(img){
-//   var lte1 = img.lte(1).reduce(ee.Reducer.min());
-//   return img.updateMask(lte1);
-// })
+//Remove any extremely high band/index values
+processedScenes = processedScenes.map(function(img){
+  var lte1 = img.lte(1).reduce(ee.Reducer.min());
+  return img.updateMask(lte1);
+})
 
 
 
@@ -219,7 +220,7 @@ if(useS2){
 // processedScenes = processedScenes.map(function(img){
 //   return getImagesLib.offsetImageDate(img,nYearOffset,'year');
 // });
-// Map.addLayer(processedScenes,{},'Raw Time Series',false);
+Map.addLayer(processedScenes,{},'Raw Time Series',false);
 // ccdcParams.dateFormat = 1;
 // ccdcParams.collection = processedScenes;
 // //Run CCDC
