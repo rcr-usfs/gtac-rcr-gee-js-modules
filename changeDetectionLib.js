@@ -2154,7 +2154,7 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,tBreakEnding,magnitudeEndi
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
   if(lossDir === null || lossDir === undefined){lossDir = getImagesLib.changeDirDict[changeDirBand]}
   if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
-  if(slopeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_SLP'}
+  if(slopeEnding === null || slopeEnding === undefined){slopeEnding = '_SLP'}
   if(tBreakEnding === null || tBreakEnding === undefined){tBreakEnding = '_tBreak'}
   if(changeProbEnding === null || changeProbEnding === undefined){changeProbEnding = '_changeProb'}
   if(changeProbThresh === null || changeProbThresh === undefined){changeProbThresh = 0.8}
