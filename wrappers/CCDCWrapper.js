@@ -37,8 +37,8 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2012;
-var endYear = 2017;
+var startYear = 2016;
+var endYear = 2020;
 
 
 
@@ -129,6 +129,7 @@ var sentinel2PreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['
 
 //Whether to use Sentinel 2 along with Landsat
 //If using Sentinel 2, be sure to select SR for Landsat toaOrSR
+var useLandsat = false;
 var useS2 = true;
 
 //Whether to offset the years so the intercept values aren't too large
@@ -182,15 +183,16 @@ var ccdcParams ={
 
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
-var processedLandsatScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
+var processedScenes;
+if(useLandsat){
+  processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,resampleMethod,harmonizeOLI,landsatPreComputedCloudScoreOffset
   ).map(getImagesLib.addSAVIandEVI)
   .select(ccdcParams.breakpointBands);
-
-
-var processedScenes = processedLandsatScenes;
+  
+}
 
 if(useS2){
   print('Acquiring Sentinel 2 data');
@@ -203,7 +205,13 @@ if(useS2){
   
   Map.addLayer(processedSentinel2Scenes.median(),getImagesLib.vizParamsFalse,'S2');
   processedSentinel2Scenes = processedSentinel2Scenes.select(ccdcParams.breakpointBands);
-  processedScenes = processedScenes.merge(processedSentinel2Scenes);
+  
+  if(processedScenes !== undefined){
+    processedScenes = processedScenes.merge(processedSentinel2Scenes);
+  }else{
+     processedScenes = processedSentinel2Scenes;
+  }
+  
 }
 //Set up time series
 processedScenes = processedScenes;
