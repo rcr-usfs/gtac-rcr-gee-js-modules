@@ -2157,8 +2157,8 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,tBreakEnding,magnitudeEndi
   if(tBreakEnding === null || tBreakEnding === undefined){tBreakEnding = '_tBreak'}
   if(changeProbEnding === null || changeProbEnding === undefined){changeProbEnding = '_changeProb'}
   if(changeProbThresh === null || changeProbThresh === undefined){changeProbThresh = 0.8}
-  if(slopeThresh === null || slopeThresh === undefined){slopeThresh = 0.2}
   if(magThresh === null || magThresh === undefined){magThresh = 0.2}
+  if(slopeThresh === null || slopeThresh === undefined){slopeThresh = 0.2}
   if(divideTimeBy === null || divideTimeBy === undefined){divideTimeBy = 1}
   if(startYear === null || startYear === undefined){startYear = 0}
   if(endYear === null || endYear === undefined){endYear = 3000}
