@@ -1,7 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -129,7 +128,7 @@ var sentinel2PreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['
 
 //Whether to use Sentinel 2 along with Landsat
 //If using Sentinel 2, be sure to select SR for Landsat toaOrSR
-var useS2 = false;
+var useS2 = true;
 
 //Whether to offset the years so the intercept values aren't too large
 //Set to -1900 if you want intercepts to be closer to the mean of the value of the band/index
@@ -185,21 +184,26 @@ var ccdcParams ={
 var processedLandsatScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,resampleMethod,harmonizeOLI,preComputedCloudScoreOffset
+  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,resampleMethod,harmonizeOLI,landsatPreComputedCloudScoreOffset
   ).map(getImagesLib.addSAVIandEVI)
   .select(ccdcParams.breakpointBands);
 
 
-// var processedScenes = processedLandsatScenes;
+var processedScenes = processedLandsatScenes;
 
-// if(useS2){
-//   print('Acquiring Sentinel 2 data');
-//   var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian)
+if(useS2){
+  print('Acquiring Sentinel 2 data');
+  var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
+  null,null,null,null,
+  null,null,null,
+  null,
+  null,null,
+  contractPixels,dilatePixels,resampleMethod,toaOrSR,null,sentinel2PreComputedCloudScoreOffset);
   
-//   Map.addLayer(processedSentinel2Scenes.median(),getImagesLib.vizParamsFalse,'S2');
+  Map.addLayer(processedSentinel2Scenes.median(),getImagesLib.vizParamsFalse,'S2');
 //   processedSentinel2Scenes = processedSentinel2Scenes.select(ccdcParams.breakpointBands);
 //   processedScenes = processedScenes.merge(processedSentinel2Scenes);
-// }
+}
 // //Set up time series
 // processedScenes = processedScenes;
 
@@ -267,10 +271,10 @@ var processedLandsatScenes = getImagesLib.getProcessedLandsatScenes(studyArea,st
 // Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
 
 //Set export asset properties
-ccdcImg = ccdcImg.set(ccdcParams).float();
-ccdcImg = ccdcImg.set({'startYear':startYear,'endYear':endYear}).float();
+// ccdcImg = ccdcImg.set(ccdcParams).float();
+// ccdcImg = ccdcImg.set({'startYear':startYear,'endYear':endYear}).float();
 
 //Export output
-Export.image.toAsset(ccdcImg, outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13);
+// Export.image.toAsset(ccdcImg, outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13);
 
 Map.setOptions('HYBRID');
