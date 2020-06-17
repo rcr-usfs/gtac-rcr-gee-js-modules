@@ -14,8 +14,8 @@ var geometry =
           [-104.55727438038721, 39.25451132142729]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
-var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+// var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+// var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 2010;
 var endYear = 2020;
@@ -35,15 +35,62 @@ ccdcImg = ccdcImg.select(selectBands);
 ccdcImg = ee.Image.cat([ccdcImg,tEnds,tBreaks])
 // print(ccdcImg.bandNames())
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
-var change = dLib.getCCDCChange2(ccdcImg);
+// var change = dLib.getCCDCChange2(ccdcImg);
 
+function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEnding,slopeEnding,tStartEnding,tEndEnding,tBreakEnding,changeProbEnding,changeProbThresh,segMagThresh,segSlopeThresh,divideTimeBy,startYear,endYear){
+  if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
+  if(lossDir === null || lossDir === undefined){lossDir = -1}//getImagesLib.changeDirDict[changeDirBand]}
+  if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
+  if(coeffEnding === null || coeffEnding === undefined){coeffEnding = '.*_coefs_.*'}
+  if(slopeEnding === null || slopeEnding === undefined){slopeEnding = '.*_SLP'}
+  if(tStartEnding === null || tStartEnding === undefined){tStartEnding = '_tStart'}
+  if(tEndEnding === null || tEndEnding === undefined){tEndEnding = '_tEnd'}
+  if(tBreakEnding === null || tBreakEnding === undefined){tBreakEnding = '_tBreak'}
+  if(changeProbEnding === null || changeProbEnding === undefined){changeProbEnding = '_changeProb'}
+  if(changeProbThresh === null || changeProbThresh === undefined){changeProbThresh = 0.8}
+  if(segMagThresh === null || segMagThresh === undefined){segMagThresh = 0.2}
+  if(segSlopeThresh === null || segSlopeThresh === undefined){segSlopeThresh = 0.2}
+  if(divideTimeBy === null || divideTimeBy === undefined){divideTimeBy = 1}
+  if(startYear === null || startYear === undefined){startYear = 0}
+  if(endYear === null || endYear === undefined){endYear = 3000}
+  
+  var coeffs = ccdcImg.select(['.*'+changeDirBand+coeffEnding]);
+  
+  var slopes = coeffs.select(['.*'+slopeEnding]);
+  var tStarts = ccdcImg.select(['.*'+tStartEnding]);
+  var tEnds = ccdcImg.select(['.*'+tEndEnding]);
+  var durs = tEnds.subtract(tStarts);
+  var mags = durs.multiply(slopes);
+  
+  
+  var changeProbs = ccdcImg.select(['.*'+changeProbEnding]).selfMask();
+  changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
 
+  var changeYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy);
+  changeYears = changeYears.updateMask(changeYears.gte(startYear).and(changeYears.lte(endYear)).and(changeProbs.mask()));
+  var diffs = ccdcImg.select(['.*'+changeDirBand+magnitudeEnding]).updateMask(changeYears.mask());
+  
+  //Pull out loss and gain
+  if(lossDir === 1){
+    diffs = diffs.multiply(-1);
+    mags = mags.multiply(-1);
+    slopes = slopes.multiply(-1);
+  }
+  var loss = diffs.lt(0).or(mags.lt(-segMagThresh)).or(slopes.lt(-segSlopeThresh));
+  var gain = diffs.gt(0).or(mags.gt(segMagThresh)).or(slopes.gt(segSlopeThresh))
+  var lossYears = changeYears.updateMask(loss);
+  var gainYears = changeYears.updateMask(gain);
+  var lossMags = diffs.updateMask(diffs.lt(0));
+  var gainMags = diffs.updateMask(diffs.gt(0));
+  
+  return {lossYears:lossYears,gainYears:gainYears,lossMags:lossMags,gainMags:gainMags};
+}
+getCCDCChange2(ccdcImg)
+// Map.addLayer(change.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
+// Map.addLayer(change.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year');
 
-Map.addLayer(change.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
-Map.addLayer(change.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year');
-
-Map.addLayer(change.lossMags.reduce(ee.Reducer.max()),{min:-0.6,max:-0.2,palette:dLib.lossMagPalette},'Largest Mag Loss');
-Map.addLayer(change.gainMags.reduce(ee.Reducer.max()),{min:0.1,max:0.3,palette:dLib.gainMagPalette},'Largest Mag Gain');
+// Map.addLayer(change.lossMags.reduce(ee.Reducer.max()),{min:-0.6,max:-0.2,palette:dLib.lossMagPalette},'Largest Mag Loss');
+// Map.addLayer(change.gainMags.reduce(ee.Reducer.max()),{min:0.1,max:0.3,palette:dLib.gainMagPalette},'Largest Mag Gain');
   
 // var ccdcImgCoeffs = ccdcImg.select(['.*_coef.*']);
 // var coeffBns = ccdcImgCoeffs.bandNames();
