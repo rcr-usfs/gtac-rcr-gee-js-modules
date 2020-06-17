@@ -37,7 +37,7 @@ var endJulian = 365;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2016;
+var startYear = 2010;
 var endYear = 2020;
 
 
@@ -148,7 +148,7 @@ var useS2 = true;
 var nYearOffset = 0;
 
 //Set up Names for the export
-var outputName = 'CCDC_Test12';
+var outputName = 'CCDC_Test13';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
