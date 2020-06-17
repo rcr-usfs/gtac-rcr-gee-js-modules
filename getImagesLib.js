@@ -793,7 +793,7 @@ function simpleTDOM2(collection,zScoreThresh,shadowSumThresh,contractPixels,
   if(irMean === null || irMean === undefined){
     print('Computing irMean for TDOM');
     irMean = collection.select(shadowSumBands).mean();
-  }else{print('Using pre-computed irMean for TDOM')};
+  }else{print('Using pre-computed irMean for TDOM')}
   if(irStdDev === null || irStdDev === undefined){
     print('Computing irStdDev for TDOM');
     irStdDev = collection.select(shadowSumBands).reduce(ee.Reducer.stdDev());
