@@ -129,7 +129,7 @@ var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudSco
 var landsatPreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['Landsat_CloudScore_p10']);
 var sentinel2PreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p10']);
 
-var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic();
+var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
 var landsatTDOMMeans = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
 var landsatTDOMStdDevs = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
 var sentinel2TDOMMeans = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
