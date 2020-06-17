@@ -130,7 +130,12 @@ var landsatPreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['La
 var sentinel2PreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p10']);
 
 var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic();
-var landsatTDOMStats = preComputedTDOMStats.select(['Landsat_.*'])
+var landsatTDOMMeans = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
+var landsatTDOMStdDevs = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
+var sentinel2TDOMMeans = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
+var sentinel2TDOMStdDevs = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
+
+
 //Whether to use Sentinel 2 along with Landsat
 //If using Sentinel 2, be sure to select SR for Landsat toaOrSR
 var useLandsat = false;
@@ -192,7 +197,8 @@ if(useLandsat){
   processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,resampleMethod,harmonizeOLI,landsatPreComputedCloudScoreOffset
+  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,resampleMethod,harmonizeOLI,
+  landsatPreComputedCloudScoreOffset,landsatTDOMMeans,landsatTDOMStdDevs
   ).map(getImagesLib.addSAVIandEVI)
   .select(ccdcParams.breakpointBands);
   
@@ -201,11 +207,12 @@ if(useLandsat){
 if(useS2){
   print('Acquiring Sentinel 2 data');
   var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
-  null,null,null,false,
+  null,null,null,true,
   null,null,null,
   null,
   null,null,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,true,sentinel2PreComputedCloudScoreOffset);
+  contractPixels,dilatePixels,resampleMethod,toaOrSR,true,
+  sentinel2PreComputedCloudScoreOffset,sentinel2TDOMMeans,sentinel2TDOMStdDevs);
 
   Map.addLayer(processedSentinel2Scenes.median(),getImagesLib.vizParamsFalse,'S2');
   processedSentinel2Scenes = processedSentinel2Scenes.select(ccdcParams.breakpointBands);
