@@ -138,7 +138,7 @@ var sentinel2TDOMStdDevs = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','
 
 //Whether to use Sentinel 2 along with Landsat
 //If using Sentinel 2, be sure to select SR for Landsat toaOrSR
-var useLandsat = false;
+var useLandsat = true;
 var useS2 = true;
 
 //Whether to offset the years so the intercept values aren't too large
@@ -289,7 +289,14 @@ Map.addLayer(predicted,{},'Predicted CCDC',false);
 
 //Set export asset properties
 ccdcImg = ccdcImg.set(ccdcParams).float();
-ccdcImg = ccdcImg.set({'startYear':startYear,'endYear':endYear}).float();
+ccdcImg = ccdcImg.set({
+  'startYear':startYear,
+  'endYear':endYear,
+  'useLandsat':useLandsat,
+  'useS2':useS2,
+  'nSegments':nSegments
+})
+  .float();
 
 //Export output
 Export.image.toAsset(ccdcImg, outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13);
