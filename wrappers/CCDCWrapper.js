@@ -122,11 +122,15 @@ var resampleMethod = 'near';
 //Choose whether to harmonize S2 and OLI
 var harmonizeOLI = false;
 
-
+//If available, bring in preComputed cloudScore offsets and TDOM stats
+//These have been pre-computed for all CONUS and are appropriate to use for any time period within
+//the growing season
 var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic();
 var landsatPreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['Landsat_CloudScore_p10']);
 var sentinel2PreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p10']);
 
+var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic();
+var landsatTDOMStats = preComputedTDOMStats.select(['Landsat_.*'])
 //Whether to use Sentinel 2 along with Landsat
 //If using Sentinel 2, be sure to select SR for Landsat toaOrSR
 var useLandsat = false;
