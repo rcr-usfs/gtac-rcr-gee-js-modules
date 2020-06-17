@@ -1990,7 +1990,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   correctIllumination,correctScale,
   exportComposites,outputName,exportPathRoot,
   crs,transform,scale,resampleMethod, 
-  preComputedCloudScoreOffset){
+  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev){
     
     
   if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
@@ -2070,7 +2070,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(applyTDOM){
     print('Applying TDOM');
     //Find and mask out dark outliers
-    ls = simpleTDOM2(ls,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
+    ls = simpleTDOM2(ls,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels,['nir','swir1'],preComputedTDOMIRMean,preComputedTDOMIRStdDev);
   }
   if(applyFmaskCloudShadowMask){
     print('Applying Fmask shadow mask');
@@ -2139,7 +2139,8 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,harmonizeOLI,preComputedCloudScoreOffset
+  contractPixels,dilatePixels,resampleMethod,harmonizeOLI,
+  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
   ){
     
     
@@ -2211,7 +2212,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   if(applyTDOM){
     print('Applying TDOM');
     //Find and mask out dark outliers
-    ls = simpleTDOM2(ls,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
+    ls = simpleTDOM2(ls,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels,['nir','swir1'],preComputedTDOMIRMean,preComputedTDOMIRStdDev);
   }
   if(applyFmaskCloudShadowMask){
     print('Applying Fmask shadow mask');
@@ -2243,7 +2244,8 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   cloudHeights,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,preComputedCloudScoreOffset
+  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
+  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
   ){
   
   
@@ -2295,7 +2297,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   }
   if(applyTDOM){
     print('Applying TDOM');
-    s2s = simpleTDOM2(s2s,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
+    s2s = simpleTDOM2(s2s,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels,['nir','swir1'],preComputedTDOMIRMean,preComputedTDOMIRStdDev);
     // Map.addLayer(s2s.mosaic(),{min:0.05,max:0.4,bands:'swir1,nir,red'},'TDOM shadow masked');
   }
   
