@@ -20,7 +20,7 @@ var geometry =
 var startYear = 2010;
 var endYear = 2020;
 var bands = ['NDVI'];
-var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test12');//.reproject('EPSG:5070',null,30);
+var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test13');//.reproject('EPSG:5070',null,30);
 print(ccdcImg)
 var selectBands = bands.map(function(b){return '.*'+b+'.*'});
 
@@ -77,12 +77,14 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEndin
     slopes = slopes.multiply(-1);
   }
   var loss = diffs.lt(0).or(mags.lt(-segMagThresh)).or(slopes.lt(-segSlopeThresh));
-  var gain = diffs.gt(0).or(mags.gt(segMagThresh)).or(slopes.gt(segSlopeThresh))
+  var gain = diffs.gt(0).or(mags.gt(segMagThresh)).or(slopes.gt(segSlopeThresh));
   var lossYears = changeYears.updateMask(loss);
   var gainYears = changeYears.updateMask(gain);
   var lossMags = diffs.updateMask(diffs.lt(0));
   var gainMags = diffs.updateMask(diffs.gt(0));
-  
+  Map.addLayer(diffs,{},'diffs');
+  Map.addLayer(mags,{},'mags')
+  Map.addLayer(changeYears,{},'changeYears')
   return {lossYears:lossYears,gainYears:gainYears,lossMags:lossMags,gainMags:gainMags};
 }
 getCCDCChange2(ccdcImg)
