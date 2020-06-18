@@ -44,7 +44,7 @@ var segGainMagThresh = 0.1;
 var segGainSlopeThresh = 0.05;
 var changeDirBand = bands[0];
 var change = dLib.getCCDCChange(ccdcImg,changeDirBand,startYear,endYear,segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh);
-var lossYearsCombined = change.breakLossYears.reduce(ee.Reducer.max()).or(change.segLossYears.reduce(ee.Reducer.max()));
+var lossYearsCombined = ee.Image.cat([change.breakLossYears.reduce(ee.Reducer.max()),change.segLossYears.reduce(ee.Reducer.max())]).reduce(ee.Reducer.firstNonNull());
 
 Map.addLayer(lossYearsCombined,{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Break or Seg Loss Year',false);
 
