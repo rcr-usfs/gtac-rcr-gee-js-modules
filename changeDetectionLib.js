@@ -2097,62 +2097,11 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to pull change out of the CCDC output
 //Separates the loss and gain from within the harmonic models
-//Currently it does this with a single band that is provided
-//It is assumes that a loss of vegetation is a negative difference in values between the end and start of two segments
-function getCCDCChange(ccdcImg,changeDirBand,changeDir){
+function getCCDCChange(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEnding,slopeEnding,
+tStartEnding,tEndEnding,tBreakEnding,changeProbEnding,changeProbThresh,
+segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh,divideTimeBy,startYear,endYear){
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
-  if(changeDir === null || changeDir === undefined){changeDir = -1}
-  
-  //Pull apart ccdcImg into parts
-  var nSegs = ccdcImg.select(['.*_changeProb']).bandNames().length();
-  var changeMask = ccdcImg.select(['.*_changeProb']).gt(0).selfMask();
-  var changeYears = ccdcImg.select(['.*_tBreak']).selfMask();
-  changeYears = changeYears.updateMask(changeMask);
-  
-  var coeffs = ccdcImg.select(['.*'+changeDirBand+'_coef.*']);
-  var startDates = ccdcImg.select(['.*_tStart']);
-  var endDates = ccdcImg.select(['.*_tEnd']);
- 
-  //Iterate across each segment pair to find differences between the predicted value
-  //at the end of the first segment, and predicted value at the beginning of the next segment
-  var diffs = ee.ImageCollection(ee.List.sequence(1,nSegs.subtract(1)).map(function(n){
-      //Find the predicted value at the end of a given segment
-      n = ee.Number(n).byte();
-      var segName = ee.String('S').cat(n.format()).cat('_.*');
-      var coeffsT = coeffs.select([segName]);
-      var bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
-      coeffsT = coeffsT.rename(bnsT);
-      var dateImgT = endDates.select([segName]).selfMask().rename(['year']); 
-      var leftPred = getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
-      
-      //Find the predicted value at the beginning of the next
-      n = n.add(1).byte();
-      segName = ee.String('S').cat(n.format()).cat('_.*');
-      coeffsT = coeffs.select([segName]);
-      bnsT = coeffsT.bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
-      coeffsT = coeffsT.rename(bnsT);
-      dateImgT = startDates.select([segName]).selfMask().rename(['year']); 
-      var rightPred =getCCDCPrediction(dateImgT,coeffsT).select(['.*_predicted']);
-      
-      //Return the difference
-      return rightPred.subtract(leftPred);
-  })).toBands().addBands(ee.Image(0).selfMask());
-  
-  //Pull out loss and gain
-  var lossChangeYears;var gainChangeYears;
-  if(changeDir === -1){
-    lossChangeYears = changeYears.updateMask(diffs.lt(0));
-    gainChangeYears = changeYears.updateMask(diffs.gt(0));
-  }else{
-    lossChangeYears = changeYears.updateMask(diffs.gt(0));
-    gainChangeYears = changeYears.updateMask(diffs.lt(0));
-  }
-  
-  return {lossYears:lossChangeYears,gainYears:gainChangeYears,diffs:diffs};
-}
-function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEnding,slopeEnding,tStartEnding,tEndEnding,tBreakEnding,changeProbEnding,changeProbThresh,segMagThresh,segSlopeThresh,divideTimeBy,startYear,endYear){
-  if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
-  if(lossDir === null || lossDir === undefined){lossDir = getImagesLib.changeDirDict[changeDirBand]}
+  if(lossDir === null || lossDir === undefined){lossDir = -1}//getImagesLib.changeDirDict[changeDirBand]}
   if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
   if(coeffEnding === null || coeffEnding === undefined){coeffEnding = '.*_coefs_.*'}
   if(slopeEnding === null || slopeEnding === undefined){slopeEnding = '.*_SLP'}
@@ -2161,42 +2110,70 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEndin
   if(tBreakEnding === null || tBreakEnding === undefined){tBreakEnding = '_tBreak'}
   if(changeProbEnding === null || changeProbEnding === undefined){changeProbEnding = '_changeProb'}
   if(changeProbThresh === null || changeProbThresh === undefined){changeProbThresh = 0.8}
-  if(segMagThresh === null || segMagThresh === undefined){segMagThresh = 0.2}
-  if(segSlopeThresh === null || segSlopeThresh === undefined){segSlopeThresh = 0.2}
+  if(segLossMagThresh === null || segLossMagThresh === undefined){segLossMagThresh = 0.2}
+  if(segLossSlopeThresh === null || segLossSlopeThresh === undefined){segLossSlopeThresh = 0.1}
+  if(segGainMagThresh === null || segGainMagThresh === undefined){segGainMagThresh = 0.1}
+  if(segGainSlopeThresh === null || segGainSlopeThresh === undefined){segGainSlopeThresh = 0.05}
+ 
   if(divideTimeBy === null || divideTimeBy === undefined){divideTimeBy = 1}
   if(startYear === null || startYear === undefined){startYear = 0}
   if(endYear === null || endYear === undefined){endYear = 3000}
   
+  //Get slopes and mags for each segment to detect changes within each segmet
   var coeffs = ccdcImg.select(['.*'+changeDirBand+coeffEnding]);
-  
   var slopes = coeffs.select(['.*'+slopeEnding]);
   var tStarts = ccdcImg.select(['.*'+tStartEnding]);
   var tEnds = ccdcImg.select(['.*'+tEndEnding]);
   var durs = tEnds.subtract(tStarts);
   var mags = durs.multiply(slopes);
   
-  
+  //Use the change prob to find significant breaks
   var changeProbs = ccdcImg.select(['.*'+changeProbEnding]).selfMask();
   changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
-
-  var changeYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy);
-  changeYears = changeYears.updateMask(changeYears.gte(startYear).and(changeYears.lte(endYear)).and(changeProbs.mask()));
+  
+  //Get the years of the breaks
+  var breakYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy);
+  breakYears = breakYears.updateMask(breakYears.floor().gte(startYear).and(breakYears.floor().lte(endYear)));
+  
+  //Filter out years that are change breaks
+  var changeYears = breakYears.updateMask(changeProbs.mask());
+  
+  //Get the diffs between the end of one segment and the beginning of another
   var diffs = ccdcImg.select(['.*'+changeDirBand+magnitudeEnding]).updateMask(changeYears.mask());
   
-  //Pull out loss and gain
+  //Pull out loss and gain for breaks and then the segments
   if(lossDir === 1){
     diffs = diffs.multiply(-1);
     mags = mags.multiply(-1);
     slopes = slopes.multiply(-1);
   }
-  var loss = diffs.lt(0).or(mags.lt(-segMagThresh)).or(slopes.lt(-segSlopeThresh));
-  var gain = diffs.gt(0).or(mags.gt(segMagThresh)).or(slopes.gt(segSlopeThresh))
-  var lossYears = changeYears.updateMask(loss);
-  var gainYears = changeYears.updateMask(gain);
-  var lossMags = diffs.updateMask(diffs.lt(0));
-  var gainMags = diffs.updateMask(diffs.gt(0));
   
-  return {lossYears:lossYears,gainYears:gainYears,lossMags:lossMags,gainMags:gainMags};
+  var breakLoss = diffs.lt(0);
+  var segLoss = mags.lt(-segLossMagThresh).or(slopes.lt(-segLossSlopeThresh));
+  var breakGain = diffs.gt(0);
+  var segGain = mags.gt(segGainMagThresh).or(slopes.gt(segGainSlopeThresh));
+  
+  var breakLossYears = changeYears.updateMask(breakLoss);
+  var breakGainYears = changeYears.updateMask(breakGain);
+  var breakLossMags = diffs.updateMask(diffs.lt(0));
+  var breakGainMags = diffs.updateMask(diffs.gt(0));
+  
+  var segLossYears = breakYears.updateMask(segLoss);
+  var segGainYears = breakYears.updateMask(segGain);
+  var segLossMags = mags.updateMask(segLoss);
+  var segGainMags = mags.updateMask(segGain);
+  
+  
+  return {breakLossYears:breakLossYears,
+  breakGainYears:breakGainYears,
+  breakLossMags:breakLossMags,
+  breakGainMags:breakGainMags,
+  
+  segLossYears:segLossYears,
+  segGainYears:segGainYears,
+  segLossMags:segLossMags,
+  segGainMags:segGainMags
+  };
 }
 ///////////////////////////////////////////////////////////////////////////////
 //-------------------- END CCDC Helper Function -------------------//
@@ -2253,4 +2230,3 @@ exports.predictCCDC = predictCCDC;
 exports.getCCDCSegCoeffs = getCCDCSegCoeffs;
 exports.getCCDCPrediction = getCCDCPrediction;
 exports.getCCDCChange = getCCDCChange;
-exports.getCCDCChange2 = getCCDCChange2;
