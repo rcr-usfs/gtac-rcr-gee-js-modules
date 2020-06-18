@@ -72,7 +72,7 @@ segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh,divideTi
   changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
   
   //Get the years of the breaks
-  var breakYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy)
+  var breakYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy);
   breakYears = breakYears.updateMask(breakYears.floor().gte(startYear).and(breakYears.floor().lte(endYear)));
   
   //Filter out years that are change breaks
