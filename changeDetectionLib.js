@@ -2097,11 +2097,11 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to pull change out of the CCDC output
 //Separates the loss and gain from within the harmonic models
-function getCCDCChange(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEnding,slopeEnding,
+function getCCDCChange(ccdcImg,segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh,changeDirBand,lossDir,magnitudeEnding,coeffEnding,slopeEnding,
 tStartEnding,tEndEnding,tBreakEnding,changeProbEnding,changeProbThresh,
-segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh,divideTimeBy,startYear,endYear){
+divideTimeBy,startYear,endYear){
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
-  if(lossDir === null || lossDir === undefined){lossDir = -1}//getImagesLib.changeDirDict[changeDirBand]}
+  if(lossDir === null || lossDir === undefined){getImagesLib.changeDirDict[changeDirBand]}
   if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
   if(coeffEnding === null || coeffEnding === undefined){coeffEnding = '.*_coefs_.*'}
   if(slopeEnding === null || slopeEnding === undefined){slopeEnding = '.*_SLP'}
