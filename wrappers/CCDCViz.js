@@ -42,7 +42,7 @@ var segLossMagThresh = 0.15;
 var segLossSlopeThresh = 0.05;
 var segGainMagThresh = 0.1;
 var segGainSlopeThresh = 0.05;
-var changeDirBand = 'NDVI';
+var changeDirBand = bands[0];
 var change = dLib.getCCDCChange(ccdcImg,changeDirBand,startYear,endYear,segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh);
 var lossYearsCombined = change.breakLossYears.reduce(ee.Reducer.max()).or(change.segLossYears.reduce(ee.Reducer.max()));
 
