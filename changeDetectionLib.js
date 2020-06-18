@@ -2110,8 +2110,8 @@ segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh,divideTi
   if(tBreakEnding === null || tBreakEnding === undefined){tBreakEnding = '_tBreak'}
   if(changeProbEnding === null || changeProbEnding === undefined){changeProbEnding = '_changeProb'}
   if(changeProbThresh === null || changeProbThresh === undefined){changeProbThresh = 0.8}
-  if(segLossMagThresh === null || segLossMagThresh === undefined){segLossMagThresh = 0.2}
-  if(segLossSlopeThresh === null || segLossSlopeThresh === undefined){segLossSlopeThresh = 0.1}
+  if(segLossMagThresh === null || segLossMagThresh === undefined){segLossMagThresh = 0.15}
+  if(segLossSlopeThresh === null || segLossSlopeThresh === undefined){segLossSlopeThresh = 0.05}
   if(segGainMagThresh === null || segGainMagThresh === undefined){segGainMagThresh = 0.1}
   if(segGainSlopeThresh === null || segGainSlopeThresh === undefined){segGainSlopeThresh = 0.05}
  
