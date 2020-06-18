@@ -21,7 +21,7 @@ var startYear = 2010;
 var endYear = 2020;
 var bands = ['NDVI'];
 var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test13');//.reproject('EPSG:5070',null,30);
-print(ccdcImg)
+// print(ccdcImg)
 var selectBands = bands.map(function(b){return '.*'+b+'.*'});
 
 selectBands = selectBands.concat(['.*tStart','.*_changeProb']);
