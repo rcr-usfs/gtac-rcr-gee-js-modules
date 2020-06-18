@@ -67,7 +67,7 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEndin
   changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
 
   var changeYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy);
-  changeYears = changeYears.updateMask(changeYears.gte(startYear).and(changeYears.lte(endYear)).and(changeProbs.mask()));
+  changeYears = changeYears.updateMask(changeYears.floor().gte(startYear).and(changeYears.ceil().lte(endYear))).and(changeProbs.mask()));
   var diffs = ccdcImg.select(['.*'+changeDirBand+magnitudeEnding]).updateMask(changeYears.mask());
   
   //Pull out loss and gain
@@ -83,7 +83,8 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEndin
   var lossMags = diffs.updateMask(diffs.lt(0));
   var gainMags = diffs.updateMask(diffs.gt(0));
   Map.addLayer(diffs,{},'diffs');
-  Map.addLayer(mags,{},'mags')
+  Map.addLayer(mags,{},'mags');
+  Map.addLayer(durs,{},'durs')
   Map.addLayer(changeYears,{},'changeYears')
   return {lossYears:lossYears,gainYears:gainYears,lossMags:lossMags,gainMags:gainMags};
 }
