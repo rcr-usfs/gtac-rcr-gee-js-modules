@@ -59,21 +59,24 @@ segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh,divideTi
   if(startYear === null || startYear === undefined){startYear = 0}
   if(endYear === null || endYear === undefined){endYear = 3000}
   
+  //Get slopes and mags for each segment to detect changes within each segmet
   var coeffs = ccdcImg.select(['.*'+changeDirBand+coeffEnding]);
-  
   var slopes = coeffs.select(['.*'+slopeEnding]);
   var tStarts = ccdcImg.select(['.*'+tStartEnding]);
   var tEnds = ccdcImg.select(['.*'+tEndEnding]);
   var durs = tEnds.subtract(tStarts);
   var mags = durs.multiply(slopes);
   
-  
+  //Use the change prob to find significant breaks
   var changeProbs = ccdcImg.select(['.*'+changeProbEnding]).selfMask();
   changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
-
-  var breakYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy);
   
-  var changeYears = breakYears.updateMask(breakYears.floor().gte(startYear).and(breakYears.floor().lte(endYear)).and(changeProbs.mask()));
+  //Get the years of the breaks
+  var breakYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy).updateMask(breakYears.floor().gte(startYear).and(breakYears.floor().lte(endYear)));
+  
+  //Filter out years that are change breaks
+  var changeYears = breakYears.updateMask(changeProbs.mask());
+  
   var diffs = ccdcImg.select(['.*'+changeDirBand+magnitudeEnding]).updateMask(changeYears.mask());
   
   //Pull out loss and gain for breaks and then the segments
