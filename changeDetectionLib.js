@@ -2097,7 +2097,7 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to pull change out of the CCDC output
 //Separates the loss and gain from within the harmonic models
-function getCCDCChange(ccdcImg,segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh,changeDirBand,lossDir,magnitudeEnding,coeffEnding,slopeEnding,
+function getCCDCChange(ccdcImg,changeDirBand,segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh,lossDir,magnitudeEnding,coeffEnding,slopeEnding,
 tStartEnding,tEndEnding,tBreakEnding,changeProbEnding,changeProbThresh,
 divideTimeBy,startYear,endYear){
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
