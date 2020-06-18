@@ -14,8 +14,8 @@ var geometry =
           [-104.55727438038721, 39.25451132142729]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
-// var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-// var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 2010;
 var endYear = 2020;
@@ -37,7 +37,9 @@ ccdcImg = ee.Image.cat([ccdcImg,tEnds,tBreaks])
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 // var change = dLib.getCCDCChange2(ccdcImg);
 
-function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEnding,slopeEnding,tStartEnding,tEndEnding,tBreakEnding,changeProbEnding,changeProbThresh,segMagThresh,segSlopeThresh,divideTimeBy,startYear,endYear){
+function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEnding,slopeEnding,
+tStartEnding,tEndEnding,tBreakEnding,changeProbEnding,changeProbThresh,
+segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh,divideTimeBy,startYear,endYear){
   if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
   if(lossDir === null || lossDir === undefined){lossDir = -1}//getImagesLib.changeDirDict[changeDirBand]}
   if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
@@ -48,8 +50,11 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEndin
   if(tBreakEnding === null || tBreakEnding === undefined){tBreakEnding = '_tBreak'}
   if(changeProbEnding === null || changeProbEnding === undefined){changeProbEnding = '_changeProb'}
   if(changeProbThresh === null || changeProbThresh === undefined){changeProbThresh = 0.8}
-  if(segMagThresh === null || segMagThresh === undefined){segMagThresh = 0.2}
-  if(segSlopeThresh === null || segSlopeThresh === undefined){segSlopeThresh = 0.2}
+  if(segLossMagThresh === null || segLossMagThresh === undefined){segLossMagThresh = 0.2}
+  if(segLossSlopeThresh === null || segLossSlopeThresh === undefined){segLossSlopeThresh = 0.1}
+  if(segGainMagThresh === null || segGainMagThresh === undefined){segGainMagThresh = 0.1}
+  if(segGainSlopeThresh === null || segGainSlopeThresh === undefined){segGainSlopeThresh = 0.05}
+ 
   if(divideTimeBy === null || divideTimeBy === undefined){divideTimeBy = 1}
   if(startYear === null || startYear === undefined){startYear = 0}
   if(endYear === null || endYear === undefined){endYear = 3000}
@@ -66,30 +71,49 @@ function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEndin
   var changeProbs = ccdcImg.select(['.*'+changeProbEnding]).selfMask();
   changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
 
-  var changeYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy);
-  changeYears = changeYears.updateMask(changeYears.floor().gte(startYear).and(changeYears.ceil().lte(endYear))).and(changeProbs.mask()));
+  var breakYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy);
+  
+  var changeYears = breakYears.updateMask(breakYears.floor().gte(startYear).and(breakYears.floor().lte(endYear)).and(changeProbs.mask()));
   var diffs = ccdcImg.select(['.*'+changeDirBand+magnitudeEnding]).updateMask(changeYears.mask());
   
-  //Pull out loss and gain
+  //Pull out loss and gain for breaks and then the segments
   if(lossDir === 1){
     diffs = diffs.multiply(-1);
     mags = mags.multiply(-1);
     slopes = slopes.multiply(-1);
   }
-  var loss = diffs.lt(0).or(mags.lt(-segMagThresh)).or(slopes.lt(-segSlopeThresh));
-  var gain = diffs.gt(0).or(mags.gt(segMagThresh)).or(slopes.gt(segSlopeThresh));
-  var lossYears = changeYears.updateMask(loss);
-  var gainYears = changeYears.updateMask(gain);
-  var lossMags = diffs.updateMask(diffs.lt(0));
-  var gainMags = diffs.updateMask(diffs.gt(0));
-  Map.addLayer(diffs,{},'diffs');
-  Map.addLayer(mags,{},'mags');
-  Map.addLayer(durs,{},'durs')
-  Map.addLayer(changeYears,{},'changeYears')
-  return {lossYears:lossYears,gainYears:gainYears,lossMags:lossMags,gainMags:gainMags};
+  
+  var breakLoss = diffs.lt(0);
+  var segLoss = mags.lt(-segLossMagThresh).or(slopes.lt(-segLossSlopeThresh));
+  var breakGain = diffs.gt(0);
+  var segGain = mags.gt(segGainMagThresh).or(slopes.gt(segGainSlopeThresh));
+  
+  var breakLossYears = changeYears.updateMask(breakLoss);
+  var breakGainYears = changeYears.updateMask(breakGain);
+  var breakLossMags = diffs.updateMask(diffs.lt(0));
+  var breakGainMags = diffs.updateMask(diffs.gt(0));
+  
+  var segLossYears = breakYears.updateMask(segLoss);
+  var segGainYears = breakYears.updateMask(segGain);
+  var segLossMags = mags.updateMask(segLoss);
+  var segGainMags = mags.updateMask(segGain);
+  
+  
+  return {breakLossYears:breakLossYears,
+  breakGainYears:breakGainYears,
+  breakLossMags:breakLossMags,
+  breakGainMags:breakGainMags,
+  
+  segLossYears:segLossYears,
+  segGainYears:segGainYears,
+  segLossMags:segLossMags,
+  segGainMags:segGainMags
+  };
 }
-getCCDCChange2(ccdcImg)
-// Map.addLayer(change.lossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Loss Year');
+var change = getCCDCChange2(ccdcImg)
+Map.addLayer(change.breakLossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Break Loss Year');
+Map.addLayer(change.segLossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Seg Loss Year');
+
 // Map.addLayer(change.gainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Gain Year');
 
 // Map.addLayer(change.lossMags.reduce(ee.Reducer.max()),{min:-0.6,max:-0.2,palette:dLib.lossMagPalette},'Largest Mag Loss');
@@ -160,14 +184,14 @@ Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 // // joined = getImagesLib.joinCollections(joined,predicted3)
 // Map.addLayer(joined,{},'Predicted With Filling',false)
 // ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments
-// var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[],0).select(['.*_predicted']);
+var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[],0).select(['.*_predicted']);
 // var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1],0).select(['.*_predicted']);
 // var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2],0).select(['.*_predicted']);
-// var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3],0).select(['.*_predicted']);
-// var joined = getImagesLib.joinCollections(predicted0,predicted1);
+var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3],0).select(['.*_predicted']);
+var joined = getImagesLib.joinCollections(predicted0,predicted3);
 // joined = getImagesLib.joinCollections(joined,predicted2)
 // joined = getImagesLib.joinCollections(joined,predicted3)
-// Map.addLayer(joined,{},'Predicted Without Filling',false)
+Map.addLayer(joined,{},'Predicted Without Filling',false)
 // print(predicted)
 // predicted = predicted.map(function(img){
 //   var nbr = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NBR_predicted_from_bands'])
