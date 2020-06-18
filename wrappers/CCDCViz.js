@@ -37,84 +37,8 @@ ccdcImg = ee.Image.cat([ccdcImg,tEnds,tBreaks])
 Map.addLayer(ccdcImg,{},'CCDC Img',false);
 // var change = dLib.getCCDCChange2(ccdcImg);
 
-function getCCDCChange2(ccdcImg,changeDirBand,lossDir,magnitudeEnding,coeffEnding,slopeEnding,
-tStartEnding,tEndEnding,tBreakEnding,changeProbEnding,changeProbThresh,
-segLossMagThresh,segLossSlopeThresh,segGainMagThresh,segGainSlopeThresh,divideTimeBy,startYear,endYear){
-  if(changeDirBand === null || changeDirBand === undefined){changeDirBand = 'NDVI'}
-  if(lossDir === null || lossDir === undefined){lossDir = -1}//getImagesLib.changeDirDict[changeDirBand]}
-  if(magnitudeEnding === null || magnitudeEnding === undefined){magnitudeEnding = '_magnitude'}
-  if(coeffEnding === null || coeffEnding === undefined){coeffEnding = '.*_coefs_.*'}
-  if(slopeEnding === null || slopeEnding === undefined){slopeEnding = '.*_SLP'}
-  if(tStartEnding === null || tStartEnding === undefined){tStartEnding = '_tStart'}
-  if(tEndEnding === null || tEndEnding === undefined){tEndEnding = '_tEnd'}
-  if(tBreakEnding === null || tBreakEnding === undefined){tBreakEnding = '_tBreak'}
-  if(changeProbEnding === null || changeProbEnding === undefined){changeProbEnding = '_changeProb'}
-  if(changeProbThresh === null || changeProbThresh === undefined){changeProbThresh = 0.8}
-  if(segLossMagThresh === null || segLossMagThresh === undefined){segLossMagThresh = 0.2}
-  if(segLossSlopeThresh === null || segLossSlopeThresh === undefined){segLossSlopeThresh = 0.1}
-  if(segGainMagThresh === null || segGainMagThresh === undefined){segGainMagThresh = 0.1}
-  if(segGainSlopeThresh === null || segGainSlopeThresh === undefined){segGainSlopeThresh = 0.05}
- 
-  if(divideTimeBy === null || divideTimeBy === undefined){divideTimeBy = 1}
-  if(startYear === null || startYear === undefined){startYear = 0}
-  if(endYear === null || endYear === undefined){endYear = 3000}
-  
-  //Get slopes and mags for each segment to detect changes within each segmet
-  var coeffs = ccdcImg.select(['.*'+changeDirBand+coeffEnding]);
-  var slopes = coeffs.select(['.*'+slopeEnding]);
-  var tStarts = ccdcImg.select(['.*'+tStartEnding]);
-  var tEnds = ccdcImg.select(['.*'+tEndEnding]);
-  var durs = tEnds.subtract(tStarts);
-  var mags = durs.multiply(slopes);
-  
-  //Use the change prob to find significant breaks
-  var changeProbs = ccdcImg.select(['.*'+changeProbEnding]).selfMask();
-  changeProbs = changeProbs.updateMask(changeProbs.gte(changeProbThresh));
-  
-  //Get the years of the breaks
-  var breakYears = ccdcImg.select(['.*'+tBreakEnding]).selfMask().divide(divideTimeBy);
-  breakYears = breakYears.updateMask(breakYears.floor().gte(startYear).and(breakYears.floor().lte(endYear)));
-  
-  //Filter out years that are change breaks
-  var changeYears = breakYears.updateMask(changeProbs.mask());
-  
-  var diffs = ccdcImg.select(['.*'+changeDirBand+magnitudeEnding]).updateMask(changeYears.mask());
-  
-  //Pull out loss and gain for breaks and then the segments
-  if(lossDir === 1){
-    diffs = diffs.multiply(-1);
-    mags = mags.multiply(-1);
-    slopes = slopes.multiply(-1);
-  }
-  
-  var breakLoss = diffs.lt(0);
-  var segLoss = mags.lt(-segLossMagThresh).or(slopes.lt(-segLossSlopeThresh));
-  var breakGain = diffs.gt(0);
-  var segGain = mags.gt(segGainMagThresh).or(slopes.gt(segGainSlopeThresh));
-  
-  var breakLossYears = changeYears.updateMask(breakLoss);
-  var breakGainYears = changeYears.updateMask(breakGain);
-  var breakLossMags = diffs.updateMask(diffs.lt(0));
-  var breakGainMags = diffs.updateMask(diffs.gt(0));
-  
-  var segLossYears = breakYears.updateMask(segLoss);
-  var segGainYears = breakYears.updateMask(segGain);
-  var segLossMags = mags.updateMask(segLoss);
-  var segGainMags = mags.updateMask(segGain);
-  
-  
-  return {breakLossYears:breakLossYears,
-  breakGainYears:breakGainYears,
-  breakLossMags:breakLossMags,
-  breakGainMags:breakGainMags,
-  
-  segLossYears:segLossYears,
-  segGainYears:segGainYears,
-  segLossMags:segLossMags,
-  segGainMags:segGainMags
-  };
-}
-var change = getCCDCChange2(ccdcImg);
+
+var change = dLib.getCCDCChange(ccdcImg);
 Map.addLayer(change.breakLossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Break Loss Year',false);
 Map.addLayer(change.segLossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Seg Loss Year',false);
 
