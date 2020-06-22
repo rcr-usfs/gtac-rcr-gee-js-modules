@@ -21,7 +21,14 @@ var startYear = 2010;
 var endYear = 2020;
 var bands = ['NDVI'];
 // var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test13');//.reproject('EPSG:5070',null,30);
-var ccdcImg = ee.Image('users/chastainr/CCDC_Collection/CCDC_Collection_imagecoll/CCDC_Test13');
+var c = ee.ImageCollection('users/chastainr/CCDC_Collection/CCDC_Collection_imagecoll');
+c = c.map(function(img){
+  var bCount = ee.Image(img).bandNames().length();
+  return img.set('bandCount',bCount);
+});
+c = c.filter(ee.Filter.eq('bandCount',576));
+c = c.mosaic();
+var ccdcImg = c;
 print(ccdcImg)
 var selectBands = bands.map(function(b){return '.*'+b+'.*'});
 
