@@ -20,8 +20,9 @@ var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 var startYear = 2010;
 var endYear = 2020;
 var bands = ['NDVI'];
-var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test13');//.reproject('EPSG:5070',null,30);
-// print(ccdcImg)
+// var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test13');//.reproject('EPSG:5070',null,30);
+var ccdcImg = ee.Image('users/chastainr/CCDC_Collection/CCDC_Collection_imagecoll/CCDC_Test13');
+print(ccdcImg)
 var selectBands = bands.map(function(b){return '.*'+b+'.*'});
 
 selectBands = selectBands.concat(['.*tStart','.*_changeProb']);
