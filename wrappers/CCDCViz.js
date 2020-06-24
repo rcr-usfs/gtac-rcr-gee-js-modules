@@ -17,9 +17,14 @@ var geometry =
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
-var startYear = 2016;
-var endYear = 2020;
+var startYear = 2019;
+var endYear = 2019;
 var bands = ['NDVI'];
+var ids = ee.FeatureCollection('projects/USFS/LCMS-NFS/CONUS-Ancillary-Data/IDS/DAMAGE_AREAS_FLAT_AllYears_CONUS_Rgn9');
+ids = ids.filter(ee.Filter.eq('SURVEY_YEA',2019))
+ids = ee.Image().paint(ids,null,2)
+ids = ids.visualize({min:1,max:1,palette:'0FF'})
+Map.addLayer(ids,{},'ids')
 // var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test14');//.reproject('EPSG:5070',null,30);
 var c = ee.ImageCollection('users/chastainr/CCDC_Collection/CCDC_Collection_imagecoll');
 c = c.map(function(img){
