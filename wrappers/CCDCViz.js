@@ -17,8 +17,8 @@ var geometry =
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
-var startYear = 2019;
-var endYear = 2019;
+var startYear = 2010;
+var endYear = 2020;
 var bands = ['NDVI'];
 var ids = ee.FeatureCollection('projects/USFS/LCMS-NFS/CONUS-Ancillary-Data/IDS/DAMAGE_AREAS_FLAT_AllYears_CONUS_Rgn9');
 ids = ids.filter(ee.Filter.eq('SURVEY_YEA',2019))
