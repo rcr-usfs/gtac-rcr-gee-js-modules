@@ -17,19 +17,19 @@ var geometry =
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
-var startYear = 2010;
+var startYear = 1984;
 var endYear = 2020;
 var bands = ['NDVI'];
-// var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test13');//.reproject('EPSG:5070',null,30);
-var c = ee.ImageCollection('users/chastainr/CCDC_Collection/CCDC_Collection_imagecoll');
-c = c.map(function(img){
-  var bCount = ee.Image(img).bandNames().length();
-  return img.set('bandCount',bCount);
-});
-c = c.filter(ee.Filter.eq('bandCount',576));
-c = c.mosaic();
-var ccdcImg = c;
-print(ccdcImg)
+var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test14');//.reproject('EPSG:5070',null,30);
+// var c = ee.ImageCollection('users/chastainr/CCDC_Collection/CCDC_Collection_imagecoll');
+// c = c.map(function(img){
+//   var bCount = ee.Image(img).bandNames().length();
+//   return img.set('bandCount',bCount);
+// });
+// c = c.filter(ee.Filter.eq('bandCount',576));
+// c = c.mosaic();
+// var ccdcImg = c;
+// print(ccdcImg)
 var selectBands = bands.map(function(b){return '.*'+b+'.*'});
 
 selectBands = selectBands.concat(['.*tStart','.*_changeProb']);
