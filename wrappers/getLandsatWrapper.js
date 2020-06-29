@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -213,6 +214,8 @@ var outline = empty.paint({
 });
 Map.addLayer(outline, {palette: '0000FF'}, "Study Area", false);
 // Map.centerObject(studyArea, 6);
+
+Map.setOptions('hybrid')
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
