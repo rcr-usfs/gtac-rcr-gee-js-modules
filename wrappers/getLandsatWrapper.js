@@ -136,21 +136,17 @@ var dilatePixels = 2.5;
 var resampleMethod = 'near';
 
 //If available, bring in preComputed cloudScore offsets and TDOM stats
-//These have been pre-computed for all CONUS and are appropriate to use for any time period within
-//the growing season
+//Set to null if computing on-the-fly is wanted
+//These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
+//and are appropriate to use for any time period within the growing season
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
-var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic();
-var landsatPreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['Landsat_CloudScore_p10']);
-var sentinel2PreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p10']);
+var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Landsat_CloudScore_p10']);
 
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
 var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
-var landsatTDOMMeans = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
-var landsatTDOMStdDevs = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
-var sentinel2TDOMMeans = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
-var sentinel2TDOMStdDevs = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
-
+var preComputedTDOMMeans = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
+var preComputedTDOMStdDevs = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
 
 // 12. correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
@@ -198,7 +194,8 @@ var lsAndTs = getImageLib.getLandsatWrapper(studyArea,startYear,endYear,startJul
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod);
+  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,
+  preComputedCloudScoreOffset,preComputedTDOMMeans,preComputedTDOMStdDevs,);
 
 //Separate into scenes and composites for subsequent analysis
 var processedScenes = lsAndTs[0];
