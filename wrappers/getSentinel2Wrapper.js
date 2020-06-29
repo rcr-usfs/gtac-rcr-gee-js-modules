@@ -156,8 +156,8 @@ var aggregateInsteadOfResample = true;
 
 //If available, bring in preComputed cloudScore offsets and TDOM stats
 //Set to null if computing on-the-fly is wanted
-//These have been pre-computed for all CONUS and are appropriate to use for any time period within
-//the growing season
+//These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
+//and are appropriate to use for any time period within the growing season
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
 var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Sentinel2_CloudScore_p10']);
 
