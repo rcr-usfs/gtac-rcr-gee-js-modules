@@ -212,16 +212,7 @@ var s2sAndTs =getImageLib.getSentinel2Wrapper(studyArea,startYear,endYear,startJ
   correctIllumination,correctScale,
   exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics,
   sentinel2PreComputedCloudScoreOffset,sentinel2TDOMMeans,sentinel2TDOMStdDevs,aggregateInsteadOfResample);
- var s2sAndTs =getImageLib.getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
-  timebuffer,weights,compositingMethod,
-  applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
-  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  cloudHeights,
-  zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,
-  correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics,
-  sentinel2PreComputedCloudScoreOffset,sentinel2TDOMMeans,sentinel2TDOMStdDevs,false); 
+  
 //Separate into scenes and composites for subsequent analysis
 var processedScenes = s2sAndTs[0];
 var processedComposites = s2sAndTs[1];
