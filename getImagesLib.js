@@ -2250,7 +2250,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   cloudHeights,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
+  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,aggregateInsteadOfResample,
   preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
   ){
   
@@ -2270,6 +2270,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
   if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
+  if(aggregateInsteadOfResample === undefined || aggregateInsteadOfResample === null){aggregateInsteadOfResample = false}
   // Prepare dates
   //Wrap the dates if needed
   var wrapOffset = 0;
@@ -2282,7 +2283,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
 
   
   // Get Sentinel2 image collection
-  var s2s = getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR,convertToDailyMosaics)
+  var s2s = getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR,convertToDailyMosaics,aggregateInsteadOfResample)
   // Map.addLayer(s2s.median().reproject('EPSG:32612',null,30),{min:0.05,max:0.4,bands:'swir1,nir,red'});
   
   if(applyQABand){
