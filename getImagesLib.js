@@ -2333,7 +2333,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics,
+  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics,aggregateInsteadOfResample,
   preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev){
   
   
@@ -2363,13 +2363,15 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
   if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
+  if(aggregateInsteadOfResample === undefined || aggregateInsteadOfResample === null){aggregateInsteadOfResample = false}
   
   var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
   applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   cloudHeights,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
+  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,aggregateInsteadOfResample,
+  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
   );
   
   
