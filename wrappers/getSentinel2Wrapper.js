@@ -107,7 +107,7 @@ var cloudScoreThresh = 20;
 //For bright areas that may always have a high cloudScore
 //but not actually be cloudy, this will result in a reduction of commission errors
 //This procedure needs at least 5 years of data to work well
-var performCloudScoreOffset = false;
+var performCloudScoreOffset = true;
 
 // If performCloudScoreOffset = true:
 //Percentile of cloud score to pull from time series to represent a minimum for 
@@ -147,6 +147,11 @@ var dilatePixels = 2.5;
 //reprojected, will appear blurred
 //Use .reproject to view the actual resulting image (this will slow it down)
 var resampleMethod = 'near';
+
+//Choose whether to apply the above resampling method or an aggregation method
+//This is generally useful for aggregating pixels when reprojecting instead of resampling
+//A good example would be reprojecting S2 data to 30 m
+var aggregateInsteadOfResample = true;
 
 //If available, bring in preComputed cloudScore offsets and TDOM stats
 //These have been pre-computed for all CONUS and are appropriate to use for any time period within
