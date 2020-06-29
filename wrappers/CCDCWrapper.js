@@ -125,10 +125,13 @@ var harmonizeOLI = false;
 //If available, bring in preComputed cloudScore offsets and TDOM stats
 //These have been pre-computed for all CONUS and are appropriate to use for any time period within
 //the growing season
+//The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
 var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic();
 var landsatPreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['Landsat_CloudScore_p10']);
 var sentinel2PreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p10']);
 
+//The TDOM stats are the mean and standard deviations of the two bands used in TDOM
+//By default, TDOM uses the nir and swir1 bands
 var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
 var landsatTDOMMeans = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
 var landsatTDOMStdDevs = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
