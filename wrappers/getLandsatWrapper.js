@@ -59,7 +59,6 @@ var compositingMethod = 'medoid';
 
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 // Specify TOA or SR
-// Current implementation does not support Fmask for TOA
 var toaOrSR = 'SR';
 
 // 8. Choose whether to include Landat 7
@@ -134,7 +133,7 @@ var dilatePixels = 2.5;
 //If method other than 'near' is chosen, any map drawn on the fly that is not
 //reprojected, will appear blurred
 //Use .reproject to view the actual resulting image (this will slow it down)
-var resampleMethod = 'bicubic';
+var resampleMethod = 'near';
 
 // 12. correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
