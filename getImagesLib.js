@@ -1935,7 +1935,7 @@ applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFm
     Map.addLayer(composite.reproject(crs,transform,scale), vizParamsTrue, year.toString() + ' True Color ' + 
       toaOrSR, false);
     Map.addLayer(composite.reproject(crs,transform,scale), vizParamsFalse, year.toString() + ' False Color ' + 
-      toaOrSR, false);
+      toaOrSR, true);
   
     // Reformat data for export
     var compositeBands = composite.bandNames();
