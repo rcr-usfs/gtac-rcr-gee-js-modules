@@ -2326,7 +2326,8 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics,preComputedCloudScoreOffset){
+  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics,
+  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev){
   
   
   if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
@@ -2361,7 +2362,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   cloudHeights,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,preComputedCloudScoreOffset
+  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
   );
   
   
