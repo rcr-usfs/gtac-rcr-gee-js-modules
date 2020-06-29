@@ -408,6 +408,10 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
     print('Setting resample method to ',resampleMethod);
     s2s = s2s.map(function(img){return img.resample(resampleMethod)});
   }
+  if(aggregateInsteadOfResample){
+    s2s = s2s.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
+  }
+  
   //Convert to daily mosaics to avoid redundent observations in MGRS overlap areas and edge artifacts for shadow masking
   if(convertToDailyMosaics){
     s2s = dailyMosaics(s2s);
