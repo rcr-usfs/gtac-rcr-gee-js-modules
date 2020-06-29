@@ -150,6 +150,7 @@ var resampleMethod = 'near';
 
 //Choose whether to apply the above resampling method or an aggregation method
 //This is generally useful for aggregating pixels when reprojecting instead of resampling
+//If this is true, the resampleMethod shouldn't matter
 //A good example would be reprojecting S2 data to 30 m
 var aggregateInsteadOfResample = true;
 
