@@ -51,7 +51,7 @@ var outputName = 'Median-MODIS';
 
 // 7. Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
-var exportPathRoot = 'users/ianhousman/test';
+var exportPathRoot = 'users/ianhousman/test/ChangeCollection';
 
 // 8. Choose medoid or median compositing method. 
 // Median tends to be smoother, while medoid retains 
