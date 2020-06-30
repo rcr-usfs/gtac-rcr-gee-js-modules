@@ -200,7 +200,8 @@ var allScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYe
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels
+  contractPixels,dilatePixels,resampleMethod,false,
+  preComputedCloudScoreOffset,preComputedTDOMMeans,preComputedTDOMStdDevs
   ).select(indexNames);
   
 
