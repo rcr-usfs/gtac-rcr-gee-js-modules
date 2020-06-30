@@ -50,8 +50,6 @@ var timebuffer = 0;
 //the compositing method
 var weights = [1];
 
-
-
 // 6. Choose medoid or median compositing method. 
 // Median tends to be smoother, while medoid retains 
 // single date of observation across all bands
