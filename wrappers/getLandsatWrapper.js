@@ -64,7 +64,7 @@ var toaOrSR = 'SR';
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
-var includeSLCOffL7 = true;
+var includeSLCOffL7 = false;
 
 //9. Whether to defringe L5
 //Landsat 5 data has fringes on the edges that can introduce anomalies into 
@@ -74,10 +74,15 @@ var defringeL5 = false;
 // 10. Choose cloud/cloud shadow masking method
 // Choices are a series of booleans for cloudScore, TDOM, and elements of Fmask
 //Fmask masking options will run fastest since they're precomputed
+//Fmask cloud mask is generally very good, while the fMask cloud shadow
+//mask isn't great. TDOM tends to perform better than the Fmask cloud shadow mask. cloudScore 
+//is usually about as good as the Fmask cloud mask overall, but each failes in different instances.
 //CloudScore runs pretty quickly, but does look at the time series to find areas that 
 //always have a high cloudScore to reduce comission errors- this takes some time
 //and needs a longer time series (>5 years or so)
 //TDOM also looks at the time series and will need a longer time series
+//If pre-computed cloudScore offsets and/or TDOM stats are provided below, cloudScore
+//and TDOM will run quite quickly
 var applyCloudScore = true;
 var applyFmaskCloudMask = false;
 
@@ -91,7 +96,7 @@ var applyFmaskSnowMask = false;
 // cloudScoreThresh: If using the cloudScoreTDOMShift method-Threshold for cloud 
 //    masking (lower number masks more clouds.  Between 10 and 30 generally 
 //    works best)
-var cloudScoreThresh = 10;
+var cloudScoreThresh = 20;
 
 //Whether to find if an area typically has a high cloudScore
 //If an area is always cloudy, this will result in cloud masking omission
