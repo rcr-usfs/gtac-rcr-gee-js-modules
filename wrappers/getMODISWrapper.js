@@ -86,7 +86,7 @@ var applyCloudScore = true;
 var applyQACloudMask = false;//Whether to use QA bits for cloud masking
 
 
-var applyTDOM = false;
+var applyTDOM = true;
 
 
 // 13. Cloud and cloud shadow masking parameters.
@@ -193,7 +193,7 @@ if(applyCloudScore){var useTempInCloudMask = true}else{var useTempInCloudMask = 
 var modisImages = getImagesLib.getModisData(startYear,endYear,startJulian,endJulian,daily,applyQACloudMask,zenithThresh,useTempInCloudMask,true,resampleMethod);
 print(modisImages.first());
 // Map.addLayer(modisImages.select(['nir']),{},'original',false); 
-Map.addLayer(modisImages.median(),{min:0.05,max:0.7,bands:'swir1,nir,red'},'Before Masking',false);
+Map.addLayer(modisImages.median().reproject(crs,transform,scale),{min:0.05,max:0.7,bands:'swir1,nir,red'},'Before Masking',false);
 
   
 // Map.addLayer(modisImages.median(),getImagesLib.vizParamsFalse,'before',false)
@@ -220,7 +220,7 @@ if(despikeMODIS){
   
 }
 
-Map.addLayer(modisImages.median(),{min:0.05,max:0.7,bands:'swir1,nir,red'},'After Masking',false);
+Map.addLayer(modisImages.median().reproject(crs,transform,scale),{min:0.05,max:0.7,bands:'swir1,nir,red'},'After Masking',false);
 
 
 
@@ -276,3 +276,4 @@ modisImages,startYear,endYear,startJulian,endJulian,null,timebuffer,exportBands)
 // });
 // Map.addLayer(outline, {palette: '0000FF'}, "Study Area", false);
 // // Map.centerObject(studyArea, 6);
+Map.setOptions('HYBRID');
