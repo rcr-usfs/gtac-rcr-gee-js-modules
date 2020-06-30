@@ -152,9 +152,8 @@ var irStdDev = cloudScoreTDOMStats.select(['.*_stdDev']).divide(10000);
 
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
-var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
-var preComputedTDOMMeans = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
-var preComputedTDOMStdDevs = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
+var preComputedTDOMMeans = cloudScoreTDOMStats.select(['.*_mean']).divide(10000);
+var preComputedTDOMStdDevs = cloudScoreTDOMStats.select(['.*_stdDev']).divide(10000);
 
 // 12. correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
