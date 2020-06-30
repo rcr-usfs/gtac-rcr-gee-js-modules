@@ -588,7 +588,7 @@ function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
   }
   return ls;
 }
-
+var getLandsat = getImageCollection;
 ////////////////////////////////////////////////////////////////////////////////
 // Helper function to apply an expression and linearly rescale the output.
 // Used in the landsatCloudScore function below.
@@ -2047,7 +2047,7 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
       // applyFmaskSnowMask = false;
     }else{addPixelQA = false;}
   // Get Landsat image collection
-  var ls = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
+  var ls = getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod);
   
   // Apply relevant cloud masking methods
@@ -2190,7 +2190,7 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
       // applyFmaskSnowMask = false;
     }else{addPixelQA = false;}
   // Get Landsat image collection
-  var ls = getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
+  var ls = getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
     toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod);
  
   // //Apply Roy 2016 harmonization if specified
@@ -2952,6 +2952,7 @@ exports.addFullYearJulianDayBand = addFullYearJulianDayBand;
 exports.wrapDates = wrapDates;
 exports.collectionToImage = collectionToImage;
 exports.getImageCollection = getImageCollection;
+exports.getLandsat = getLandsat;
 exports.getS2 = getS2;
 exports.vizParamsFalse = vizParamsFalse;
 exports.vizParamsTrue = vizParamsTrue;
