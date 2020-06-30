@@ -12,7 +12,7 @@ var geometry =
 //Wrapper for running harmonic regression across a moving window of years
 
 //Module imports
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -60,17 +60,22 @@ var defringeL5 = false;
 // 10. Choose cloud/cloud shadow masking method
 // Choices are a series of booleans for cloudScore, TDOM, and elements of Fmask
 //Fmask masking options will run fastest since they're precomputed
+//Fmask cloud mask is generally very good, while the fMask cloud shadow
+//mask isn't great. TDOM tends to perform better than the Fmask cloud shadow mask. cloudScore 
+//is usually about as good as the Fmask cloud mask overall, but each failes in different instances.
 //CloudScore runs pretty quickly, but does look at the time series to find areas that 
-//always have a high cloudScore to reduce comission errors- this takes some time
+//always have a high cloudScore to reduce commission errors- this takes some time
 //and needs a longer time series (>5 years or so)
 //TDOM also looks at the time series and will need a longer time series
-var applyCloudScore = false;
+//If pre-computed cloudScore offsets and/or TDOM stats are provided below, cloudScore
+//and TDOM will run quite quickly
+var applyCloudScore = true;
 var applyFmaskCloudMask = true;
 
-var applyTDOM = false;
+var applyTDOM = true;
 var applyFmaskCloudShadowMask = true;
 
-var applyFmaskSnowMask = true;
+var applyFmaskSnowMask = false;
 
 // 11. Cloud and cloud shadow masking parameters.
 // If cloudScoreTDOM is chosen
@@ -84,14 +89,14 @@ var cloudScoreThresh = 20;
 //For bright areas that may always have a high cloudScore
 //but not actually be cloudy, this will result in a reduction of commission errors
 //This procedure needs at least 5 years of data to work well
-var performCloudScoreOffset = false;
+var performCloudScoreOffset = true;
 
-
-// Percentile of cloud score to pull from time series to represent a minimum for 
+// If performCloudScoreOffset = true:
+//Percentile of cloud score to pull from time series to represent a minimum for 
 // the cloud score over time for a given pixel. Reduces comission errors over 
 // cool bright surfaces. Generally between 5 and 10 works well. 0 generally is a
-// bit noisy
-var cloudScorePctl = 10; 
+// bit noisy but may be necessary in persistently cloudy areas
+var cloudScorePctl = 10;
 
 // zScoreThresh: Threshold for cloud shadow masking- lower number masks out 
 //    less. Between -0.8 and -1.2 generally works well
@@ -114,6 +119,26 @@ var contractPixels = 1.5;
 // (1.5 results in a 1 pixel buffer)(0.5 results in a 0 pixel buffer)
 // (2.5 or 3.5 generally is sufficient)
 var dilatePixels = 2.5;
+
+//Choose the resampling method: 'near', 'bilinear', or 'bicubic'
+//Defaults to 'near'
+//If method other than 'near' is chosen, any map drawn on the fly that is not
+//reprojected, will appear blurred
+//Use .reproject to view the actual resulting image (this will slow it down)
+var resampleMethod = 'near';
+
+//If available, bring in preComputed cloudScore offsets and TDOM stats
+//Set to null if computing on-the-fly is wanted
+//These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
+//and are appropriate to use for any time period within the growing season
+//The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
+var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Landsat_CloudScore_p'+cloudScorePctl.toString()]);
+
+//The TDOM stats are the mean and standard deviations of the two bands used in TDOM
+//By default, TDOM uses the nir and swir1 bands
+var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
+var preComputedTDOMMeans = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
+var preComputedTDOMStdDevs = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
 
 // 12. correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
@@ -169,7 +194,7 @@ if(indexNames.indexOf(seasonalityVizIndexName) == -1){indexNames.push(seasonalit
 ////////////////////////////////////////////////////////////////////////////////
 //Function Calls
 //Get all images
-var allScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
+var allScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
@@ -194,7 +219,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   var seasonalityMedian = composite.select([seasonalityVizIndexName]);
  
   //Fit harmonic model
-  var coeffsPredicted =getImageLib.getHarmonicCoefficientsAndFit(allScenesT,indexNames,whichHarmonics,detrend);
+  var coeffsPredicted =getImagesLib.getHarmonicCoefficientsAndFit(allScenesT,indexNames,whichHarmonics,detrend);
   
   //Set some properties
   var coeffs = coeffsPredicted[0]
@@ -210,7 +235,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   
   //Optionally simplify coeffs to phase, amplitude, and date of peak
   if(whichHarmonics.indexOf(2) > -1){
-    var pap = ee.Image(getImageLib.getPhaseAmplitudePeak(coeffs));
+    var pap = ee.Image(getImagesLib.getPhaseAmplitudePeak(coeffs));
     print(pap);
     
     var vals = coeffs.select(['.*_intercept']);
@@ -226,7 +251,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   
     //Create synthetic image for peak julian day according the the seasonalityVizIndexName band
     var dateImage = ee.Image(yr).add(peakJulians.select([seasonalityVizIndexName + '_peakJulianDay']).divide(365));
-    var synth = getImageLib.synthImage(coeffs,dateImage,indexNames,whichHarmonics,detrend);
+    var synth = getImagesLib.synthImage(coeffs,dateImage,indexNames,whichHarmonics,detrend);
     Map.addLayer(synth,{'min':0.1,'max':0.4},nameStart + '_Date_of_Max_'+seasonalityVizIndexName+'_Synth_Image',false);
     
     // Turn the HSV data into an RGB image and add it to the map.
@@ -252,7 +277,7 @@ var coeffCollection = ee.List.sequence(startYear+timebuffer,endYear-timebuffer,1
   
   var outName = outputName + startYearT.toString() + '_'+ endYearT.toString();
   var outPath = exportPathRoot + '/' + outName;
-  getImageLib.exportToAssetWrapper(coeffs,outName,outPath,
+  getImagesLib.exportToAssetWrapper(coeffs,outName,outPath,
   'mean',studyArea,scale,crs,transform);
   return coeffs;
   
