@@ -14,7 +14,7 @@ var geometry =
           [-121.09204983511518, 39.25666609688575]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 
@@ -202,7 +202,7 @@ var scale = 30;
 ///////////////////////////////////////////////////////////////////////
 
   
-var s2sAndTs =getImageLib.getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
+var s2sAndTs =getImagesLib.getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   timebuffer,weights,compositingMethod,
   applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
