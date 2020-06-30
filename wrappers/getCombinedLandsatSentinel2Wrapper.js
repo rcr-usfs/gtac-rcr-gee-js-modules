@@ -251,40 +251,70 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   ls = ls.map(function(img){return img.float().set('whichProgram','Landsat')});
   s2s = s2s.map(function(img){return img.float().set('whichProgram','Sentinel2')});
 
-
-  
-  //Seperate each sensor for correction
-  //Seperate TM/ETM+
-  var tm = ls.filter(ee.Filter.inList('SENSOR_ID',['TM','ETM']));
-  //Fill if no ETM+ or TM images
-  tm = getImagesLib.fillEmptyCollections(tm,ee.Image(ls.first()));
-  //Seperate OLI
-  var oli = ls.filter(ee.Filter.inList('SENSOR_ID',['OLI_TIRS']));
-  
-  //Seperate MSI
+  //Seperate each sensor
+  var tm = ls.filter(ee.Filter.eq('SENSOR_ID','TM'));
+  var etm = ls.filter(ee.Filter.eq('SENSOR_ID','ETM'));
+  var oli = ls.filter(ee.Filter.eq('SENSOR_ID','OLI_TIRS'));
   var msi = s2s;
+  
+  //Fill if no images
+  tm = getImagesLib.fillEmptyCollections(tm,ee.Image(ls.first()));
+  etm = getImagesLib.fillEmptyCollections(etm,ee.Image(ls.first()));
+  oli = getImagesLib.fillEmptyCollections(oli,ee.Image(ls.first()));
  
-  Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli before');
-  Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi before');
-  // Map.addLayer(ls.first(),getImagesLib.vizParamsFalse,'Landsat Single Image Cloud/Shadow Masking',false);
-  // Map.addLayer(s2s.first(),getImagesLib.vizParamsFalse,'S2 Single Image Cloud/Shadow Masking',false);
+  tm = tm.map(function(img){
+    return img.addBands(ee.Image(5).rename(['sensor']));
+  });
+  etm = etm.map(function(img){
+    return img.addBands(ee.Image(7).rename(['sensor']));
+  });
   
-  //Apply correction
-  //Currently coded to go to ETM+
+  oli = oli.map(function(img){
+    return img.addBands(ee.Image(8).rename(['sensor']));
+  });
   
-  //No need to correct ETM to ETM
-  // tm = tm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
+  msi = msi.map(function(img){
+    return img.addBands(ee.Image(2).rename(['sensor']));
+  });
   
-  //Harmonize the other two
-  oli = oli.map(function(img){return getImagesLib.harmonizationChastain(img, 'OLI','ETM')});
-  msi = msi.map(function(img){return getImagesLib.harmonizationChastain(img, 'MSI','ETM')});
-  Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli after');
-  Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi after');
-  ls = ee.ImageCollection(tm.merge(oli));
+  //Merge etm and tm since they are rather similar
+  tm = ee.ImageCollection(tm.merge(etm));
+  
+  if(runChastainHarmonization){
+    print('Running Chastain et al 2019 harmonization');
+    
+    Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli before');
+    Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi before');
+   
+    //Apply correction
+    //Currently coded to go to ETM+
+    
+    //No need to correct ETM to ETM
+    // tm = tm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
+    
+    //Harmonize the other two
+    oli = oli.map(function(img){return getImagesLib.harmonizationChastain(img, 'OLI','ETM')});
+    msi = msi.map(function(img){return getImagesLib.harmonizationChastain(img, 'MSI','ETM')});
+    Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli after');
+    Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi after');
+    
+    
+  }
   s2s = msi;
+  ls = ee.ImageCollection(tm.merge(oli));
   // Merge collections
   var merged = ls.merge(s2s);
 
+  //Create hybrid composites
+// var composites = getImagesLib.compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
+
+// if(exportComposites){// Export composite collection
+  
+//     var exportBands = ['blue', 'green', 'red','nir','swir1', 'swir2'];
+//     getImagesLib.exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
+// composites,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
+// true, false,true,false,false,includeSLCOffL7,false,null);
+//   }
 }
 
 getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
