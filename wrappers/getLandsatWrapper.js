@@ -84,10 +84,10 @@ var defringeL5 = false;
 //If pre-computed cloudScore offsets and/or TDOM stats are provided below, cloudScore
 //and TDOM will run quite quickly
 var applyCloudScore = true;
-var applyFmaskCloudMask = false;
+var applyFmaskCloudMask = true;
 
 var applyTDOM = true;
-var applyFmaskCloudShadowMask = false;
+var applyFmaskCloudShadowMask = true;
 
 var applyFmaskSnowMask = false;
 
