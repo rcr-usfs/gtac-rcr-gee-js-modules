@@ -158,6 +158,10 @@ var resampleMethod = 'near';
 //A good example would be reprojecting S2 data to 30 m
 var aggregateInsteadOfResample = true;
 
+//Choose whether to use the Chastain et al 2019(https://www.sciencedirect.com/science/article/pii/S0034425718305212)
+//harmonization method
+//All harmonization models apply a rather small correction and are likely not needed
+var runChastainHarmonization = true;
 
 //If available, bring in preComputed cloudScore offsets and TDOM stats
 //Set to null if computing on-the-fly is wanted
@@ -219,7 +223,7 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,aggregateInsteadOfResample,convertToDailyMosaics,
+  contractPixels,dilatePixels,resampleMethod,aggregateInsteadOfResample,convertToDailyMosaics,runChastainHarmonization,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs){
   
@@ -241,7 +245,43 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs,aggregateInsteadOfResample
   )
   Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
-  Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s')
+  Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
+  
+  //Set a property for splitting apart later
+  ls = ls.map(function(img){return img.float().set('whichProgram','Landsat')});
+  s2s = s2s.map(function(img){return img.float().set('whichProgram','Sentinel2')});
+
+
+  
+//Seperate each sensor for correction
+//Seperate TM/ETM+
+var tm = ls.filter(ee.Filter.inList('SATELLITE',['LANDSAT_7','LANDSAT_5']));
+//Fill if no ETM+ or TM images
+tm = getImagesLib.fillEmptyCollections(tm,ee.Image(ls.first()));
+//Seperate OLI
+var oli = ls.filter(ee.Filter.inList('SATELLITE',['LANDSAT_8']));
+
+//Seperate MSI
+var msi = s2s;
+
+// Map.addLayer(ls.first(),getImagesLib.vizParamsFalse,'Landsat Single Image Cloud/Shadow Masking',false);
+// Map.addLayer(s2s.first(),getImagesLib.vizParamsFalse,'S2 Single Image Cloud/Shadow Masking',false);
+
+//Apply correction
+//Currently coded to go to ETM+
+
+//No need to correct ETM to ETM
+// tm = tm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
+
+//Harmonize the other two
+oli = oli.map(function(img){return getImagesLib.harmonizationChastain(img, 'OLI','ETM')});
+msi = msi.map(function(img){return getImagesLib.harmonizationChastain(img, 'MSI','ETM')});
+
+ls = ee.ImageCollection(tm.merge(oli));
+s2s = msi;
+// Merge collections
+  var merged = ls.merge(s2s);
+
 }
 
 getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
@@ -249,7 +289,7 @@ getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,aggregateInsteadOfResample,convertToDailyMosaics,
+  contractPixels,dilatePixels,resampleMethod,aggregateInsteadOfResample,convertToDailyMosaics,runChastainHarmonization,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs)
 //Get Landsat and Sentinel 2 raw images
