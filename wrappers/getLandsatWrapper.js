@@ -47,7 +47,7 @@ var timebuffer = 0;
 //If the center year is 2000, then the years are 1999,2000, and 2001
 //In order to overweight the center year, you could specify the weights as
 //[1,5,1] which would duplicate the center year 5 times and increase its weight for
-//the compositing method
+//the compositing method//
 var weights = [1];
 
 // 6. Choose medoid or median compositing method. 
