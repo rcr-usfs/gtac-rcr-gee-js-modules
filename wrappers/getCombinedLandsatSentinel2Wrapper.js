@@ -50,7 +50,14 @@ var compositingMethod = 'medoid';
 
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 // Specify TOA or SR
-var toaOrSR = 'SR';
+//Sentinel 2 SR data currently have terrain correction applied
+//Best to use TOA if using S2 and Landsat together
+var toaOrSR = 'TOA';
+
+//Whether to convert S2 images from the military grid reference system(MGRS) tiles to daily mosaics to avoid arbitrary
+//MGRS tile artifacts or not. In most cases, it is best to set this to true.
+var convertToDailyMosaics = true;
+
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
@@ -75,13 +82,21 @@ var defringeL5 = false;
 //and TDOM will run quite quickly
 
 //CloudScore and TDOM switches- for both Sentinel 2 and Landsat
+//We generally use these
 var applyCloudScore = true;
 var applyTDOM = true;
 
-//QA switch for Sentinel 2 only- generally do not use this 
+//S2 only cloud/cloud shadow masking methods switches- generally do not use these
+//QA band method is fast but is generally awful- don't use if you like good composites
+//Shadow shift is intended if you don't have a time series to use for TDOM or just want individual images
+//It will commit any dark area that the cloud mask is cast over (water, hill shadows, etc)
 var applyQABand = false;
+var applyShadowShift = false;
+//Height of clouds to use to project cloud shadows
+var cloudHeights = ee.List.sequence(500,10000,500);
 
 //Fmask switches- only for Landsat
+//Generally we do use these
 var applyFmaskCloudMask = true;
 var applyFmaskCloudShadowMask = true;
 var applyFmaskSnowMask = false;
@@ -135,6 +150,14 @@ var dilatePixels = 2.5;
 //reprojected, will appear blurred
 //Use .reproject to view the actual resulting image (this will slow it down)
 var resampleMethod = 'near';
+
+//S2 only
+//Choose whether to apply the above resampling method or an aggregation method
+//This is generally useful for aggregating pixels when reprojecting instead of resampling
+//If this is true, the resampleMethod shouldn't matter
+//A good example would be reprojecting S2 data to 30 m
+var aggregateInsteadOfResample = true;
+
 
 //If available, bring in preComputed cloudScore offsets and TDOM stats
 //Set to null if computing on-the-fly is wanted
@@ -190,24 +213,13 @@ var scale = null;
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 //Start function calls
-
-// Prepare dates
-//Wrap the dates if needed
-var wrapOffset = 0;
-if (startJulian > endJulian) {
-  wrapOffset = 365;
-}
-var startDate = ee.Date.fromYMD(startYear,1,1).advance(startJulian-1,'day');
-var endDate = ee.Date.fromYMD(endYear,1,1).advance(endJulian-1+wrapOffset,'day');
-print('Start and end dates:', startDate, endDate);
-
 ////////////////////////////////////////////////////////////////////////////////
 function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,
+  contractPixels,dilatePixels,resampleMethod,aggregateInsteadOfResample,convertToDailyMosaics,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs){
   
@@ -220,15 +232,16 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs
   );
   
-  var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
+  var s2s = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
   applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   cloudHeights,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
-  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev,aggregateInsteadOfResample
+  preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs,aggregateInsteadOfResample
   )
-  Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls')
+  Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
+  Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s')
 }
 
 getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
@@ -236,7 +249,7 @@ getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,
+  contractPixels,dilatePixels,resampleMethod,aggregateInsteadOfResample,convertToDailyMosaics,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs)
 //Get Landsat and Sentinel 2 raw images
