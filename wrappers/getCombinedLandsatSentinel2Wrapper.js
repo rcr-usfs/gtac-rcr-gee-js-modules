@@ -26,7 +26,7 @@ var endJulian = 250;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2018;
+var startYear = 2010;
 var endYear = 2018;
 
 // 4. Specify an annual buffer to include imagery from the same season 
@@ -61,7 +61,7 @@ var convertToDailyMosaics = true;
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
-var includeSLCOffL7 = false;
+var includeSLCOffL7 = true;
 
 //9. Whether to defringe L5
 //Landsat 5 data has fringes on the edges that can introduce anomalies into 
@@ -244,8 +244,8 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs,aggregateInsteadOfResample
   )
-  Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
-  Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
+  // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
+  // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
   
   //Set a property for splitting apart later
   ls = ls.map(function(img){return img.float().set('whichProgram','Landsat')});
@@ -253,33 +253,36 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
 
 
   
-//Seperate each sensor for correction
-//Seperate TM/ETM+
-var tm = ls.filter(ee.Filter.inList('SATELLITE',['LANDSAT_7','LANDSAT_5']));
-//Fill if no ETM+ or TM images
-tm = getImagesLib.fillEmptyCollections(tm,ee.Image(ls.first()));
-//Seperate OLI
-var oli = ls.filter(ee.Filter.inList('SATELLITE',['LANDSAT_8']));
-
-//Seperate MSI
-var msi = s2s;
-
-// Map.addLayer(ls.first(),getImagesLib.vizParamsFalse,'Landsat Single Image Cloud/Shadow Masking',false);
-// Map.addLayer(s2s.first(),getImagesLib.vizParamsFalse,'S2 Single Image Cloud/Shadow Masking',false);
-
-//Apply correction
-//Currently coded to go to ETM+
-
-//No need to correct ETM to ETM
-// tm = tm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
-
-//Harmonize the other two
-oli = oli.map(function(img){return getImagesLib.harmonizationChastain(img, 'OLI','ETM')});
-msi = msi.map(function(img){return getImagesLib.harmonizationChastain(img, 'MSI','ETM')});
-
-ls = ee.ImageCollection(tm.merge(oli));
-s2s = msi;
-// Merge collections
+  //Seperate each sensor for correction
+  //Seperate TM/ETM+
+  var tm = ls.filter(ee.Filter.inList('SENSOR_ID',['TM','ETM']));
+  //Fill if no ETM+ or TM images
+  tm = getImagesLib.fillEmptyCollections(tm,ee.Image(ls.first()));
+  //Seperate OLI
+  var oli = ls.filter(ee.Filter.inList('SENSOR_ID',['OLI_TIRS']));
+  
+  //Seperate MSI
+  var msi = s2s;
+ 
+  Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli before');
+  Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi before');
+  // Map.addLayer(ls.first(),getImagesLib.vizParamsFalse,'Landsat Single Image Cloud/Shadow Masking',false);
+  // Map.addLayer(s2s.first(),getImagesLib.vizParamsFalse,'S2 Single Image Cloud/Shadow Masking',false);
+  
+  //Apply correction
+  //Currently coded to go to ETM+
+  
+  //No need to correct ETM to ETM
+  // tm = tm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
+  
+  //Harmonize the other two
+  oli = oli.map(function(img){return getImagesLib.harmonizationChastain(img, 'OLI','ETM')});
+  msi = msi.map(function(img){return getImagesLib.harmonizationChastain(img, 'MSI','ETM')});
+  Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli after');
+  Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi after');
+  ls = ee.ImageCollection(tm.merge(oli));
+  s2s = msi;
+  // Merge collections
   var merged = ls.merge(s2s);
 
 }
