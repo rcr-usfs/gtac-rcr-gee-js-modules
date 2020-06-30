@@ -140,11 +140,12 @@ var resampleMethod = 'bicubic';
 //If available, bring in preComputed cloudScore offsets and TDOM stats
 //Set to null if computing on-the-fly is wanted
 //These have been pre-computed for all CONUS for MODIS
-
 var cloudScoreTDOMStats = ee.ImageCollection('projects/USFS/FHAAST/RTFD/TDOM_Stats')
             .map(function(img){return img.updateMask(img.neq(-32768))})
             .mosaic();
+            
 var preComputedCloudScoreOffset = cloudScoreTDOMStats.select(['cloudScore_p'+cloudScorePctl.toString()]);
+
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
 var preComputedTDOMMeans = cloudScoreTDOMStats.select(['.*_mean']).divide(10000);
@@ -193,7 +194,7 @@ Map.addLayer(modisImages.median(),{min:0.05,max:0.7,bands:'swir1,nir,red'},'Befo
 // Apply relevant cloud masking methods
 if(applyCloudScore){
   print('Applying cloudScore');
-  modisImages = getImagesLib.applyCloudScoreAlgorithm(modisImages,getImagesLib.modisCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset); 
+  modisImages = getImagesLib.applyCloudScoreAlgorithm(modisImages,getImagesLib.modisCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset,preComputedCloudScoreOffset); 
 }
 
 
@@ -202,7 +203,7 @@ if(applyCloudScore){
 if(applyTDOM){
   print('Applying TDOM');
   // Find and mask out dark outliers
-  modisImages = getImagesLib.simpleTDOM2(modisImages,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
+  modisImages = getImagesLib.simpleTDOM2(modisImages,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels,['nir','swir1'],preComputedTDOMMeans,preComputedTDOMStdDevs);
 // Map.addLayer(modisImages.min(),getImagesLib.vizParamsFalse,'aftertdom') 
 }
 
