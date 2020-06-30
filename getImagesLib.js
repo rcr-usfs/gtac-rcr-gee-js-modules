@@ -423,7 +423,7 @@ return s2s;
 
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
-function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
+function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod){
   
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
@@ -588,7 +588,7 @@ function getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
   }
   return ls;
 }
-var getLandsat = getImageCollection;
+var getImageCollection = getLandsat;
 ////////////////////////////////////////////////////////////////////////////////
 // Helper function to apply an expression and linearly rescale the output.
 // Used in the landsatCloudScore function below.
