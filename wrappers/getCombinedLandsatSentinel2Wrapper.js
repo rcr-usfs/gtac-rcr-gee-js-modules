@@ -6,7 +6,7 @@ var geometry = /* color: #d63000 */ee.Geometry.Polygon(
           [-114.40969985413568, 48.87781053836135]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 
@@ -73,12 +73,17 @@ var defringeL5 = false;
 //TDOM also looks at the time series and will need a longer time series
 //If pre-computed cloudScore offsets and/or TDOM stats are provided below, cloudScore
 //and TDOM will run quite quickly
+
+//CloudScore and TDOM switches- for both Sentinel 2 and Landsat
 var applyCloudScore = true;
-var applyFmaskCloudMask = true;
-
 var applyTDOM = true;
-var applyFmaskCloudShadowMask = true;
 
+//QA switch for Sentinel 2 only- generally do not use this 
+var applyQABand = false;
+
+//Fmask switches- only for Landsat
+var applyFmaskCloudMask = true;
+var applyFmaskCloudShadowMask = true;
 var applyFmaskSnowMask = false;
 
 // 11. Cloud and cloud shadow masking parameters.
@@ -203,18 +208,27 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,resampleMethod,
-  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev){
+  preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
+  preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs){
   
-  var ls = getImagesLIb.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
+  var ls = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,resampleMethod,false,
-  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
+  preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs
   );
   
-  print(ls)
+  var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
+  applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
+  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
+  cloudHeights,
+  zScoreThresh,shadowSumThresh,
+  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
+  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev,aggregateInsteadOfResample
+  )
+  Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls')
 }
 
 getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
