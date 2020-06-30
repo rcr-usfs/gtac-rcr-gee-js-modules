@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-112.08865964627057, 41.13958991663369],
-          [-112.08865964627057, 40.36560905472839],
-          [-111.33060300564557, 40.36560905472839],
-          [-111.33060300564557, 41.13958991663369]]], null, false);
+        [[[-108.0764409385066, 38.063974781475835],
+          [-108.0764409385066, 37.0975668525586],
+          [-106.4284917197566, 37.0975668525586],
+          [-106.4284917197566, 38.063974781475835]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
 var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
@@ -78,11 +78,11 @@ var defringeL5 = false;
 //always have a high cloudScore to reduce comission errors- this takes some time
 //and needs a longer time series (>5 years or so)
 //TDOM also looks at the time series and will need a longer time series
-var applyCloudScore = false;
-var applyFmaskCloudMask = true;
+var applyCloudScore = true;
+var applyFmaskCloudMask = false;
 
-var applyTDOM = false;
-var applyFmaskCloudShadowMask = true;
+var applyTDOM = true;
+var applyFmaskCloudShadowMask = false;
 
 var applyFmaskSnowMask = false;
 
@@ -91,14 +91,14 @@ var applyFmaskSnowMask = false;
 // cloudScoreThresh: If using the cloudScoreTDOMShift method-Threshold for cloud 
 //    masking (lower number masks more clouds.  Between 10 and 30 generally 
 //    works best)
-var cloudScoreThresh = 20;
+var cloudScoreThresh = 10;
 
 //Whether to find if an area typically has a high cloudScore
 //If an area is always cloudy, this will result in cloud masking omission
 //For bright areas that may always have a high cloudScore
 //but not actually be cloudy, this will result in a reduction of commission errors
 //This procedure needs at least 5 years of data to work well
-var performCloudScoreOffset = false;
+var performCloudScoreOffset = true;
 
 // If performCloudScoreOffset = true:
 //Percentile of cloud score to pull from time series to represent a minimum for 
@@ -141,7 +141,7 @@ var resampleMethod = 'near';
 //These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
 //and are appropriate to use for any time period within the growing season
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
-var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Landsat_CloudScore_p10']);
+var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Landsat_CloudScore_p'+cloudScorePctl.toString()]);
 
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
