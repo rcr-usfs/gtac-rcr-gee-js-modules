@@ -82,12 +82,14 @@ var convertToDailyMosaics = true;
 // Choices are a series of booleans for applyQABand, applyCloudScore, 
 //applyShadowShift, and applyTDOM
 //CloudScore runs pretty quickly, but does look at the time series to find areas that 
-//always have a high cloudScore to reduce comission errors- this takes some time
+//always have a high cloudScore to reduce commission errors- this takes some time
 //and needs a longer time series (>5 years or so)
 //TDOM also looks at the time series and will need a longer time series
 //QA band method is fast but is generally awful- don't use if you like good composites
 //Shadow shift is intended if you don't have a time series to use for TDOM or just want individual images
 //It will commit any dark area that the cloud mask is cast over (water, hill shadows, etc)
+//If pre-computed cloudScore offsets and/or TDOM stats are provided below, cloudScore
+//and TDOM will run quite quickly and a long time sereies is not needed 
 var applyQABand = false;
 
 var applyCloudScore = true;
