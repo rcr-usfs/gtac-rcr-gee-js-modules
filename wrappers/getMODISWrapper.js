@@ -6,16 +6,13 @@ var geometry = /* color: #d63000 */ee.Geometry.Polygon(
           [-77.09453124999999, 47.565183593175995]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 
 // 1. Specify study area: Study area
 // Can specify a country, provide a fusion table  or asset table (must add 
 // .geometry() after it), or draw a polygon and make studyArea = drawnPolygon
-var rio = ee.FeatureCollection('users/ianhousman/RIO/Rio_Grande_NF_Boundary_10kBuffer_albers_diss').geometry();
-var fnf = ee.FeatureCollection('projects/USFS/LCMS-NFS/R1/FNF/FNF_GNP_Merge_Admin_BND_1k').geometry();
-var bt = ee.FeatureCollection('projects/USFS/LCMS-NFS/R4/BT/BT_LCMS_ProjectArea_5km').geometry();
 var studyArea = geometry;
 
 // 2. Update the startJulian and endJulian variables to indicate your seasonal 
@@ -80,11 +77,13 @@ var modisSpikeThresh = 0.1;//Threshold for identifying spikes.  Any pair of imag
 //always have a high cloudScore to reduce comission errors- this takes some time
 //and needs a longer time series (>5 years or so)
 //TDOM also looks at the time series and will need a longer time series
+//If pre-computed cloudScore offsets and/or TDOM stats are provided below, cloudScore
+//and TDOM will run quite quickly
 var applyCloudScore = true;
 var applyQACloudMask = false;//Whether to use QA bits for cloud masking
 
 
-var applyTDOM = false;
+var applyTDOM = true;
 
 
 // 13. Cloud and cloud shadow masking parameters.
@@ -137,6 +136,30 @@ var dilatePixels = 0;
 //Use .reproject to view the actual resulting image (this will slow it down)
 var resampleMethod = 'bicubic';
 
+
+//If available, bring in preComputed cloudScore offsets and TDOM stats
+//Set to null if computing on-the-fly is wanted
+//These have been pre-computed for all CONUS for MODIS
+
+var cloudScoreTDOMStats = ee.ImageCollection('projects/USFS/FHAAST/RTFD/TDOM_Stats')
+            .map(function(img){return img.updateMask(img.neq(-32768))})
+            .mosaic();
+var preComputedCloudScoreOffset = cloudScoreTDOMStats.select(['cloudScore_p'+cloudScorePctl.toString()]);
+//The TDOM stats are the mean and standard deviations of the two bands used in TDOM
+//By default, TDOM uses the nir and swir1 bands
+var preComputedTDOMMeans = cloudScoreTDOMStats.select(['.*_mean']).divide(10000);
+var preComputedTDOMStdDevs = cloudScoreTDOMStats.select(['.*_stdDev']).divide(10000);
+
+//and are appropriate to use for any time period within the growing season
+//The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
+var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Landsat_CloudScore_p'+cloudScorePctl.toString()]);
+
+//The TDOM stats are the mean and standard deviations of the two bands used in TDOM
+//By default, TDOM uses the nir and swir1 bands
+var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
+var preComputedTDOMMeans = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
+var preComputedTDOMStdDevs = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
+
 //15. Export params
 var crs = 'EPSG:5070';
 var transform = [250,0,-2361915.0,0,-250,3177735.0];//Specify transform if scale is null and snapping to known grid is needed
@@ -160,32 +183,32 @@ if(applyCloudScore){var useTempInCloudMask = true}else{var useTempInCloudMask = 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Get MODIS image collection
-var modisImages = getImageLib.getModisData(startYear,endYear,startJulian,endJulian,daily,applyQACloudMask,zenithThresh,useTempInCloudMask,true,resampleMethod);
+var modisImages = getImagesLib.getModisData(startYear,endYear,startJulian,endJulian,daily,applyQACloudMask,zenithThresh,useTempInCloudMask,true,resampleMethod);
 print(modisImages.first())
 // Map.addLayer(modisImages.select(['nir']),{},'original',false); 
 Map.addLayer(modisImages.median(),{min:0.05,max:0.7,bands:'swir1,nir,red'},'Before Masking',false);
 
   
-// Map.addLayer(modisImages.median(),getImageLib.vizParamsFalse,'before',false)
+// Map.addLayer(modisImages.median(),getImagesLib.vizParamsFalse,'before',false)
 // Apply relevant cloud masking methods
 if(applyCloudScore){
   print('Applying cloudScore');
-  modisImages = getImageLib.applyCloudScoreAlgorithm(modisImages,getImageLib.modisCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset); 
+  modisImages = getImagesLib.applyCloudScoreAlgorithm(modisImages,getImagesLib.modisCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset); 
 }
 
 
-// Map.addLayer(modisImages.min(),getImageLib.vizParamsFalse,'beforetdom') 
+// Map.addLayer(modisImages.min(),getImagesLib.vizParamsFalse,'beforetdom') 
 
 if(applyTDOM){
   print('Applying TDOM');
   // Find and mask out dark outliers
-  modisImages = getImageLib.simpleTDOM2(modisImages,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
-// Map.addLayer(modisImages.min(),getImageLib.vizParamsFalse,'aftertdom') 
+  modisImages = getImagesLib.simpleTDOM2(modisImages,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
+// Map.addLayer(modisImages.min(),getImagesLib.vizParamsFalse,'aftertdom') 
 }
 
 if(despikeMODIS){
     print('Despiking MODIS');
-    modisImages = getImageLib.despikeCollection(modisImages,modisSpikeThresh,'nir');
+    modisImages = getImagesLib.despikeCollection(modisImages,modisSpikeThresh,'nir');
    
   
 }
@@ -197,43 +220,43 @@ Map.addLayer(modisImages.median(),{min:0.05,max:0.7,bands:'swir1,nir,red'},'Afte
 // // Add zenith and azimuth
 // if (correctIllumination){
 //   ls = ls.map(function(img){
-//     return getImageLib.addZenithAzimuth(img,toaOrSR);
+//     return getImagesLib.addZenithAzimuth(img,toaOrSR);
 //   });
 // }
 
 // Add common indices- can use addIndices for comprehensive indices 
 //or simpleAddIndices for only common indices
-modisImages = modisImages.map(getImageLib.simpleAddIndices);
+modisImages = modisImages.map(getImagesLib.simpleAddIndices);
 
 // Create composite time series
-var modisImages = getImageLib.compositeTimeSeries(modisImages,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod,null);
+var modisImages = getImagesLib.compositeTimeSeries(modisImages,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod,null);
 var f = ee.Image(modisImages.first());
-Map.addLayer(f,getImageLib.vizParamsFalse,'First-non-illuminated',false);
+Map.addLayer(f,getImagesLib.vizParamsFalse,'First-non-illuminated',false);
 
 // // Correct illumination
 // if (correctIllumination){
 //   print('Correcting illumination');
-//   ts = ts.map(getImageLib.illuminationCondition)
+//   ts = ts.map(getImagesLib.illuminationCondition)
 //     .map(function(img){
-//       return getImageLib.illuminationCorrection(img, correctScale,studyArea);
+//       return getImagesLib.illuminationCorrection(img, correctScale,studyArea);
 //     });
 //   var f = ee.Image(ts.first());
-//   Map.addLayer(f,getImageLib.vizParamsFalse,'First-illuminated',false);
+//   Map.addLayer(f,getImagesLib.vizParamsFalse,'First-illuminated',false);
 // }
 
 
 // Export composite collection
 var exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2'];
-getImageLib.exportCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
+getImagesLib.exportCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
 modisImages,startYear,endYear,startJulian,endJulian,null,timebuffer,exportBands);
 
 // /////////////////////////////////////////////////////////////////////////////////////////////
 
 // ///////////////////////////////////////
 // // Create composite time series
-// var mts = getImageLib.compositeTimeSeries(modis,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
+// var mts = getImagesLib.compositeTimeSeries(modis,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
 // var first = ee.Image(mts.first());
-// Map.addLayer(first,getImageLib.vizParamsFalse,'modis')
+// Map.addLayer(first,getImagesLib.vizParamsFalse,'modis')
 // // ////////////////////////////////////////////////////////////////////////////////
 // // Load the study region, with a blue outline.
 // // Create an empty image into which to paint the features, cast to byte.
