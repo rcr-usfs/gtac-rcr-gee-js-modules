@@ -1,5 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.Polygon(
+var geometry = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Geometry.Polygon(
         [[[-116.29374999999999, 46.54729956447318],
           [-116.03007812499999, 38.809492348693325],
           [-85.26835937499999, 37.63572230181635],
@@ -83,7 +86,7 @@ var applyCloudScore = true;
 var applyQACloudMask = false;//Whether to use QA bits for cloud masking
 
 
-var applyTDOM = true;
+var applyTDOM = false;
 
 
 // 13. Cloud and cloud shadow masking parameters.
@@ -91,7 +94,7 @@ var applyTDOM = true;
 // cloudScoreThresh: If using the cloudScoreTDOMShift method-Threshold for cloud 
 //    masking (lower number masks more clouds.  Between 10 and 30 generally 
 //    works best)
-var cloudScoreThresh = 5;
+var cloudScoreThresh = 20;
 
 //Whether to find if an area typically has a high cloudScore
 //If an area is always cloudy, this will result in cloud masking omission
@@ -153,13 +156,16 @@ var preComputedTDOMStdDevs = cloudScoreTDOMStats.select(['.*_stdDev']).divide(10
 
 //and are appropriate to use for any time period within the growing season
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
-var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Landsat_CloudScore_p'+cloudScorePctl.toString()]);
+var cloudScoreTDOMStats = ee.ImageCollection('projects/USFS/FHAAST/RTFD/TDOM_Stats')
+            .map(function(img){return img.updateMask(img.neq(-32768))})
+            .mosaic();
+
+var preComputedCloudScoreOffset = cloudScoreTDOMStats.select(['cloudScore_p'+cloudScorePctl.toString()]);
 
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
-var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
-var preComputedTDOMMeans = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
-var preComputedTDOMStdDevs = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
+var preComputedTDOMMeans = cloudScoreTDOMStats.select(['.*_mean']).divide(10000);
+var preComputedTDOMStdDevs =cloudScoreTDOMStats.select(['.*_stdDev']).divide(10000);
 
 //15. Export params
 var crs = 'EPSG:5070';
@@ -185,7 +191,7 @@ if(applyCloudScore){var useTempInCloudMask = true}else{var useTempInCloudMask = 
 ////////////////////////////////////////////////////////////////////////////////
 // Get MODIS image collection
 var modisImages = getImagesLib.getModisData(startYear,endYear,startJulian,endJulian,daily,applyQACloudMask,zenithThresh,useTempInCloudMask,true,resampleMethod);
-print(modisImages.first())
+print(modisImages.first());
 // Map.addLayer(modisImages.select(['nir']),{},'original',false); 
 Map.addLayer(modisImages.median(),{min:0.05,max:0.7,bands:'swir1,nir,red'},'Before Masking',false);
 
@@ -214,7 +220,7 @@ if(despikeMODIS){
   
 }
 
-Map.addLayer(modisImages.median(),{min:0.05,max:0.7,bands:'swir1,nir,red'},'After Masking',false) 
+Map.addLayer(modisImages.median(),{min:0.05,max:0.7,bands:'swir1,nir,red'},'After Masking',false);
 
 
 
