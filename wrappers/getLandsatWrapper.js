@@ -147,8 +147,6 @@ var resampleMethod = 'near';
 var cloudScoreTDOMStats = ee.ImageCollection('projects/USFS/FHAAST/RTFD/TDOM_Stats')
             .map(function(img){return img.updateMask(img.neq(-32768))})
             .mosaic();
-var irMean = cloudScoreTDOMStats.select(['.*_mean']).divide(10000);
-var irStdDev = cloudScoreTDOMStats.select(['.*_stdDev']).divide(10000);
 
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
