@@ -114,7 +114,7 @@ var performCloudScoreOffset = true;
 // the cloud score over time for a given pixel. Reduces comission errors over 
 // cool bright surfaces. Generally between 5 and 10 works well. 0 generally is a
 // bit noisy but may be necessary in persistently cloudy areas
-var cloudScorePctl = 0; 
+var cloudScorePctl = 10; 
 
 //Height of clouds to use to project cloud shadows
 var cloudHeights = ee.List.sequence(500,10000,500);
@@ -159,7 +159,7 @@ var aggregateInsteadOfResample = true;
 //These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
 //and are appropriate to use for any time period within the growing season
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
-var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Sentinel2_CloudScore_p10']);
+var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Sentinel2_CloudScore_p'+cloudScorePctl.toString()]);
 
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
