@@ -259,11 +259,12 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   var oli = ls.filter(ee.Filter.eq('SENSOR_ID','OLI_TIRS'));
   var msi = s2s;
   
-  //Fill if no images
+  //Fill if no images exist for particular sensor
   tm = getImagesLib.fillEmptyCollections(tm,ee.Image(ls.first()));
   etm = getImagesLib.fillEmptyCollections(etm,ee.Image(ls.first()));
   oli = getImagesLib.fillEmptyCollections(oli,ee.Image(ls.first()));
- 
+  
+  //Set sensor band number
   tm = tm.map(function(img){
     return img.addBands(ee.Image(5).rename(['sensor']));
   });
