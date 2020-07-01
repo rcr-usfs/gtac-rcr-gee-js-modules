@@ -283,8 +283,8 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   if(runChastainHarmonization){
     print('Running Chastain et al 2019 harmonization');
     
-    Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli before');
-    Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi before');
+    // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli before');
+    // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi before');
    
     //Apply correction
     //Currently coded to go to ETM+
@@ -295,26 +295,26 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
     //Harmonize the other two
     oli = oli.map(function(img){return getImagesLib.harmonizationChastain(img, 'OLI','ETM')});
     msi = msi.map(function(img){return getImagesLib.harmonizationChastain(img, 'MSI','ETM')});
-    Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli after');
-    Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi after');
+    // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli after');
+    // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi after');
     
     
   }
+  
   s2s = msi;
   ls = ee.ImageCollection(tm.merge(oli));
   // Merge collections
   var merged = ls.merge(s2s);
 
   //Create hybrid composites
-// var composites = getImagesLib.compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
+  var composites = getImagesLib.compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
 
-// if(exportComposites){// Export composite collection
-  
-//     var exportBands = ['blue', 'green', 'red','nir','swir1', 'swir2'];
-//     getImagesLib.exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
-// composites,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-// true, false,true,false,false,includeSLCOffL7,false,null);
-//   }
+  if(exportComposites){// Export composite collection
+    var exportBands = ['blue', 'green', 'red','nir','swir1', 'swir2'];
+    getImagesLib.exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
+      composites,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
+      true, false,true,false,false,includeSLCOffL7,false,null);
+  }
 }
 
 getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
