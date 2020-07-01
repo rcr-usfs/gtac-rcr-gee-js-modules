@@ -1109,14 +1109,14 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
   var medoid = inCollection.map(function(img){
     var diff = ee.Image(img).select(medoidIncludeBands).subtract(median)
       .pow(ee.Image.constant(2));
-    img = addYearBand(img);
-    img = addJulianDayBand(img);
+    // img = addYearBand(img);
+    // img = addJulianDayBand(img);
     return diff.reduce('sum').addBands(img);
   });
   // When exported as CSV, this provides a weighted list of the scenes being included in the composite
   // Map.addLayer(medoid,{},'Medoid Image Collection Scenes') 
   
-  bandNames = bandNames.cat(['year','julianDay']);
+  // bandNames = bandNames.cat(['year','julianDay']);
   var bandNumbers = ee.List.sequence(1, bandNames.length());
   // Minimize the distance across all bands
   medoid = ee.ImageCollection(medoid)
