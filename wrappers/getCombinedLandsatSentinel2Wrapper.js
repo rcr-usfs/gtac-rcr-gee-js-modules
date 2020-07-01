@@ -26,7 +26,7 @@ var endJulian = 250;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2010;
+var startYear = 2018;
 var endYear = 2018;
 
 // 4. Specify an annual buffer to include imagery from the same season 
@@ -46,7 +46,7 @@ var weights = [1];
 // Median tends to be smoother, while medoid retains 
 // single date of observation across all bands
 // If not exporting indices with composites to save space, medoid should be used
-var compositingMethod = 'medoid';
+var compositingMethod = 'median';
 
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 // Specify TOA or SR
@@ -305,7 +305,8 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   ls = ee.ImageCollection(tm.merge(oli));
   // Merge collections
   var merged = ls.merge(s2s);
-
+  merged = merged.map(getImagesLib.addYearBand);
+  merged = merged.map(getImagesLib.addJulianDayBand);
   //Create hybrid composites
   var composites = getImagesLib.compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
   print(composites)
