@@ -247,6 +247,11 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
   // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
   
+  //Select off common bands between Landsat and Sentinel 2
+  var commonBands =  ['blue', 'green', 'red','nir','swir1', 'swir2'];
+  ls = ls.select(commonBands);
+  s2s = s2s.select(commonBands);
+  
   //Set a property for splitting apart later
   ls = ls.map(function(img){return img.float().set('whichProgram','Landsat')});
   s2s = s2s.map(function(img){return img.float().set('whichProgram','Sentinel2')});
