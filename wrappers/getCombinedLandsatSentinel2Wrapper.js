@@ -310,10 +310,11 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   var composites = getImagesLib.compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
   print(composites)
   if(exportComposites){// Export composite collection
-    var exportBands = ['blue', 'green', 'red','nir','swir1', 'swir2'];
+    var exportBands = ['blue', 'green', 'red','nir','swir1', 'swir2','sensor','year','julianDay'];
+    var nonDivideBands = ['sensor','year','julianDay'];
     getImagesLib.exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
       composites,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-      true, false,true,false,false,includeSLCOffL7,false,null);
+      applyCloudScore,applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,nonDivideBands);
   }
 }
 
