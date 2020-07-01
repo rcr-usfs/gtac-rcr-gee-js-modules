@@ -26,7 +26,7 @@ var endJulian = 250;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2018;
+var startYear = 2014;
 var endYear = 2018;
 
 // 4. Specify an annual buffer to include imagery from the same season 
@@ -46,7 +46,7 @@ var weights = [1];
 // Median tends to be smoother, while medoid retains 
 // single date of observation across all bands
 // If not exporting indices with composites to save space, medoid should be used
-var compositingMethod = 'median';
+var compositingMethod = 'medoid';
 
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 // Specify TOA or SR
@@ -259,10 +259,36 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   var oli = ls.filter(ee.Filter.eq('SENSOR_ID','OLI_TIRS'));
   var msi = s2s;
   
-  //Fill if no images exist for particular sensor
+  //Fill if no images exist for particular Landsat sensor
+  //Allow it to fail of no images exist for Sentinel 2 since the point
+  //of this method is to include S2
   tm = getImagesLib.fillEmptyCollections(tm,ee.Image(ls.first()));
   etm = getImagesLib.fillEmptyCollections(etm,ee.Image(ls.first()));
   oli = getImagesLib.fillEmptyCollections(oli,ee.Image(ls.first()));
+  
+  
+  if(runChastainHarmonization){
+    print('Running Chastain et al 2019 harmonization');
+    
+    // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli before');
+    // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi before');
+   
+    //Apply correction
+    //Currently coded to go to ETM+
+    
+    //No need to correct ETM to ETM
+    // tm = tm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
+    // etm = etm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
+    
+    //Harmonize the other two
+    oli = oli.map(function(img){return getImagesLib.harmonizationChastain(img, 'OLI','ETM')});
+    msi = msi.map(function(img){return getImagesLib.harmonizationChastain(img, 'MSI','ETM')});
+    // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli after');
+    // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi after');
+    
+    
+  }
+  
   
   //Set sensor band number
   tm = tm.map(function(img){
@@ -280,36 +306,20 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
     return img.addBands(ee.Image(2).rename(['sensor']));
   });
   
-  //Merge etm and tm since they are rather similar
-  tm = ee.ImageCollection(tm.merge(etm));
-  
-  if(runChastainHarmonization){
-    print('Running Chastain et al 2019 harmonization');
-    
-    // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli before');
-    // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi before');
-   
-    //Apply correction
-    //Currently coded to go to ETM+
-    
-    //No need to correct ETM to ETM
-    // tm = tm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
-    
-    //Harmonize the other two
-    oli = oli.map(function(img){return getImagesLib.harmonizationChastain(img, 'OLI','ETM')});
-    msi = msi.map(function(img){return getImagesLib.harmonizationChastain(img, 'MSI','ETM')});
-    // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli after');
-    // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi after');
-    
-    
-  }
   
   s2s = msi;
+  
+  //Merge Landsat back together
+  tm = ee.ImageCollection(tm.merge(etm));
   ls = ee.ImageCollection(tm.merge(oli));
-  // Merge collections
+  
+  // Merge Landsat and S2
   var merged = ls.merge(s2s);
+ 
+  //Add year and julian day band to keep track of when pixel in composite came from
   merged = merged.map(getImagesLib.addYearBand);
   merged = merged.map(getImagesLib.addJulianDayBand);
+  
   //Create hybrid composites
   var composites = getImagesLib.compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
   print(composites)
