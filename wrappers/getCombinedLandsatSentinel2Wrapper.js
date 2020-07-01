@@ -252,9 +252,6 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   ls = ls.select(commonBands);
   s2s = s2s.select(commonBands);
   
-  //Set a property for splitting apart later
-  ls = ls.map(function(img){return img.float().set('whichProgram','Landsat')});
-  s2s = s2s.map(function(img){return img.float().set('whichProgram','Sentinel2')});
 
   //Seperate each sensor
   var tm = ls.filter(ee.Filter.eq('SENSOR_ID','TM'));
