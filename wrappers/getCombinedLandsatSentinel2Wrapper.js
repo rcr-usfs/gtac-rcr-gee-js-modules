@@ -308,7 +308,7 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
 
   //Create hybrid composites
   var composites = getImagesLib.compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
-
+  print(composites)
   if(exportComposites){// Export composite collection
     var exportBands = ['blue', 'green', 'red','nir','swir1', 'swir2'];
     getImagesLib.exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
