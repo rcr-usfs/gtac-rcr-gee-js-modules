@@ -145,6 +145,10 @@ var dilatePixels = 2.5;
 
 //Choose the resampling method: 'aggregate','near', 'bilinear', or 'bicubic'
 //Defaults to 'aggregate'
+
+//Aggregate is generally useful for aggregating pixels when reprojecting instead of resampling
+//A good example would be reprojecting S2 data to 30 m
+
 //If method other than 'near' is chosen, any map drawn on the fly that is not
 //reprojected, will appear blurred or not really represented properly
 //Use .reproject to view the actual resulting image (this will slow it down)
