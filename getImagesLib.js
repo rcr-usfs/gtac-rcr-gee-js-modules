@@ -408,7 +408,7 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
     print('Setting resample method to ',resampleMethod);
     s2s = s2s.map(function(img){return img.resample(resampleMethod)});
   }
-  if(aggregateInsteadOfResample){
+  if(resampleMethod === 'aggregate'){
     print('Setting to aggregate instead of resample ');
     s2s = s2s.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
   }
