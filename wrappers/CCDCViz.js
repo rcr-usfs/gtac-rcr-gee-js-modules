@@ -21,17 +21,17 @@ var startYear = 2010;
 var endYear = 2020.5;
 var bands = ['NDVI'];
 var idsFolder = 'projects/USFS/LCMS-NFS/CONUS-Ancillary-Data/IDS';
-var ids = ee.data.getList({id:idsFolder}).map(function(t){print(t.id);return t.id});
+var ids = ee.data.getList({id:idsFolder}).map(function(t){return t.id});
 
 ids = ids.map(function(id){
   var idsT = ee.FeatureCollection(id);
   return idsT;
 });
 ids = ee.FeatureCollection(ids).flatten();
-ids = ids.filter(ee.Filter.eq('SURVEY_YEA',2019))
-ids = ee.Image().paint(ids,null,2)
-ids = ids.visualize({min:1,max:1,palette:'0FF'})
-Map.addLayer(ids,{},'ids')
+ids = ids.filter(ee.Filter.inList('SURVEY_YEA',[2019]));
+ids = ee.Image().paint(ids,null,2);
+ids = ids.visualize({min:1,max:1,palette:'0FF'});
+Map.addLayer(ids,{},'ids');
 // var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test14');//.reproject('EPSG:5070',null,30);
 var c = ee.ImageCollection('users/chastainr/CCDC_Collection/CCDC_Collection_imagecoll');
 c = c.map(function(img){
