@@ -2437,7 +2437,131 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   
   return [s2s,ts];
 }
+////////////////////////////////////////////////////////////////////////////////
+//Hybrid get Landsat and Sentinel 2 wrapper function
+//Handles getting processed scenes and composites with Landsat and Sentinel 2
+function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
+  toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
+  applyFmaskCloudShadowMask,applyFmaskSnowMask,
+  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
+  zScoreThresh,shadowSumThresh,
+  contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
+  preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
+  preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs){
+  
+  var ls = getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
+  toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
+  applyFmaskCloudShadowMask,applyFmaskSnowMask,
+  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
+  zScoreThresh,shadowSumThresh,
+  contractPixels,dilatePixels,landsatResampleMethod,false,
+  preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs
+  );
+  
+  var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
+  applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
+  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
+  cloudHeights,
+  zScoreThresh,shadowSumThresh,
+  contractPixels,dilatePixels,sentinel2ResampleMethod,toaOrSR,convertToDailyMosaics,
+  preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs
+  );
+  // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
+  // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
+  
+  //Select off common bands between Landsat and Sentinel 2
+  var commonBands =  ['blue', 'green', 'red','nir','swir1', 'swir2'];
+  ls = ls.select(commonBands);
+  s2s = s2s.select(commonBands);
+  
 
+  //Seperate each sensor
+  var tm = ls.filter(ee.Filter.eq('SENSOR_ID','TM'));
+  var etm = ls.filter(ee.Filter.eq('SENSOR_ID','ETM'));
+  var oli = ls.filter(ee.Filter.eq('SENSOR_ID','OLI_TIRS'));
+  var msi = s2s;
+  
+  //Fill if no images exist for particular Landsat sensor
+  //Allow it to fail of no images exist for Sentinel 2 since the point
+  //of this method is to include S2
+  tm = fillEmptyCollections(tm,ee.Image(ls.first()));
+  etm = fillEmptyCollections(etm,ee.Image(ls.first()));
+  oli = fillEmptyCollections(oli,ee.Image(ls.first()));
+  
+  
+  if(runChastainHarmonization){
+    print('Running Chastain et al 2019 harmonization');
+    
+    // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli before');
+    // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi before');
+   
+    //Apply correction
+    //Currently coded to go to ETM+
+    
+    //No need to correct ETM to ETM
+    // tm = tm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
+    // etm = etm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
+    
+    //Harmonize the other two
+    oli = oli.map(function(img){return harmonizationChastain(img, 'OLI','ETM')});
+    msi = msi.map(function(img){return harmonizationChastain(img, 'MSI','ETM')});
+    // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli after');
+    // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi after');
+    
+    
+  }
+  
+  
+  //Set sensor band number
+  tm = tm.map(function(img){
+    return img.addBands(ee.Image(5).rename(['sensor']));
+  });
+  etm = etm.map(function(img){
+    return img.addBands(ee.Image(7).rename(['sensor']));
+  });
+  
+  oli = oli.map(function(img){
+    return img.addBands(ee.Image(8).rename(['sensor']));
+  });
+  
+  msi = msi.map(function(img){
+    return img.addBands(ee.Image(2).rename(['sensor']));
+  });
+  
+  
+  s2s = msi;
+  
+  //Merge Landsat back together
+  tm = ee.ImageCollection(tm.merge(etm));
+  ls = ee.ImageCollection(tm.merge(oli));
+  
+  // Merge Landsat and S2
+  var merged = ls.merge(s2s);
+ 
+ 
+  //Create hybrid composites
+  var composites = compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
+  
+  if(exportComposites){// Export composite collection
+    
+    var exportBandDict = {
+      'medoid':['blue', 'green', 'red','nir','swir1', 'swir2','sensor','year','julianDay'],
+      'median':['blue', 'green', 'red','nir','swir1', 'swir2']
+    };
+    var nonDivideBandDict = {
+      'medoid':['sensor','year','julianDay'],
+      'median':[]
+    };
+    var exportBands = exportBandDict[compositingMethod];
+    var nonDivideBands = nonDivideBandDict[compositingMethod];
+    exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
+      composites,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
+      applyCloudScore,applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,nonDivideBands,'Landsat: '+[landsatResampleMethod,sentinel2ResampleMethod].join(' Sentinel2:'));
+  }
+  
+  return [merged,composites];
+}
+///////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 //Harmonic regression
 ////////////////////////////////////////////////////////////////////
