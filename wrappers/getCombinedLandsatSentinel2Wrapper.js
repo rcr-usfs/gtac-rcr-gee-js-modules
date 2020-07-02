@@ -192,11 +192,11 @@ var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 var exportComposites = true;
 
 //Set up Names for the export
-var outputName = 'Landsat';
+var outputName = 'Landsat_S2_Hybrid_';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
-var exportPathRoot = 'users/ianhousman/test/changeCollection';
+var exportPathRoot = 'users/iwhousman/test/ChangeCollection';
 
 
 
