@@ -228,6 +228,8 @@ var processedAndComposites = getImagesLib.getLandsatAndSentinel2HybridWrapper(st
   cloudHeights,cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
+  correctIllumination,correctScale,
+  exportComposites,outputName,exportPathRoot,crs,transform,scale,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs);
 
