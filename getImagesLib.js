@@ -2444,7 +2444,7 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   toaOrSR,includeSLCOffL7,defringeL5,
   applyQABand,applyShadowShift,
   applyCloudScore,applyTDOM,
-  applyFmaskCloudMask,pplyFmaskCloudShadowMask,applyFmaskSnowMask,
+  applyFmaskCloudMask,applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
