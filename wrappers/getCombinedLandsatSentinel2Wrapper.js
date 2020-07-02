@@ -333,7 +333,7 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
     var nonDivideBands = nonDivideBandDict[compositingMethod];
     getImagesLib.exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
       composites,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-      applyCloudScore,applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,nonDivideBands);
+      applyCloudScore,applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,nonDivideBands,'Landsat: '+[landsatResampleMethod,sentinel2ResampleMethod].join(' Sentinel2:'));
   }
 }
 ///////////////////////////////////////////////////////////////
