@@ -220,6 +220,7 @@ var scale = null;
 
 ///////////////////////////////////////////////////////////////
 var processedAndComposites = getImagesLib.getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
+  timebuffer,weights,compositingMethod,
   toaOrSR,includeSLCOffL7,defringeL5,
   applyQABand,applyShadowShift,
   applyCloudScore,applyTDOM,
