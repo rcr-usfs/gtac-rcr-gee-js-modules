@@ -2410,18 +2410,19 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   //Export composites
   if(exportComposites){// Export composite collection
     print(ts.first())
-    var exportBandDict = {
-      'SR':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2'],
-      'TOA':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2']
-    }
+    
     var exportBandDict = {
       'SR_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2','year','julianDay'],
       'SR_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2'],
       'TOA_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2','year','julianDay'],
       'TOA_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2']
     };
-   
-    var exportBands = exportBandDict[toaOrSR];
+    var nonDivideBandDict = {
+      'medoid':['year','julianDay'],
+      'median':[]
+    };
+    var exportBands = exportBandDict[toaOrSR + '_'+compositingMethod];
+    var nonDivideBands = 
     exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
     ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
                   applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,null);
