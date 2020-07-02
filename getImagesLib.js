@@ -2483,7 +2483,7 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   
   if(correctIllumination === undefined || correctIllumination === null){correctIllumination = false}
   if(correctScale === undefined || correctScale === null){correctScale = 250}
-  if(exportComposites === undefined || exportComposites === null){exportComposites = false}
+  if(exportComposites === undefined || exportComposites === null){exportComposites = true}
   if(outputName === undefined || outputName === null){outputName = 'Sentinel2-Composite'}
   if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/iwhousman/test'}
   if(crs === undefined || crs === null){crs = 'EPSG:5070'}
