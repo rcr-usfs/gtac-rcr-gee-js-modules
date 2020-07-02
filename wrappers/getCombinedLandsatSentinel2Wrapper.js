@@ -316,10 +316,7 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   // Merge Landsat and S2
   var merged = ls.merge(s2s);
  
-  //Add year and julian day band to keep track of when pixel in composite came from
-  merged = merged.map(getImagesLib.addYearBand);
-  merged = merged.map(getImagesLib.addJulianDayBand);
-  
+ 
   //Create hybrid composites
   var composites = getImagesLib.compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
   print(composites)
@@ -340,7 +337,7 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
       applyCloudScore,applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,nonDivideBands);
   }
 }
-
+///////////////////////////////////////////////////////////////
 getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
