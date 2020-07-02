@@ -144,19 +144,18 @@ var contractPixels = 1.5;
 // (2.5 or 3.5 generally is sufficient)
 var dilatePixels = 2.5;
 
-//Choose the resampling method: 'near', 'bilinear', or 'bicubic'
-//Defaults to 'near'
-//If method other than 'near' is chosen, any map drawn on the fly that is not
-//reprojected, will appear blurred
-//Use .reproject to view the actual resulting image (this will slow it down)
-var resampleMethod = 'near';
+//Choose the resampling method: 'aggregate','near', 'bilinear', or 'bicubic'
+//Defaults to 'aggregate' for Sentinel 2 and 'near' for Landsat
 
-//S2 only
-//Choose whether to apply the above resampling method or an aggregation method
-//This is generally useful for aggregating pixels when reprojecting instead of resampling
-//If this is true, the resampleMethod shouldn't matter
+//Aggregate is generally useful for aggregating pixels when reprojecting instead of resampling
 //A good example would be reprojecting S2 data to 30 m
-var aggregateInsteadOfResample = true;
+
+//If method other than 'near' is chosen, any map drawn on the fly that is not
+//reprojected, will appear blurred or not really represented properly
+//Use .reproject to view the actual resulting image (this will slow it down)
+var landsatResampleMethod = 'aggregate';
+
+var sentinel2ResampleMethod = 'aggregate';
 
 //Choose whether to use the Chastain et al 2019(https://www.sciencedirect.com/science/article/pii/S0034425718305212)
 //harmonization method
