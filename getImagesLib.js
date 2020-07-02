@@ -1909,6 +1909,7 @@ applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFm
     nonDivideBands = ['temp'];
   }
   collection = collection.select(exportBands);
+  print('Export bands:',exportBands)
   print('Non divide bands:',nonDivideBands);
    //Take care of date wrapping
   var dateWrapping = wrapDates(startJulian,endJulian);
@@ -2392,7 +2393,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   // Create composite time series
   var ts = compositeTimeSeries(s2s,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
   
-  print(ts)
+  
   // Correct illumination
   // if (correctIllumination){
   //   var f = ee.Image(ts.first());
@@ -2409,7 +2410,6 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   
   //Export composites
   if(exportComposites){// Export composite collection
-    print(ts.first())
     
     var exportBandDict = {
       'SR_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2','year','julianDay'],
