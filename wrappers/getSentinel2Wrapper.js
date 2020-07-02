@@ -56,7 +56,7 @@ var weights = [1];
 // Median tends to be smoother, while medoid retains 
 // single date of observation across all bands
 // If not exporting indices with composites to save space, medoid should be used
-var compositingMethod = 'medoid';
+var compositingMethod = 'median';
 
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 // Specify TOA or SR
