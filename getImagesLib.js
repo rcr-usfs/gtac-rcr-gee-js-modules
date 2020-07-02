@@ -1912,8 +1912,9 @@ collection,startYear,endYear,startJulian,endJulian,compositingReducer,timebuffer
 // Function to export composite collection
 function exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
 collection,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,nonDivideBands){
-  if(nonDivideBands === undefined){
+applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,
+nonDivideBands,){
+  if(nonDivideBands === undefined || nonDivideBands === null){
     nonDivideBands = ['temp'];
   }
   collection = collection.select(exportBands);
