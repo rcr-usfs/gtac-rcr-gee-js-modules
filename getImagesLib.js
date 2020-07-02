@@ -1909,7 +1909,7 @@ applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFm
     nonDivideBands = ['temp'];
   }
   collection = collection.select(exportBands);
-  print('Export bands:',exportBands)
+  print('Export bands:',exportBands);
   print('Non divide bands:',nonDivideBands);
    //Take care of date wrapping
   var dateWrapping = wrapDates(startJulian,endJulian);
