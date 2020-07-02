@@ -241,7 +241,7 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   cloudHeights,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,sentinel2ResampleMethod,toaOrSR,convertToDailyMosaics,
-  preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs,aggregateInsteadOfResample
+  preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs
   )
   // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
   // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
@@ -342,7 +342,7 @@ getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,aggregateInsteadOfResample,convertToDailyMosaics,runChastainHarmonization,
+  contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs)
 //Get Landsat and Sentinel 2 raw images
