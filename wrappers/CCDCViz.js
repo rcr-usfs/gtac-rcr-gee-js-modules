@@ -18,9 +18,16 @@ var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 var startYear = 2010;
-var endYear = 2020;
+var endYear = 2020.5;
 var bands = ['NDVI'];
-var ids = ee.FeatureCollection('projects/USFS/LCMS-NFS/CONUS-Ancillary-Data/IDS/DAMAGE_AREAS_FLAT_AllYears_CONUS_Rgn9');
+var idsFolder = 'projects/USFS/LCMS-NFS/CONUS-Ancillary-Data/IDS';
+var ids = ee.data.getList({id:idsFolder}).map(function(t){print(t.id);return t.id});
+
+ids = ids.map(function(id){
+  var idsT = ee.FeatureCollection(id);
+  return idsT;
+});
+ids = ee.FeatureCollection(ids).flatten();
 ids = ids.filter(ee.Filter.eq('SURVEY_YEA',2019))
 ids = ee.Image().paint(ids,null,2)
 ids = ids.visualize({min:1,max:1,palette:'0FF'})
@@ -31,6 +38,7 @@ c = c.map(function(img){
   var bCount = ee.Image(img).bandNames().length();
   return img.set('bandCount',bCount);
 });
+print(c)
 c = c.filter(ee.Filter.eq('bandCount',576));
 c = c.mosaic();
 var ccdcImg = c;
