@@ -2440,7 +2440,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
 ////////////////////////////////////////////////////////////////////////////////
 //Hybrid get Landsat and Sentinel 2 wrapper function
 //Handles getting processed scenes and composites with Landsat and Sentinel 2
-function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
+function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
@@ -3119,6 +3119,9 @@ exports.getProcessedLandsatScenes = getProcessedLandsatScenes;
 
 exports.getProcessedSentinel2Scenes = getProcessedSentinel2Scenes;
 exports.getSentinel2Wrapper =getSentinel2Wrapper;
+
+exports.getLandsatAndSentinel2HybridWrapper = getLandsatAndSentinel2HybridWrapper
+
 exports.getModisData = getModisData;
 exports.modisCloudScore = modisCloudScore;
 exports.despikeCollection = despikeCollection;
