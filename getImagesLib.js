@@ -1850,6 +1850,10 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
     print('Setting resampling method',resampleMethod);
     joined = ee.ImageCollection(joined).map(function(img){return img.resample(resampleMethod) });
   }
+  else if(resampleMethod === 'aggregate'){
+    print('Setting to aggregate instead of resample ');
+    ls = s2s.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
+  }
   return joined;
     
   }
