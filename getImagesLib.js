@@ -2137,12 +2137,12 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
       var exportBands = ['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','year','julianDay'];
       exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
       ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-                  applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','year','julianDay']);
+                  applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','year','julianDay'],resampleMethod);
     }else{
       var exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp'];
       exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
       ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-                  applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp']);
+                  applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp'],resampleMethod);
     }
   }
   
@@ -2432,7 +2432,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
     var nonDivideBands = nonDivideBandDict[compositingMethod];
     exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
     ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-                  applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,nonDivideBands);
+                  applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,nonDivideBands,resampleMethod);
   }
   
   return [s2s,ts];
