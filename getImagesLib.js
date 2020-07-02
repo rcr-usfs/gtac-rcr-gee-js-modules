@@ -2333,7 +2333,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
   exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics,
-  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDe){
+  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev){
   
   
   if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
