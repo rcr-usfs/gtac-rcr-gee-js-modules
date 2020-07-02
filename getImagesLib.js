@@ -2422,7 +2422,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
       'median':[]
     };
     var exportBands = exportBandDict[toaOrSR + '_'+compositingMethod];
-    var nonDivideBands = 
+    var nonDivideBands = nonDivideBandDict[compositingMethod];
     exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
     ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
                   applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,null);
