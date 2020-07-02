@@ -585,6 +585,11 @@ function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
     print('Setting resample method to ',resampleMethod);
     ls = ls.map(function(img){return img.resample(resampleMethod)});
   }
+  
+  else if(resampleMethod === 'aggregate'){
+    print('Setting to aggregate instead of resample ');
+    ls = ls.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
+  }
   return ls;
 }
 var getImageCollection = getLandsat;
