@@ -2336,7 +2336,6 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
 //Wrapper function for getting Landsat imagery
 function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   timebuffer,weights,compositingMethod,
-  toaOrSR,includeSLCOffL7,defringeL5,
   applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   cloudHeights,
@@ -2442,6 +2441,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
 //Hybrid get Landsat and Sentinel 2 wrapper function
 //Handles getting processed scenes and composites with Landsat and Sentinel 2
 function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
+  timebuffer,weights,compositingMethod,
   toaOrSR,includeSLCOffL7,defringeL5,
   applyQABand,applyShadowShift,
   applyCloudScore,applyTDOM,
