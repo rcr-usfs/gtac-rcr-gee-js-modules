@@ -222,7 +222,7 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,landsatResampleMethod,aggregateInsteadOfResample,convertToDailyMosaics,runChastainHarmonization,
+  contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs){
   
@@ -231,7 +231,7 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,sentinel2ResampleMethod,false,
+  contractPixels,dilatePixels,landsatResampleMethod,false,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs
   );
   
@@ -240,7 +240,7 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   cloudHeights,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
+  contractPixels,dilatePixels,sentinel2ResampleMethod,toaOrSR,convertToDailyMosaics,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs,aggregateInsteadOfResample
   )
   // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
@@ -342,7 +342,7 @@ getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,aggregateInsteadOfResample,convertToDailyMosaics,runChastainHarmonization,
+  contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,aggregateInsteadOfResample,convertToDailyMosaics,runChastainHarmonization,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs)
 //Get Landsat and Sentinel 2 raw images
