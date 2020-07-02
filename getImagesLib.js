@@ -2160,7 +2160,6 @@ function getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJu
   ){
     
     
-
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'SR'}
   if(includeSLCOffL7 === undefined || includeSLCOffL7 === null){includeSLCOffL7 = false}
   if(defringeL5 === undefined || defringeL5 === null){defringeL5 = false}
@@ -2277,7 +2276,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
   if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
   if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
-  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
+  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'aggregate'}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
   if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
   // Prepare dates
@@ -2369,7 +2368,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/iwhousman/test'}
   if(crs === undefined || crs === null){crs = 'EPSG:5070'}
   if((scale === undefined || scale === null) && (transform === undefined || transform === null)){scale = 20;transform = null;}
-  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
+  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'aggregate'}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
   if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
   
@@ -2453,6 +2452,43 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   exportComposites,outputName,exportPathRoot,crs,transform,scale,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs){
+  
+  if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
+  if(weights === undefined || weights === null){weights = [1]}
+  if(compositingMethod === undefined || compositingMethod === null){compositingMethod = 'medoid'}
+  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
+  if(includeSLCOffL7 === undefined || includeSLCOffL7 === null){includeSLCOffL7 = false}
+  if(defringeL5 === undefined || defringeL5 === null){defringeL5 = false}
+  if(applyQABand === undefined || applyQABand === null){applyQABand = false}
+  if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = true}
+  if(applyShadowShift === undefined || applyShadowShift === null){applyShadowShift = false}
+  if(applyTDOM === undefined || applyTDOM === null){applyTDOM = true}
+  if(applyFmaskCloudMask === undefined || applyFmaskCloudMask === null){applyFmaskCloudMask = true}
+  if(applyFmaskCloudShadowMask === undefined || applyFmaskCloudShadowMask === null){applyFmaskCloudShadowMask = true}
+  if(applyFmaskSnowMask === undefined || applyFmaskSnowMask === null){applyFmaskSnowMask = false}
+  if(cloudScoreThresh === undefined || cloudScoreThresh === null){cloudScoreThresh = 10}
+  if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
+  if(cloudScorePctl === undefined || cloudScorePctl === null){cloudScorePctl = 10}
+  if(cloudHeights === undefined || cloudHeights === null){cloudHeights = ee.List.sequence(500,10000,500)}
+  if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
+  if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
+  if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
+  if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
+  
+  if(landsatResampleMethod === undefined || landsatResampleMethod === null){landsatResampleMethod = 'near'}
+  if(sentinel2ResampleMethod === undefined || sentinel2ResampleMethod === null){sentinel2ResampleMethod = 'aggregate'}
+  if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
+  if(runChastainHarmonization === undefined || runChastainHarmonization === null){runChastainHarmonization = true}
+  
+  
+  if(correctIllumination === undefined || correctIllumination === null){correctIllumination = false}
+  if(correctScale === undefined || correctScale === null){correctScale = 250}
+  if(exportComposites === undefined || exportComposites === null){exportComposites = false}
+  if(outputName === undefined || outputName === null){outputName = 'Sentinel2-Composite'}
+  if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/iwhousman/test'}
+  if(crs === undefined || crs === null){crs = 'EPSG:5070'}
+  if((scale === undefined || scale === null) && (transform === undefined || transform === null)){scale = 20;transform = null;}
+  
   
   var ls = getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
