@@ -224,7 +224,7 @@ var processedAndComposites = getImagesLib.getLandsatAndSentinel2HybridWrapper(st
   applyQABand,applyShadowShift,
   applyCloudScore,applyTDOM,
   applyFmaskCloudMask,applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
+  cloudHeights,cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
