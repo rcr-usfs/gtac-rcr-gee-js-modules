@@ -2425,7 +2425,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
     var nonDivideBands = nonDivideBandDict[compositingMethod];
     exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
     ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-                  applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,null);
+                  applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,nonDivideBands);
   }
   
   return [s2s,ts];
