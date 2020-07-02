@@ -112,12 +112,18 @@ var dilatePixels = 2.5;
 var correctIllumination = false;
 var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
-//Choose the resampling method: 'near', 'bilinear', or 'bicubic'
-//Defaults to 'near'
+//Choose the resampling method: 'aggregate','near', 'bilinear', or 'bicubic'
+//Defaults to 'aggregate' for Sentinel 2 and 'near' for Landsat
+
+//Aggregate is generally useful for aggregating pixels when reprojecting instead of resampling
+//A good example would be reprojecting S2 data to 30 m
+
 //If method other than 'near' is chosen, any map drawn on the fly that is not
-//reprojected, will appear blurred
+//reprojected, will appear blurred or not really represented properly
 //Use .reproject to view the actual resulting image (this will slow it down)
-var resampleMethod = 'near';
+var landsatResampleMethod = 'near';
+
+var sentinel2ResampleMethod = 'aggregate';
 
 //Choose whether to harmonize S2 and OLI
 var harmonizeOLI = false;
@@ -200,7 +206,7 @@ if(useLandsat){
   processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,resampleMethod,harmonizeOLI,
+  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,landsatResampleMethod,harmonizeOLI,
   landsatPreComputedCloudScoreOffset,landsatTDOMMeans,landsatTDOMStdDevs
   ).map(getImagesLib.addSAVIandEVI)
   .select(ccdcParams.breakpointBands);
@@ -214,7 +220,7 @@ if(useS2){
   null,null,null,
   null,
   null,null,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,true,
+  contractPixels,dilatePixels,sentinel2ResampleMethod,toaOrSR,true,
   sentinel2PreComputedCloudScoreOffset,sentinel2TDOMMeans,sentinel2TDOMStdDevs);
 
   Map.addLayer(processedSentinel2Scenes.median(),getImagesLib.vizParamsFalse,'S2');
