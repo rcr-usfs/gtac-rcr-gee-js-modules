@@ -335,6 +335,8 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
       composites,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
       applyCloudScore,applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,nonDivideBands,'Landsat: '+[landsatResampleMethod,sentinel2ResampleMethod].join(' Sentinel2:'));
   }
+  
+  return [merged,composites];
 }
 ///////////////////////////////////////////////////////////////
 getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
