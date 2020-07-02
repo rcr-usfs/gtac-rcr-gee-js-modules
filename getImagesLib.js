@@ -371,10 +371,9 @@ function dailyMosaics(imgs){
     return imgs;
 }
 //////////////////////////////////////////////////////
-function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR,convertToDailyMosaics,aggregateInsteadOfResample){
-  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
+function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR,convertToDailyMosaics){
+  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'aggregate'}
   if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
-  if(aggregateInsteadOfResample === undefined || aggregateInsteadOfResample === null){aggregateInsteadOfResample = false}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
   toaOrSR = toaOrSR.toUpperCase();
   var s2CollectionDict = {'TOA':'COPERNICUS/S2','SR':'COPERNICUS/S2_SR'};
@@ -2252,7 +2251,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   cloudHeights,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
-  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev,aggregateInsteadOfResample
+  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
   ){
   
   
@@ -2271,7 +2270,6 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
   if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
-  if(aggregateInsteadOfResample === undefined || aggregateInsteadOfResample === null){aggregateInsteadOfResample = false}
   // Prepare dates
   //Wrap the dates if needed
   var wrapOffset = 0;
@@ -2284,7 +2282,7 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
 
   
   // Get Sentinel2 image collection
-  var s2s = getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR,convertToDailyMosaics,aggregateInsteadOfResample)
+  var s2s = getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR,convertToDailyMosaics)
   // Map.addLayer(s2s.median().reproject('EPSG:32612',null,30),{min:0.05,max:0.4,bands:'swir1,nir,red'});
   
   if(applyQABand){
@@ -2335,7 +2333,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
   exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics,
-  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev,aggregateInsteadOfResample){
+  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDe){
   
   
   if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
@@ -2364,7 +2362,6 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
   if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
-  if(aggregateInsteadOfResample === undefined || aggregateInsteadOfResample === null){aggregateInsteadOfResample = false}
   
   var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
   applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
@@ -2372,7 +2369,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   cloudHeights,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
-  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev,aggregateInsteadOfResample
+  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
   );
   
   
