@@ -153,7 +153,7 @@ var dilatePixels = 2.5;
 //If method other than 'near' is chosen, any map drawn on the fly that is not
 //reprojected, will appear blurred or not really represented properly
 //Use .reproject to view the actual resulting image (this will slow it down)
-var landsatResampleMethod = 'aggregate';
+var landsatResampleMethod = 'near';
 
 var sentinel2ResampleMethod = 'aggregate';
 
