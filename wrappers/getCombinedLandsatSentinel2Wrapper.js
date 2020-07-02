@@ -221,8 +221,9 @@ var scale = null;
 ///////////////////////////////////////////////////////////////
 var processedAndComposites = getImagesLib.getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,
-  applyQABand,applyCloudScore,applyFmaskCloudMask,applyTDOM,
-  applyFmaskCloudShadowMask,applyFmaskSnowMask,
+  applyQABand,applyShadowShift,
+  applyCloudScore,applyTDOM,
+  applyFmaskCloudMask,applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
