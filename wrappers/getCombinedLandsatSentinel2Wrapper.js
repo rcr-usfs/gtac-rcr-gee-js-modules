@@ -339,15 +339,34 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   return [merged,composites];
 }
 ///////////////////////////////////////////////////////////////
-getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
+var processedAndComposites = getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
   applyFmaskCloudShadowMask,applyFmaskSnowMask,
   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
-  preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs)
+  preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs);
 
+//Separate into scenes and composites for subsequent analysis
+var processedScenes = processedAndComposites[0];
+var processedComposites = processedAndComposites[1];
+
+////////////////////////////////////////////////////////////////////////////////
+// Load the study region, with a blue outline.
+// Create an empty image into which to paint the features, cast to byte.
+// Paint all the polygon edges with the same number and width, display.
+var empty = ee.Image().byte();
+var outline = empty.paint({
+  featureCollection: studyArea,
+  color: 1,
+  width: 3
+});
+Map.addLayer(outline, {palette: '0000FF'}, "Study Area", false);
+// Map.centerObject(studyArea, 6);
+
+Map.setOptions('hybrid')
+////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 //Code for starting all tasks once this script has ran
 //Press f12, then paste functions into console
