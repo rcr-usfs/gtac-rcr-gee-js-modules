@@ -28,7 +28,7 @@ var studyArea = geometry;
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
 var startJulian = 190;
-var endJulian = 250; 
+var endJulian = 200; 
 
 // 3. Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
@@ -143,12 +143,12 @@ var contractPixels = 1.5;
 // (2.5 or 3.5 generally is sufficient)
 var dilatePixels = 2.5;
 
-//Choose the resampling method: 'near', 'bilinear', or 'bicubic'
-//Defaults to 'near'
+//Choose the resampling method: 'aggregate','near', 'bilinear', or 'bicubic'
+//Defaults to 'aggregate'
 //If method other than 'near' is chosen, any map drawn on the fly that is not
-//reprojected, will appear blurred
+//reprojected, will appear blurred or not really represented properly
 //Use .reproject to view the actual resulting image (this will slow it down)
-var resampleMethod = 'near';
+var resampleMethod = 'aggregate';
 
 //Choose whether to apply the above resampling method or an aggregation method
 //This is generally useful for aggregating pixels when reprojecting instead of resampling
@@ -211,7 +211,7 @@ var s2sAndTs =getImagesLib.getSentinel2Wrapper(studyArea,startYear,endYear,start
   contractPixels,dilatePixels,
   correctIllumination,correctScale,
   exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics,
-  preComputedCloudScoreOffset,preComputedTDOMMeans,preComputedTDOMStdDevs,aggregateInsteadOfResample);
+  preComputedCloudScoreOffset,preComputedTDOMMeans,preComputedTDOMStdDevs);
 
 
 //Separate into scenes and composites for subsequent analysis
