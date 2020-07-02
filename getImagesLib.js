@@ -1913,10 +1913,9 @@ collection,startYear,endYear,startJulian,endJulian,compositingReducer,timebuffer
 function exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
 collection,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
 applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,
-nonDivideBands,){
-  if(nonDivideBands === undefined || nonDivideBands === null){
-    nonDivideBands = ['temp'];
-  }
+nonDivideBands,resampleMethod){
+  if(nonDivideBands === undefined || nonDivideBands === null){ nonDivideBands = ['temp']}
+  if(resampleMethod === undefined || resampleMethod === null){ resampleMethod = 'near'}
   collection = collection.select(exportBands);
   print('Export bands:',exportBands);
   print('Non divide bands:',nonDivideBands);
@@ -1976,7 +1975,8 @@ nonDivideBands,){
       'applyFmaskSnowMask': applyFmaskSnowMask.toString(),
       'compositingMethod': compositingMethod,
       'includeSLCOffL7': includeSLCOffL7.toString(),
-      'correctIllumination':correctIllumination.toString()
+      'correctIllumination':correctIllumination.toString(),
+      'resampleMethod':resampleMethod
     });
   
     // Export the composite 
