@@ -242,7 +242,7 @@ function getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,en
   zScoreThresh,shadowSumThresh,
   contractPixels,dilatePixels,sentinel2ResampleMethod,toaOrSR,convertToDailyMosaics,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs
-  )
+  );
   // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
   // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
   
@@ -345,79 +345,7 @@ getLandsatAndS2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs)
-//Get Landsat and Sentinel 2 raw images
-// var ls = getImagesLib.getImageCollection(studyArea,startDate,endDate,startJulian,endJulian,
-//     toaOrSR,includeSLCOffL7,defringeL5);
-// var s2s = getImagesLib.getS2(studyArea,startDate,endDate,startJulian,endJulian);
-// Map.addLayer(ls.first(),getImagesLib.vizParamsFalse,'Landsat Single Image No Masking',false);
-// Map.addLayer(s2s.first(),getImagesLib.vizParamsFalse,'S2 Single Image No Masking',false);
 
-
-
-
-// //Apply respective cloudScore functions
-// ls = getImagesLib.applyCloudScoreAlgorithm(ls,getImagesLib.landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset);
-// s2s = getImagesLib.applyCloudScoreAlgorithm(s2s,getImagesLib.sentinel2CloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset);
-// Map.addLayer(ls.first(),getImagesLib.vizParamsFalse,'Landsat Single Image Cloud Masking',false);
-// Map.addLayer(s2s.first(),getImagesLib.vizParamsFalse,'S2 Single Image Cloud Masking',false);
-
-// //Set a property for splitting apart later
-// ls = ls.map(function(img){return img.float().set('whichProgram','Landsat')});
-// s2s = s2s.map(function(img){return img.float().set('whichProgram','Sentinel2')});
-
-// //Merge collections
-// var merged = ls.merge(s2s);
-
-// //Perform TDOM
-// merged = getImagesLib.simpleTDOM2(merged,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels);
-
-// //Seperate back out and select common band names
-// ls = merged.filter(ee.Filter.eq('whichProgram','Landsat')).select(['blue','green','red','nir','swir1','swir2']);
-// s2s = merged.filter(ee.Filter.eq('whichProgram','Sentinel2')).select(['blue','green','red','nir','swir1','swir2']);
-
-// //Seperate each sensor for correction
-// //Seperate TM/ETM+
-// var tm = ls.filter(ee.Filter.inList('SATELLITE',['LANDSAT_7','LANDSAT_5']));
-// //Fill if no ETM+ or TM images
-// tm = getImagesLib.fillEmptyCollections(tm,ee.Image(ls.first()));
-// //Seperate OLI
-// var oli = ls.filter(ee.Filter.inList('SATELLITE',['LANDSAT_8']));
-
-// //Seperate MSI
-// var msi = s2s;
-
-// Map.addLayer(ls.first(),getImagesLib.vizParamsFalse,'Landsat Single Image Cloud/Shadow Masking',false);
-// Map.addLayer(s2s.first(),getImagesLib.vizParamsFalse,'S2 Single Image Cloud/Shadow Masking',false);
-
-// //Apply correction
-// //Currently coded to go to ETM+
-
-// //No need to correct ETM to ETM
-// // tm = tm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
-
-// //Harmonize the other two
-// oli = oli.map(function(img){return getImagesLib.harmonizationChastain(img, 'OLI','ETM')});
-// msi = msi.map(function(img){return getImagesLib.harmonizationChastain(img, 'MSI','ETM')});
-
-// ls = ee.ImageCollection(tm.merge(oli));
-// s2s = msi;
-
-// Map.addLayer(ls.first(),getImagesLib.vizParamsFalse,'Landsat Single Image Cloud/Shadow Masking Harmonization',false);
-// Map.addLayer(s2s.first(),getImagesLib.vizParamsFalse,'S2 Single Image Cloud/Shadow Masking Harmonization',false);
-
-// //Merge them after harmonization
-// var merged = ee.ImageCollection(ls.merge(s2s));
-
-// //Create hybrid composites
-// var composites = getImagesLib.compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
-
-// if(exportComposites){// Export composite collection
-  
-//     var exportBands = ['blue', 'green', 'red','nir','swir1', 'swir2'];
-//     getImagesLib.exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
-// composites,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-// true, false,true,false,false,includeSLCOffL7,false,null);
-//   }
 /////////////////////////////////////////////////////
 //Code for starting all tasks once this script has ran
 //Press f12, then paste functions into console
