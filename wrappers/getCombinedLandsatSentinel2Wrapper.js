@@ -217,25 +217,28 @@ var scale = null;
 ///////////////////////////////////////////////////////////////////////
 //Start function calls
 ////////////////////////////////////////////////////////////////////////////////
-
+function test(args,second){
+  print(typeof(args))
+}
+test(args,second)
 ///////////////////////////////////////////////////////////////
-var processedAndComposites = getImagesLib.getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
-  timebuffer,weights,compositingMethod,
-  toaOrSR,includeSLCOffL7,defringeL5,
-  applyQABand,applyShadowShift,
-  applyCloudScore,applyTDOM,
-  applyFmaskCloudMask,applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudHeights,cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
-  correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale,
-  preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
-  preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs);
+// var processedAndComposites = getImagesLib.getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
+//   timebuffer,weights,compositingMethod,
+//   toaOrSR,includeSLCOffL7,defringeL5,
+//   applyQABand,applyShadowShift,
+//   applyCloudScore,applyTDOM,
+//   applyFmaskCloudMask,applyFmaskCloudShadowMask,applyFmaskSnowMask,
+//   cloudHeights,cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
+//   zScoreThresh,shadowSumThresh,
+//   contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
+//   correctIllumination,correctScale,
+//   exportComposites,outputName,exportPathRoot,crs,transform,scale,
+//   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
+//   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs);
 
-//Separate into scenes and composites for subsequent analysis
-var processedScenes = processedAndComposites[0];
-var processedComposites = processedAndComposites[1];
+// //Separate into scenes and composites for subsequent analysis
+// var processedScenes = processedAndComposites[0];
+// var processedComposites = processedAndComposites[1];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the study region, with a blue outline.
