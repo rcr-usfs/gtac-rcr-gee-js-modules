@@ -408,6 +408,8 @@ function dailyMosaics(imgs){
     return imgs;
 }
 //////////////////////////////////////////////////////
+//Function for acquiring Sentinel2 imagery
+//See default arguments below
 function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR,convertToDailyMosaics){
   var defaultArgs = {
     'studyArea':null,
@@ -415,19 +417,15 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
     'endDate':null,
     'startJulian':null,
     'endJulian':null,
+    'resampleMethod':'aggregate',
     'toaOrSR':'TOA',
-    'includeSLCOffL7':false,
-    'defringeL5':false,
-    'addPixelQA':false,
-    'resampleMethod':'near'
+    'convertToDailyMosaics':true
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
-  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'aggregate'}
-  if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
-  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
-  toaOrSR = toaOrSR.toUpperCase();
+  print(args)
+
   var s2CollectionDict = {'TOA':'COPERNICUS/S2','SR':'COPERNICUS/S2_SR'};
   var sensorBandDict = {
       'SR': ['B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9', 'B11','B12'],
@@ -440,25 +438,25 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
     
    
   //Get some s2 data
-  var s2s = ee.ImageCollection(s2CollectionDict[toaOrSR])
-                    .filterDate(startDate,endDate)
-                    .filter(ee.Filter.calendarRange(startJulian,endJulian))
-                    .filterBounds(studyArea)
+  var s2s = ee.ImageCollection(s2CollectionDict[args.toaOrSR])
+                    .filterDate(args.startDate,args.endDate)
+                    .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+                    .filterBounds(args.studyArea)
                     .map(function(img){
                       
-                      var t = img.select(sensorBandDict[toaOrSR]).divide(10000);//Rescale to 0-1
+                      var t = img.select(sensorBandDict[args.toaOrSR]).divide(10000);//Rescale to 0-1
                       t = t.addBands(img.select(['QA60']));
                       var out = t.copyProperties(img).copyProperties(img,['system:time_start']);
                     return out;
                       })
-                      .select(['QA60'].concat(sensorBandDict[toaOrSR]),['QA60'].concat(sensorBandNameDict[toaOrSR]));
+                      .select(['QA60'].concat(sensorBandDict[args.toaOrSR]),['QA60'].concat(sensorBandNameDict[args.toaOrSR]));
                       // .map(function(img){return img.resample('bicubic') }) ;
 
   s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
-
-  if(['bilinear','bicubic'].indexOf(resampleMethod) > -1){
-    print('Setting resample method to ',resampleMethod);
-    s2s = s2s.map(function(img){return img.resample(resampleMethod)});
+  
+  if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
+    print('Setting resample method to ',args.resampleMethod);
+    s2s = s2s.map(function(img){return img.resample(args.resampleMethod)});
   }
   else if(resampleMethod === 'aggregate'){
     print('Setting to aggregate instead of resample ');
@@ -466,18 +464,18 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
   }
   
   //Convert to daily mosaics to avoid redundent observations in MGRS overlap areas and edge artifacts for shadow masking
-  if(convertToDailyMosaics){
+  if(args.convertToDailyMosaics){
     s2s = dailyMosaics(s2s);
   }
-return s2s;
+  return s2s.set(args);
 }
-// var getImageCollection = getLandsat;
-// var out = getLandsat({'studyArea':geometry,
-//                       'startDate':ee.Date.fromYMD(2000,1,1),
-//                       'endDate':ee.Date.fromYMD(2001,1,1),
-//                       'startJulian':190,
-//                       'endJulian':250,'defringeL5':true});
-// print(out)
+
+var out = getS2({'studyArea':geometry,
+                      'startDate':ee.Date.fromYMD(2019,1,1),
+                      'endDate':ee.Date.fromYMD(2020,1,1),
+                      'startJulian':190,
+                      'endJulian':250,'defringeL5':true});
+print(out)
 // Map.addLayer(out.median(),{})
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
@@ -665,7 +663,7 @@ function getLandsat(){
   
   return ls.set(args);
 }
-
+var getImageCollection = getLandsat;
 ////////////////////////////////////////////////////////////////////////////////
 // Helper function to apply an expression and linearly rescale the output.
 // Used in the landsatCloudScore function below.
