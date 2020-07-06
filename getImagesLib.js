@@ -52,10 +52,17 @@ function prepArgumentsObject(args,defaultArgs){
   args = {};
   Object.keys(defaultArgs).forEach(function(key, i) { 
     var value;
-    if(typeof(argList[0]) === 'object' && argList.length === 1){
+    try{
       value = argList[0][key];
-    }else{value = argList[i]}
-    
+    }catch(err){
+      print(err);
+      value = argList[i]
+    }
+    print
+    // if(typeof(argList[0]) === 'object'){
+    //   value = argList[0][key];
+    // }else{value = argList[i]}
+    // print(typeof(argList[0]))
     if(value === undefined || value === null){
       value = defaultArgs[key];
     }
@@ -66,12 +73,14 @@ function prepArgumentsObject(args,defaultArgs){
 //////////////////////////////////////////////////
 //Function to set null value for export or conversion to arrays
 function setNoData(image,noDataValue){
-  var args = prepArgumentsObject(arguments,{'image':null,'noDataValue':-32768});
+  // var args = prepArgumentsObject(arguments,{'image':null,'noDataValue':-32768});
   // var m = image.mask();
   // image = image.mask(ee.Image(1));
   // image = image.where(m.not(),noDataValue);
-  return args.image.unmask(args.noDataValue,false);
+  // print(args);
+  return image.unmask(noDataValue,false);
 }
+setNoData(ee.Image(1))
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 //Functions to perform basic clump and elim
