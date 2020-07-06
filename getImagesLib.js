@@ -66,10 +66,11 @@ function prepArgumentsObject(args,defaultArgs){
 //////////////////////////////////////////////////
 //Function to set null value for export or conversion to arrays
 function setNoData(image,noDataValue){
+  var args = prepArgumentsObject(arguments,{'image':null,'noDataValue':-32768})
   // var m = image.mask();
   // image = image.mask(ee.Image(1));
   // image = image.where(m.not(),noDataValue);
-  return image.unmask(noDataValue,false);
+  return args.image.unmask(args.noDataValue,false);
 }
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
