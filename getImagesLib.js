@@ -178,6 +178,7 @@ function harmonizationChastain(img, fromSensor,toSensor){
 }
 ///////////////////////////////////////////////////////////
 //Function to create a multiband image from a collection
+//Has been replaced by imageCollection.toBands()
 function collectionToImage(collection){
   var stack = ee.Image(collection.iterate(function(img, prev) {
     return ee.Image(prev).addBands(img);
