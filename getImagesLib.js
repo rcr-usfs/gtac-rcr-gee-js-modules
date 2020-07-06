@@ -47,6 +47,7 @@ var changeDirDict = {
 //Function to prep arguments into standardized object regardless of format parameters are provided in
 //args are the default arguments keyword for the function
 //defaultArgs is an object containing each key and default value needed for the function
+//Leave any defaultArg as null if it is needed but a default is not provided
 function prepArgumentsObject(args,defaultArgs){
   var argList = [].slice.call(args);
   args = {};
@@ -459,6 +460,7 @@ return s2s;
 // Function for acquiring Landsat TOA image collection
 function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod){
+  
   var defaultArgs = {
     'studyArea':null,
     'startDate':null,
@@ -466,14 +468,14 @@ function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
     'startJulian':null,
     'endJulian':null,
     'toaOrSR':'TOA',
-    
-    }
+    'includeSLCOffL7':false,
+    'defringeL5':false,
+    'addPixelQA':false,
+    'resampleMethod':'near'
+    };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
-  print(args);
-  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
-  if(defringeL5 === null || defringeL5 === undefined){defringeL5 = false}
-  if(addPixelQA === null || addPixelQA === undefined){addPixelQA = false}
+  args.toaOrSR =  args.toaOrSR.toUpperCase();
   
   // Set up bands and corresponding band names
   var sensorBandDict = {
@@ -639,6 +641,7 @@ function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
   return ls;
 }
 var getImageCollection = getLandsat;
+getLandsat(geometry,ee.Date.fromYMD(2000,1,1),ee.Date.fromYMD(2001,1,1),190,250)
 ////////////////////////////////////////////////////////////////////////////////
 // Helper function to apply an expression and linearly rescale the output.
 // Used in the landsatCloudScore function below.
