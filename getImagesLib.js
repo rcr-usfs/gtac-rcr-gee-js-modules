@@ -809,7 +809,7 @@ function applyCloudScoreAlgorithm(){
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
- 
+  print(args)
   
   // Add cloudScore
   args.collection = args.collection.map(function(img){
