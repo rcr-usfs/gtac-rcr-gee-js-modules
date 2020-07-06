@@ -50,22 +50,27 @@ var changeDirDict = {
 function prepArgumentsObject(args,defaultArgs){
   var argList = [].slice.call(args);
   args = {};
-  Object.keys(defaultArgs).forEach(function(key, i) { 
+  
+  //See if first argument is an ee object instead of a vanilla js object
+  var firstArgumentIsEEObj = false;
+  try{
+      var t=argList[0].serialize();
+      firstArgumentIsEEObj = true;
+      }catch(err){
+        
+      }
+  //Iterate through each expected argument to create the obj with all parameters
+  Object.keys(defaultArgs).forEach(function(key, i) {
     var value;
-    try{
+    if(typeof(argList[0]) === 'object' && argList.length === 1 && !firstArgumentIsEEObj){
       value = argList[0][key];
-    }catch(err){
-      print(err);
-      value = argList[i]
-    }
-    print
-    // if(typeof(argList[0]) === 'object'){
-    //   value = argList[0][key];
-    // }else{value = argList[i]}
-    // print(typeof(argList[0]))
+    }else{value = argList[i]}
+    
+    //Fill in default value if non is provided or it is null
     if(value === undefined || value === null){
       value = defaultArgs[key];
     }
+    // console.log(value)
       args[key] = value;
     });
   return args;
@@ -73,24 +78,24 @@ function prepArgumentsObject(args,defaultArgs){
 //////////////////////////////////////////////////
 //Function to set null value for export or conversion to arrays
 function setNoData(image,noDataValue){
-  // var args = prepArgumentsObject(arguments,{'image':null,'noDataValue':-32768});
+  var args = prepArgumentsObject(arguments,{'image':null,'noDataValue':-32768});
   // var m = image.mask();
   // image = image.mask(ee.Image(1));
   // image = image.where(m.not(),noDataValue);
   // print(args);
-  return image.unmask(noDataValue,false);
+  return args.image.unmask(args.noDataValue,false);
 }
-setNoData(ee.Image(1))
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 //Functions to perform basic clump and elim
 function sieve(image,mmu){
-  var connected = image.connectedPixelCount(mmu+20);
-  Map.addLayer(connected,{'min':1,'max':mmu},'connected');
-  var elim = connected.gt(mmu);
-  var mode = image.focal_mode(mmu/2,'circle');
-  mode = mode.mask(image.mask());
-  var filled = image.where(elim.not(),mode);
+  var args = prepArgumentsObject(arguments,{'image':null,'mmu':4});
+  var connected = args.image.connectedPixelCount(args.mmu+20);
+  Map.addLayer(connected,{'min':1,'max':args.mmu},'connected');
+  var elim = connected.gt(args.mmu);
+  var mode = args.image.focal_mode(args.mmu/2,'circle');
+  mode = mode.mask(args.image.mask());
+  var filled = args.image.where(elim.not(),mode);
   return filled;
 }
 
