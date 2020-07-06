@@ -827,7 +827,7 @@ function applyCloudScoreAlgorithm(){
       // Map.addLayer(minCloudScore,{'min':0,'max':30},'minCloudScore',false);
     }else{
       print('Using pre-computed cloudScore offset');
-      minCloudScore = preComputedCloudScoreOffset.rename(['cloudScore']);
+      minCloudScore = args.preComputedCloudScoreOffset.rename(['cloudScore']);
     }
   }else{
     print('Not computing cloudScore offset');
