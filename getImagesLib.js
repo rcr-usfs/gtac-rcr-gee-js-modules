@@ -812,7 +812,7 @@ function applyCloudScoreAlgorithm(){
  
   
   // Add cloudScore
-  var collection = args.collection.map(function(img){
+  args.collection = args.collection.map(function(img){
     var cs = args.cloudScoreFunction(img).rename(['cloudScore']);
     return img.addBands(cs);
   });
@@ -822,7 +822,7 @@ function applyCloudScoreAlgorithm(){
     if(args.preComputedCloudScoreOffset === null){
       print('Computing cloudScore offset');
       // Find low cloud score pctl for each pixel to avoid comission errors
-      minCloudScore = collection.select(['cloudScore'])
+      minCloudScore = args.collection.select(['cloudScore'])
         .reduce(ee.Reducer.percentile([args.cloudScorePctl]));
       // Map.addLayer(minCloudScore,{'min':0,'max':30},'minCloudScore',false);
     }else{
@@ -835,14 +835,14 @@ function applyCloudScoreAlgorithm(){
   }
   
   // Apply cloudScore
-  var collection = args.collection.map(function(img){
+  args.collection = args.collection.map(function(img){
     var cloudMask = img.select(['cloudScore']).subtract(minCloudScore)
       .lt(args.cloudScoreThresh)
       .focal_max(args.contractPixels).focal_min(args.dilatePixels).rename('cloudMask');
     return img.updateMask(cloudMask);
   });
   
-  return collection.set(args);
+  return args.collection.set(args);
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Functions for applying fmask to SR data
