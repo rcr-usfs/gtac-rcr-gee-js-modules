@@ -835,7 +835,7 @@ function applyCloudScoreAlgorithm(){
   }
   
   // Apply cloudScore
-  var collection = collection.map(function(img){
+  var collection = args.collection.map(function(img){
     var cloudMask = img.select(['cloudScore']).subtract(minCloudScore)
       .lt(args.cloudScoreThresh)
       .focal_max(args.contractPixels).focal_min(args.dilatePixels).rename('cloudMask');
