@@ -459,7 +459,7 @@ function getS2(){
     print('Setting resample method to ',args.resampleMethod);
     s2s = s2s.map(function(img){return img.resample(args.resampleMethod)});
   }
-  else if(resampleMethod === 'aggregate'){
+  else if(args.resampleMethod === 'aggregate'){
     print('Setting to aggregate instead of resample ');
     s2s = s2s.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
   }
