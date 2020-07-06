@@ -51,7 +51,6 @@ var changeDirDict = {
 //Leave any defaultArg as null if it is needed but a default is not provided
 function prepArgumentsObject(args,defaultArgs){
   var argList = [].slice.call(args);
-  print('alist',argList)
   args = {};
   
   //See if first argument is an ee object instead of a vanilla js object
@@ -472,13 +471,13 @@ function getS2(){
   return s2s.set(args);
 }
 
-// var out = getS2({'studyArea':geometry,
-//                       'startDate':ee.Date.fromYMD(2019,1,1),
-//                       'endDate':ee.Date.fromYMD(2020,1,1),
-//                       'startJulian':190,
-//                       'endJulian':250,'defringeL5':true});
-// print(out)
-// // Map.addLayer(out.median(),{})
+var out = getS2({'studyArea':geometry,
+                      'startDate':ee.Date.fromYMD(2019,1,1),
+                      'endDate':ee.Date.fromYMD(2020,1,1),
+                      'startJulian':190,
+                      'endJulian':250,'defringeL5':true});
+print(out)
+// Map.addLayer(out.median(),{})
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
 //See default arguments below
@@ -796,8 +795,8 @@ function landsatCloudScore(img) {
 }
 ////////////////////////////////////////////////////////////////////////////////
 //Wrapper for applying cloudScore function
-//Required arguments: collection,cloudScoreFunction
-function applyCloudScoreAlgorithm(){
+//Required params: collection,cloudScoreFunction
+function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset,preComputedCloudScoreOffset){
   var defaultArgs = {
     'collection':null,
     'cloudScoreFunction':null,
@@ -810,25 +809,27 @@ function applyCloudScoreAlgorithm(){
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
-  print(args)
+ 
   
+  if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
+  if(preComputedCloudScoreOffset === undefined || preComputedCloudScoreOffset === null){preComputedCloudScoreOffset = null};
   // Add cloudScore
-  args.collection = args.collection.map(function(img){
-    var cs = args.cloudScoreFunction(img).rename(['cloudScore']);
+  var collection = collection.map(function(img){
+    var cs = cloudScoreFunction(img).rename(['cloudScore']);
     return img.addBands(cs);
   });
 
-  if(args.performCloudScoreOffset){
+  if(performCloudScoreOffset){
     var minCloudScore;
-    if(args.preComputedCloudScoreOffset === null){
+    if(preComputedCloudScoreOffset === null){
       print('Computing cloudScore offset');
       // Find low cloud score pctl for each pixel to avoid comission errors
-      minCloudScore = args.collection.select(['cloudScore'])
-        .reduce(ee.Reducer.percentile([args.cloudScorePctl]));
+      minCloudScore = collection.select(['cloudScore'])
+        .reduce(ee.Reducer.percentile([cloudScorePctl]));
       // Map.addLayer(minCloudScore,{'min':0,'max':30},'minCloudScore',false);
     }else{
       print('Using pre-computed cloudScore offset');
-      minCloudScore = args.preComputedCloudScoreOffset.rename(['cloudScore']);
+      minCloudScore = preComputedCloudScoreOffset.rename(['cloudScore']);
     }
   }else{
     print('Not computing cloudScore offset');
@@ -836,14 +837,14 @@ function applyCloudScoreAlgorithm(){
   }
   
   // Apply cloudScore
-  args.collection = args.collection.map(function(img){
+  var collection = collection.map(function(img){
     var cloudMask = img.select(['cloudScore']).subtract(minCloudScore)
-      .lt(args.cloudScoreThresh)
-      .focal_max(args.contractPixels).focal_min(args.dilatePixels).rename('cloudMask');
+      .lt(cloudScoreThresh)
+      .focal_max(contractPixels).focal_min(dilatePixels).rename('cloudMask');
     return img.updateMask(cloudMask);
   });
   
-  return args.collection.set(args);
+  return collection;
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Functions for applying fmask to SR data
