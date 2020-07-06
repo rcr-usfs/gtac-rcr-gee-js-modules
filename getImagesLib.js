@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -408,6 +409,21 @@ function dailyMosaics(imgs){
 }
 //////////////////////////////////////////////////////
 function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR,convertToDailyMosaics){
+  var defaultArgs = {
+    'studyArea':null,
+    'startDate':null,
+    'endDate':null,
+    'startJulian':null,
+    'endJulian':null,
+    'toaOrSR':'TOA',
+    'includeSLCOffL7':false,
+    'defringeL5':false,
+    'addPixelQA':false,
+    'resampleMethod':'near'
+    };
+  
+  var args = prepArgumentsObject(arguments,defaultArgs);
+  args.toaOrSR =  args.toaOrSR.toUpperCase();
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'aggregate'}
   if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
   if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
@@ -455,11 +471,18 @@ function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,
   }
 return s2s;
 }
-
+// var getImageCollection = getLandsat;
+// var out = getLandsat({'studyArea':geometry,
+//                       'startDate':ee.Date.fromYMD(2000,1,1),
+//                       'endDate':ee.Date.fromYMD(2001,1,1),
+//                       'startJulian':190,
+//                       'endJulian':250,'defringeL5':true});
+// print(out)
+// Map.addLayer(out.median(),{})
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
-function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
-  toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod){
+//See arguments below
+function getLandsat(){
   
   var defaultArgs = {
     'studyArea':null,
@@ -515,53 +538,54 @@ function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
     'TOA': ee.Image([1,1,1,1,1,1,1,1]),
     'SR': ee.Image([0.0001,0.0001,0.0001,0.0001,0.0001,0.1,0.0001,1])
   };
+  
   // Get Landsat data
-  var l4s = ee.ImageCollection(collectionDict['L4'+ toaOrSR])
-    .filterDate(startDate,endDate)
-    .filter(ee.Filter.calendarRange(startJulian,endJulian))
-    .filterBounds(studyArea)
+  var l4s = ee.ImageCollection(collectionDict['L4'+ args.toaOrSR])
+    .filterDate(args.startDate,args.endDate)
+    .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+    .filterBounds(args.studyArea)
     .filter(ee.Filter.lte('WRS_ROW',120))
-    .select(sensorBandDict['L4'+ toaOrSR],sensorBandNameDict[toaOrSR]);
+    .select(sensorBandDict['L4'+ args.toaOrSR],sensorBandNameDict[args.toaOrSR]);
     
   
   // Get Landsat data
-  var l5s = ee.ImageCollection(collectionDict['L5'+ toaOrSR])
-    .filterDate(startDate,endDate)
-    .filter(ee.Filter.calendarRange(startJulian,endJulian))
-    .filterBounds(studyArea)
+  var l5s = ee.ImageCollection(collectionDict['L5'+ args.toaOrSR])
+    .filterDate(args.startDate,args.endDate)
+    .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+    .filterBounds(args.studyArea)
     .filter(ee.Filter.lte('WRS_ROW',120))
-    .select(sensorBandDict['L5'+ toaOrSR],sensorBandNameDict[toaOrSR]);
+    .select(sensorBandDict['L5'+ args.toaOrSR],sensorBandNameDict[args.toaOrSR]);
     
-  if(defringeL5){
+  if(args.defringeL5){
     print('Defringing L5');
     l4s = l4s.map(defringeLandsat);
     l5s = l5s.map(defringeLandsat);
   }
-  var l8s = ee.ImageCollection(collectionDict['L8'+ toaOrSR])
-    .filterDate(startDate,endDate)
-    .filter(ee.Filter.calendarRange(startJulian,endJulian))
-    .filterBounds(studyArea)
+  var l8s = ee.ImageCollection(collectionDict['L8'+ args.toaOrSR])
+    .filterDate(args.startDate,args.endDate)
+    .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+    .filterBounds(args.studyArea)
     .filter(ee.Filter.lte('WRS_ROW',120))
-    .select(sensorBandDict['L8'+ toaOrSR],sensorBandNameDict[toaOrSR]);
+    .select(sensorBandDict['L8'+ args.toaOrSR],sensorBandNameDict[args.toaOrSR]);
   
   var ls; var l7s;
-  if (includeSLCOffL7) {
+  if (args.includeSLCOffL7) {
     print('Including All Landsat 7');
-    l7s = ee.ImageCollection(collectionDict['L7'+toaOrSR])
-      .filterDate(startDate,endDate)
-      .filter(ee.Filter.calendarRange(startJulian,endJulian))
-      .filterBounds(studyArea)
+    l7s = ee.ImageCollection(collectionDict['L7'+args.toaOrSR])
+      .filterDate(args.startDate,args.endDate)
+      .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+      .filterBounds(args.studyArea)
       .filter(ee.Filter.lte('WRS_ROW',120))
-      .select(sensorBandDict['L7'+ toaOrSR],sensorBandNameDict[ toaOrSR]);
+      .select(sensorBandDict['L7'+ args.toaOrSR],sensorBandNameDict[ args.toaOrSR]);
   } else {
     print('Only including SLC On Landsat 7');
-    l7s = ee.ImageCollection(collectionDict['L7'+toaOrSR])
+    l7s = ee.ImageCollection(collectionDict['L7'+args.toaOrSR])
       .filterDate(ee.Date.fromYMD(1998,1,1),ee.Date.fromYMD(2003,5,31))
-      .filterDate(startDate,endDate)
-      .filter(ee.Filter.calendarRange(startJulian,endJulian))
-      .filterBounds(studyArea)
+      .filterDate(args.startDate,args.endDate)
+      .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+      .filterBounds(args.studyArea)
       .filter(ee.Filter.lte('WRS_ROW',120))
-      .select(sensorBandDict['L7'+ toaOrSR],sensorBandNameDict[toaOrSR]);
+      .select(sensorBandDict['L7'+ args.toaOrSR],sensorBandNameDict[args.toaOrSR]);
   }
   
   // Merge collections
@@ -569,25 +593,25 @@ function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
   
   
   //If TOA and Fmask need to merge Fmask qa bits with toa- this gets the qa band from the sr collections
-  if(toaOrSR.toLowerCase() === 'toa' && addPixelQA === true){
+  if(args.toaOrSR.toLowerCase() === 'toa' && args.addPixelQA === true){
     print('Acquiring SR qa bands for applying Fmask to TOA data');
     var l4sTOAFMASK =  ee.ImageCollection(collectionDict['L4SR'])
-              .filterDate(startDate,endDate)
-              .filter(ee.Filter.calendarRange(startJulian,endJulian))
-              .filterBounds(studyArea)
+              .filterDate(args.startDate,args.endDate)
+              .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+              .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
               .select(sensorBandDict['L4SRFMASK'],sensorBandNameDict['SRFMASK']);
               
     var l5sTOAFMASK =  ee.ImageCollection(collectionDict['L5SR'])
-              .filterDate(startDate,endDate)
-              .filter(ee.Filter.calendarRange(startJulian,endJulian))
-              .filterBounds(studyArea)
+              .filterDate(args.startDate,args.endDate)
+              .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+              .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
               .select(sensorBandDict['L5SRFMASK'],sensorBandNameDict['SRFMASK']);
     var l8sTOAFMASK =  ee.ImageCollection(collectionDict['L8SR'])
-              .filterDate(startDate,endDate)
-              .filter(ee.Filter.calendarRange(startJulian,endJulian))
-              .filterBounds(studyArea)
+              .filterDate(args.startDate,args.endDate)
+              .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+              .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
               .select(sensorBandDict['L8SRFMASK'],sensorBandNameDict['SRFMASK']);
     
@@ -595,9 +619,9 @@ function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
     if(includeSLCOffL7){ 
       print('Including All Landsat 7 for TOA QA');
       var l7sTOAFMASK =  ee.ImageCollection(collectionDict['L7SR'])
-              .filterDate(startDate,endDate)
-              .filter(ee.Filter.calendarRange(startJulian,endJulian))
-              .filterBounds(studyArea)
+              .filterDate(args.startDate,args.endDate)
+              .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+              .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
               .select(sensorBandDict['L7SRFMASK'],sensorBandNameDict['SRFMASK']);
     
@@ -606,9 +630,9 @@ function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
       print('Only including SLC On Landat 7 for TOA QA');
       var l7sTOAFMASK =  ee.ImageCollection(collectionDict['L7SR'])
               .filterDate(ee.Date.fromYMD(1998,1,1),ee.Date.fromYMD(2003,5,31))
-              .filterDate(startDate,endDate)
-              .filter(ee.Filter.calendarRange(startJulian,endJulian))
-              .filterBounds(studyArea)
+              .filterDate(args.startDate,args.endDate)
+              .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+              .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
               .select(sensorBandDict['L7SRFMASK'],sensorBandNameDict['SRFMASK']);
     }
@@ -625,23 +649,23 @@ function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
   // Make sure all bands have data
   ls = ls.map(function(img){
     img = img.updateMask(img.mask().reduce(ee.Reducer.min()));
-    return img.multiply(multImageDict[toaOrSR]).float()
+    return img.multiply(multImageDict[args.toaOrSR]).float()
       .copyProperties(img,['system:time_start']).copyProperties(img);
   });
   
-  if(['bilinear','bicubic'].indexOf(resampleMethod) > -1){
-    print('Setting resample method to ',resampleMethod);
-    ls = ls.map(function(img){return img.resample(resampleMethod)});
+  if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
+    print('Setting resample method to ',args.resampleMethod);
+    ls = ls.map(function(img){return img.resample(args.resampleMethod)});
   }
   
-  else if(resampleMethod === 'aggregate'){
+  else if(args.resampleMethod === 'aggregate'){
     print('Setting to aggregate instead of resample ');
     ls = ls.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
   }
-  return ls;
+  
+  return ls.set(args);
 }
-var getImageCollection = getLandsat;
-getLandsat(geometry,ee.Date.fromYMD(2000,1,1),ee.Date.fromYMD(2001,1,1),190,250)
+
 ////////////////////////////////////////////////////////////////////////////////
 // Helper function to apply an expression and linearly rescale the output.
 // Used in the landsatCloudScore function below.
