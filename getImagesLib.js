@@ -459,7 +459,18 @@ return s2s;
 // Function for acquiring Landsat TOA image collection
 function getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod){
+  var defaultArgs = {
+    'studyArea':null,
+    'startDate':null,
+    'endDate':null,
+    'startJulian':null,
+    'endJulian':null,
+    'toaOrSR':'TOA',
+    
+    }
   
+  var args = prepArgumentsObject(arguments,defaultArgs);
+  print(args);
   if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   if(defringeL5 === null || defringeL5 === undefined){defringeL5 = false}
   if(addPixelQA === null || addPixelQA === undefined){addPixelQA = false}
