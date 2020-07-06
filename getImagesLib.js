@@ -471,13 +471,13 @@ function getS2(){
   return s2s.set(args);
 }
 
-var out = getS2({'studyArea':geometry,
-                      'startDate':ee.Date.fromYMD(2019,1,1),
-                      'endDate':ee.Date.fromYMD(2020,1,1),
-                      'startJulian':190,
-                      'endJulian':250,'defringeL5':true});
-print(out)
-// Map.addLayer(out.median(),{})
+// var out = getS2({'studyArea':geometry,
+//                       'startDate':ee.Date.fromYMD(2019,1,1),
+//                       'endDate':ee.Date.fromYMD(2020,1,1),
+//                       'startJulian':190,
+//                       'endJulian':250,'defringeL5':true});
+// print(out)
+// // Map.addLayer(out.median(),{})
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
 //See default arguments below
