@@ -797,18 +797,18 @@ function landsatCloudScore(img) {
 //Wrapper for applying cloudScore function
 //Required params: collection,cloudScoreFunction
 function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset,preComputedCloudScoreOffset){
-  var defaultArgs = {
-    'collection':null,
-    'cloudScoreFunction':null,
-    'cloudScoreThresh':20,
-    'cloudScorePctl':10,
-    'contractPixels':1.5,
-    'dilatePixels':3.5,
-    'performCloudScoreOffset':true,
-    'preComputedCloudScoreOffset':null
-    };
+  // var defaultArgs = {
+  //   'collection':null,
+  //   'cloudScoreFunction':null,
+  //   'cloudScoreThresh':20,
+  //   'cloudScorePctl':10,
+  //   'contractPixels':1.5,
+  //   'dilatePixels':3.5,
+  //   'performCloudScoreOffset':true,
+  //   'preComputedCloudScoreOffset':null
+  //   };
   
-  var args = prepArgumentsObject(arguments,defaultArgs);
+  // var args = prepArgumentsObject(arguments,defaultArgs);
  
   
   if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
