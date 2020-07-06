@@ -51,6 +51,7 @@ var changeDirDict = {
 //Leave any defaultArg as null if it is needed but a default is not provided
 function prepArgumentsObject(args,defaultArgs){
   var argList = [].slice.call(args);
+  print(argList)
   args = {};
   
   //See if first argument is an ee object instead of a vanilla js object
