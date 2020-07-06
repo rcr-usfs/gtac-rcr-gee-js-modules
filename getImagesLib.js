@@ -795,7 +795,7 @@ function landsatCloudScore(img) {
 }
 ////////////////////////////////////////////////////////////////////////////////
 //Wrapper for applying cloudScore function
-//Required params: collection,cloudScoreFunction
+//Required arguments: collection,cloudScoreFunction
 function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset,preComputedCloudScoreOffset){
   var defaultArgs = {
     'collection':null,
@@ -811,21 +811,19 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
   var args = prepArgumentsObject(arguments,defaultArgs);
  
   
-  if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
-  if(preComputedCloudScoreOffset === undefined || preComputedCloudScoreOffset === null){preComputedCloudScoreOffset = null};
   // Add cloudScore
   var collection = collection.map(function(img){
-    var cs = cloudScoreFunction(img).rename(['cloudScore']);
+    var cs = args.cloudScoreFunction(img).rename(['cloudScore']);
     return img.addBands(cs);
   });
 
-  if(performCloudScoreOffset){
+  if(args.performCloudScoreOffset){
     var minCloudScore;
-    if(preComputedCloudScoreOffset === null){
+    if(args.preComputedCloudScoreOffset === null){
       print('Computing cloudScore offset');
       // Find low cloud score pctl for each pixel to avoid comission errors
       minCloudScore = collection.select(['cloudScore'])
-        .reduce(ee.Reducer.percentile([cloudScorePctl]));
+        .reduce(ee.Reducer.percentile([args.cloudScorePctl]));
       // Map.addLayer(minCloudScore,{'min':0,'max':30},'minCloudScore',false);
     }else{
       print('Using pre-computed cloudScore offset');
@@ -839,12 +837,12 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
   // Apply cloudScore
   var collection = collection.map(function(img){
     var cloudMask = img.select(['cloudScore']).subtract(minCloudScore)
-      .lt(cloudScoreThresh)
-      .focal_max(contractPixels).focal_min(dilatePixels).rename('cloudMask');
+      .lt(args.cloudScoreThresh)
+      .focal_max(args.contractPixels).focal_min(args.dilatePixels).rename('cloudMask');
     return img.updateMask(cloudMask);
   });
   
-  return collection;
+  return collection.set(args);
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Functions for applying fmask to SR data
