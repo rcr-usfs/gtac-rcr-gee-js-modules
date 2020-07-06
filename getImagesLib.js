@@ -410,6 +410,7 @@ function dailyMosaics(imgs){
 //////////////////////////////////////////////////////
 //Function for acquiring Sentinel2 imagery
 //See default arguments below
+//Required arguments: studyArea,startDate,endDate,startJulian,endJulian
 function getS2(){
   var defaultArgs = {
     'studyArea':null,
@@ -479,7 +480,8 @@ print(out)
 // Map.addLayer(out.median(),{})
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
-//See arguments below
+//See default arguments below
+//Required arguments: studyArea,startDate,endDate,startJulian,endJulian
 function getLandsat(){
   
   var defaultArgs = {
@@ -793,7 +795,22 @@ function landsatCloudScore(img) {
 }
 ////////////////////////////////////////////////////////////////////////////////
 //Wrapper for applying cloudScore function
+//Required params: collection,cloudScoreFunction
 function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset,preComputedCloudScoreOffset){
+  var defaultArgs = {
+    'collection':null,
+    'cloudScoreFunction':null,
+    'cloudScoreThresh':20,
+    'cloudScorePctl':10,
+    'contractPixels':1.5,
+    'dilatePixels':3.5,
+    'performCloudScoreOffset':true,
+    'preComputedCloudScoreOffset':null
+    };
+  
+  var args = prepArgumentsObject(arguments,defaultArgs);
+ 
+  
   if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
   if(preComputedCloudScoreOffset === undefined || preComputedCloudScoreOffset === null){preComputedCloudScoreOffset = null};
   // Add cloudScore
