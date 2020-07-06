@@ -796,7 +796,7 @@ function landsatCloudScore(img) {
 ////////////////////////////////////////////////////////////////////////////////
 //Wrapper for applying cloudScore function
 //Required arguments: collection,cloudScoreFunction
-function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset,preComputedCloudScoreOffset){
+function applyCloudScoreAlgorithm(){
   var defaultArgs = {
     'collection':null,
     'cloudScoreFunction':null,
