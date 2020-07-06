@@ -69,7 +69,7 @@ function setNoData(image,noDataValue){
   // var m = image.mask();
   // image = image.mask(ee.Image(1));
   // image = image.where(m.not(),noDataValue);
-  return image.unmask(noDat);
+  return image.unmask(noDataValue,false);
 }
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
