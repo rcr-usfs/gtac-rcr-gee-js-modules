@@ -44,6 +44,25 @@ var changeDirDict = {
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 /////////////////////////////////////////////////////////////////////////////////
+//Function to prep arguments into standardized object regardless of format parameters are provided in
+//args are the default arguments keyword for the function
+//defaultArgs is an object containing each key and default value needed for the function
+function prepArgumentsObject(args,defaultArgs){
+  var argList = [].slice.call(args);
+  args = {};
+  Object.keys(defaultArgs).forEach(function(key, i) { 
+    var value;
+    if(typeof(argList[0]) === 'object' && argList.length === 1){
+      value = argList[0][key];
+    }else{value = argList[i]}
+    
+    if(value === undefined || value === null){
+      value = defaultArgs[key];
+    }
+      args[key] = value;
+    });
+  return args;
+}
 //////////////////////////////////////////////////
 //Function to set null value for export or conversion to arrays
 function setNoData(image,noDataValue){
