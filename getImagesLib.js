@@ -410,7 +410,7 @@ function dailyMosaics(imgs){
 //////////////////////////////////////////////////////
 //Function for acquiring Sentinel2 imagery
 //See default arguments below
-function getS2(studyArea,startDate,endDate,startJulian,endJulian,resampleMethod,toaOrSR,convertToDailyMosaics){
+function getS2(){
   var defaultArgs = {
     'studyArea':null,
     'startDate':null,
