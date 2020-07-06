@@ -812,7 +812,7 @@ function applyCloudScoreAlgorithm(){
  
   
   // Add cloudScore
-  var collection = collection.map(function(img){
+  var collection = args.collection.map(function(img){
     var cs = args.cloudScoreFunction(img).rename(['cloudScore']);
     return img.addBands(cs);
   });
