@@ -2095,18 +2095,20 @@ nonDivideBands,resampleMethod){
     }
     
    
-
+    args.startYearComposite = startYearT;
+    args.endYearComposite = endYearT;
+    
     // Add metadata, cast to integer, and export composite
     composite = composite.set(args);
   
     // Export the composite 
     // Set up export name and path
-    var exportName = args.outputName  + '_' + args.toaOrSR + '_' + args.compositingMethod + 
+    args.exportName = args.outputName  + '_' + args.toaOrSR + '_' + args.compositingMethod + 
       '_'  + startYearT + '_' + endYearT+'_' + 
       args.startJulian + '_' + args.endJulian ;
    
     
-    var exportPath = args.exportPathRoot + '/' + exportName;
+    var exportPath = args.exportPathRoot + '/' + args.exportName;
     // print('Write down the Asset ID:', exportPath);
     print('Exporting:',composite);
     exportToAssetWrapper(composite,exportName,exportPath,'mean',
