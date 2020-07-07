@@ -2233,8 +2233,8 @@ function getLandsatWrapper(){
           .map(simpleAddTCAngles);
           
   // Create composite time series
-  var ts = compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
-  
+  var ts = compositeTimeSeries(ls,args.startYear,args.endYear,args.startJulian,args.endJulian,args.timebuffer,args.weights,args.compositingMethod);
+  print(ts)
   
   // // Correct illumination
   // if (correctIllumination){
