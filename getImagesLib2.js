@@ -2108,10 +2108,10 @@ nonDivideBands,resampleMethod){
       args.startJulian + '_' + args.endJulian ;
    
     
-    var exportPath = args.exportPathRoot + '/' + args.exportName;
+    args.exportPath = args.exportPathRoot + '/' + args.exportName;
     // print('Write down the Asset ID:', exportPath);
     print('Exporting:',composite);
-    exportToAssetWrapper(composite,exportName,exportPath,'mean',
+    exportToAssetWrapper(composite,args.exportName,args.exportPath,'mean',
       args.studyArea,args.scale,args.crs,args.transform);
     });
 }
