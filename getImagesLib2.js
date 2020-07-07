@@ -2085,18 +2085,8 @@ nonDivideBands,resampleMethod){
 /////////////////////////////////////////////////////////////////////
 //Wrapper function for getting Landsat imagery
 //See default arguments below
-//Required arguments: studyArea,startDate,endDate,startJulian,endJulian
-function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
-  timebuffer,weights,compositingMethod,
-  toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
-  applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,
-  correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,
-  crs,transform,scale,resampleMethod, 
-  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev){
+//Required arguments: studyArea,startYear,endYear,startJulian,endJulian, crs, scale or transform
+function getLandsatWrapper(){
   
    var defaultArgs = {
     'studyArea':null,
@@ -2140,144 +2130,144 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   print(args)
     
-  if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
-  if(weights === undefined || weights === null){weights = [1]}
-  if(compositingMethod === undefined || compositingMethod === null){compositingMethod = 'medoid'}
-  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'SR'}
-  if(includeSLCOffL7 === undefined || includeSLCOffL7 === null){includeSLCOffL7 = false}
-  if(defringeL5 === undefined || defringeL5 === null){defringeL5 = false}
-  if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = false}
-  if(applyFmaskCloudMask === undefined || applyFmaskCloudMask === null){applyFmaskCloudMask = true}
-  if(applyTDOM === undefined || applyTDOM === null){applyTDOM = false}
-  if(applyFmaskCloudShadowMask === undefined || applyFmaskCloudShadowMask === null){applyFmaskCloudShadowMask = true}
-  if(applyFmaskSnowMask === undefined || applyFmaskSnowMask === null){applyFmaskSnowMask = false}
-  if(cloudScoreThresh === undefined || cloudScoreThresh === null){cloudScoreThresh = 10}
-  if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
-  if(cloudScorePctl === undefined || cloudScorePctl === null){cloudScorePctl = 10}
-  if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
-  if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
-  if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
-  if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
-  if(correctIllumination === undefined || correctIllumination === null){correctIllumination = false}
-  if(correctScale === undefined || correctScale === null){correctScale = 250}
-  if(exportComposites === undefined || exportComposites === null){exportComposites = false}
-  if(outputName === undefined || outputName === null){outputName = 'Landsat-Composite'}
-  if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/ianhousman/test'}
-  if(crs === undefined || crs === null){crs = 'EPSG:5070'}
-  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
+  // if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
+  // if(weights === undefined || weights === null){weights = [1]}
+  // if(compositingMethod === undefined || compositingMethod === null){compositingMethod = 'medoid'}
+  // if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'SR'}
+  // if(includeSLCOffL7 === undefined || includeSLCOffL7 === null){includeSLCOffL7 = false}
+  // if(defringeL5 === undefined || defringeL5 === null){defringeL5 = false}
+  // if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = false}
+  // if(applyFmaskCloudMask === undefined || applyFmaskCloudMask === null){applyFmaskCloudMask = true}
+  // if(applyTDOM === undefined || applyTDOM === null){applyTDOM = false}
+  // if(applyFmaskCloudShadowMask === undefined || applyFmaskCloudShadowMask === null){applyFmaskCloudShadowMask = true}
+  // if(applyFmaskSnowMask === undefined || applyFmaskSnowMask === null){applyFmaskSnowMask = false}
+  // if(cloudScoreThresh === undefined || cloudScoreThresh === null){cloudScoreThresh = 10}
+  // if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
+  // if(cloudScorePctl === undefined || cloudScorePctl === null){cloudScorePctl = 10}
+  // if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
+  // if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
+  // if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
+  // if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
+  // if(correctIllumination === undefined || correctIllumination === null){correctIllumination = false}
+  // if(correctScale === undefined || correctScale === null){correctScale = 250}
+  // if(exportComposites === undefined || exportComposites === null){exportComposites = false}
+  // if(outputName === undefined || outputName === null){outputName = 'Landsat-Composite'}
+  // if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/ianhousman/test'}
+  // if(crs === undefined || crs === null){crs = 'EPSG:5070'}
+  // if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
   // Prepare dates
   //Wrap the dates if needed
   var wrapOffset = 0;
-  if (startJulian > endJulian) {
+  if (args.startJulian > args.endJulian) {
     wrapOffset = 365;
   }
    
-  var startDate = ee.Date.fromYMD(startYear,1,1).advance(startJulian-1,'day');
-  var endDate = ee.Date.fromYMD(endYear,1,1).advance(endJulian-1+wrapOffset,'day');
-  print('Start and end dates:', startDate, endDate);
+  args.startDate = ee.Date.fromYMD(args.startYear,1,1).advance(args.startJulian-1,'day');
+  args.endDate = ee.Date.fromYMD(args.endYear,1,1).advance(args.endJulian-1+wrapOffset,'day');
+  print('Start and end dates:', args.startDate, args.endDate);
 
   //Do some error checking
-  toaOrSR = toaOrSR.toUpperCase();
-  var addPixelQA;
-  if(toaOrSR === 'TOA' && (applyFmaskCloudMask === true ||  applyFmaskCloudShadowMask === true || applyFmaskSnowMask === true)){
-      addPixelQA = true;
+  
+  
+  if(args.toaOrSR === 'TOA' && (args.applyFmaskCloudMask === true ||  args.applyFmaskCloudShadowMask === true || args.applyFmaskSnowMask === true)){
+      args.addPixelQA = true;
       // applyFmaskCloudMask = false;
   
       // applyFmaskCloudShadowMask = false;
   
       // applyFmaskSnowMask = false;
-    }else{addPixelQA = false;}
+    }else{args.addPixelQA = false;}
   // Get Landsat image collection
-  var ls = getLandsat(studyArea,startDate,endDate,startJulian,endJulian,
-    toaOrSR,includeSLCOffL7,defringeL5,addPixelQA,resampleMethod);
+  var ls = getLandsat(args.studyArea,args.startDate,args.endDate,args.startJulian,args.endJulian,
+    args.toaOrSR,args.includeSLCOffL7,args.defringeL5,args.addPixelQA,args.resampleMethod);
+  print(ls)
+  // // Apply relevant cloud masking methods
+  // if(applyCloudScore){
+  //   print('Applying cloudScore');
+  //   ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset, preComputedCloudScoreOffset); 
+  // }
   
-  // Apply relevant cloud masking methods
-  if(applyCloudScore){
-    print('Applying cloudScore');
-    ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset, preComputedCloudScoreOffset); 
-  }
-  
-  if(applyFmaskCloudMask){
-    print('Applying Fmask cloud mask');
-    ls = ls.map(function(img){return cFmask(img,'cloud')});
-    //Experimenting on how to reduce commission errors over bright cool areas
-    // var preCount = ls.count();
-    // var cloudFreeCount = ls.map(function(img){return cFmask(img,'cloud')}).count().unmask();
-    // // var ls = ls.map(function(img){return cFmask(img,'cloud')})
-    // var fmaskCloudFreeProp = cloudFreeCount.divide(preCount);
-    // var alwaysCloud = fmaskCloudFreeProp.lte(0.1);
-    // var ls = ls.map(function(img){
-    //   var m = img.select('pixel_qa').bitwiseAnd(fmaskBitDict['cloud']).neq(0).and(alwaysCloud.not());
-    //   return img.updateMask(m.not());
-    // })
+  // if(applyFmaskCloudMask){
+  //   print('Applying Fmask cloud mask');
+  //   ls = ls.map(function(img){return cFmask(img,'cloud')});
+  //   //Experimenting on how to reduce commission errors over bright cool areas
+  //   // var preCount = ls.count();
+  //   // var cloudFreeCount = ls.map(function(img){return cFmask(img,'cloud')}).count().unmask();
+  //   // // var ls = ls.map(function(img){return cFmask(img,'cloud')})
+  //   // var fmaskCloudFreeProp = cloudFreeCount.divide(preCount);
+  //   // var alwaysCloud = fmaskCloudFreeProp.lte(0.1);
+  //   // var ls = ls.map(function(img){
+  //   //   var m = img.select('pixel_qa').bitwiseAnd(fmaskBitDict['cloud']).neq(0).and(alwaysCloud.not());
+  //   //   return img.updateMask(m.not());
+  //   // })
    
-    // Map.addLayer(alwaysCloud,{min:0,max:1},'Fmask cloud prop',false);
-  }
+  //   // Map.addLayer(alwaysCloud,{min:0,max:1},'Fmask cloud prop',false);
+  // }
   
-  if(applyTDOM){
-    print('Applying TDOM');
-    //Find and mask out dark outliers
-    ls = simpleTDOM2(ls,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels,['nir','swir1'],preComputedTDOMIRMean,preComputedTDOMIRStdDev);
-  }
-  if(applyFmaskCloudShadowMask){
-    print('Applying Fmask shadow mask');
-    ls = ls.map(function(img){return cFmask(img,'shadow')});
-  }
-  if(applyFmaskSnowMask){
-    print('Applying Fmask snow mask');
-    ls = ls.map(function(img){return cFmask(img,'snow')});
-  }
+  // if(applyTDOM){
+  //   print('Applying TDOM');
+  //   //Find and mask out dark outliers
+  //   ls = simpleTDOM2(ls,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels,['nir','swir1'],preComputedTDOMIRMean,preComputedTDOMIRStdDev);
+  // }
+  // if(applyFmaskCloudShadowMask){
+  //   print('Applying Fmask shadow mask');
+  //   ls = ls.map(function(img){return cFmask(img,'shadow')});
+  // }
+  // if(applyFmaskSnowMask){
+  //   print('Applying Fmask snow mask');
+  //   ls = ls.map(function(img){return cFmask(img,'snow')});
+  // }
   
   
-  // Add zenith and azimuth
-  if (correctIllumination){
-    ls = ls.map(function(img){
-      return addZenithAzimuth(img,toaOrSR);
-    });
-  }
+  // // Add zenith and azimuth
+  // if (correctIllumination){
+  //   ls = ls.map(function(img){
+  //     return addZenithAzimuth(img,toaOrSR);
+  //   });
+  // }
   
-  // Add common indices- can use addIndices for comprehensive indices 
-  //or simpleAddIndices for only common indices
-  ls = ls.map(simpleAddIndices)
-          .map(getTasseledCap)
-          .map(simpleAddTCAngles);
+  // // Add common indices- can use addIndices for comprehensive indices 
+  // //or simpleAddIndices for only common indices
+  // ls = ls.map(simpleAddIndices)
+  //         .map(getTasseledCap)
+  //         .map(simpleAddTCAngles);
           
-  //Set to appropriate resampling method for any reprojection
-  // ls = ls.map(function(img){return img.resample('bicubic') })    
-  // Create composite time series
-  var ts = compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
+  // //Set to appropriate resampling method for any reprojection
+  // // ls = ls.map(function(img){return img.resample('bicubic') })    
+  // // Create composite time series
+  // var ts = compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
   
   
-  // Correct illumination
-  if (correctIllumination){
-    var f = ee.Image(ts.first());
-    Map.addLayer(f,vizParamsFalse,'First-non-illuminated',false);
+  // // Correct illumination
+  // if (correctIllumination){
+  //   var f = ee.Image(ts.first());
+  //   Map.addLayer(f,vizParamsFalse,'First-non-illuminated',false);
   
-    print('Correcting illumination');
-    ts = ts.map(illuminationCondition)
-      .map(function(img){
-        return illuminationCorrection(img, correctScale,studyArea);
-      });
-    var f = ee.Image(ts.first());
-    Map.addLayer(f,vizParamsFalse,'First-illuminated',false);
-  }
+  //   print('Correcting illumination');
+  //   ts = ts.map(illuminationCondition)
+  //     .map(function(img){
+  //       return illuminationCorrection(img, correctScale,studyArea);
+  //     });
+  //   var f = ee.Image(ts.first());
+  //   Map.addLayer(f,vizParamsFalse,'First-illuminated',false);
+  // }
   
-  //Export composites
-  if(exportComposites){// Export composite collection
-    if(compositingMethod == 'medoid'){
-      var exportBands = ['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','year','julianDay'];
-      exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
-      ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-                  applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','year','julianDay'],resampleMethod);
-    }else{
-      var exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp'];
-      exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
-      ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-                  applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp'],resampleMethod);
-    }
-  }
+  // //Export composites
+  // if(exportComposites){// Export composite collection
+  //   if(compositingMethod == 'medoid'){
+  //     var exportBands = ['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','year','julianDay'];
+  //     exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
+  //     ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
+  //                 applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','year','julianDay'],resampleMethod);
+  //   }else{
+  //     var exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp'];
+  //     exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
+  //     ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
+  //                 applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp'],resampleMethod);
+  //   }
+  // }
   
-  return [ls,ts];
+  // return [ls,ts];
 }
 
 //Wrapper function for getting Landsat imagery
