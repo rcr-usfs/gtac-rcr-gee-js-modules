@@ -1255,7 +1255,23 @@ function wrapDates(startJulian,endJulian){
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Create composites for each year within startYear and endYear range
+//See default args for necessary params
+//There are no default params- all must be provided either listed out in the function call or as an object
 function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod,compositingReducer){
+  var defaultArgs = {
+    'ls':null,
+    'startYear':null,
+    'endYear':null,
+    'startJulian':null,
+    'endJulian':null,
+    'timebuffer':null,
+    'weights':null,
+    'compositingMethod':null,
+    'compositingReducer':null
+  }
+  var args = prepArgumentsObject(arguments,defaultArgs);
+
+  print(args);
   var dummyImage = ee.Image(ls.first());
   
   var dateWrapping = wrapDates(startJulian,endJulian);
@@ -2128,7 +2144,7 @@ function getLandsatWrapper(){
   
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
-  print(args)
+  print(args);
   
   // Prepare dates
   //Wrap the dates if needed
