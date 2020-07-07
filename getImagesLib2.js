@@ -2389,14 +2389,7 @@ function getProcessedLandsatScenes(){
 
 ///////////////////////////////////////////////////////////////////
 //Wrapper function for getting Sentinel2 imagery
-function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
-  applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
-  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  cloudHeights,
-  zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
-  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
-  ){
+function getProcessedSentinel2Scenes(){
   
   
   
