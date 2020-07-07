@@ -14,7 +14,7 @@ var geometry =
           [-121.09204983511518, 39.25666609688575]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
-var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 
