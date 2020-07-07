@@ -256,6 +256,10 @@ var sensorDict = ee.Dictionary({'LANDSAT_4':4,
 var sensorPropDict = ee.Dictionary({'landsat':
                                           {'TOA':'SPACECRAFT_ID',
                                             'SR':'SATELLITE'
+                                          },
+                                    'setinel2':
+                                          {'TOA':'SPACECRAFT_NAME',
+                                           'SR':'SPACECRAFT_NAME'
                                           }
                                     });
 
