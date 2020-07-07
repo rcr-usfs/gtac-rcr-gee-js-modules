@@ -249,8 +249,8 @@ var sensorPropDict = ee.Dictionary({'landsat':
                                           }
                                     });
 
-function addSensorBand(img,whichProgram,toaOrSr){
-  var sensorProp = ee.Dictionary(sensorPropDict.get(whichProgram)).get(toaOrSr);
+function addSensorBand(img,whichProgram,toaOrSR){
+  var sensorProp = ee.Dictionary(sensorPropDict.get(whichProgram)).get(toaOrSR);
   return img.addBands(ee.Image.constant(sensorDict.get(img.get(sensorProp))).rename(['sensor']).byte());
 }
 /////////////////////////////////////////////////////////////////
@@ -2264,7 +2264,7 @@ function getLandsatWrapper(){
           .map(simpleAddTCAngles);
   
   //Add sensor band
-  ls = ls.map(function(img){return addSensorBand(img,'landsat')});
+  ls = ls.map(function(img){return addSensorBand(img,'landsat',args.toaOrSR)});
 
 
   args.ls = ls;
