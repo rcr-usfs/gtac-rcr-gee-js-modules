@@ -2012,36 +2012,68 @@ collection,startYear,endYear,startJulian,endJulian,compositingReducer,timebuffer
       studyArea.bounds(),null,crs,transform);
     });
 }
-
+/////////////////////////////////////////////////////////////
 // Function to export composite collection
+//See below for necessary arguments
+//All parameters must be provided
 function exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
 collection,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
 applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,
 nonDivideBands,resampleMethod){
-  if(nonDivideBands === undefined || nonDivideBands === null){ nonDivideBands = ['temp']}
-  if(resampleMethod === undefined || resampleMethod === null){ resampleMethod = 'near'}
-  collection = collection.select(exportBands);
-  print('Export bands:',exportBands);
-  print('Non divide bands:',nonDivideBands);
+  
+  
+   var defaultArgs = {
+              'exportPathRoot':null,
+              'outputName':null,
+              'studyArea':null, 
+              'crs':null,
+              'transform':null,
+              'scale':null,
+              'collection':null,
+              'startYear':null,
+              'endYear':null,
+              'startJulian':null,
+              'endJulian':null,
+              'compositingMethod':null,
+              'timebuffer':null,
+              'exportBands':null,
+              'toaOrSR':null,
+              'weights':null,
+              'applyCloudScore':null, 
+              'applyFmaskCloudMask':null,
+              'applyTDOM':null,
+              'applyFmaskCloudShadowMask':null,
+              'applyFmaskSnowMask':null,
+              'includeSLCOffL7':null,
+              'correctIllumination':null,
+              'nonDivideBands':['temp'],
+              'resampleMethod':'near'
+    };
+  
+  var args = prepArgumentsObject(arguments,defaultArgs);
+  
+  args.collection = args.collection.select(args.exportBands);
+  print('Export bands:',args.exportBands);
+  print('Non divide bands:',args.nonDivideBands);
    //Take care of date wrapping
-  var dateWrapping = wrapDates(startJulian,endJulian);
-  var wrapOffset = dateWrapping[0];
-  var yearWithMajority = dateWrapping[1];
+  args.dateWrapping = wrapDates(args.startJulian,args.endJulian);
+  args.wrapOffset = args.dateWrapping[0];
+  args.yearWithMajority = args.dateWrapping[1];
   
   //Clean up output name
-  outputName = outputName.replace(/\s+/g,'-');
-  outputName = outputName.replace(/\//g,'-');
+  args.outputName = args.outputName.replace(/\s+/g,'-');
+  args.outputName = args.outputName.replace(/\//g,'-');
   
   
-  var years = ee.List.sequence(startYear+timebuffer,endYear-timebuffer).getInfo()
+  var years = ee.List.sequence(args.startYear+args.timebuffer,args.endYear-args.timebuffer).getInfo()
     .map(function(year){
       
     // Set up dates
-    var startYearT = year-timebuffer;
-    var endYearT = year+timebuffer+yearWithMajority;
+    var startYearT = year-args.timebuffer;
+    var endYearT = year+args.timebuffer+args.yearWithMajority;
     
     // Get yearly composite
-    var composite = collection.filter(ee.Filter.calendarRange(year+yearWithMajority,year+yearWithMajority,'year'));
+    var composite = args.collection.filter(ee.Filter.calendarRange(year+args.yearWithMajority,year+args.yearWithMajority,'year'));
     composite = ee.Image(composite.first());
     
     // Display the Landsat composite
@@ -2052,10 +2084,10 @@ nonDivideBands,resampleMethod){
   
     // Reformat data for export
     var compositeBands = composite.bandNames();
-    if(nonDivideBands !== null){
-      var composite10k = composite.select(compositeBands.removeAll(nonDivideBands))
+    if(args.nonDivideBands !== null){
+      var composite10k = composite.select(compositeBands.removeAll(args.nonDivideBands))
       .multiply(10000);
-      composite = composite10k.addBands(composite.select(nonDivideBands))
+      composite = composite10k.addBands(composite.select(args.nonDivideBands))
       .select(compositeBands).int16();
     }
     else{
@@ -2065,36 +2097,20 @@ nonDivideBands,resampleMethod){
    
 
     // Add metadata, cast to integer, and export composite
-    composite = composite.set({
-      'system:time_start': ee.Date.fromYMD(year,6,1).millis(),
-      'source': toaOrSR,
-      'yearBuffer':timebuffer,
-      'yearWeights': listToString(weights),
-      'startJulian': startJulian,
-      'endJulian': endJulian,
-      'applyCloudScore':applyCloudScore.toString(),
-      'applyFmaskCloudMask' :applyFmaskCloudMask.toString(),
-      'applyTDOM' :applyTDOM.toString(),
-      'applyFmaskCloudShadowMask' :applyFmaskCloudShadowMask.toString(),
-      'applyFmaskSnowMask': applyFmaskSnowMask.toString(),
-      'compositingMethod': compositingMethod,
-      'includeSLCOffL7': includeSLCOffL7.toString(),
-      'correctIllumination':correctIllumination.toString(),
-      'resampleMethod':resampleMethod
-    });
+    composite = composite.set(args);
   
     // Export the composite 
     // Set up export name and path
-    var exportName = outputName  + toaOrSR + '_' + compositingMethod + 
+    var exportName = args.outputName  + args.toaOrSR + '_' + args.compositingMethod + 
       '_'  + startYearT + '_' + endYearT+'_' + 
-      startJulian + '_' + endJulian ;
+      args.startJulian + '_' + args.endJulian ;
    
     
-    var exportPath = exportPathRoot + '/' + exportName;
+    var exportPath = args.exportPathRoot + '/' + exportName;
     // print('Write down the Asset ID:', exportPath);
   
     exportToAssetWrapper(composite,exportName,exportPath,'mean',
-      studyArea,scale,crs,transform);
+      args.studyArea,args.scale,args.crs,args.transform);
     });
 }
 /////////////////////////////////////////////////////////////////////
