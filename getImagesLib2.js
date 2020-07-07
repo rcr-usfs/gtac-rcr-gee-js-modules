@@ -2225,21 +2225,21 @@ function getLandsatWrapper(){
   args.ls = ls;
   // Create composite time series
   var ts = compositeTimeSeries(args);
-  print(ts)
   
-  // // Correct illumination
-  // if (correctIllumination){
-  //   var f = ee.Image(ts.first());
-  //   Map.addLayer(f,vizParamsFalse,'First-non-illuminated',false);
   
-  //   print('Correcting illumination');
-  //   ts = ts.map(illuminationCondition)
-  //     .map(function(img){
-  //       return illuminationCorrection(img, correctScale,studyArea);
-  //     });
-  //   var f = ee.Image(ts.first());
-  //   Map.addLayer(f,vizParamsFalse,'First-illuminated',false);
-  // }
+  // Correct illumination
+  if (args.correctIllumination){
+    var f = ee.Image(ts.first());
+    Map.addLayer(f,vizParamsFalse,'First-non-illuminated',false);
+  
+    print('Correcting illumination');
+    ts = ts.map(illuminationCondition)
+      .map(function(img){
+        return illuminationCorrection(img, args.correctScale,args.studyArea);
+      });
+    var f = ee.Image(ts.first());
+    Map.addLayer(f,vizParamsFalse,'First-illuminated',false);
+  }
   
   // //Export composites
   // if(exportComposites){// Export composite collection
