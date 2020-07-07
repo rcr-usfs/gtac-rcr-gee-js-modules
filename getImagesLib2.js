@@ -2282,9 +2282,7 @@ function getLandsatWrapper(){
       args.exportBands =['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','sensor','year','julianDay'];
       args.nonDivideBands = ['temp','year','sensor','julianDay'];
       print(args)
-      // exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
-      // ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-                  // applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','year','sensor','julianDay'],resampleMethod);
+      exportCompositeCollection(args);
     }
     // else{
     //   var exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','sensor'];
