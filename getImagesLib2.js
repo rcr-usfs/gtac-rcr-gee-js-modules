@@ -883,9 +883,9 @@ function cFmask(img,fmaskClass){
   var m;
   var qa = img.select('pixel_qa').int16();
   if (fmaskClass == 'high_confidence_cloud'){
-    m = qa.bitwiseAnd(1 << 6).neq(0).and(qa.bitwiseAnd(1 << 7).neq(0))
+    m = qa.bitwiseAnd(1 << 6).neq(0).and(qa.bitwiseAnd(1 << 7).neq(0));
   }else if (fmaskClass == 'med_confidence_cloud'){
-    m = qa.bitwiseAnd(1 << 7).neq(0)
+    m = qa.bitwiseAnd(1 << 7).neq(0);
   }else{
     m = qa.bitwiseAnd(fmaskBitDict[fmaskClass]).neq(0);
   }
