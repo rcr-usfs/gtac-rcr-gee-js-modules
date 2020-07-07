@@ -2561,7 +2561,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   args.origin = 'Sentinel2';
-  
+  print(args)
   // var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
   // applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
   // cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
