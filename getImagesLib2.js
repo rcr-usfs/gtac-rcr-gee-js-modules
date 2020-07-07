@@ -2529,16 +2529,16 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   args.origin = 'Sentinel2';
   print(args)
-  // var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
-  // applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
-  // cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  // cloudHeights,
-  // zScoreThresh,shadowSumThresh,
-  // contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
-  // preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
-  // );
+  var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
+  applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
+  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
+  cloudHeights,
+  zScoreThresh,shadowSumThresh,
+  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
+  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
+  );
   
-  
+  print(s2s)
   
   // // // Add zenith and azimuth
   // // if (correctIllumination){
