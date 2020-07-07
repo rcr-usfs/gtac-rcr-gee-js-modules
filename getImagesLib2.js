@@ -22,10 +22,20 @@ var vizParamsFalse = {
   'bands': 'swir2,nir,red', 
   'gamma': 1.6
 };
-
+var vizParamsFalse10k = {
+  'min': 0.1*10000, 
+  'max': [0.5*10000,0.6*10000,0.6*10000], 
+  'bands': 'swir2,nir,red', 
+  'gamma': 1.6
+};
 var vizParamsTrue = {
   'min': 0, 
   'max': [0.2,0.2,0.2], 
+  'bands': 'red,green,blue', 
+};
+var vizParamsTrue10k = {
+  'min': 0, 
+  'max': [0.2*10000,0.2*10000,0.2*10000], 
   'bands': 'red,green,blue', 
 };
 
@@ -2093,11 +2103,7 @@ nonDivideBands,resampleMethod){
     var composite = args.collection.filter(ee.Filter.calendarRange(year+args.yearWithMajority,year+args.yearWithMajority,'year'));
     composite = ee.Image(composite.first());
     
-    // Display the Landsat composite
-    Map.addLayer(composite, vizParamsTrue, year.toString() + ' True Color ' + 
-      args.toaOrSR, false);
-    Map.addLayer(composite, vizParamsFalse, year.toString() + ' False Color ' + 
-      args.toaOrSR, false);
+    
   
     // Reformat data for export
     var compositeBands = composite.bandNames();
@@ -2118,7 +2124,8 @@ nonDivideBands,resampleMethod){
     args.yearOriginal = year;
     args.yearUsed = args.systemTimeStartYear;
     args['system:time_start'] = ee.Date.fromYMD(args.systemTimeStartYear,6,1).millis();
-  
+    
+    
     // Export the composite 
     // Set up export name and path
     args.exportName = args.outputName  + '_' + args.toaOrSR + '_' + args.compositingMethod + 
@@ -2129,6 +2136,14 @@ nonDivideBands,resampleMethod){
     
     // Add metadata, cast to integer, and export composite
     composite = composite.set(args);
+    
+    // Display the Landsat composite
+    Map.addLayer(composite, vizParamsTrue,  args.yearUsed.toString() + ' True Color ' + 
+      args.toaOrSR, false);
+    Map.addLayer(composite, vizParamsFalse,  args.yearUsed.toString() + ' False Color ' + 
+      args.toaOrSR, false);
+      
+      
     print('Exporting:',composite);
     exportToAssetWrapper(composite,args.exportName,args.exportPath,'mean',
       args.studyArea,args.scale,args.crs,args.transform);
