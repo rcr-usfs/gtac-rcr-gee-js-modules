@@ -2144,7 +2144,7 @@ nonDivideBands,resampleMethod){
       args.toaOrSR, false);
       
       
-    print('Exporting:',composite);
+    // print('Exporting:',composite);
     exportToAssetWrapper(composite,args.exportName,args.exportPath,'mean',
       args.studyArea,args.scale,args.crs,args.transform);
     });
