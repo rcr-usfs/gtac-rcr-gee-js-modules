@@ -2229,6 +2229,7 @@ function getLandsatWrapper(){
   
   // Correct illumination
   if (args.correctIllumination){
+    
     var f = ee.Image(ts.first());
     Map.addLayer(f,vizParamsFalse,'First-non-illuminated',false);
   
