@@ -490,7 +490,7 @@ function getLandsat(){
     'endDate':null,
     'startJulian':null,
     'endJulian':null,
-    'toaOrSR':'TOA',
+    'toaOrSR':'SR',
     'includeSLCOffL7':false,
     'defringeL5':false,
     'addPixelQA':false,
@@ -2084,6 +2084,8 @@ nonDivideBands,resampleMethod){
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 //Wrapper function for getting Landsat imagery
+//See default arguments below
+//Required arguments: studyArea,startDate,endDate,startJulian,endJulian
 function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   timebuffer,weights,compositingMethod,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
@@ -2095,7 +2097,48 @@ function getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
   exportComposites,outputName,exportPathRoot,
   crs,transform,scale,resampleMethod, 
   preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev){
-    
+  
+   var defaultArgs = {
+    'studyArea':null,
+    'startYear':null,
+    'endYear':null,
+    'startJulian':null,
+    'endJulian':null,
+    'timebuffer':0,
+    'weights':[1],
+    'compositingMethod':'medoid',
+    'toaOrSR':'SR',
+    'includeSLCOffL7':false,
+    'defringeL5':false,
+    'applyCloudScore':false,
+    'applyFmaskCloudMask':true,
+    'applyTDOM':false,
+    'applyFmaskCloudShadowMask':true,
+    'applyFmaskSnowMask':false,
+    'cloudScoreThresh':10,
+    'performCloudScoreOffset':true,
+    'cloudScorePctl':10,
+    'zScoreThresh':-1,
+    'shadowSumThresh':0.35,
+    'contractPixels':1.5,
+    'dilatePixels':3.5,
+    'correctIllumination':false,
+    'correctScale':250,
+    'exportComposites':false,
+    'outputName':'Landsat-Composite',
+    'exportPathRoot':'users/ianhousman/test',
+    'crs':'EPSG:5070',
+    'transform':null,
+    'scale':null,
+    'resampleMethod':'near', 
+    'preComputedCloudScoreOffset':null,
+    'preComputedTDOMIRMean':null,
+    'preComputedTDOMIRStdDev':null
+    };
+  
+  var args = prepArgumentsObject(arguments,defaultArgs);
+  args.toaOrSR =  args.toaOrSR.toUpperCase();
+  print(args)
     
   if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
   if(weights === undefined || weights === null){weights = [1]}
