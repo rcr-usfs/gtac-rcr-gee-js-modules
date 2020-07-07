@@ -2359,7 +2359,8 @@ function getProcessedLandsatScenes(){
   if(args.applyTDOM){
     print('Applying TDOM');
     //Find and mask out dark outliers
-    ls = simpleTDOM2(ls,args.zScoreThresh,args.shadowSumThresh,args.contractPixels,args.dilatePixels,['nir','swir1'],args.preComputedTDOMIRMean,args.preComputedTDOMIRStdDev);
+    args.collection = ls;
+    ls = simpleTDOM2(args);
   }
   if(args.applyFmaskCloudShadowMask){
     print('Applying Fmask shadow mask');
@@ -2463,7 +2464,8 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   }
   if(args.applyTDOM){
     print('Applying TDOM');
-    s2s = simpleTDOM2(s2s,args.zScoreThresh,args.shadowSumThresh,args.contractPixels,args.dilatePixels,['nir','swir1'],args.preComputedTDOMIRMean,args.preComputedTDOMIRStdDev);
+    args.collection = s2s;
+    s2s = simpleTDOM2(args);
     // Map.addLayer(s2s.mosaic(),{min:0.05,max:0.4,bands:'swir1,nir,red'},'TDOM shadow masked');
   }
   
