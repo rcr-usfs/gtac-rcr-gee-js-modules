@@ -2091,9 +2091,9 @@ nonDivideBands,resampleMethod){
     
     // Display the Landsat composite
     Map.addLayer(composite, vizParamsTrue, year.toString() + ' True Color ' + 
-      toaOrSR, false);
+      args.toaOrSR, false);
     Map.addLayer(composite, vizParamsFalse, year.toString() + ' False Color ' + 
-      toaOrSR, false);
+      args.toaOrSR, false);
   
     // Reformat data for export
     var compositeBands = composite.bandNames();
