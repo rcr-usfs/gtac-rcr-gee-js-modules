@@ -2228,9 +2228,11 @@ function getLandsatWrapper(){
   var sensorDict = ee.Dictionary({'LANDSAT_4':4,
                     'LANDSAT_5':5,
                     'LANDSAT_7':7,
-                    'LANDSAT_8':8
+                    'LANDSAT_8':8,
+                    
                     });
-  ls = ls.map(function(img){return img.addBands(ee.Image.constant(sensorDict.get(img.get('SPACECRAFT_ID'))).rename(['sensor']).byte())});
+  var sensorPropDict = ee.Dictionary({'landsat':'SPACECRAFT_ID'})
+  ls = ls.map(function(img){return img.addBands(ee.Image.constant(sensorDict.get(img.get(sensorPropDict.get('landsat')))).rename(['sensor']).byte())});
 
   
   args.ls = ls;
