@@ -2217,25 +2217,23 @@ function getLandsatWrapper(){
     print('Applying Fmask snow mask');
     ls = ls.map(function(img){return cFmask(img,'snow')});
   }
-  print(ls)
   
-  // // Add zenith and azimuth
-  // if (correctIllumination){
-  //   ls = ls.map(function(img){
-  //     return addZenithAzimuth(img,toaOrSR);
-  //   });
-  // }
   
-  // // Add common indices- can use addIndices for comprehensive indices 
-  // //or simpleAddIndices for only common indices
-  // ls = ls.map(simpleAddIndices)
-  //         .map(getTasseledCap)
-  //         .map(simpleAddTCAngles);
+  // Add zenith and azimuth
+  if (args.correctIllumination){
+    ls = ls.map(function(img){
+      return addZenithAzimuth(img,args.toaOrSR);
+    });
+  }
+  
+  // Add common indices- can use addIndices for comprehensive indices 
+  //or simpleAddIndices for only common indices
+  ls = ls.map(simpleAddIndices)
+          .map(getTasseledCap)
+          .map(simpleAddTCAngles);
           
-  // //Set to appropriate resampling method for any reprojection
-  // // ls = ls.map(function(img){return img.resample('bicubic') })    
-  // // Create composite time series
-  // var ts = compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
+  // Create composite time series
+  var ts = compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
   
   
   // // Correct illumination
