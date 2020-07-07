@@ -2098,6 +2098,7 @@ nonDivideBands,resampleMethod){
     args.startYearComposite = startYearT;
     args.endYearComposite = endYearT;
     args.systemTimeStartYear = year+args.yearWithMajority;
+    args.yearOriginal = year;
     args.yearUsed = args.systemTimeStartYear;
     args['system:time_start'] = ee.Date.fromYMD(args.systemTimeStartYear,6,1).millis();
   
