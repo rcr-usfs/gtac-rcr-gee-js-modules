@@ -2212,7 +2212,7 @@ function getLandsatWrapper(){
   
   // Add zenith and azimuth
   if (args.correctIllumination){
-    print('Adding zenith and azimuth for terrain correction')
+    print('Adding zenith and azimuth for terrain correction');
     ls = ls.map(function(img){
       return addZenithAzimuth(img,args.toaOrSR);
     });
