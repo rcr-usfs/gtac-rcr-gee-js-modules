@@ -2138,9 +2138,9 @@ nonDivideBands,resampleMethod){
     composite = composite.set(args);
     
     // Display the Landsat composite
-    Map.addLayer(composite, vizParamsTrue,  args.yearUsed.toString() + ' True Color ' + 
+    Map.addLayer(composite, vizParamsTrue10k,  args.yearUsed.toString() + ' True Color ' + 
       args.toaOrSR, false);
-    Map.addLayer(composite, vizParamsFalse,  args.yearUsed.toString() + ' False Color ' + 
+    Map.addLayer(composite, vizParamsFalse10k,  args.yearUsed.toString() + ' False Color ' + 
       args.toaOrSR, false);
       
       
