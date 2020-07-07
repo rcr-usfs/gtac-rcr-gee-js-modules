@@ -2223,7 +2223,8 @@ function getLandsatWrapper(){
   ls = ls.map(simpleAddIndices)
           .map(getTasseledCap)
           .map(simpleAddTCAngles);
-          
+  
+  //Add sensor band
   var sensorDict = ee.Dictionary({'LANDSAT_4':4,
                     'LANDSAT_5':5,
                     'LANDSAT_7':7,
