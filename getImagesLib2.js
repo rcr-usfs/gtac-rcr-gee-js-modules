@@ -2470,6 +2470,8 @@ function getProcessedSentinel2Scenes(){
           .map(simpleAddTCAngles);
   
   
+  //Add sensor band
+  // s2s = s2s.map(function(img){return addSensorBand(img,'sentinel2',args.toaOrSR)});
   
   return s2s.set(args);
 }
