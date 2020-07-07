@@ -2257,7 +2257,7 @@ function getLandsatWrapper(){
           .map(getTasseledCap)
           .map(simpleAddTCAngles);
   
-  
+  //Add sensor band
   ls = ls.map(function(img){return addSensorBand(img,'landsat')});
 
 
