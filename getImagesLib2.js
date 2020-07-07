@@ -2097,8 +2097,8 @@ nonDivideBands,resampleMethod){
    
     args.startYearComposite = startYearT;
     args.endYearComposite = endYearT;
-    
-    
+    args.yearUsed = year+args.yearWithMajority;
+    args['system:time_start'] = ee.Date.fromYMD(args.yearUsed,6,1).millis();
   
     // Export the composite 
     // Set up export name and path
