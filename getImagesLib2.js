@@ -2147,8 +2147,7 @@ nonDivideBands,resampleMethod){
       args.toaOrSR, false);
       
       
-      
-    // print('Exporting:',composite);
+    print('Exporting:',composite);
     exportToAssetWrapper(composite,args.exportName,args.exportPath,args.pyramidingPolicy,
       args.studyArea,args.scale,args.crs,args.transform);
     });
