@@ -2390,10 +2390,7 @@ function getProcessedLandsatScenes(){
 ///////////////////////////////////////////////////////////////////
 //Wrapper function for getting Sentinel2 imagery
 function getProcessedSentinel2Scenes(){
-  
-  
-  
-   var defaultArgs = {
+  var defaultArgs = {
     'studyArea':null,
     'startYear':null,
     'endYear':null,
