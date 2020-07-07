@@ -1285,8 +1285,8 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
     // Set up dates
     var startYearT = year-args.timebuffer;
     var endYearT = year+args.timebuffer;
-    var startDateT = ee.Date.fromYMD(args.startYearT,1,1).advance(args.startJulian-1,'day');
-    var endDateT = ee.Date.fromYMD(args.endYearT,1,1).advance(args.endJulian-1+args.wrapOffset,'day');
+    var startDateT = ee.Date.fromYMD(startYearT,1,1).advance(args.startJulian-1,'day');
+    var endDateT = ee.Date.fromYMD(endYearT,1,1).advance(args.endJulian-1+args.wrapOffset,'day');
     
   
     // print(year,startDateT,endDateT);
