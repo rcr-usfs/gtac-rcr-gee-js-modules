@@ -1272,21 +1272,21 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
   var args = prepArgumentsObject(arguments,defaultArgs);
 
   print(args);
-  var dummyImage = ee.Image(ls.first());
+  var dummyImage = ee.Image(args.ls.first());
   
-  var dateWrapping = wrapDates(startJulian,endJulian);
-  var wrapOffset = dateWrapping[0];
-  var yearWithMajority = dateWrapping[1];
+  args.dateWrapping = wrapDates(args.startJulian,args.endJulian);
+  args.wrapOffset = args.dateWrapping[0];
+  args.yearWithMajority = args.dateWrapping[1];
   
   //Iterate across each year
-  var ts = ee.List.sequence(startYear+timebuffer,endYear-timebuffer).getInfo()
+  var ts = ee.List.sequence(args.startYear+args.timebuffer,args.endYear-args.timebuffer).getInfo()
     .map(function(year){
    
     // Set up dates
-    var startYearT = year-timebuffer;
-    var endYearT = year+timebuffer;
-    var startDateT = ee.Date.fromYMD(startYearT,1,1).advance(startJulian-1,'day');
-    var endDateT = ee.Date.fromYMD(endYearT,1,1).advance(endJulian-1+wrapOffset,'day');
+    var startYearT = year-args.timebuffer;
+    var endYearT = year+args.timebuffer;
+    var startDateT = ee.Date.fromYMD(args.startYearT,1,1).advance(args.startJulian-1,'day');
+    var endDateT = ee.Date.fromYMD(args.endYearT,1,1).advance(args.endJulian-1+args.wrapOffset,'day');
     
   
     // print(year,startDateT,endDateT);
@@ -1304,8 +1304,8 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
     var images = yearsTT.map(function(yr){
       // Set up dates
       
-      var startDateT = ee.Date.fromYMD(yr,1,1).advance(startJulian-1,'day');
-      var endDateT = ee.Date.fromYMD(yr,1,1).advance(endJulian-1+wrapOffset,'day');
+      var startDateT = ee.Date.fromYMD(yr,1,1).advance(args.startJulian-1,'day');
+      var endDateT = ee.Date.fromYMD(yr,1,1).advance(args.endJulian-1+args.wrapOffset,'day');
       
       // Filter images for given date range
       var lsT = ls.filterDate(startDateT,endDateT);
@@ -1317,9 +1317,9 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
     // Compute median or medoid or apply reducer
     var composite;
     if(compositingReducer !== undefined && compositingReducer !== null){
-      composite = lsT.reduce(compositingReducer);
+      composite = lsT.reduce(args.compositingReducer);
     }
-    else if (compositingMethod.toLowerCase() === 'median') {
+    else if (args.compositingMethod.toLowerCase() === 'median') {
       composite = lsT.median();
     }
     else {
@@ -1327,15 +1327,15 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
       composite = medoidMosaicMSD(lsT,['green','red','nir','swir1','swir2']);
     }
 
-    return composite.set({'system:time_start':ee.Date.fromYMD(year+ yearWithMajority,6,1).millis(),
+    return composite.set({'system:time_start':ee.Date.fromYMD(year+ args.yearWithMajority,6,1).millis(),
                         'startDate':startDateT.millis(),
                         'endDate':endDateT.millis(),
-                        'startJulian':startJulian,
-                        'endJulian':endJulian,
-                        'yearBuffer':timebuffer,
-                        'yearWeights': listToString(weights),
+                        'startJulian':args.startJulian,
+                        'endJulian':args.endJulian,
+                        'yearBuffer':args.timebuffer,
+                        'yearWeights': listToString(args.weights),
                         'yrOriginal':year,
-                        'yrUsed': year + yearWithMajority
+                        'yrUsed': year + args.yearWithMajority
     });
   });
   return ee.ImageCollection(ts).set(args);
