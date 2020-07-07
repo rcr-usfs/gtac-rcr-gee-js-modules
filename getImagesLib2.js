@@ -616,7 +616,7 @@ function getLandsat(){
               .select(sensorBandDict['L8SRFMASK'],sensorBandNameDict['SRFMASK']);
     
     var lsTOAFMASK;
-    if(includeSLCOffL7){ 
+    if(args.includeSLCOffL7){ 
       print('Including All Landsat 7 for TOA QA');
       var l7sTOAFMASK =  ee.ImageCollection(collectionDict['L7SR'])
               .filterDate(args.startDate,args.endDate)
