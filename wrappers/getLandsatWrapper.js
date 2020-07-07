@@ -32,7 +32,7 @@ args.studyArea = geometry;
 // constraints. This supports wrapping for tropics and southern hemisphere.
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-args.startJulian = 190;
+args.startJulian = 150;
 args.endJulian = 250; 
 
 // 3. Specify start and end years for all analyses
@@ -46,7 +46,7 @@ args.endYear = 2018;
 // 4. Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
 // in a 3 year moving window
-args.timebuffer = 1;
+args.timebuffer = 0;
 
 // 5. Specify the weights to be used for the moving window created by timeBuffer
 //For example- if timeBuffer is 1, that is a 3 year moving window
@@ -54,7 +54,7 @@ args.timebuffer = 1;
 //In order to overweight the center year, you could specify the weights as
 //[1,5,1] which would duplicate the center year 5 times and increase its weight for
 //the compositing method
-args.weights = [1,5,1];
+args.weights = [1];
 
 // 6. Choose medoid or median compositing method. 
 // Median tends to be smoother, while medoid retains 
