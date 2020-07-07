@@ -937,7 +937,7 @@ function simpleTDOM2(){
   }
   
   // Mask out dark dark outliers
-  args.collection = args.collection.map(function(img){
+  var collection = args.collection.map(function(img){
     var zScore = img.select(args.shadowSumBands).subtract(irMean).divide(irStdDev);
     var irSum = img.select(args.shadowSumBands).reduce(ee.Reducer.sum());
     var TDOMMask = zScore.lt(args.zScoreThresh).reduce(ee.Reducer.sum()).eq(args.shadowSumBands.length)
@@ -946,7 +946,7 @@ function simpleTDOM2(){
     return img.updateMask(TDOMMask.not());
   });
   
-  return args.collection.set(args);
+  return collection.set(args);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
