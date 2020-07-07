@@ -2562,69 +2562,69 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   args.origin = 'Sentinel2';
   
-  var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
-  applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
-  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  cloudHeights,
-  zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
-  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
-  );
+  // var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
+  // applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
+  // cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
+  // cloudHeights,
+  // zScoreThresh,shadowSumThresh,
+  // contractPixels,dilatePixels,resampleMethod,toaOrSR,convertToDailyMosaics,
+  // preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
+  // );
   
   
   
-  // // Add zenith and azimuth
-  // if (correctIllumination){
-  //   s2s = s2s.map(function(img){
-  //     return addZenithAzimuth(img,'TOA',{'TOA':'MEAN_SOLAR_ZENITH_ANGLE'},{'TOA':'MEAN_SOLAR_AZIMUTH_ANGLE'});
-  //   });
-  // }
+  // // // Add zenith and azimuth
+  // // if (correctIllumination){
+  // //   s2s = s2s.map(function(img){
+  // //     return addZenithAzimuth(img,'TOA',{'TOA':'MEAN_SOLAR_ZENITH_ANGLE'},{'TOA':'MEAN_SOLAR_AZIMUTH_ANGLE'});
+  // //   });
+  // // }
  
-  // Add common indices- can use addIndices for comprehensive indices 
-  //or simpleAddIndices for only common indices
-  // s2s = s2s.map(simpleAddIndices)
-          // .map(getTasseledCap)
-          // .map(simpleAddTCAngles);
+  // // Add common indices- can use addIndices for comprehensive indices 
+  // //or simpleAddIndices for only common indices
+  // // s2s = s2s.map(simpleAddIndices)
+  //         // .map(getTasseledCap)
+  //         // .map(simpleAddTCAngles);
   
-  // Create composite time series
-  var ts = compositeTimeSeries(s2s,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
+  // // Create composite time series
+  // var ts = compositeTimeSeries(s2s,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
   
   
-  // Correct illumination
-  // if (correctIllumination){
-  //   var f = ee.Image(ts.first());
-  //   Map.addLayer(f,vizParamsFalse,'First-non-illuminated',false);
+  // // Correct illumination
+  // // if (correctIllumination){
+  // //   var f = ee.Image(ts.first());
+  // //   Map.addLayer(f,vizParamsFalse,'First-non-illuminated',false);
   
-  //   print('Correcting illumination');
-  //   ts = ts.map(illuminationCondition)
-  //     .map(function(img){
-  //       return illuminationCorrection(img, correctScale,studyArea,[ 'blue', 'green', 'red','nir','swir1', 'swir2']);
-  //     });
-  //   var f = ee.Image(ts.first());
-  //   Map.addLayer(f,vizParamsFalse,'First-illuminated',false);
+  // //   print('Correcting illumination');
+  // //   ts = ts.map(illuminationCondition)
+  // //     .map(function(img){
+  // //       return illuminationCorrection(img, correctScale,studyArea,[ 'blue', 'green', 'red','nir','swir1', 'swir2']);
+  // //     });
+  // //   var f = ee.Image(ts.first());
+  // //   Map.addLayer(f,vizParamsFalse,'First-illuminated',false);
+  // // }
+  
+  // //Export composites
+  // if(exportComposites){// Export composite collection
+    
+  //   var exportBandDict = {
+  //     'SR_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2','year','julianDay'],
+  //     'SR_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2'],
+  //     'TOA_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2','year','julianDay'],
+  //     'TOA_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2']
+  //   };
+  //   var nonDivideBandDict = {
+  //     'medoid':['year','julianDay'],
+  //     'median':[]
+  //   };
+  //   var exportBands = exportBandDict[toaOrSR + '_'+compositingMethod];
+  //   var nonDivideBands = nonDivideBandDict[compositingMethod];
+  //   exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
+  //   ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
+  //                 applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,nonDivideBands,resampleMethod);
   // }
   
-  //Export composites
-  if(exportComposites){// Export composite collection
-    
-    var exportBandDict = {
-      'SR_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2','year','julianDay'],
-      'SR_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2'],
-      'TOA_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2','year','julianDay'],
-      'TOA_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2']
-    };
-    var nonDivideBandDict = {
-      'medoid':['year','julianDay'],
-      'median':[]
-    };
-    var exportBands = exportBandDict[toaOrSR + '_'+compositingMethod];
-    var nonDivideBands = nonDivideBandDict[compositingMethod];
-    exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
-    ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-                  applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,nonDivideBands,resampleMethod);
-  }
-  
-  return [s2s,ts];
+  // return [s2s,ts];
 }
 ////////////////////////////////////////////////////////////////////////////////
 //Hybrid get Landsat and Sentinel 2 wrapper function
