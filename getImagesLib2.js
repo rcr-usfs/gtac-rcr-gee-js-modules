@@ -2223,7 +2223,15 @@ function getLandsatWrapper(){
   ls = ls.map(simpleAddIndices)
           .map(getTasseledCap)
           .map(simpleAddTCAngles);
-  print(ls.aggregate_histogram('SPACECRAFT_ID'))
+          
+  var sensorDict = ee.Dictionary({'LANDSAT_4':4,
+                    'LANDSAT_5':5,
+                    'LANDSAT_7':7,
+                    'LANDSAT_8':8
+                    });
+  ls = ls.map((img) =>{ img.addBands(ee.Image.constant(sensorDict.get(img.get('SPACECRAFT_ID'))).rename('Sensor'))});
+  print(ls)
+  
   args.ls = ls;
   // Create composite time series
   var ts = compositeTimeSeries(args);
