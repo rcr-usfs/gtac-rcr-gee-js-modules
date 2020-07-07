@@ -2372,7 +2372,9 @@ function getProcessedLandsatScenes(){
           .map(simpleAddTCAngles);
   
   
-  
+  //Add sensor band
+  ls = ls.map(function(img){return addSensorBand(img,'landsat',args.toaOrSR)});
+
   return ls.set(args);
 }
 
