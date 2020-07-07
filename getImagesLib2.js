@@ -2224,9 +2224,6 @@ function getLandsatWrapper(){
     });
   }
   
-  
-  
-  
 
   args.ls = ls;
   // Create composite time series
