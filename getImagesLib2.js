@@ -2203,69 +2203,18 @@ function getLandsatWrapper(){
   
   // Prepare dates
   //Wrap the dates if needed
-  var wrapOffset = 0;
+  args.wrapOffset = 0;
   if (args.startJulian > args.endJulian) {
-    wrapOffset = 365;
+    args.wrapOffset = 365;
   }
    
   args.startDate = ee.Date.fromYMD(args.startYear,1,1).advance(args.startJulian-1,'day');
-  args.endDate = ee.Date.fromYMD(args.endYear,1,1).advance(args.endJulian-1+wrapOffset,'day');
+  args.endDate = ee.Date.fromYMD(args.endYear,1,1).advance(args.endJulian-1+args.wrapOffset,'day');
   print('Start and end dates:', args.startDate, args.endDate);
 
   //Do some error checking
   
-  
-  if(args.toaOrSR === 'TOA' && (args.applyFmaskCloudMask === true ||  args.applyFmaskCloudShadowMask === true || args.applyFmaskSnowMask === true)){
-      args.addPixelQA = true;
-      // applyFmaskCloudMask = false;
-  
-      // applyFmaskCloudShadowMask = false;
-  
-      // applyFmaskSnowMask = false;
-    }else{args.addPixelQA = false;}
-  // Get Landsat image collection
-  var ls = getLandsat(args.studyArea,args.startDate,args.endDate,args.startJulian,args.endJulian,
-    args.toaOrSR,args.includeSLCOffL7,args.defringeL5,args.addPixelQA,args.resampleMethod);
-  
-  print('Raw Landsat collection:',ls);
-  
-  // Apply relevant cloud masking methods
-  if(args.applyCloudScore){
-    print('Applying cloudScore');
-    ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,args.cloudScoreThresh,args.cloudScorePctl,args.contractPixels,args.dilatePixels,args.performCloudScoreOffset, args.preComputedCloudScoreOffset); 
-  }
-  
-  if(args.applyFmaskCloudMask){
-    print('Applying Fmask cloud mask');
-    ls = ls.map(function(img){return cFmask(img,'cloud')});
-    //Experimenting on how to reduce commission errors over bright cool areas
-    // var preCount = ls.count();
-    // var cloudFreeCount = ls.map(function(img){return cFmask(img,'cloud')}).count().unmask();
-    // // var ls = ls.map(function(img){return cFmask(img,'cloud')})
-    // var fmaskCloudFreeProp = cloudFreeCount.divide(preCount);
-    // var alwaysCloud = fmaskCloudFreeProp.lte(0.1);
-    // var ls = ls.map(function(img){
-    //   var m = img.select('pixel_qa').bitwiseAnd(fmaskBitDict['cloud']).neq(0).and(alwaysCloud.not());
-    //   return img.updateMask(m.not());
-    // })
-   
-    // Map.addLayer(alwaysCloud,{min:0,max:1},'Fmask cloud prop',false);
-  }
-  
-  if(args.applyTDOM){
-    print('Applying TDOM');
-    //Find and mask out dark outliers
-    ls = simpleTDOM2(ls,args.zScoreThresh,args.shadowSumThresh,args.contractPixels,args.dilatePixels,['nir','swir1'],args.preComputedTDOMIRMean,args.preComputedTDOMIRStdDev);
-  }
-  if(args.applyFmaskCloudShadowMask){
-    print('Applying Fmask shadow mask');
-    ls = ls.map(function(img){return cFmask(img,'shadow')});
-  }
-  if(args.applyFmaskSnowMask){
-    print('Applying Fmask snow mask');
-    ls = ls.map(function(img){return cFmask(img,'snow')});
-  }
-  
+  ls = getProcessedLandsatScenes(args);
   
   // Add zenith and azimuth
   if (args.correctIllumination){
@@ -2275,15 +2224,9 @@ function getLandsatWrapper(){
     });
   }
   
-  // Add common indices- can use addIndices for comprehensive indices 
-  //or simpleAddIndices for only common indices
-  ls = ls.map(simpleAddIndices)
-          .map(getTasseledCap)
-          .map(simpleAddTCAngles);
   
-  //Add sensor band
-  ls = ls.map(function(img){return addSensorBand(img,'landsat',args.toaOrSR)});
-
+  
+  
 
   args.ls = ls;
   // Create composite time series
@@ -2327,7 +2270,6 @@ function getLandsatWrapper(){
 
 //Wrapper function for getting Landsat imagery
 function getProcessedLandsatScenes(){
-    
     
    var defaultArgs = {
     'studyArea':null,
