@@ -2239,7 +2239,7 @@ function getLandsatWrapper(){
   }
   ls = ls.map(function(img){return addSensorBand(img,'landsat')});
 
-  
+  print(ls)
   args.ls = ls;
   // Create composite time series
   var ts = compositeTimeSeries(args);
