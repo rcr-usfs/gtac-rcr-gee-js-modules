@@ -2255,7 +2255,7 @@ function getLandsatWrapper(){
   }
   ls = ls.map(function(img){return addSensorBand(img,'landsat')});
 
-  print(ls)
+
   args.ls = ls;
   // Create composite time series
   var ts = compositeTimeSeries(args);
@@ -2280,19 +2280,19 @@ function getLandsatWrapper(){
   if(args.exportComposites){// Export composite collection
     if(args.compositingMethod == 'medoid'){
       args.exportBands =['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','sensor','year','julianDay'];
-      args.nonDivideBands = ['temp','year','sensor','julianDay'];
+      args.nonDivideBands = ['temp','sensor','year','julianDay'];
       print(args)
       exportCompositeCollection(args);
     }
-    // else{
-    //   var exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','sensor'];
-    //   exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
-    //   ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-    //               applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','sensor'],resampleMethod);
-    // }
+    else{
+      args.exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','sensor'];
+      args.nonDivideBands = ['temp','sensor'];
+      print(args)
+      exportCompositeCollection(args);
+      
   }
   
-  // return [ls,ts];
+  return args;
 }
 
 //Wrapper function for getting Landsat imagery
