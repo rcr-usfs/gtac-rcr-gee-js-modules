@@ -2315,6 +2315,9 @@ function getLandsatWrapper(){
     print('Args:',args);
     exportCompositeCollection(args);
   }
+  
+  args.processedScenes = ls;
+  args.composites = ts;
   return args;
 }
 
