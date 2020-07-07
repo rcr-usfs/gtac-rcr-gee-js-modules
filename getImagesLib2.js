@@ -2212,8 +2212,7 @@ function getLandsatWrapper(){
   args.endDate = ee.Date.fromYMD(args.endYear,1,1).advance(args.endJulian-1+args.wrapOffset,'day');
   print('Start and end dates:', args.startDate, args.endDate);
 
-  //Do some error checking
-  
+  //Get processed Landsat scenes
   var ls = getProcessedLandsatScenes(args);
   
   // Add zenith and azimuth
