@@ -2440,21 +2440,38 @@ function getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,end
   ){
   
   
-  if(applyQABand === undefined || applyQABand === null){applyQABand = false}
-  if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = true}
-  if(applyShadowShift === undefined || applyShadowShift === null){applyShadowShift = false}
-  if(applyTDOM === undefined || applyTDOM === null){applyTDOM = true}
-  if(cloudScoreThresh === undefined || cloudScoreThresh === null){cloudScoreThresh = 10}
-  if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
-  if(cloudScorePctl === undefined || cloudScorePctl === null){cloudScorePctl = 10}
-  if(cloudHeights === undefined || cloudHeights === null){cloudHeights = ee.List.sequence(500,10000,500)}
-  if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
-  if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
-  if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
-  if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
-  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'aggregate'}
-  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
-  if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
+  
+   var defaultArgs = {
+    'studyArea':null,
+    'startYear':null,
+    'endYear':null,
+    'startJulian':null,
+    'endJulian':null,
+    'applyQABand':false,
+    'applyCloudScore':true,
+    'applyShadowShift':false,
+    'applyTDOM':true,
+    'cloudScoreThresh':20,
+    'performCloudScoreOffset':true,
+    'cloudScorePctl':10,
+    'cloudHeights':ee.List.sequence(500,10000,500),
+    'zScoreThresh': -1,
+    'shadowSumThresh':0.35,
+    'contractPixels':1.5,
+    'dilatePixels':3.5,
+    'resampleMethod':'aggregate',
+    'toaOrSR':'TOA',
+    'convertToDailyMosaics':true,
+    'preComputedCloudScoreOffset':null,
+    'preComputedTDOMIRMean':null,
+    'preComputedTDOMIRStdDev':null
+    };
+  
+  var args = prepArgumentsObject(arguments,defaultArgs);
+  args.toaOrSR =  args.toaOrSR.toUpperCase();
+  args.origin = 'Sentinel2';
+  print(args)
+  
   // Prepare dates
   //Wrap the dates if needed
   var wrapOffset = 0;
