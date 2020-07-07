@@ -2180,44 +2180,44 @@ function getLandsatWrapper(){
   // Get Landsat image collection
   var ls = getLandsat(args.studyArea,args.startDate,args.endDate,args.startJulian,args.endJulian,
     args.toaOrSR,args.includeSLCOffL7,args.defringeL5,args.addPixelQA,args.resampleMethod);
-  print(ls)
-  // // Apply relevant cloud masking methods
-  // if(applyCloudScore){
-  //   print('Applying cloudScore');
-  //   ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset, preComputedCloudScoreOffset); 
-  // }
   
-  // if(applyFmaskCloudMask){
-  //   print('Applying Fmask cloud mask');
-  //   ls = ls.map(function(img){return cFmask(img,'cloud')});
-  //   //Experimenting on how to reduce commission errors over bright cool areas
-  //   // var preCount = ls.count();
-  //   // var cloudFreeCount = ls.map(function(img){return cFmask(img,'cloud')}).count().unmask();
-  //   // // var ls = ls.map(function(img){return cFmask(img,'cloud')})
-  //   // var fmaskCloudFreeProp = cloudFreeCount.divide(preCount);
-  //   // var alwaysCloud = fmaskCloudFreeProp.lte(0.1);
-  //   // var ls = ls.map(function(img){
-  //   //   var m = img.select('pixel_qa').bitwiseAnd(fmaskBitDict['cloud']).neq(0).and(alwaysCloud.not());
-  //   //   return img.updateMask(m.not());
-  //   // })
+  // Apply relevant cloud masking methods
+  if(args.applyCloudScore){
+    print('Applying cloudScore');
+    ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,args.cloudScoreThresh,args.cloudScorePctl,args.contractPixels,args.dilatePixels,args.performCloudScoreOffset, args.preComputedCloudScoreOffset); 
+  }
+  
+  if(applyFmaskCloudMask){
+    print('Applying Fmask cloud mask');
+    ls = ls.map(function(img){return cFmask(img,'cloud')});
+    //Experimenting on how to reduce commission errors over bright cool areas
+    // var preCount = ls.count();
+    // var cloudFreeCount = ls.map(function(img){return cFmask(img,'cloud')}).count().unmask();
+    // // var ls = ls.map(function(img){return cFmask(img,'cloud')})
+    // var fmaskCloudFreeProp = cloudFreeCount.divide(preCount);
+    // var alwaysCloud = fmaskCloudFreeProp.lte(0.1);
+    // var ls = ls.map(function(img){
+    //   var m = img.select('pixel_qa').bitwiseAnd(fmaskBitDict['cloud']).neq(0).and(alwaysCloud.not());
+    //   return img.updateMask(m.not());
+    // })
    
-  //   // Map.addLayer(alwaysCloud,{min:0,max:1},'Fmask cloud prop',false);
-  // }
+    // Map.addLayer(alwaysCloud,{min:0,max:1},'Fmask cloud prop',false);
+  }
   
-  // if(applyTDOM){
-  //   print('Applying TDOM');
-  //   //Find and mask out dark outliers
-  //   ls = simpleTDOM2(ls,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels,['nir','swir1'],preComputedTDOMIRMean,preComputedTDOMIRStdDev);
-  // }
-  // if(applyFmaskCloudShadowMask){
-  //   print('Applying Fmask shadow mask');
-  //   ls = ls.map(function(img){return cFmask(img,'shadow')});
-  // }
-  // if(applyFmaskSnowMask){
-  //   print('Applying Fmask snow mask');
-  //   ls = ls.map(function(img){return cFmask(img,'snow')});
-  // }
-  
+  if(applyTDOM){
+    print('Applying TDOM');
+    //Find and mask out dark outliers
+    ls = simpleTDOM2(ls,args.zScoreThresh,args.shadowSumThresh,args.contractPixels,args.dilatePixels,['nir','swir1'],args.preComputedTDOMIRMean,args.preComputedTDOMIRStdDev);
+  }
+  if(applyFmaskCloudShadowMask){
+    print('Applying Fmask shadow mask');
+    ls = ls.map(function(img){return cFmask(img,'shadow')});
+  }
+  if(applyFmaskSnowMask){
+    print('Applying Fmask snow mask');
+    ls = ls.map(function(img){return cFmask(img,'snow')});
+  }
+  print(ls)
   
   // // Add zenith and azimuth
   // if (correctIllumination){
