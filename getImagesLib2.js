@@ -2214,7 +2214,7 @@ function getLandsatWrapper(){
 
   //Do some error checking
   
-  ls = getProcessedLandsatScenes(args);
+  var ls = getProcessedLandsatScenes(args);
   
   // Add zenith and azimuth
   if (args.correctIllumination){
