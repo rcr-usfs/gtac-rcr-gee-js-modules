@@ -2229,8 +2229,8 @@ function getLandsatWrapper(){
                     'LANDSAT_7':7,
                     'LANDSAT_8':8
                     });
-  ls = ls.map(function(img){return img.addBands(ee.Image.constant(sensorDict.get(img.get('SPACECRAFT_ID'))).rename('Sensor').byte())});
-  print(ls)
+  ls = ls.map(function(img){return img.addBands(ee.Image.constant(sensorDict.get(img.get('SPACECRAFT_ID'))).rename(['sensor']).byte())});
+
   
   args.ls = ls;
   // Create composite time series
@@ -2255,7 +2255,7 @@ function getLandsatWrapper(){
   //Export composites
   if(exportComposites){// Export composite collection
     if(compositingMethod == 'medoid'){
-      var exportBands = ['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','year','julianDay'];
+      var exportBands = ['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','sensor','year','julianDay'];
       exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
       ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
                   applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','year','julianDay'],resampleMethod);
