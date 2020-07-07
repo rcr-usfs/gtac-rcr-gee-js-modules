@@ -2187,7 +2187,7 @@ function getLandsatWrapper(){
     ls = applyCloudScoreAlgorithm(ls,landsatCloudScore,args.cloudScoreThresh,args.cloudScorePctl,args.contractPixels,args.dilatePixels,args.performCloudScoreOffset, args.preComputedCloudScoreOffset); 
   }
   
-  if(applyFmaskCloudMask){
+  if(args.applyFmaskCloudMask){
     print('Applying Fmask cloud mask');
     ls = ls.map(function(img){return cFmask(img,'cloud')});
     //Experimenting on how to reduce commission errors over bright cool areas
@@ -2204,16 +2204,16 @@ function getLandsatWrapper(){
     // Map.addLayer(alwaysCloud,{min:0,max:1},'Fmask cloud prop',false);
   }
   
-  if(applyTDOM){
+  if(args.applyTDOM){
     print('Applying TDOM');
     //Find and mask out dark outliers
     ls = simpleTDOM2(ls,args.zScoreThresh,args.shadowSumThresh,args.contractPixels,args.dilatePixels,['nir','swir1'],args.preComputedTDOMIRMean,args.preComputedTDOMIRStdDev);
   }
-  if(applyFmaskCloudShadowMask){
+  if(args.applyFmaskCloudShadowMask){
     print('Applying Fmask shadow mask');
     ls = ls.map(function(img){return cFmask(img,'shadow')});
   }
-  if(applyFmaskSnowMask){
+  if(args.applyFmaskSnowMask){
     print('Applying Fmask snow mask');
     ls = ls.map(function(img){return cFmask(img,'snow')});
   }
