@@ -243,7 +243,11 @@ var sensorDict = ee.Dictionary({'LANDSAT_4':4,
                   'LANDSAT_8':8,
                   
                   });
-var sensorPropDict = ee.Dictionary({'landsat':'SPACECRAFT_ID'});
+var sensorPropDict = ee.Dictionary({'landsat':
+                                          {'TOA':'SPACECRAFT_ID',
+                                            'SR':'SATELLITE'
+                                          }
+                                    });
 
 function addSensorBand(img,whichOne){
   var sensorProp = sensorPropDict.get(whichOne);
