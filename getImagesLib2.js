@@ -2538,7 +2538,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
   );
   
-  print(s2s)
+  Map.addLayer(s2s)
   
   // // // Add zenith and azimuth
   // // if (correctIllumination){
