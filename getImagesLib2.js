@@ -236,6 +236,19 @@ function fillEmptyCollections(inCollection,dummyImage){
 
 }
 //////////////////////////////////////////////////////////////////////////
+//Add sensor band function
+var sensorDict = ee.Dictionary({'LANDSAT_4':4,
+                  'LANDSAT_5':5,
+                  'LANDSAT_7':7,
+                  'LANDSAT_8':8,
+                  
+                  });
+var sensorPropDict = ee.Dictionary({'landsat':'SPACECRAFT_ID'});
+
+function addSensorBand(img,whichOne){
+  var sensorProp = sensorPropDict.get(whichOne);
+  return img.addBands(ee.Image.constant(sensorDict.get(img.get(sensorProp))).rename(['sensor']).byte());
+}
 /////////////////////////////////////////////////////////////////
 //Adds the float year with julian proportion to image
 function addDateBand(img,maskTime){
@@ -2244,19 +2257,7 @@ function getLandsatWrapper(){
           .map(getTasseledCap)
           .map(simpleAddTCAngles);
   
-  //Add sensor band
-  var sensorDict = ee.Dictionary({'LANDSAT_4':4,
-                    'LANDSAT_5':5,
-                    'LANDSAT_7':7,
-                    'LANDSAT_8':8,
-                    
-                    });
-  var sensorPropDict = ee.Dictionary({'landsat':'SPACECRAFT_ID'});
   
-  function addSensorBand(img,whichOne){
-    var sensorProp = sensorPropDict.get(whichOne);
-    return img.addBands(ee.Image.constant(sensorDict.get(img.get(sensorProp))).rename(['sensor']).byte());
-  }
   ls = ls.map(function(img){return addSensorBand(img,'landsat')});
 
 
