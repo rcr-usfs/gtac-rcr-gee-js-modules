@@ -11,7 +11,11 @@ var geometry =
         [[[-108.0764409385066, 38.063974781475835],
           [-108.0764409385066, 37.0975668525586],
           [-106.4284917197566, 37.0975668525586],
-          [-106.4284917197566, 38.063974781475835]]], null, false);
+          [-106.4284917197566, 38.063974781475835]]], null, false),
+    geometry2 = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Geometry.MultiPoint();
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
 var getImageLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
@@ -50,7 +54,7 @@ args.timebuffer = 1;
 //In order to overweight the center year, you could specify the weights as
 //[1,5,1] which would duplicate the center year 5 times and increase its weight for
 //the compositing method
-args.weights = [1];
+args.weights = [1,5,1];
 
 // 6. Choose medoid or median compositing method. 
 // Median tends to be smoother, while medoid retains 
@@ -60,11 +64,11 @@ args.compositingMethod = 'medoid';
 
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 // Specify TOA or SR
-args.toaOrSR = 'TOA';
+args.toaOrSR = 'SR';
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
-args.includeSLCOffL7 = true;
+args.includeSLCOffL7 = false;
 
 //9. Whether to defringe L5
 //Landsat 5 data has fringes on the edges that can introduce anomalies into 
@@ -153,6 +157,7 @@ args.preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudSc
 var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
 args.preComputedTDOMIRMean = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
 args.preComputedTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
+
 
 // 12. correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
