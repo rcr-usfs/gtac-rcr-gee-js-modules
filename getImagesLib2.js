@@ -2098,8 +2098,7 @@ nonDivideBands,resampleMethod){
     args.startYearComposite = startYearT;
     args.endYearComposite = endYearT;
     
-    // Add metadata, cast to integer, and export composite
-    composite = composite.set(args);
+    
   
     // Export the composite 
     // Set up export name and path
@@ -2107,9 +2106,10 @@ nonDivideBands,resampleMethod){
       '_'  + startYearT + '_' + endYearT+'_' + 
       args.startJulian + '_' + args.endJulian ;
    
-    
     args.exportPath = args.exportPathRoot + '/' + args.exportName;
-    // print('Write down the Asset ID:', exportPath);
+    
+    // Add metadata, cast to integer, and export composite
+    composite = composite.set(args);
     print('Exporting:',composite);
     exportToAssetWrapper(composite,args.exportName,args.exportPath,'mean',
       args.studyArea,args.scale,args.crs,args.transform);
