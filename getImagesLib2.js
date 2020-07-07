@@ -1294,7 +1294,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
     //Set up weighted moving widow
     var yearsT = ee.List.sequence(startYearT,endYearT);
     
-    var z = yearsT.zip(weights);
+    var z = yearsT.zip(args.weights);
     var yearsTT = z.map(function(i){
       i = ee.List(i);
       return ee.List.repeat(i.get(0),i.get(1));
