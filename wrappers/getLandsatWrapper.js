@@ -149,8 +149,8 @@ args.preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudSc
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
 var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
-args.preComputedTDOMMeans = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
-args.preComputedTDOMStdDevs = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
+args.preComputedTDOMIRMean = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
+args.preComputedTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
 
 // 12. correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
@@ -186,57 +186,9 @@ args.scale = null;
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 //Start function calls
-
-   var defaultArgs = {
-    'studyArea':null,
-    'startYear':null,
-    'endYear':null,
-    'startJulian':null,
-    'endJulian':null,
-    'timebuffer':0,
-    'weights':[1],
-    'compositingMethod':'medoid',
-    'toaOrSR':'SR',
-    'includeSLCOffL7':false,
-    'defringeL5':false,
-    'applyCloudScore':false,
-    'applyFmaskCloudMask':true,
-    'applyTDOM':false,
-    'applyFmaskCloudShadowMask':true,
-    'applyFmaskSnowMask':false,
-    'cloudScoreThresh':10,
-    'performCloudScoreOffset':true,
-    'cloudScorePctl':10,
-    'zScoreThresh':-1,
-    'shadowSumThresh':0.35,
-    'contractPixels':1.5,
-    'dilatePixels':3.5,
-    'correctIllumination':false,
-    'correctScale':250,
-    'exportComposites':false,
-    'outputName':'Landsat-Composite',
-    'exportPathRoot':'users/ianhousman/test',
-    'crs':'EPSG:5070',
-    'transform':null,
-    'scale':null,
-    'resampleMethod':'near', 
-    'preComputedCloudScoreOffset':null,
-    'preComputedTDOMIRMean':null,
-    'preComputedTDOMIRStdDev':null
-    };
-print(Object.keys(args));print(Object.keys(defaultArgs));
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
-// var lsAndTs = getImageLib.getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian,
-//   timebuffer,weights,compositingMethod,
-//   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
-//   applyFmaskCloudShadowMask,applyFmaskSnowMask,
-//   cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-//   zScoreThresh,shadowSumThresh,
-//   contractPixels,dilatePixels,
-//   correctIllumination,correctScale,
-//   exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,
-//   preComputedCloudScoreOffset,preComputedTDOMMeans,preComputedTDOMStdDevs);
+getImageLib.getLandsatWrapper(args);
 
 //Separate into scenes and composites for subsequent analysis
 // var processedScenes = lsAndTs[0];
