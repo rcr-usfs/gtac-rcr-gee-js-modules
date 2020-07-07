@@ -2205,6 +2205,7 @@ function getLandsatWrapper(){
   var ls = getLandsat(args.studyArea,args.startDate,args.endDate,args.startJulian,args.endJulian,
     args.toaOrSR,args.includeSLCOffL7,args.defringeL5,args.addPixelQA,args.resampleMethod);
   
+  print('Raw Landsat collection:',ls);
   // Apply relevant cloud masking methods
   if(args.applyCloudScore){
     print('Applying cloudScore');
