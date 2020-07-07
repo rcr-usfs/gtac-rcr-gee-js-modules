@@ -249,8 +249,8 @@ var sensorPropDict = ee.Dictionary({'landsat':
                                           }
                                     });
 
-function addSensorBand(img,whichOne){
-  var sensorProp = sensorPropDict.get(whichOne);
+function addSensorBand(img,whichProgram,toaOrSr){
+  var sensorProp = sensorPropDict.get(whichProgram).get(toaOrSr);
   return img.addBands(ee.Image.constant(sensorDict.get(img.get(sensorProp))).rename(['sensor']).byte());
 }
 /////////////////////////////////////////////////////////////////
