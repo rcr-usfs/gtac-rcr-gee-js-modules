@@ -28,12 +28,13 @@ args.studyArea = geometry;
 // constraints. This supports wrapping for tropics and southern hemisphere.
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-args.startJulian = 300;
-args.endJulian = 100; 
+args.startJulian = 190;
+args.endJulian = 250; 
 
 // 3. Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
-// well. If using Fmask as the cloud/cloud shadow masking method, this does not 
+// well. If using Fmask as the cloud/cloud shadow masking method, or pre-computed 
+//cloudScore offsets and/or tdom stats, this does not 
 // matter
 args.startYear = 2010;
 args.endYear = 2018;
