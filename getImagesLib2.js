@@ -906,8 +906,6 @@ function cFmaskCloudShadow(img){
 //See defaultArgs below
 //Only parameter that must be provided is collection
 function simpleTDOM2(){
-  
-  
   var defaultArgs = {
     'collection':null,
     'zScoreThresh':-1,
