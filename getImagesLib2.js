@@ -2229,7 +2229,7 @@ function getLandsatWrapper(){
                     'LANDSAT_7':7,
                     'LANDSAT_8':8
                     });
-  ls = ls.map((img) =>{ img.addBands(ee.Image.constant(sensorDict.get(img.get('SPACECRAFT_ID'))).rename('Sensor'))});
+  ls = ls.map(function(img){return img.addBands(ee.Image.constant(sensorDict.get(img.get('SPACECRAFT_ID'))).rename('Sensor'))});
   print(ls)
   
   args.ls = ls;
