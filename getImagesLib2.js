@@ -2235,7 +2235,7 @@ function getLandsatWrapper(){
   
   function addSensorBand(img,whichOne){
     var sensorProp = sensorPropDict.get(whichOne);
-    return img.addBands(ee.Image.constant(sensorDict.get(img.get(sensorProp))).rename(['sensor']).byte())
+    return img.addBands(ee.Image.constant(sensorDict.get(img.get(sensorProp))).rename(['sensor']).byte());
   }
   ls = ls.map(function(img){return addSensorBand(img,'landsat')});
 
