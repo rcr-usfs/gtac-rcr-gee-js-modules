@@ -2521,32 +2521,46 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev){
   
   
-  if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
-  if(weights === undefined || weights === null){weights = [1]}
-  if(compositingMethod === undefined || compositingMethod === null){compositingMethod = 'medoid'}
-  if(applyQABand === undefined || applyQABand === null){applyQABand = false}
-  if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = true}
-  if(applyShadowShift === undefined || applyShadowShift === null){applyShadowShift = false}
-  if(applyTDOM === undefined || applyTDOM === null){applyTDOM = true}
-  if(cloudScoreThresh === undefined || cloudScoreThresh === null){cloudScoreThresh = 10}
-  if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
-  if(cloudScorePctl === undefined || cloudScorePctl === null){cloudScorePctl = 10}
-  if(cloudHeights === undefined || cloudHeights === null){cloudHeights = ee.List.sequence(500,10000,500)}
-  if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
-  if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
-  if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
-  if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
+   var defaultArgs = {
+    'studyArea':null,
+    'startYear':null,
+    'endYear':null,
+    'startJulian':null,
+    'endJulian':null,
+    'timebuffer':0,
+    'weights':[1],
+    'compositingMethod':'medoid',
+    'applyQABand':false,
+    'applyCloudScore':true,
+    'applyShadowShift':false,
+    'applyTDOM':true,
+    'cloudScoreThresh':20,
+    'performCloudScoreOffset':true,
+    'cloudScorePctl':10,
+    'cloudHeights':ee.List.sequence(500,10000,500),
+    'zScoreThresh': -1,
+    'shadowSumThresh':0.35,
+    'contractPixels':1.5,
+    'dilatePixels':3.5,
+    'correctIllumination':false,
+    'correctScale':250,
+    'exportComposites':false,
+    'outputName':'Sentinel2-Composite',
+    'exportPathRoot':'users/iwhousman/test',
+    'crs':'EPSG:5070',
+    'transform':null,
+    'scale':null,
+    'resampleMethod':'aggregate',
+    'toaOrSR':'TOA',
+    'convertToDailyMosaics':true,
+    'preComputedCloudScoreOffset':null,
+    'preComputedTDOMIRMean':null,
+    'preComputedTDOMIRStdDev':null
+    };
   
-  if(correctIllumination === undefined || correctIllumination === null){correctIllumination = false}
-  if(correctScale === undefined || correctScale === null){correctScale = 250}
-  if(exportComposites === undefined || exportComposites === null){exportComposites = false}
-  if(outputName === undefined || outputName === null){outputName = 'Sentinel2-Composite'}
-  if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/iwhousman/test'}
-  if(crs === undefined || crs === null){crs = 'EPSG:5070'}
-  if((scale === undefined || scale === null) && (transform === undefined || transform === null)){scale = 20;transform = null;}
-  if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'aggregate'}
-  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
-  if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
+  var args = prepArgumentsObject(arguments,defaultArgs);
+  args.toaOrSR =  args.toaOrSR.toUpperCase();
+  args.origin = 'Sentinel2';
   
   var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
   applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
