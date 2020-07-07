@@ -902,16 +902,11 @@ function cFmaskCloudShadow(img){
 ////////////////////////////////////////////////////////////////////////////////
 // Function for finding dark outliers in time series.
 // Original concept written by Carson Stam and adapted by Ian Housman.
-// Adds a band that is a mask of pixels that are dark, and dark outliers.
-function simpleTDOM2(collection,zScoreThresh,shadowSumThresh,contractPixels,
-  dilatePixels,shadowSumBands,irMean,irStdDev){
-  if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
-  if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
-  if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
-  if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
-  if(shadowSumBands === null || shadowSumBands === undefined){
-    shadowSumBands = ['nir','swir1'];
-  }
+// Masks out pixels that are dark, and dark outliers.
+//See defaultArgs below
+//Only parameter that must be provided is collection
+function simpleTDOM2(){
+  
   
   var defaultArgs = {
     'collection':null,
