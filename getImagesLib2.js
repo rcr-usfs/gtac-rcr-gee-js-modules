@@ -2074,7 +2074,8 @@ nonDivideBands,resampleMethod){
               'includeSLCOffL7':null,
               'correctIllumination':null,
               'nonDivideBands':['temp'],
-              'resampleMethod':'near'
+              'resampleMethod':'near',
+              'origin':'Landsat'
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
