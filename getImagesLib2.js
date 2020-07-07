@@ -934,22 +934,25 @@ function simpleTDOM2(collection,zScoreThresh,shadowSumThresh,contractPixels,
     print('Using pre-computed irMean for TDOM');
     irMean = args.preComputedTDOMIRMean;
   }
-  if(irStdDev === null || irStdDev === undefined){
+  if(args.preComputedTDOMIRStdDev === null || args.preComputedTDOMIRStdDev === undefined){
     print('Computing irStdDev for TDOM');
-    irStdDev = collection.select(shadowSumBands).reduce(ee.Reducer.stdDev());
-  }else{print('Using pre-computed irStdDev for TDOM')}
+    irStdDev = collection.select(args.shadowSumBands).reduce(ee.Reducer.stdDev());
+  }else{
+    print('Using pre-computed irStdDev for TDOM');
+    irStdDev = args.preComputedTDOMIRStdDev;
+  }
   
   // Mask out dark dark outliers
   collection = collection.map(function(img){
-    var zScore = img.select(shadowSumBands).subtract(irMean).divide(irStdDev);
-    var irSum = img.select(shadowSumBands).reduce(ee.Reducer.sum());
-    var TDOMMask = zScore.lt(zScoreThresh).reduce(ee.Reducer.sum()).eq(shadowSumBands.length)
-      .and(irSum.lt(shadowSumThresh));
-    TDOMMask = TDOMMask.focal_min(contractPixels).focal_max(dilatePixels);
+    var zScore = img.select(args.shadowSumBands).subtract(irMean).divide(irStdDev);
+    var irSum = img.select(args.shadowSumBands).reduce(ee.Reducer.sum());
+    var TDOMMask = zScore.lt(args.zScoreThresh).reduce(ee.Reducer.sum()).eq(args.shadowSumBands.length)
+      .and(irSum.lt(args.shadowSumThresh));
+    TDOMMask = TDOMMask.focal_min(args.contractPixels).focal_max(args.dilatePixels);
     return img.updateMask(TDOMMask.not());
   });
   
-  return collection;
+  return collection.set(args);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
