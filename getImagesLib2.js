@@ -2546,14 +2546,14 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev
   );
   
-  print(s2s)
   
-  // // // Add zenith and azimuth
-  // // if (correctIllumination){
-  // //   s2s = s2s.map(function(img){
-  // //     return addZenithAzimuth(img,'TOA',{'TOA':'MEAN_SOLAR_ZENITH_ANGLE'},{'TOA':'MEAN_SOLAR_AZIMUTH_ANGLE'});
-  // //   });
-  // // }
+  
+  // // Add zenith and azimuth
+  // if (correctIllumination){
+  //   s2s = s2s.map(function(img){
+  //     return addZenithAzimuth(img,'TOA',{'TOA':'MEAN_SOLAR_ZENITH_ANGLE'},{'TOA':'MEAN_SOLAR_AZIMUTH_ANGLE'});
+  //   });
+  // }
  
   // // Add common indices- can use addIndices for comprehensive indices 
   // //or simpleAddIndices for only common indices
@@ -2561,9 +2561,10 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   //         // .map(getTasseledCap)
   //         // .map(simpleAddTCAngles);
   
-  // // Create composite time series
-  // var ts = compositeTimeSeries(s2s,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
-  
+  // Create composite time series
+  args.ls = s2s;
+  var ts = compositeTimeSeries(args);
+  print('ts',ts)
   
   // // Correct illumination
   // // if (correctIllumination){
