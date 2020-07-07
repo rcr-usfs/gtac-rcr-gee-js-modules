@@ -2101,7 +2101,7 @@ nonDivideBands,resampleMethod){
   
     // Export the composite 
     // Set up export name and path
-    var exportName = args.outputName  + args.toaOrSR + '_' + args.compositingMethod + 
+    var exportName = args.outputName  + '_' + args.toaOrSR + '_' + args.compositingMethod + 
       '_'  + startYearT + '_' + endYearT+'_' + 
       args.startJulian + '_' + args.endJulian ;
    
