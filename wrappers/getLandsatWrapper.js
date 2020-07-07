@@ -14,7 +14,7 @@ var geometry =
           [-106.4284917197566, 38.063974781475835]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImageLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 
@@ -34,7 +34,7 @@ var endJulian = 250;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2018;
+var startYear = 2010;
 var endYear = 2018;
 
 // 4. Specify an annual buffer to include imagery from the same season 
@@ -58,11 +58,11 @@ var compositingMethod = 'medoid';
 
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 // Specify TOA or SR
-var toaOrSR = 'SR';
+var toaOrSR = 'TOA';
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
-var includeSLCOffL7 = false;
+var includeSLCOffL7 = true;
 
 //9. Whether to defringe L5
 //Landsat 5 data has fringes on the edges that can introduce anomalies into 
@@ -202,8 +202,8 @@ var lsAndTs = getImageLib.getLandsatWrapper(studyArea,startYear,endYear,startJul
   preComputedCloudScoreOffset,preComputedTDOMMeans,preComputedTDOMStdDevs);
 
 //Separate into scenes and composites for subsequent analysis
-var processedScenes = lsAndTs[0];
-var processedComposites = lsAndTs[1];
+// var processedScenes = lsAndTs[0];
+// var processedComposites = lsAndTs[1];
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the study region, with a blue outline.
