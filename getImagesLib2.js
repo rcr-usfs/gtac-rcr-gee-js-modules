@@ -2222,9 +2222,9 @@ function getLandsatWrapper(){
   ls = ls.map(simpleAddIndices)
           .map(getTasseledCap)
           .map(simpleAddTCAngles);
-          
+  args.ls = ls;
   // Create composite time series
-  var ts = compositeTimeSeries(ls,args.startYear,args.endYear,args.startJulian,args.endJulian,args.timebuffer,args.weights,args.compositingMethod);
+  var ts = compositeTimeSeries(args);
   print(ts)
   
   // // Correct illumination
