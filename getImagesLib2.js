@@ -2275,21 +2275,24 @@ function getLandsatWrapper(){
     var f = ee.Image(ts.first());
     Map.addLayer(f,vizParamsFalse,'First-illuminated',false);
   }
-  
-  // //Export composites
-  // if(args.exportComposites){// Export composite collection
-  //   if(args.compositingMethod == 'medoid'){
-  //     var exportBands = ['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','sensor','year','julianDay'];
-  //     exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
-  //     ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-  //                 applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','year','sensor','julianDay'],resampleMethod);
-  //   }else{
-  //     var exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','sensor'];
-  //     exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
-  //     ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-  //                 applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','sensor'],resampleMethod);
-  //   }
-  // }
+  args.collection = ts;
+  //Export composites
+  if(args.exportComposites){// Export composite collection
+    if(args.compositingMethod == 'medoid'){
+      args.exportBands =['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','sensor','year','julianDay'];
+      args.nonDivideBands = ['temp','year','sensor','julianDay'];
+      print(args)
+      // exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
+      // ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
+                  // applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','year','sensor','julianDay'],resampleMethod);
+    }
+    // else{
+    //   var exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','sensor'];
+    //   exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
+    //   ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
+    //               applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,['temp','sensor'],resampleMethod);
+    // }
+  }
   
   // return [ls,ts];
 }
