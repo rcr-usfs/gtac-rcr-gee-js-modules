@@ -196,11 +196,11 @@ print('Provided parameters are:',args);
 //Start function calls
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
-getImageLib.getLandsatWrapper(args);
-
+var landsat = getImageLib.getLandsatWrapper(args);
+print('Final output:',landsat)
 //Separate into scenes and composites for subsequent analysis
-// var processedScenes = lsAndTs[0];
-// var processedComposites = lsAndTs[1];
+var processedScenes = landsat.processedScenes;
+var processedComposites = landsat.processedComposites;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the study region, with a blue outline.
