@@ -2286,9 +2286,9 @@ function getLandsatWrapper(){
       args.exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','sensor'];
       args.nonDivideBands = ['temp','sensor'];
     }
-  print('Args:',args);
-  exportCompositeCollection(args);
-  
+    print('Args:',args);
+    exportCompositeCollection(args);
+  }
   return args;
 }
 
