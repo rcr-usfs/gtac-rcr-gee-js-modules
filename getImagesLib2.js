@@ -2317,7 +2317,7 @@ function getLandsatWrapper(){
   }
   
   args.processedScenes = ls;
-  args.composites = ts;
+  args.processedComposites = ts;
   return args;
 }
 
