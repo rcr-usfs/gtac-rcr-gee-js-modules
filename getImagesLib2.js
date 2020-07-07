@@ -2281,16 +2281,13 @@ function getLandsatWrapper(){
     if(args.compositingMethod == 'medoid'){
       args.exportBands =['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','sensor','year','julianDay'];
       args.nonDivideBands = ['temp','sensor','year','julianDay'];
-      print(args)
-      exportCompositeCollection(args);
     }
     else{
       args.exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','sensor'];
       args.nonDivideBands = ['temp','sensor'];
-      print(args)
-      exportCompositeCollection(args);
-      
-  }
+    }
+  print('Args:',args);
+  exportCompositeCollection(args);
   
   return args;
 }
