@@ -2306,6 +2306,7 @@ function getLandsatWrapper(){
     Map.addLayer(f,vizParamsFalse,'First-illuminated',false);
   }
   args.collection = ts;
+  args.origin = 'Landsat';
   //Export composites
   if(args.exportComposites){// Export composite collection
     if(args.compositingMethod == 'medoid'){
