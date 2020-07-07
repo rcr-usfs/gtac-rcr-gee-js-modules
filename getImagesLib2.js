@@ -2080,6 +2080,8 @@ nonDivideBands,resampleMethod){
   
   var args = prepArgumentsObject(arguments,defaultArgs);
   
+  args.pyramidingPolicy = 'mean';
+  
   args.collection = args.collection.select(args.exportBands);
   print('Export bands:',args.exportBands);
   print('Non divide bands:',args.nonDivideBands);
@@ -2145,8 +2147,9 @@ nonDivideBands,resampleMethod){
       args.toaOrSR, false);
       
       
+      
     // print('Exporting:',composite);
-    exportToAssetWrapper(composite,args.exportName,args.exportPath,'mean',
+    exportToAssetWrapper(composite,args.exportName,args.exportPath,args.pyramidingPolicy,
       args.studyArea,args.scale,args.crs,args.transform);
     });
 }
