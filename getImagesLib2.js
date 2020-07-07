@@ -2129,32 +2129,7 @@ function getLandsatWrapper(){
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   print(args)
-    
-  // if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
-  // if(weights === undefined || weights === null){weights = [1]}
-  // if(compositingMethod === undefined || compositingMethod === null){compositingMethod = 'medoid'}
-  // if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'SR'}
-  // if(includeSLCOffL7 === undefined || includeSLCOffL7 === null){includeSLCOffL7 = false}
-  // if(defringeL5 === undefined || defringeL5 === null){defringeL5 = false}
-  // if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = false}
-  // if(applyFmaskCloudMask === undefined || applyFmaskCloudMask === null){applyFmaskCloudMask = true}
-  // if(applyTDOM === undefined || applyTDOM === null){applyTDOM = false}
-  // if(applyFmaskCloudShadowMask === undefined || applyFmaskCloudShadowMask === null){applyFmaskCloudShadowMask = true}
-  // if(applyFmaskSnowMask === undefined || applyFmaskSnowMask === null){applyFmaskSnowMask = false}
-  // if(cloudScoreThresh === undefined || cloudScoreThresh === null){cloudScoreThresh = 10}
-  // if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
-  // if(cloudScorePctl === undefined || cloudScorePctl === null){cloudScorePctl = 10}
-  // if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
-  // if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
-  // if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
-  // if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
-  // if(correctIllumination === undefined || correctIllumination === null){correctIllumination = false}
-  // if(correctScale === undefined || correctScale === null){correctScale = 250}
-  // if(exportComposites === undefined || exportComposites === null){exportComposites = false}
-  // if(outputName === undefined || outputName === null){outputName = 'Landsat-Composite'}
-  // if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/ianhousman/test'}
-  // if(crs === undefined || crs === null){crs = 'EPSG:5070'}
-  // if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
+  
   // Prepare dates
   //Wrap the dates if needed
   var wrapOffset = 0;
