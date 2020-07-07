@@ -18,6 +18,7 @@ var getImageLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 var args = {};
+
 // 1. Specify study area: Study area
 // Can specify a country, provide a fusion table  or asset table (must add 
 // .geometry() after it), or draw a polygon and make studyArea = drawnPolygon
@@ -27,8 +28,8 @@ args.studyArea = geometry;
 // constraints. This supports wrapping for tropics and southern hemisphere.
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-args.startJulian = 190;
-args.endJulian = 250; 
+args.startJulian = 300;
+args.endJulian = 100; 
 
 // 3. Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
@@ -40,7 +41,7 @@ args.endYear = 2018;
 // 4. Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
 // in a 3 year moving window
-args.timebuffer = 0;
+args.timebuffer = 1;
 
 // 5. Specify the weights to be used for the moving window created by timeBuffer
 //For example- if timeBuffer is 1, that is a 3 year moving window
@@ -146,7 +147,7 @@ args.resampleMethod = 'near';
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
 args.preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Landsat_CloudScore_p'+args.cloudScorePctl.toString()]);
 
-//The TDOM stats are the mean and standard deviations of the two bands used in TDOM
+//The TDOM stats are the mean and standard deviations of the two IR bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
 var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
 args.preComputedTDOMIRMean = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
@@ -183,6 +184,7 @@ args.scale = null;
 ///////////////////////////////////////////////////////////////////////
 // End user parameters
 ///////////////////////////////////////////////////////////////////////
+print('Provided parameters are:',args);
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 //Start function calls
