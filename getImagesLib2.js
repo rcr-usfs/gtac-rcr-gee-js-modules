@@ -913,12 +913,27 @@ function simpleTDOM2(collection,zScoreThresh,shadowSumThresh,contractPixels,
     shadowSumBands = ['nir','swir1'];
   }
   
+  var defaultArgs = {
+    'collection':null,
+    'zScoreThresh':-1,
+    'shadowSumThresh':0.35,
+    'contractPixels':1.5,
+    'dilatePixels':3.5,
+    'shadowSumBands':['nir','swir1'],
+    'preComputedTDOMIRMean':null,
+    'preComputedTDOMIRStdDev':null
+  }
+  
+  var args = prepArgumentsObject(arguments,defaultArgs);
   
   // Get some pixel-wise stats for the time series
-  if(irMean === null || irMean === undefined){
+  if(args.preComputedTDOMIRMean === null || args.preComputedTDOMIRMean === undefined){
     print('Computing irMean for TDOM');
-    irMean = collection.select(shadowSumBands).mean();
-  }else{print('Using pre-computed irMean for TDOM')}
+    irMean = collection.select(args.shadowSumBands).mean();
+  }else{
+    print('Using pre-computed irMean for TDOM');
+    irMean = args.preComputedTDOMIRMean;
+  }
   if(irStdDev === null || irStdDev === undefined){
     print('Computing irStdDev for TDOM');
     irStdDev = collection.select(shadowSumBands).reduce(ee.Reducer.stdDev());
@@ -2196,7 +2211,7 @@ function getLandsatWrapper(){
     'preComputedTDOMIRMean':null,
     'preComputedTDOMIRStdDev':null
     };
-  
+   
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   args.origin = 'Landsat';
