@@ -2108,7 +2108,7 @@ nonDivideBands,resampleMethod){
     
     var exportPath = args.exportPathRoot + '/' + exportName;
     // print('Write down the Asset ID:', exportPath);
-  
+    print('Exporting:',composite);
     exportToAssetWrapper(composite,exportName,exportPath,'mean',
       args.studyArea,args.scale,args.crs,args.transform);
     });
