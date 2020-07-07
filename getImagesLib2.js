@@ -920,6 +920,7 @@ function simpleTDOM2(){
   var args = prepArgumentsObject(arguments,defaultArgs);
   
   // Get some pixel-wise stats for the time series
+  var irMean;var irStdDev;
   if(args.preComputedTDOMIRMean === null || args.preComputedTDOMIRMean === undefined){
     print('Computing irMean for TDOM');
     irMean = collection.select(args.shadowSumBands).mean();
