@@ -915,7 +915,7 @@ function simpleTDOM2(){
     'shadowSumBands':['nir','swir1'],
     'preComputedTDOMIRMean':null,
     'preComputedTDOMIRStdDev':null
-  }
+  };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
   
