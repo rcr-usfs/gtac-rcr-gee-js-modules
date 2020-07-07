@@ -197,7 +197,7 @@ print('Provided parameters are:',args);
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
 var landsat = getImageLib.getLandsatWrapper(args);
-print('Final output:',landsat)
+print('Final output:',landsat);
 //Separate into scenes and composites for subsequent analysis
 var processedScenes = landsat.processedScenes;
 var processedComposites = landsat.processedComposites;
