@@ -2177,7 +2177,7 @@ function getLandsatWrapper(){
   
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
-  print(args);
+
   
   // Prepare dates
   //Wrap the dates if needed
