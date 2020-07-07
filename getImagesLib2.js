@@ -2200,7 +2200,7 @@ function getLandsatWrapper(){
   
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
-
+  args.origin = 'Landsat';
   
   // Prepare dates
   //Wrap the dates if needed
@@ -2306,7 +2306,7 @@ function getLandsatWrapper(){
     Map.addLayer(f,vizParamsFalse,'First-illuminated',false);
   }
   args.collection = ts;
-  args.origin = 'Landsat';
+  
   //Export composites
   if(args.exportComposites){// Export composite collection
     if(args.compositingMethod == 'medoid'){
