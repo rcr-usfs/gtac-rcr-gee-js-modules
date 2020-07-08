@@ -2723,7 +2723,7 @@ function getLandsatAndSentinel2HybridWrapper(args){
   
   // Merge Landsat and S2
   var merged = ls.merge(s2s);
-  print(merged)
+  print(ls)
   args.ls = merged;
   //Create hybrid composites
   var composites = compositeTimeSeries(args);
