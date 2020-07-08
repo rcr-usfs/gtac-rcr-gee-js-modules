@@ -453,7 +453,8 @@ function getS2(){
     'endJulian':null,
     'resampleMethod':'aggregate',
     'toaOrSR':'TOA',
-    'convertToDailyMosaics':true
+    'convertToDailyMosaics':true,
+    'addCloudProbabilty':true
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -461,6 +462,7 @@ function getS2(){
   print(args)
 
   var s2CollectionDict = {'TOA':'COPERNICUS/S2','SR':'COPERNICUS/S2_SR'};
+  
   var sensorBandDict = {
       'SR': ['B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9', 'B11','B12'],
       'TOA': ['B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9', 'B10', 'B11','B12']
@@ -487,6 +489,13 @@ function getS2(){
                       // .map(function(img){return img.resample('bicubic') }) ;
 
   s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
+  
+  var cloudProbabilities = ee.ImageCollection("COPERNICUS/S2_CLOUD_PROBABILITY")
+                    .filterDate(args.startDate,args.endDate)
+                    .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+                    .filterBounds(args.studyArea);
+  
+  print(s2s.size(),cloudProbabilities.size())
   
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
