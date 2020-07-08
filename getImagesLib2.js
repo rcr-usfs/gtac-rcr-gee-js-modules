@@ -2622,7 +2622,7 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs){
   
-  var args = {
+  var defaultArgs = {
           'studyArea':null,
           'startYear':null,
           'endYear':null,
