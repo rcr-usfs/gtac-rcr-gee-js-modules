@@ -2754,6 +2754,7 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
     args.nonDivideBands = nonDivideBandDict[args.compositingMethod];
     print('Args:',args);
     exportCompositeCollection(args);
+    
   }
   
   args.processedScenes = merged;
