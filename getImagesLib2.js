@@ -2471,7 +2471,7 @@ function getProcessedSentinel2Scenes(){
      s2s = applyCloudScoreAlgorithm(s2s,sentinel2CloudScore,args.cloudScoreThresh,args.cloudScorePctl,args.contractPixels,args.dilatePixels,args.performCloudScoreOffset,args.preComputedCloudScoreOffset);
     // Map.addLayer(s2s.mosaic(),{min:0.05,max:0.4,bands:'swir1,nir,red'},'Cloud score cloud masked');
   }
-  if(applyCloudProbability){
+  if(args.applyCloudProbability){
     print('Applying cloud probability');
   }
   if(args.applyShadowShift){
