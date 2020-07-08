@@ -2739,23 +2739,23 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   args.ls = merged;
   //Create hybrid composites
   var composites = compositeTimeSeries(args);
-  print(composites)
-  // if(exportComposites){// Export composite collection
+  
+  if(args.exportComposites){// Export composite collection
     
-  //   var exportBandDict = {
-  //     'medoid':['blue', 'green', 'red','nir','swir1', 'swir2','sensor','year','julianDay'],
-  //     'median':['blue', 'green', 'red','nir','swir1', 'swir2']
-  //   };
-  //   var nonDivideBandDict = {
-  //     'medoid':['sensor','year','julianDay'],
-  //     'median':[]
-  //   };
+    var exportBandDict = {
+      'medoid':['blue', 'green', 'red','nir','swir1', 'swir2','compositeObsCount','sensor','year','julianDay'],
+      'median':['blue', 'green', 'red','nir','swir1', 'swir2','compositeObsCount']
+    };
+    var nonDivideBandDict = {
+      'medoid':['compositeObsCount','sensor','year','julianDay'],
+      'median':['compositeObsCount']
+    };
   //   var exportBands = exportBandDict[compositingMethod];
   //   var nonDivideBands = nonDivideBandDict[compositingMethod];
   //   exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
   //     composites,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
   //     applyCloudScore,applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,nonDivideBands,'Landsat: '+[landsatResampleMethod,sentinel2ResampleMethod].join(' Sentinel2:'));
-  // }
+  }
   
   // return [merged,composites];
 }
