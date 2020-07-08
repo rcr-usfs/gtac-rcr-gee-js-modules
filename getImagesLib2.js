@@ -2673,79 +2673,68 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   args.origin = 'Sentinel2';
-  print(args)
+  
+  //Get Landsat
   args.preComputedCloudScoreOffset = args.preComputedLandsatCloudScoreOffset;
   args.preComputedTDOMIRMean = args.preComputedLandsatTDOMIRMean;
   args.preComputedTDOMIRStdDev = args.preComputedSentinel2TDOMIRStdDev;
   var ls = getProcessedLandsatScenes(args);
+  
+  //Get Sentinel 2
   args.preComputedCloudScoreOffset = args.preComputedSentinel2CloudScoreOffset;
   args.preComputedTDOMIRMean = args.preComputedSentinel2TDOMIRMean;
   args.preComputedTDOMIRStdDev = args.preComputedSentinel2TDOMIRStdDev;
   var s2s = getProcessedSentinel2Scenes(args);
-  // // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
-  // // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
+  // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
+  // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
   
-  // //Select off common bands between Landsat and Sentinel 2
-  // var commonBands =  ['blue', 'green', 'red','nir','swir1', 'swir2'];
-  // ls = ls.select(commonBands);
-  // s2s = s2s.select(commonBands);
+  //Select off common bands between Landsat and Sentinel 2
+  var commonBands =  ['blue', 'green', 'red','nir','swir1', 'swir2'];
+  ls = ls.select(commonBands);
+  s2s = s2s.select(commonBands);
   
 
-  // //Seperate each sensor
-  // var tm = ls.filter(ee.Filter.eq('SENSOR_ID','TM'));
-  // var etm = ls.filter(ee.Filter.eq('SENSOR_ID','ETM'));
-  // var oli = ls.filter(ee.Filter.eq('SENSOR_ID','OLI_TIRS'));
-  // var msi = s2s;
-  
-  // //Fill if no images exist for particular Landsat sensor
-  // //Allow it to fail of no images exist for Sentinel 2 since the point
-  // //of this method is to include S2
-  // tm = fillEmptyCollections(tm,ee.Image(ls.first()));
-  // etm = fillEmptyCollections(etm,ee.Image(ls.first()));
-  // oli = fillEmptyCollections(oli,ee.Image(ls.first()));
   
   
-  // if(runChastainHarmonization){
-  //   print('Running Chastain et al 2019 harmonization');
+  if(runChastainHarmonization){
     
-  //   // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli before');
-  //   // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi before');
+    //Seperate each sensor
+    var tm = ls.filter(ee.Filter.inList('SENSOR_ID',['TM','ETM']));
+    var oli = ls.filter(ee.Filter.eq('SENSOR_ID','OLI_TIRS'));
+    var msi = s2s;
+  
+    //Fill if no images exist for particular Landsat sensor
+    //Allow it to fail of no images exist for Sentinel 2 since the point
+    //of this method is to include S2
+    tm = fillEmptyCollections(tm,ee.Image(ls.first()));
+    etm = fillEmptyCollections(etm,ee.Image(ls.first()));
+    oli = fillEmptyCollections(oli,ee.Image(ls.first()));
+  
+    print('Running Chastain et al 2019 harmonization');
+    
+    // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli before');
+    // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi before');
    
-  //   //Apply correction
-  //   //Currently coded to go to ETM+
+    //Apply correction
+    //Currently coded to go to ETM+
     
-  //   //No need to correct ETM to ETM
-  //   // tm = tm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
-  //   // etm = etm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
+    //No need to correct ETM to ETM
+    // tm = tm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
+    // etm = etm.map(function(img){return getImagesLib.harmonizationChastain(img, 'ETM','ETM')});
     
-  //   //Harmonize the other two
-  //   oli = oli.map(function(img){return harmonizationChastain(img, 'OLI','ETM')});
-  //   msi = msi.map(function(img){return harmonizationChastain(img, 'MSI','ETM')});
-  //   // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli after');
-  //   // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi after');
+    //Harmonize the other two
+    oli = oli.map(function(img){return harmonizationChastain(img, 'OLI','ETM')});
+    msi = msi.map(function(img){return harmonizationChastain(img, 'MSI','ETM')});
+    // Map.addLayer(oli.median(),getImagesLib.vizParamsFalse,'oli after');
+    // Map.addLayer(msi.median(),getImagesLib.vizParamsFalse,'msi after');
     
+    s2s = msi;
     
-  // }
+  }
   
   
-  // //Set sensor band number
-  // tm = tm.map(function(img){
-  //   return img.addBands(ee.Image(5).rename(['sensor']));
-  // });
-  // etm = etm.map(function(img){
-  //   return img.addBands(ee.Image(7).rename(['sensor']));
-  // });
-  
-  // oli = oli.map(function(img){
-  //   return img.addBands(ee.Image(8).rename(['sensor']));
-  // });
-  
-  // msi = msi.map(function(img){
-  //   return img.addBands(ee.Image(2).rename(['sensor']));
-  // });
   
   
-  // s2s = msi;
   
   // //Merge Landsat back together
   // tm = ee.ImageCollection(tm.merge(etm));
