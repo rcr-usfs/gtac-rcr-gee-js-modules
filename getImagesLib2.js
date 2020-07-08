@@ -251,9 +251,9 @@ var sensorDict = ee.Dictionary({'LANDSAT_4':4,
                   'LANDSAT_5':5,
                   'LANDSAT_7':7,
                   'LANDSAT_8':8,
-                  'Sentinel-2A':2,
-                  'Sentinel-2B':2,
-                  'Sentinel-2C':2
+                  'Sentinel-2A':21,
+                  'Sentinel-2B':22,
+                  'Sentinel-2C':23
                   });
 var sensorPropDict = ee.Dictionary({'landsat':
                                           {'TOA':'SPACECRAFT_ID',
