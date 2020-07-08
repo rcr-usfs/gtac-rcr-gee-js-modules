@@ -495,7 +495,8 @@ function getS2(){
     var cloudProbabilities = ee.ImageCollection("COPERNICUS/S2_CLOUD_PROBABILITY")
                     .filterDate(args.startDate,args.endDate)
                     .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
-                    .filterBounds(args.studyArea);
+                    .filterBounds(args.studyArea)
+                    .select(['probability'],['cloud_probability']);
     print(s2s.size())
     s2s = joinCollections(s2s,cloudProbabilities, false,'system:index');
     print(s2s.size())
