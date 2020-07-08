@@ -2577,19 +2577,6 @@ function getSentinel2Wrapper(args){
   }
   
   
-  
-  //Export composites
-  if(args.exportComposites){// Export composite collection
-    if(args.compositingMethod == 'medoid'){
-      args.exportBands =['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','sensor','year','julianDay'];
-      args.nonDivideBands = ['temp','sensor','year','julianDay'];
-    }
-    else{
-      args.exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','sensor'];
-      args.nonDivideBands = ['temp','sensor'];
-    }
-    print('Args:',args);
-    exportCompositeCollection(args);
   // return [s2s,ts];
 }
 ////////////////////////////////////////////////////////////////////////////////
