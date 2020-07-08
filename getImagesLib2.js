@@ -2537,6 +2537,7 @@ function getSentinel2Wrapper(args){
     'resampleMethod':'aggregate',
     'toaOrSR':'TOA',
     'convertToDailyMosaics':true,
+    'applyCloudProbability':true,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
     'preComputedTDOMIRStdDev':null
