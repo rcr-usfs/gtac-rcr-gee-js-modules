@@ -177,8 +177,8 @@ var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mo
 args.preComputedLandsatTDOMIRMean = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
 args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
 
-args.preComputedSentinel2TDOMMeans = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
-args.preComputedSentinel2TDOMStdDevs = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
+args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
+args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
 
 // 12. correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
@@ -219,7 +219,7 @@ args.scale = null;
 ////////////////////////////////////////////////////////////////////////////////
 print(args)
 ///////////////////////////////////////////////////////////////
-// var processedAndComposites = getImagesLib.getLandsatAndSentinel2HybridWrapper(args);
+var processedAndComposites = getImagesLib.getLandsatAndSentinel2HybridWrapper(args);
 
 // //Separate into scenes and composites for subsequent analysis
 // var processedScenes = processedAndComposites[0];
@@ -231,7 +231,7 @@ print(args)
 // Paint all the polygon edges with the same number and width, display.
 var empty = ee.Image().byte();
 var outline = empty.paint({
-  featureCollection: studyArea,
+  featureCollection: args.studyArea,
   color: 1,
   width: 3
 });
