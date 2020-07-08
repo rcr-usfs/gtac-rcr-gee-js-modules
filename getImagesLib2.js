@@ -490,12 +490,17 @@ function getS2(){
 
   s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
   
-  var cloudProbabilities = ee.ImageCollection("COPERNICUS/S2_CLOUD_PROBABILITY")
+  if(args.addCloudProbabilty){
+    print('Joining pre-computed cloud probabilities from: COPERNICUS/S2_CLOUD_PROBABILITY');
+    var cloudProbabilities = ee.ImageCollection("COPERNICUS/S2_CLOUD_PROBABILITY")
                     .filterDate(args.startDate,args.endDate)
                     .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
                     .filterBounds(args.studyArea);
+    print(s2s.size())
+    s2s = joinCollections(s2s,cloudProbabilities, false,'system:index');
+    print(s2s.size())
+  }
   
-  print(s2s.size(),cloudProbabilities.size())
   
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
