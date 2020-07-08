@@ -497,9 +497,9 @@ function getS2(){
                     .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
                     .filterBounds(args.studyArea)
                     .select(['probability'],['cloud_probability']);
-    print(s2s.size())
+    print('N s2 images before joining with cloud prob:',s2s.size());
     s2s = joinCollections(s2s,cloudProbabilities, false,'system:index');
-    print(s2s.size())
+    print('N s2 images after joining with cloud prob:',s2s.size());
   }
   
   
