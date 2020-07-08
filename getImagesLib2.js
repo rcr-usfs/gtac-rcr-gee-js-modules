@@ -2622,42 +2622,58 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
   preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs){
   
-  if(timebuffer === undefined || timebuffer === null){timebuffer = 0}
-  if(weights === undefined || weights === null){weights = [1]}
-  if(compositingMethod === undefined || compositingMethod === null){compositingMethod = 'medoid'}
-  if(toaOrSR === undefined || toaOrSR === null){toaOrSR = 'TOA'}
-  if(includeSLCOffL7 === undefined || includeSLCOffL7 === null){includeSLCOffL7 = false}
-  if(defringeL5 === undefined || defringeL5 === null){defringeL5 = false}
-  if(applyQABand === undefined || applyQABand === null){applyQABand = false}
-  if(applyCloudScore === undefined || applyCloudScore === null){applyCloudScore = true}
-  if(applyShadowShift === undefined || applyShadowShift === null){applyShadowShift = false}
-  if(applyTDOM === undefined || applyTDOM === null){applyTDOM = true}
-  if(applyFmaskCloudMask === undefined || applyFmaskCloudMask === null){applyFmaskCloudMask = true}
-  if(applyFmaskCloudShadowMask === undefined || applyFmaskCloudShadowMask === null){applyFmaskCloudShadowMask = true}
-  if(applyFmaskSnowMask === undefined || applyFmaskSnowMask === null){applyFmaskSnowMask = false}
-  if(cloudScoreThresh === undefined || cloudScoreThresh === null){cloudScoreThresh = 10}
-  if(performCloudScoreOffset === undefined || performCloudScoreOffset === null){performCloudScoreOffset = true}
-  if(cloudScorePctl === undefined || cloudScorePctl === null){cloudScorePctl = 10}
-  if(cloudHeights === undefined || cloudHeights === null){cloudHeights = ee.List.sequence(500,10000,500)}
-  if(zScoreThresh === undefined || zScoreThresh === null){zScoreThresh = -1}
-  if(shadowSumThresh === undefined || shadowSumThresh === null){shadowSumThresh = 0.35}
-  if(contractPixels === undefined || contractPixels === null){contractPixels = 1.5}
-  if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
-  
-  if(landsatResampleMethod === undefined || landsatResampleMethod === null){landsatResampleMethod = 'near'}
-  if(sentinel2ResampleMethod === undefined || sentinel2ResampleMethod === null){sentinel2ResampleMethod = 'aggregate'}
-  if(convertToDailyMosaics === undefined || convertToDailyMosaics === null){convertToDailyMosaics = true}
-  if(runChastainHarmonization === undefined || runChastainHarmonization === null){runChastainHarmonization = true}
-  
-  
-  if(correctIllumination === undefined || correctIllumination === null){correctIllumination = false}
-  if(correctScale === undefined || correctScale === null){correctScale = 250}
-  if(exportComposites === undefined || exportComposites === null){exportComposites = true}
-  if(outputName === undefined || outputName === null){outputName = 'Sentinel2-Composite'}
-  if(exportPathRoot === undefined || exportPathRoot === null){exportPathRoot = 'users/iwhousman/test'}
-  if(crs === undefined || crs === null){crs = 'EPSG:5070'}
-  if((scale === undefined || scale === null) && (transform === undefined || transform === null)){scale = 20;transform = null;}
-  
+  var args = {
+          'studyArea':null,
+          'startYear':null,
+          'endYear':null,
+          'startJulian':null,
+          'endJulian':null,
+          'timebuffer': 0,
+          'weights': [1],
+          'compositingMethod':'medoid',
+          'toaOrSR':'TOA',
+          'includeSLCOffL7':false,
+          'defringeL5':false,
+          'applyQABand':false,
+          'applyCloudProbability':true,
+          'applyShadowShift':false,
+          'applyCloudScore':false,
+          'applyTDOM':true,
+          'applyFmaskCloudMask':true,
+          'applyFmaskCloudShadowMask':true,
+          'applyFmaskSnowMask':false,
+          'cloudHeights':ee.List.sequence(500,10000,500),
+          'cloudScoreThresh':20,
+          'performCloudScoreOffset':true,
+          'cloudScorePctl':10,
+          'zScoreThresh':-1,
+          'shadowSumThresh':0.35,
+          'contractPixels':1.5,
+          'dilatePixels':0.35,
+          'landsatResampleMethod':'near',
+          'sentinel2ResampleMethod':'aggregate',
+          'convertToDailyMosaics':true,
+          'runChastainHarmonization':true,
+          'correctIllumination':false,
+          'correctScale':250,
+          'exportComposites':false,
+          'outputName':'Landsat-Sentinel2-Hybrid',
+          'exportPathRoot':'users/iwhousman/test/compositeCollection',
+          'crs':'EPSG:5070',
+          'transform':null,
+          'scale':10,
+          'preComputedLandsatCloudScoreOffset':null,
+          'preComputedLandsatTDOMMeans':null,
+          'preComputedLandsatTDOMStdDevs':null,
+          'preComputedSentinel2CloudScoreOffset':null,
+          'preComputedSentinel2TDOMMeans':null,
+          'preComputedSentinel2TDOMStdDevs':null
+        }
+        
+  var args = prepArgumentsObject(arguments,defaultArgs);
+  args.toaOrSR =  args.toaOrSR.toUpperCase();
+  args.origin = 'Sentinel2';
+  print(args)
   
   var ls = getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
   toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
