@@ -2109,7 +2109,8 @@ nonDivideBands,resampleMethod){
               'correctIllumination':null,
               'nonDivideBands':['temp'],
               'resampleMethod':'near',
-              'origin':'Landsat'
+              'origin':'Landsat',
+              'applyCloudProbability':null
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
