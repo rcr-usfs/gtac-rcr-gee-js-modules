@@ -1358,8 +1358,8 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
       return lsT;
     });
     var lsT = ee.ImageCollection(ee.FeatureCollection(images).flatten());
-    Map.addLayer(lsT,{},'lst'+year.toString(),false);
-    var count = lsT.select(['nir']).count().rename(['compositeObsCount']);
+    
+    var count = lsT.select([0]).count().rename(['compositeObsCount']);
     // Compute median or medoid or apply reducer
     var composite;
     if(compositingReducer !== undefined && compositingReducer !== null){
