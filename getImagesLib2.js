@@ -2750,12 +2750,16 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
       'medoid':['compositeObsCount','sensor','year','julianDay'],
       'median':['compositeObsCount']
     };
-  //   var exportBands = exportBandDict[compositingMethod];
-  //   var nonDivideBands = nonDivideBandDict[compositingMethod];
-  //   exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
-  //     composites,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-  //     applyCloudScore,applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,nonDivideBands,'Landsat: '+[landsatResampleMethod,sentinel2ResampleMethod].join(' Sentinel2:'));
+    args.exportBands = exportBandDict[args.compositingMethod];
+    args.nonDivideBands = nonDivideBandDict[args.compositingMethod];
+    print('Args:',args);
+    exportCompositeCollection(args);
   }
+  
+  args.processedScenes = merged;
+  args.processedComposites = composites;
+  return args;
+ 
   
   // return [merged,composites];
 }
