@@ -86,9 +86,13 @@ args.convertToDailyMosaics = true;
 args.applyQABand = false;
 
 args.applyCloudScore = false;
-args.applyCloudProbability = true;
 args.applyShadowShift = false;
 args.applyTDOM = true;
+
+//Whether to use the pre-computed cloud probabilities to mask
+//clouds for Sentinel 2
+//This method works really well
+args.applyCloudProbability = true;
 
 
 // 11. Cloud and cloud shadow masking parameters.
