@@ -2693,8 +2693,6 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   ls = ls.select(commonBands);
   s2s = s2s.select(commonBands);
   
-
-  
   
   if(runChastainHarmonization){
     
@@ -2707,7 +2705,6 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
     //Allow it to fail of no images exist for Sentinel 2 since the point
     //of this method is to include S2
     tm = fillEmptyCollections(tm,ee.Image(ls.first()));
-    etm = fillEmptyCollections(etm,ee.Image(ls.first()));
     oli = fillEmptyCollections(oli,ee.Image(ls.first()));
   
     print('Running Chastain et al 2019 harmonization');
@@ -2730,19 +2727,15 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
     
     s2s = msi;
     
+  
+    //Merge Landsat back together
+    ls = ee.ImageCollection(tm.merge(oli));
+  
   }
   
-  
-  
-  
-  
-  // //Merge Landsat back together
-  // tm = ee.ImageCollection(tm.merge(etm));
-  // ls = ee.ImageCollection(tm.merge(oli));
-  
-  // // Merge Landsat and S2
-  // var merged = ls.merge(s2s);
- 
+  // Merge Landsat and S2
+  var merged = ls.merge(s2s);
+  print(merged)
  
   // //Create hybrid composites
   // var composites = compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
