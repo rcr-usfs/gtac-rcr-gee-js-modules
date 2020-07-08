@@ -2576,7 +2576,7 @@ function getSentinel2Wrapper(args){
     args.nonDivideBands = nonDivideBandDict[args.compositingMethod];
     exportCompositeCollection(args);
   }
-  args.processedScenes = ls;
+  args.processedScenes = s2s;
   args.processedComposites = ts;
   return args;
   
