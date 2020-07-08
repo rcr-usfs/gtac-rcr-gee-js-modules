@@ -2484,16 +2484,7 @@ function getProcessedSentinel2Scenes(){
 
 /////////////////////////////////////////////////////////////////////
 //Wrapper function for getting Landsat imagery
-function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
-  timebuffer,weights,compositingMethod,
-  applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
-  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  cloudHeights,
-  zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,
-  correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics,
-  preComputedCloudScoreOffset,preComputedTDOMIRMean,preComputedTDOMIRStdDev){
+function getSentinel2Wrapper(args){
   
   
    var defaultArgs = {
@@ -2582,9 +2573,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
     };
     args.exportBands = exportBandDict[args.toaOrSR + '_'+args.compositingMethod];
     args.nonDivideBands = nonDivideBandDict[args.compositingMethod];
-    exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
-    ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-                  applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,nonDivideBands,resampleMethod);
+    exportCompositeCollection(args);
   }
   
   
