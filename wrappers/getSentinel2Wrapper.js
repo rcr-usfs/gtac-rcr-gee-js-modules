@@ -28,7 +28,7 @@ args.studyArea = geometry;
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
 args.startJulian = 190;
-args.endJulian = 200; 
+args.endJulian = 250; 
 
 // 3. Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
