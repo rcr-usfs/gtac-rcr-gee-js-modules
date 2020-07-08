@@ -95,6 +95,11 @@ args.applyShadowShift = false;
 //Height of clouds to use to project cloud shadows
 args.cloudHeights = ee.List.sequence(500,10000,500);
 
+//Whether to use the pre-computed cloud probabilities to mask
+//clouds for Sentinel 2
+//This method works really well
+args.applyCloudProbability = true;
+
 //Fmask switches- only for Landsat
 //Generally we do use these
 args.applyFmaskCloudMask = true;
