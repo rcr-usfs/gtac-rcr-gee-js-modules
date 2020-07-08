@@ -2266,12 +2266,12 @@ function getLandsatWrapper(){
   //Export composites
   if(args.exportComposites){// Export composite collection
     if(args.compositingMethod == 'medoid'){
-      args.exportBands =['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','sensor','year','julianDay'];
-      args.nonDivideBands = ['temp','sensor','year','julianDay'];
+      args.exportBands =['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','composite_obs_count','sensor','year','julianDay'];
+      args.nonDivideBands = ['temp','sensor','year','julianDay','composite_obs_count'];
     }
     else{
-      args.exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp'];
-      args.nonDivideBands = ['temp'];
+      args.exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','composite_obs_count'];
+      args.nonDivideBands = ['temp','composite_obs_count'];
     }
     print('Args:',args);
     exportCompositeCollection(args);
