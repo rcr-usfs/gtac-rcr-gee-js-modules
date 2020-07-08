@@ -2433,6 +2433,7 @@ function getProcessedSentinel2Scenes(){
     'resampleMethod':'aggregate',
     'toaOrSR':'TOA',
     'convertToDailyMosaics':true,
+    'applyCloudProbability':true,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
     'preComputedTDOMIRStdDev':null
@@ -2441,6 +2442,7 @@ function getProcessedSentinel2Scenes(){
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   args.origin = 'Sentinel2';
+  args.addCloudProbabilty = args.applyCloudProbability;
   print(args)
   
   // Prepare dates
