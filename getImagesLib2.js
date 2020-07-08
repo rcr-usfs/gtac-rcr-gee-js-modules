@@ -2576,9 +2576,11 @@ function getSentinel2Wrapper(args){
     args.nonDivideBands = nonDivideBandDict[args.compositingMethod];
     exportCompositeCollection(args);
   }
+  args.processedScenes = ls;
+  args.processedComposites = ts;
+  return args;
   
-  
-  // return [s2s,ts];
+  return args;
 }
 ////////////////////////////////////////////////////////////////////////////////
 //Hybrid get Landsat and Sentinel 2 wrapper function
