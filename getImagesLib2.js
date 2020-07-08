@@ -157,7 +157,6 @@ var msiETMIntercepts = [-0.0139,0.00411,-0.0024,-0.0076,0.00411,0.00861];
 //etm = (oli-intercept)/slope
 var oliETMSlopes =[1.03501,1.00921,1.01991,1.14061,1.04351,1.05271];
 var oliETMIntercepts = [-0.0055,-0.0008,-0.0021,-0.0163,-0.0045,0.00261];
-
 //Construct dictionary to handle all pairwise combos 
 var chastainCoeffDict = {'MSI_OLI':[msiOLISlopes,msiOLIIntercepts,1],
                         'MSI_ETM':[msiETMSlopes,msiETMIntercepts,1],
@@ -169,11 +168,21 @@ var chastainCoeffDict = {'MSI_OLI':[msiOLISlopes,msiOLIIntercepts,1],
 };
 //Function to apply model in one direction
 function dir0Regression(img,slopes,intercepts){
-  return img.select(chastainBandNames).multiply(slopes).add(intercepts);
+  var bns = img.bandNames();
+  var nonCorrectBands = bns.removeAll(chastainBandNames);
+  var nonCorrectedBands = img.select(nonCorrectBands);
+  var corrected = img.select(chastainBandNames).multiply(slopes).add(intercepts);
+  var out = corrected.addBands(nonCorrectedBands).select(bns);
+  return out;
 }
 //Applying the model in the opposite direction
 function dir1Regression(img,slopes,intercepts){
-  return img.select(chastainBandNames).subtract(intercepts).divide(slopes);
+  var bns = img.bandNames();
+  var nonCorrectBands = bns.removeAll(chastainBandNames);
+  var nonCorrectedBands = img.select(nonCorrectBands);
+  var corrected = img.select(chastainBandNames).subtract(intercepts).divide(slopes);
+  var out = corrected.addBands(nonCorrectedBands).select(bns);
+  return out;
 }
 //Function to correct one sensor to another
 function harmonizationChastain(img, fromSensor,toSensor){
