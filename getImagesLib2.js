@@ -2678,7 +2678,7 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   args.preComputedTDOMIRMean = args.preComputedLandsatTDOMIRMean;
   args.preComputedTDOMIRStdDev = args.preComputedSentinel2TDOMIRStdDev;
   var ls = getProcessedLandsatScenes(args);
-  
+  print(ls)
   // var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
   // applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
   // cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
