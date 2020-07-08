@@ -2728,7 +2728,7 @@ function getLandsatAndSentinel2HybridWrapper(args){
   //Create hybrid composites
   var composites = compositeTimeSeries(args);
   args.collection = composites;
-  
+  print(composites)
   if(args.exportComposites){// Export composite collection
     
     var exportBandDict = {
