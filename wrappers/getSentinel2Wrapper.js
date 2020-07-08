@@ -83,7 +83,8 @@ args.convertToDailyMosaics = true;
 //and TDOM will run quite quickly and a long time sereies is not needed 
 args.applyQABand = false;
 
-args.applyCloudScore = true;
+args.applyCloudScore = false;
+args.applyCloudProbability = true;
 args.applyShadowShift = false;
 args.applyTDOM = true;
 
@@ -205,13 +206,13 @@ print('Provided parameters are:',args);
 //Call on master wrapper function to get Sentinel2 scenes and composites
 
   
-var s2sAndTs =getImagesLib.getSentinel2Wrapper(args);
+var sentinel2 =getImagesLib.getSentinel2Wrapper(args);
 
 
 //Separate into scenes and composites for subsequent analysis
-// var processedScenes = s2sAndTs[0];
-// var processedComposites = s2sAndTs[1];
-
+var processedScenes = sentinel2.processedScenes;
+var processedComposites = sentinel2.processedComposites;
+print(processedScenes)
 ////////////////////////////////////////////////////////////////////////////////
 // Load the study region, with a blue outline.
 // Create an empty image into which to paint the features, cast to byte.
