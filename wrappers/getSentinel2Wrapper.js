@@ -179,20 +179,20 @@ args.outputName = 'Sentinel2_';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
-args.exportPathRoot = 'users/iwhousman/test/ChangeCollection';
+args.exportPathRoot = 'users/iwhousman/test/compositeCollection';
 
 
 
 //CRS- must be provided.  
 //Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
 //WGS84 UTM N hemisphere is EPSG:326+ zone number (zone 12 N would be EPSG:32612) and S hemisphere is EPSG:327+ zone number
-var crs = 'EPSG:5070';
+args.crs = 'EPSG:5070';
 
 //Specify transform if scale is null and snapping to known grid is needed
-var transform = null;//[30,0,-2361915.0,0,-30,3177735.0];
+args.transform = null;//[30,0,-2361915.0,0,-30,3177735.0];
 
 //Specify scale if transform is null
-var scale = 30;
+args.scale = 30;
 ///////////////////////////////////////////////////////////////////////
 
   
