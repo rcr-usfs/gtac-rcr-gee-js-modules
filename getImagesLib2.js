@@ -2674,15 +2674,10 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   args.origin = 'Sentinel2';
   print(args)
-  
-  // var ls = getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
-  // toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
-  // applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  // cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  // zScoreThresh,shadowSumThresh,
-  // contractPixels,dilatePixels,landsatResampleMethod,false,
-  // preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs
-  // );
+  args.preComputedCloudScoreOffset = args.preComputedLandsatCloudScoreOffset;
+  args.preComputedTDOMIRMean = args.preComputedLandsatTDOMIRMean;
+  args.preComputedTDOMIRStdDev = args.preComputedSentinel2TDOMIRStdDev;
+  var ls = getProcessedLandsatScenes(args);
   
   // var s2s = getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
   // applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
