@@ -189,11 +189,19 @@ args.exportPathRoot = 'users/iwhousman/test/compositeCollection';
 args.crs = 'EPSG:5070';
 
 //Specify transform if scale is null and snapping to known grid is needed
-args.transform = null;//[30,0,-2361915.0,0,-30,3177735.0];
+args.transform = [10,0,-2361915.0,0,-10,3177735.0];
 
 //Specify scale if transform is null
-args.scale = 30;
+args.scale = null;
 ///////////////////////////////////////////////////////////////////////
+// End user parameters
+///////////////////////////////////////////////////////////////////////
+print('Provided parameters are:',args);
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+//Start function calls
+////////////////////////////////////////////////////////////////////////////////
+//Call on master wrapper function to get Landat scenes and composites
 
   
 var s2sAndTs =getImagesLib.getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
