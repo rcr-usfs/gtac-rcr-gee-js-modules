@@ -2735,11 +2735,11 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   
   // Merge Landsat and S2
   var merged = ls.merge(s2s);
-  print(merged)
- 
-  // //Create hybrid composites
-  // var composites = compositeTimeSeries(merged,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod);
   
+  args.ls = merged;
+  //Create hybrid composites
+  var composites = compositeTimeSeries(args);
+  print(composites)
   // if(exportComposites){// Export composite collection
     
   //   var exportBandDict = {
