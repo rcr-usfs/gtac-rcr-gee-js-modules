@@ -2270,8 +2270,8 @@ function getLandsatWrapper(){
       args.nonDivideBands = ['temp','sensor','year','julianDay'];
     }
     else{
-      args.exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','sensor'];
-      args.nonDivideBands = ['temp','sensor'];
+      args.exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp'];
+      args.nonDivideBands = ['temp'];
     }
     print('Args:',args);
     exportCompositeCollection(args);
@@ -2536,7 +2536,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   args.origin = 'Sentinel2';
-  print(args)
+  
   var s2s = getProcessedSentinel2Scenes(args);
   
   
@@ -2552,7 +2552,7 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   args.ls = s2s;
   var ts = compositeTimeSeries(args);
   print('ts',ts)
-  
+  args.collection = ts;
   // Correct illumination
   // if (correctIllumination){
   //   var f = ee.Image(ts.first());
@@ -2567,26 +2567,40 @@ function getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
   //   Map.addLayer(f,vizParamsFalse,'First-illuminated',false);
   // }
   
-  // //Export composites
-  // if(exportComposites){// Export composite collection
+  //Export composites
+  if(args.exportComposites){// Export composite collection
     
-  //   var exportBandDict = {
-  //     'SR_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2','year','julianDay'],
-  //     'SR_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2'],
-  //     'TOA_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2','year','julianDay'],
-  //     'TOA_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2']
-  //   };
-  //   var nonDivideBandDict = {
-  //     'medoid':['year','julianDay'],
-  //     'median':[]
-  //   };
-  //   var exportBands = exportBandDict[toaOrSR + '_'+compositingMethod];
-  //   var nonDivideBands = nonDivideBandDict[compositingMethod];
-  //   exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
-  //   ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-  //                 applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,nonDivideBands,resampleMethod);
-  // }
+    var exportBandDict = {
+      'SR_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2','year','julianDay'],
+      'SR_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2'],
+      'TOA_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2','year','julianDay'],
+      'TOA_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2']
+    };
+    var nonDivideBandDict = {
+      'medoid':['sensor','year','julianDay'],
+      'median':[]
+    };
+    args.exportBands = exportBandDict[args.toaOrSR + '_'+args.compositingMethod];
+    args.nonDivideBands = nonDivideBandDict[args.compositingMethod];
+    exportCompositeCollection(exportPathRoot,outputName,studyArea,crs,transform,scale,
+    ts,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
+                  applyCloudScore, 'NA',applyTDOM,'NA','NA','NA',correctIllumination,nonDivideBands,resampleMethod);
+  }
   
+  
+  
+  //Export composites
+  if(args.exportComposites){// Export composite collection
+    if(args.compositingMethod == 'medoid'){
+      args.exportBands =['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','sensor','year','julianDay'];
+      args.nonDivideBands = ['temp','sensor','year','julianDay'];
+    }
+    else{
+      args.exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','sensor'];
+      args.nonDivideBands = ['temp','sensor'];
+    }
+    print('Args:',args);
+    exportCompositeCollection(args);
   // return [s2s,ts];
 }
 ////////////////////////////////////////////////////////////////////////////////
