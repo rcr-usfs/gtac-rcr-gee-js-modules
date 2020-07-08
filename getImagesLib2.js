@@ -2689,7 +2689,7 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
   
   //Select off common bands between Landsat and Sentinel 2
-  var commonBands =  ['blue', 'green', 'red','nir','swir1', 'swir2'];
+  var commonBands =  ['blue', 'green', 'red','nir','swir1', 'swir2','sensor'];
   ls = ls.select(commonBands);
   s2s = s2s.select(commonBands);
   
