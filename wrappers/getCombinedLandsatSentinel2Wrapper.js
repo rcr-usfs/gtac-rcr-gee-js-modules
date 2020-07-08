@@ -191,7 +191,7 @@ args.correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 args.exportComposites = true;
 
 //Set up Names for the export
-args.outputName = 'Landsat_S2_Hybrid_';
+args.outputName = 'Landsat_S2_Hybrid';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
