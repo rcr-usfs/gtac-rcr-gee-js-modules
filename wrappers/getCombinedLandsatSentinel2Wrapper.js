@@ -183,32 +183,32 @@ args.preComputedSentinel2TDOMStdDevs = preComputedTDOMStats.select(['Sentinel2_n
 // 12. correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
 // correction is calculated in meters.
-var correctIllumination = false;
-var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
+args.correctIllumination = false;
+args.correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
 //13. Export params
 //Whether to export composites
-var exportComposites = true;
+args.exportComposites = true;
 
 //Set up Names for the export
-var outputName = 'Landsat_S2_Hybrid_';
+args.outputName = 'Landsat_S2_Hybrid_';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
-var exportPathRoot = 'users/iwhousman/test/ChangeCollection';
+args.exportPathRoot = 'users/iwhousman/test/ChangeCollection';
 
 
 
 //CRS- must be provided.  
 //Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
 //WGS84 UTM N hemisphere is EPSG:326+ zone number (zone 12 N would be EPSG:32612) and S hemisphere is EPSG:327+ zone number
-var crs = 'EPSG:5070';
+args.crs = 'EPSG:5070';
 
 //Specify transform if scale is null and snapping to known grid is needed
-var transform = [10,0,-2361915.0,0,-10,3177735.0];
+args.transform = [10,0,-2361915.0,0,-10,3177735.0];
 
 //Specify scale if transform is null
-var scale = null;
+args.scale = null;
 
 ///////////////////////////////////////////////////////////////////////
 // End user parameters
@@ -217,21 +217,9 @@ var scale = null;
 ///////////////////////////////////////////////////////////////////////
 //Start function calls
 ////////////////////////////////////////////////////////////////////////////////
-
+print(args)
 ///////////////////////////////////////////////////////////////
-var processedAndComposites = getImagesLib.getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
-  timebuffer,weights,compositingMethod,
-  toaOrSR,includeSLCOffL7,defringeL5,
-  applyQABand,applyShadowShift,
-  applyCloudScore,applyTDOM,
-  applyFmaskCloudMask,applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudHeights,cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
-  correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale,
-  preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
-  preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs);
+// var processedAndComposites = getImagesLib.getLandsatAndSentinel2HybridWrapper(args);
 
 // //Separate into scenes and composites for subsequent analysis
 // var processedScenes = processedAndComposites[0];
