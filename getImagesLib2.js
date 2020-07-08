@@ -2608,19 +2608,7 @@ function getSentinel2Wrapper(args){
 ////////////////////////////////////////////////////////////////////////////////
 //Hybrid get Landsat and Sentinel 2 wrapper function
 //Handles getting processed scenes and composites with Landsat and Sentinel 2
-function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJulian,endJulian,
-  timebuffer,weights,compositingMethod,
-  toaOrSR,includeSLCOffL7,defringeL5,
-  applyQABand,applyShadowShift,
-  applyCloudScore,applyTDOM,
-  applyFmaskCloudMask,applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudHeights,cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,landsatResampleMethod,sentinel2ResampleMethod,convertToDailyMosaics,runChastainHarmonization,
-  correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale,
-  preComputedLandsatCloudScoreOffset,preComputedLandsatTDOMMeans,preComputedLandsatTDOMStdDevs,
-  preComputedSentinel2CloudScoreOffset,preComputedSentinel2TDOMMeans,preComputedSentinel2TDOMStdDevs){
+function getLandsatAndSentinel2HybridWrapper(args){
   
   var defaultArgs = {
           'studyArea':null,
