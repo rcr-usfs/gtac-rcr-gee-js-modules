@@ -208,7 +208,7 @@ args.crs = 'EPSG:5070';
 args.transform = [10,0,-2361915.0,0,-10,3177735.0];
 
 //Specify scale if transform is null
-args.scale = null;
+args.scale = 10;
 
 ///////////////////////////////////////////////////////////////////////
 // End user parameters
