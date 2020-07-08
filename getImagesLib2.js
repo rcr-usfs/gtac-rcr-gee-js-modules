@@ -1358,7 +1358,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
       return lsT;
     });
     var lsT = ee.ImageCollection(ee.FeatureCollection(images).flatten());
-    var count = lsT.select([0]).count().rename(['composite_obs_count']);
+    var count = lsT.select([0]).count().rename(['compositeObsCount']);
     // Compute median or medoid or apply reducer
     var composite;
     if(compositingReducer !== undefined && compositingReducer !== null){
@@ -2266,12 +2266,12 @@ function getLandsatWrapper(){
   //Export composites
   if(args.exportComposites){// Export composite collection
     if(args.compositingMethod == 'medoid'){
-      args.exportBands =['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','composite_obs_count','sensor','year','julianDay'];
-      args.nonDivideBands = ['temp','sensor','year','julianDay','composite_obs_count'];
+      args.exportBands =['blue', 'green', 'red', 'nir', 'swir1','swir2','temp','compositeObsCount','sensor','year','julianDay'];
+      args.nonDivideBands = ['temp','compositeObsCount','sensor','year','julianDay'];
     }
     else{
-      args.exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','composite_obs_count'];
-      args.nonDivideBands = ['temp','composite_obs_count'];
+      args.exportBands = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp','compositeObsCount'];
+      args.nonDivideBands = ['temp','compositeObsCount'];
     }
     print('Args:',args);
     exportCompositeCollection(args);
