@@ -2562,14 +2562,14 @@ function getSentinel2Wrapper(args){
   if(args.exportComposites){// Export composite collection
     
     var exportBandDict = {
-      'SR_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2','sensor','year','julianDay'],
-      'SR_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2'],
-      'TOA_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2','sensor','year','julianDay'],
-      'TOA_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2']
+      'SR_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2','compositeObsCount','sensor','year','julianDay'],
+      'SR_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'swir1', 'swir2','compositeObsCount'],
+      'TOA_medoid':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2','compositeObsCount','sensor','year','julianDay'],
+      'TOA_median':['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus', 'swir1', 'swir2','compositeObsCount']
     };
     var nonDivideBandDict = {
-      'medoid':['sensor','year','julianDay'],
-      'median':[]
+      'medoid':['compositeObsCount','sensor','year','julianDay'],
+      'median':['compositeObsCount']
     };
     args.exportBands = exportBandDict[args.toaOrSR + '_'+args.compositingMethod];
     args.nonDivideBands = nonDivideBandDict[args.compositingMethod];
