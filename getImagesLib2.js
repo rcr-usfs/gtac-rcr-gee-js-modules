@@ -2672,7 +2672,7 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
         
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
-  args.origin = 'Sentinel2';
+  args.origin = 'Landsat-Sentinel2-Hybrid';
   
   //Get Landsat
   args.preComputedCloudScoreOffset = args.preComputedLandsatCloudScoreOffset;
