@@ -1387,7 +1387,7 @@ function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuff
 
       composite = medoidMosaicMSD(lsT,['green','red','nir','swir1','swir2']);
     }
-    composite = composite.addBands(count);
+    composite = composite.addBands(count).float();
     return composite.set({'system:time_start':ee.Date.fromYMD(year+ args.yearWithMajority,6,1).millis(),
                         'startDate':startDateT.millis(),
                         'endDate':endDateT.millis(),
