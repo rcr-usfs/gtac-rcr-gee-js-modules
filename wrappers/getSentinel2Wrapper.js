@@ -201,19 +201,10 @@ print('Provided parameters are:',args);
 ///////////////////////////////////////////////////////////////////////
 //Start function calls
 ////////////////////////////////////////////////////////////////////////////////
-//Call on master wrapper function to get Landat scenes and composites
+//Call on master wrapper function to get Sentinel2 scenes and composites
 
   
-var s2sAndTs =getImagesLib.getSentinel2Wrapper(studyArea,startYear,endYear,startJulian,endJulian,
-  timebuffer,weights,compositingMethod,
-  applyQABand,applyCloudScore,applyShadowShift,applyTDOM,
-  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  cloudHeights,
-  zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels,
-  correctIllumination,correctScale,
-  exportComposites,outputName,exportPathRoot,crs,transform,scale,resampleMethod,toaOrSR,convertToDailyMosaics,
-  preComputedCloudScoreOffset,preComputedTDOMMeans,preComputedTDOMStdDevs);
+var s2sAndTs =getImagesLib.getSentinel2Wrapper(args);
 
 
 //Separate into scenes and composites for subsequent analysis
