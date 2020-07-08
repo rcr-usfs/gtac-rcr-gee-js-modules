@@ -2663,11 +2663,11 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
           'transform':null,
           'scale':10,
           'preComputedLandsatCloudScoreOffset':null,
-          'preComputedLandsatTDOMMeans':null,
-          'preComputedLandsatTDOMStdDevs':null,
+          'preComputedLandsatTDOMIRMean':null,
+          'preComputedLandsatTDOMIRStdDev':null,
           'preComputedSentinel2CloudScoreOffset':null,
-          'preComputedSentinel2TDOMMeans':null,
-          'preComputedSentinel2TDOMStdDevs':null
+          'preComputedSentinel2TDOMIRMean':null,
+          'preComputedSentinel2TDOMIRStdDev':null
         }
         
   var args = prepArgumentsObject(arguments,defaultArgs);
