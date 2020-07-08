@@ -75,6 +75,8 @@ args.convertToDailyMosaics = true;
 //CloudScore runs pretty quickly, but does look at the time series to find areas that 
 //always have a high cloudScore to reduce commission errors- this takes some time
 //and needs a longer time series (>5 years or so)
+//The cloud probability is provided as a pre-computed asset and seems better than cloudScore.
+//The cloudScoreThresh is applied to both the cloudScore and cloud probability as they work in a similar manner
 //TDOM also looks at the time series and will need a longer time series
 //QA band method is fast but is generally awful- don't use if you like good composites
 //Shadow shift is intended if you don't have a time series to use for TDOM or just want individual images
