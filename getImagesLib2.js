@@ -2661,7 +2661,7 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
           'exportPathRoot':'users/iwhousman/test/compositeCollection',
           'crs':'EPSG:5070',
           'transform':null,
-          'scale':10,
+          'scale':null,
           'preComputedLandsatCloudScoreOffset':null,
           'preComputedLandsatTDOMIRMean':null,
           'preComputedLandsatTDOMIRStdDev':null,
