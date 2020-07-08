@@ -2690,7 +2690,6 @@ function getLandsatAndSentinel2HybridWrapper(args){
   ls = ls.select(commonBands);
   s2s = s2s.select(commonBands);
   
-  args.runChastainHarmonization = false;
   if(args.runChastainHarmonization){
     
     //Seperate each sensor
