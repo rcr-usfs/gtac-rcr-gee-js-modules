@@ -1,16 +1,17 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-121.72925686636518, 39.25666609688575],
-          [-121.72925686636518, 39.00526300299732],
-          [-121.09204983511518, 39.00526300299732],
-          [-121.09204983511518, 39.25666609688575]]], null, false);
+        [[[-108.0764409385066, 38.063974781475835],
+          [-108.0764409385066, 37.0975668525586],
+          [-106.4284917197566, 37.0975668525586],
+          [-106.4284917197566, 38.063974781475835]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
@@ -55,7 +56,7 @@ args.weights = [1,5,1];
 // Median tends to be smoother, while medoid retains 
 // single date of observation across all bands
 // If not exporting indices with composites to save space, medoid should be used
-args.compositingMethod = 'median';
+args.compositingMethod = 'medoid';
 
 // 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 // Specify TOA or SR
@@ -175,7 +176,7 @@ args.correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 args.exportComposites = true;
 
 //Set up Names for the export
-args.outputName = 'Sentinel2_';
+args.outputName = 'Sentinel2';
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
