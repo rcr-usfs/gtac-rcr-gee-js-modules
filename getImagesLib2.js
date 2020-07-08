@@ -2473,6 +2473,7 @@ function getProcessedSentinel2Scenes(){
   }
   if(args.applyCloudProbability){
     print('Applying cloud probability');
+    s2s = s2s.map(function(img){return img.updateMask(img.select(['cloud_probability']).lte(args.cloudScoreThresh))})
   }
   if(args.applyShadowShift){
     print('Applying shadow shift');
