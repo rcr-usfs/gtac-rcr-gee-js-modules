@@ -2694,7 +2694,7 @@ function getLandsatAndSentinel2HybridWrapper(studyArea,startYear,endYear,startJu
   s2s = s2s.select(commonBands);
   
   
-  if(runChastainHarmonization){
+  if(args.runChastainHarmonization){
     
     //Seperate each sensor
     var tm = ls.filter(ee.Filter.inList('SENSOR_ID',['TM','ETM']));
