@@ -929,14 +929,14 @@ function simpleTDOM2(){
   var irMean;var irStdDev;
   if(args.preComputedTDOMIRMean === null || args.preComputedTDOMIRMean === undefined){
     print('Computing irMean for TDOM');
-    irMean = collection.select(args.shadowSumBands).mean();
+    irMean = args.collection.select(args.shadowSumBands).mean();
   }else{
     print('Using pre-computed irMean for TDOM');
     irMean = args.preComputedTDOMIRMean;
   }
   if(args.preComputedTDOMIRStdDev === null || args.preComputedTDOMIRStdDev === undefined){
     print('Computing irStdDev for TDOM');
-    irStdDev = collection.select(args.shadowSumBands).reduce(ee.Reducer.stdDev());
+    irStdDev = args.collection.select(args.shadowSumBands).reduce(ee.Reducer.stdDev());
   }else{
     print('Using pre-computed irStdDev for TDOM');
     irStdDev = args.preComputedTDOMIRStdDev;
