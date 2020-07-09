@@ -65,16 +65,21 @@ function prepArgumentsObject(args,defaultArgs){
   
   //See if first argument is an ee object instead of a vanilla js object
   var firstArgumentIsEEObj = false;
+  var argsAreObject = false;
   try{
       var t=argList[0].serialize();
       firstArgumentIsEEObj = true;
       }catch(err){
         
       }
+      
+  if(typeof(argList[0]) === 'object' && argList.length === 1 && !firstArgumentIsEEObj){
+    argsAreObject = true;
+  }
   //Iterate through each expected argument to create the obj with all parameters
   Object.keys(defaultArgs).forEach(function(key, i) {
     var value;
-    if(typeof(argList[0]) === 'object' && argList.length === 1 && !firstArgumentIsEEObj){
+    if(argsAreObject){
       value = argList[0][key];
     }else{value = argList[i]}
     
