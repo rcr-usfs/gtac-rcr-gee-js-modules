@@ -61,7 +61,7 @@ var changeDirDict = {
 //Leave any defaultArg as null if it is needed but a default is not provided
 function prepArgumentsObject(args,defaultArgs){
   var argList = [].slice.call(args);
-  args = {};
+  var outArgs = {};
   
   //See if first argument is an ee object instead of a vanilla js object
   var firstArgumentIsEEObj = false;
@@ -75,6 +75,7 @@ function prepArgumentsObject(args,defaultArgs){
       
   if(typeof(argList[0]) === 'object' && argList.length === 1 && !firstArgumentIsEEObj){
     argsAreObject = true;
+    outArgs = args;
   }
   //Iterate through each expected argument to create the obj with all parameters
   Object.keys(defaultArgs).forEach(function(key, i) {
@@ -88,9 +89,9 @@ function prepArgumentsObject(args,defaultArgs){
       value = defaultArgs[key];
     }
     // console.log(value)
-      args[key] = value;
+      outArgs[key] = value;
     });
-  return args;
+  return outArgs;
 }
 //////////////////////////////////////////////////
 //Function to set null value for export or conversion to arrays
