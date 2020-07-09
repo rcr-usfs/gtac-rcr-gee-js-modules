@@ -75,7 +75,7 @@ function prepArgumentsObject(args,defaultArgs){
       
   if(typeof(argList[0]) === 'object' && argList.length === 1 && !firstArgumentIsEEObj){
     argsAreObject = true;
-    outArgs = argList[0];
+    // outArgs = argList[0];
   }
   //Iterate through each expected argument to create the obj with all parameters
   Object.keys(defaultArgs).forEach(function(key, i) {
@@ -2755,7 +2755,7 @@ function getLandsatAndSentinel2HybridWrapper(args){
     };
     args.exportBands = exportBandDict[args.compositingMethod];
     args.nonDivideBands = nonDivideBandDict[args.compositingMethod];
-    print('Args:',args.origin);
+    print('Args:',args);
     exportCompositeCollection(args);
     
   }
