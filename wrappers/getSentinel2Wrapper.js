@@ -1,17 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-108.0764409385066, 38.063974781475835],
-          [-108.0764409385066, 37.0975668525586],
-          [-106.4284917197566, 37.0975668525586],
-          [-106.4284917197566, 38.063974781475835]]], null, false);
+        [[[-108.15478039861847, 37.808492197985494],
+          [-108.15478039861847, 37.75530865001079],
+          [-108.05315686346222, 37.75530865001079],
+          [-108.05315686346222, 37.808492197985494]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
@@ -219,6 +218,10 @@ var sentinel2 =getImagesLib.getSentinel2Wrapper(args);
 var processedScenes = sentinel2.processedScenes;
 var processedComposites = sentinel2.processedComposites;
 print(processedScenes)
+
+var composite = ee.Image(processedComposites.first());
+var url = composite.getThumbURL({'dimensions':1000, 'region':geometry});
+print(url)
 ////////////////////////////////////////////////////////////////////////////////
 // Load the study region, with a blue outline.
 // Create an empty image into which to paint the features, cast to byte.
