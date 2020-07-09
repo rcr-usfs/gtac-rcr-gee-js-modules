@@ -59,6 +59,15 @@ var changeDirDict = {
 //args are the default arguments keyword for the function
 //defaultArgs is an object containing each key and default value needed for the function
 //Leave any defaultArg as null if it is needed but a default is not provided
+function copyObj(mainObj) {
+  var objCopy = {}; // objCopy will store a copy of the mainObj
+  var key;
+
+  for (key in mainObj) {
+    objCopy[key] = mainObj[key]; // copies each property to the objCopy object
+  }
+  return objCopy;
+}
 function prepArgumentsObject(args,defaultArgs){
   var argList = [].slice.call(args);
   var outArgs = {};
@@ -75,7 +84,7 @@ function prepArgumentsObject(args,defaultArgs){
       
   if(typeof(argList[0]) === 'object' && argList.length === 1 && !firstArgumentIsEEObj){
     argsAreObject = true;
-    outArgs = Object.assign(outArgs, argList[0]);
+    outArgs = copyObj(maiargList[0]);
   }
   //Iterate through each expected argument to create the obj with all parameters
   Object.keys(defaultArgs).forEach(function(key, i) {
