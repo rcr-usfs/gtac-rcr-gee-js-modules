@@ -2677,7 +2677,7 @@ function getLandsatAndSentinel2HybridWrapper(args){
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   args.origin = 'Landsat-Sentinel2-Hybrid';
-  
+  print('initial args:',args)
   //Get Landsat
   args.preComputedCloudScoreOffset = args.preComputedLandsatCloudScoreOffset;
   args.preComputedTDOMIRMean = args.preComputedLandsatTDOMIRMean;
