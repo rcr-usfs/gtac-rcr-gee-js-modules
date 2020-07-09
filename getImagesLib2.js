@@ -2755,7 +2755,7 @@ function getLandsatAndSentinel2HybridWrapper(args){
     };
     args.exportBands = exportBandDict[args.compositingMethod];
     args.nonDivideBands = nonDivideBandDict[args.compositingMethod];
-    print('Args:',args);
+    print('Args:',args.origin);
     exportCompositeCollection(args);
     
   }
