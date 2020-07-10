@@ -219,7 +219,7 @@ function harmonizationChastain(){
   //Apply the model in the respective direction
   var out = ee.Algorithms.If(direction.eq(0),dir0Regression(args.image,slopes,intercepts),dir1Regression(args.image,slopes,intercepts));
   out = ee.Image(out).copyProperties(args.image).copyProperties(args.image,['system:time_start']);
-  out = out.set(args)
+  out = out.set(args);
   return ee.Image(out);
 }
 ///////////////////////////////////////////////////////////
