@@ -1,17 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-122.97343749999999, 41.09980169586945],
-          [-122.97343749999999, 39.69425229061023],
-          [-120.77617187499999, 39.69425229061023],
-          [-120.77617187499999, 41.09980169586945]]], null, false);
+        [[[-108.28630509064759, 38.085343638120925],
+          [-108.28630509064759, 37.18051220092945],
+          [-106.74821915314759, 37.18051220092945],
+          [-106.74821915314759, 38.085343638120925]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ////////////////////////////////////////////////////////////////////////////////
 //Module for getting Landsat, Sentinel 2 and MODIS images/composites
@@ -3367,3 +3366,5 @@ exports.addAbsDiff = addAbsDiff;
 exports.customQualityMosaic  = customQualityMosaic;
 exports.compositeDates = compositeDates;
 exports.defringeLandsat = defringeLandsat;
+
+exports.testArea = geometry;
