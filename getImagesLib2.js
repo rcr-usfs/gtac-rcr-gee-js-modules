@@ -784,7 +784,7 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
   var zenR  =ee.Number(meanZenith).multiply(Math.PI).divide(180.0);
   
   
- 
+ print(nominalScale)
   //Find the shadows
   var shadows = cloudHeights.map(function(cloudHeight){
     cloudHeight = ee.Number(cloudHeight);
