@@ -769,7 +769,7 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
   ///////////////////////////////////////////////////////
   // print('a',meanAzimuth);
   // print('z',meanZenith)
-  
+  print(cloudMask.projection())
   //Find dark pixels
   var darkPixels = image.select(['nir','swir1','swir2']).reduce(ee.Reducer.sum()).lt(irSumThresh)
     .focal_min(contractPixels).focal_max(dilatePixels)
@@ -801,7 +801,7 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
   
   
   var shadowMask = ee.ImageCollection.fromImages(shadows).max();
-  Map.addLayer(shadowMask,{},'shadow mask')
+  
   //Create shadow mask
   shadowMask = shadowMask.and(cloudMask.not());
   shadowMask = shadowMask.and(darkPixels).focal_min(contractPixels).focal_max(dilatePixels);
