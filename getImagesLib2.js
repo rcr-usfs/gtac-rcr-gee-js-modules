@@ -101,7 +101,7 @@ function setNoData(){
 //Functions to perform basic clump and elim
 //See default args below
 //Must provide image 
-//mmu is an optional parameter
+//mmu is an optional parameter with default of 4 pixels
 function sieve(image,mmu){
   var defaultArgs = {
     'image':null,
