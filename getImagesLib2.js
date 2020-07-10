@@ -93,15 +93,21 @@ function setNoData(){
     'noDataValue':null
     };
   var args = prepArgumentsObject(arguments,defaultArgs);
-  
-  print(args);
+
   return args.image.unmask(args.noDataValue,false);
 }
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 //Functions to perform basic clump and elim
+//See default args below
+//Must provide image 
+//mmu is an optional parameter
 function sieve(image,mmu){
-  var args = prepArgumentsObject(arguments,{'image':null,'mmu':4});
+  var defaultArgs = {
+    'image':null,
+    'mmu':4
+    };
+  var args = prepArgumentsObject(arguments,defaultArgs);
   var connected = args.image.connectedPixelCount(args.mmu+20);
   Map.addLayer(connected,{'min':1,'max':args.mmu},'connected');
   var elim = connected.gt(args.mmu);
