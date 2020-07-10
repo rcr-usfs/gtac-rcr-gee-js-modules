@@ -87,6 +87,7 @@ function prepArgumentsObject(args,defaultArgs){
 //Function to set null value for export or conversion to arrays
 //See default args below
 //Must provide image and noDataValue - there are no defaults
+//Example usage: setNoData(anEEImage,-32768) or setNoData({'image':anEEImage,'noDataValue':-32768})
 function setNoData(){
   var defaultArgs = {
     'image':null,
@@ -102,7 +103,7 @@ function setNoData(){
 //See default args below
 //Must provide image 
 //mmu is an optional parameter with default of 4 pixels
-function sieve(image,mmu){
+function sieve(){
   var defaultArgs = {
     'image':null,
     'mmu':4
