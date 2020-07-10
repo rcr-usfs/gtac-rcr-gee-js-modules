@@ -40,7 +40,7 @@ args.endJulian = 250;
 // well. If using Fmask as the cloud/cloud shadow masking method, or pre-computed 
 //cloudScore offsets and/or tdom stats, this does not 
 // matter
-args.startYear = 2010;
+args.startYear = 2018;
 args.endYear = 2018;
 
 // 4. Specify an annual buffer to include imagery from the same season 
@@ -68,12 +68,12 @@ args.toaOrSR = 'SR';
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
-args.includeSLCOffL7 = false;
+args.includeSLCOffL7 = true;
 
 //9. Whether to defringe L5
 //Landsat 5 data has fringes on the edges that can introduce anomalies into 
 //the analysis.  This method removes them, but is somewhat computationally expensive
-args.defringeL5 = false;
+args.defringeL5 = true;
 
 // 10. Choose cloud/cloud shadow masking method
 // Choices are a series of booleans for cloudScore, TDOM, and elements of Fmask
