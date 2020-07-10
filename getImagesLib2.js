@@ -813,7 +813,20 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
   image = image.updateMask(cloudShadowMask.not()).addBands(shadowMask.rename(['cloudShadowMask']));
   return image;
 }
-function projectShadowsWrapper(img,cloudThresh,irSumThresh,contractPixels,dilatePixels,cloudHeights){
+//See defaultArgs for list of params
+//img is a required parameter
+//Params can be provided as an object or parameter separated by commas
+function projectShadowsWrapper(){
+   var defaultArgs = {
+    'img':null,
+    'cloudThresh':20,
+    'irSumThresh':0.35,
+    'contractPixels':1.5,
+    'dilatePixels':3.5,
+    'cloudHeights':ee.List.sequence(500,10000,500)
+  };
+  
+  var args = prepArgumentsObject(arguments,defaultArgs);
   var cloudMask = sentinel2CloudScore(img).gt(cloudThresh)
     .focal_min(contractPixels).focal_max(dilatePixels);
 
