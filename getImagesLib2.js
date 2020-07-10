@@ -764,7 +764,7 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
   if(yMult === undefined || yMult === null){
     yMult = ee.Algorithms.If(ee.Algorithms.IsEqual(image.select([3]).projection(), ee.Projection("EPSG:4326")),1,-1);
   }
-  print(yMult)
+  print('yMult',yMult)
   var meanAzimuth = image.get('MEAN_SOLAR_AZIMUTH_ANGLE');
   var meanZenith = image.get('MEAN_SOLAR_ZENITH_ANGLE');
   ///////////////////////////////////////////////////////
