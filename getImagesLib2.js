@@ -777,7 +777,7 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
   
   
   //Get scale of image
-  var nominalScale = cloudMask.projection().nominalScale();
+  var nominalScale = 20;//cloudMask.projection().nominalScale();
   //Find where cloud shadows should be based on solar geometry
   //Convert to radians
   var azR =ee.Number(meanAzimuth).add(180).multiply(Math.PI).divide(180.0);
