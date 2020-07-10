@@ -764,6 +764,7 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
   if(yMult === undefined || yMult === null){
     yMult = ee.Algorithms.If(ee.Algorithms.IsEqual(image.select([3]).projection(), ee.Projection("EPSG:4326")),1,-1);
   }
+  print(yMult)
   var meanAzimuth = image.get('MEAN_SOLAR_AZIMUTH_ANGLE');
   var meanZenith = image.get('MEAN_SOLAR_ZENITH_ANGLE');
   ///////////////////////////////////////////////////////
@@ -830,7 +831,7 @@ function projectShadowsWrapper(){
   
   var cloudMask = sentinel2CloudScore(args.img).gt(args.cloudThresh)
     .focal_min(args.contractPixels).focal_max(args.dilatePixels);
-  Map.addLayer(cloudMask,{},'cloudMask')
+  
   var img = projectShadows(cloudMask,args.img,args.irSumThresh,args.contractPixels,args.dilatePixels,args.cloudHeights);
 
   return img.set(args);
