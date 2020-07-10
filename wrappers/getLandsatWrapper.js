@@ -1,24 +1,5 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #d63000 */
-    /* shown: false */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[-108.0764409385066, 38.063974781475835],
-          [-108.0764409385066, 37.0975668525586],
-          [-106.4284917197566, 37.0975668525586],
-          [-106.4284917197566, 38.063974781475835]]], null, false),
-    geometry2 = 
-    /* color: #d63000 */
-    /* shown: false */
-    ee.Geometry.MultiPoint();
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 var args = {};
@@ -26,7 +7,7 @@ var args = {};
 // 1. Specify study area: Study area
 // Can specify a country, provide a fusion table  or asset table (must add 
 // .geometry() after it), or draw a polygon and make studyArea = drawnPolygon
-args.studyArea = geometry;
+args.studyArea = getImagesLib.testAreas.CA;
 
 // 2. Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
@@ -196,7 +177,7 @@ print('Provided parameters are:',args);
 //Start function calls
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
-var landsat = getImageLib.getLandsatWrapper(args);
+var landsat = getImagesLib.getLandsatWrapper(args);
 print('Final output:',landsat);
 //Separate into scenes and composites for subsequent analysis
 var processedScenes = landsat.processedScenes;
