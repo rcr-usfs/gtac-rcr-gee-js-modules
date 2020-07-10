@@ -208,7 +208,7 @@ function harmonizationChastain(){
     };
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.fromSensor = args.fromSensor.toUpperCase();
-  args.toSensor = args.toSensor.toUpperCase()
+  args.toSensor = args.toSensor.toUpperCase();
   //Get the model for the given from and to sensor
   args.comboKey = args.fromSensor+'_'+args.toSensor;
   args.coeffList = chastainCoeffDict[args.comboKey];
