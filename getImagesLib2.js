@@ -478,6 +478,7 @@ function dailyMosaics(imgs){
 //Function for acquiring Sentinel2 imagery
 //See default arguments below
 //Required arguments: studyArea,startDate,endDate,startJulian,endJulian
+//Can be called on with parameters as an object or ordered set of parameters 
 function getS2(){
   var defaultArgs = {
     'studyArea':null,
@@ -552,18 +553,11 @@ function getS2(){
   }
   return s2s.set(args);
 }
-
-// var out = getS2({'studyArea':geometry,
-//                       'startDate':ee.Date.fromYMD(2019,1,1),
-//                       'endDate':ee.Date.fromYMD(2020,1,1),
-//                       'startJulian':190,
-//                       'endJulian':250,'defringeL5':true});
-// print(out)
-// Map.addLayer(out.median(),{})
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
 //See default arguments below
 //Required arguments: studyArea,startDate,endDate,startJulian,endJulian
+//Can be called on with parameters as an object or ordered set of parameters 
 function getLandsat(){
   
   var defaultArgs = {
