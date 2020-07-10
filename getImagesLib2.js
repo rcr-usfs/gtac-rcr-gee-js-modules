@@ -798,10 +798,10 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
     
     
   });
-  print(shadows)
+  
   
   var shadowMask = ee.ImageCollection.fromImages(shadows).max();
-  
+  Map.addLayer(shadowMask,{},'shadow mask')
   //Create shadow mask
   shadowMask = shadowMask.and(cloudMask.not());
   shadowMask = shadowMask.and(darkPixels).focal_min(contractPixels).focal_max(dilatePixels);
