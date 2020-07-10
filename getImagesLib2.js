@@ -1,5 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
+var testAreaCO = 
     /* color: #d63000 */
     /* displayProperties: [
       {
@@ -10,7 +10,19 @@ var geometry =
         [[[-108.28630509064759, 38.085343638120925],
           [-108.28630509064759, 37.18051220092945],
           [-106.74821915314759, 37.18051220092945],
-          [-106.74821915314759, 38.085343638120925]]], null, false);
+          [-106.74821915314759, 38.085343638120925]]], null, false),
+    testAreaCA = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-119.96383760287506, 37.138150574108714],
+          [-119.96383760287506, 36.40774412106424],
+          [-117.95333955600006, 36.40774412106424],
+          [-117.95333955600006, 37.138150574108714]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ////////////////////////////////////////////////////////////////////////////////
 //Module for getting Landsat, Sentinel 2 and MODIS images/composites
@@ -3367,4 +3379,5 @@ exports.customQualityMosaic  = customQualityMosaic;
 exports.compositeDates = compositeDates;
 exports.defringeLandsat = defringeLandsat;
 
-exports.testArea = geometry;
+exports.testAreaCO = testAreaCO;
+exports.testAreaCA = testAreaCA;
