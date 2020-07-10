@@ -111,7 +111,7 @@ function sieve(){
     };
   var args = prepArgumentsObject(arguments,defaultArgs);
   var connected = args.image.connectedPixelCount(args.mmu+20);
-  Map.addLayer(connected,{'min':1,'max':args.mmu},'connected');
+  // Map.addLayer(connected,{'min':1,'max':args.mmu},'connected');
   var elim = connected.gt(args.mmu);
   var mode = args.image.focal_mode(args.mmu/2,'circle');
   mode = mode.mask(args.image.mask());
