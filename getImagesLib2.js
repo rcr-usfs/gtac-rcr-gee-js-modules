@@ -827,10 +827,11 @@ function projectShadowsWrapper(){
   };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
-  var cloudMask = sentinel2CloudScore(img).gt(cloudThresh)
-    .focal_min(contractPixels).focal_max(dilatePixels);
+  
+  var cloudMask = sentinel2CloudScore(args.img).gt(args.cloudThresh)
+    .focal_min(args.contractPixels).focal_max(args.dilatePixels);
 
-  img = projectShadows(cloudMask,img,irSumThresh,contractPixels,dilatePixels,cloudHeights);
+  img = projectShadows(cloudMask,args.img,args.irSumThresh,args.contractPixels,args.dilatePixels,args.cloudHeights);
 
   return img;
 }
