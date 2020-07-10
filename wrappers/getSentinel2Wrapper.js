@@ -1,17 +1,3 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #d63000 */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[-108.15478039861847, 37.808492197985494],
-          [-108.15478039861847, 37.75530865001079],
-          [-108.05315686346222, 37.75530865001079],
-          [-108.05315686346222, 37.808492197985494]]], null, false);
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,7 +6,7 @@ var args = {};
 // 1. Specify study area: Study area
 // Can specify a country, provide a fusion table  or asset table (must add 
 // .geometry() after it), or draw a polygon and make studyArea = drawnPolygon
-args.studyArea = geometry;
+args.studyArea = getImagesLib.testAreas.CA;
 
 // 2. Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
