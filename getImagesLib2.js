@@ -116,7 +116,7 @@ function sieve(){
   var mode = args.image.focal_mode(args.mmu/2,'circle');
   mode = mode.mask(args.image.mask());
   var filled = args.image.where(elim.not(),mode);
-  return filled;
+  return filled.set(args);
 }
 
 //Written by Yang Z.
