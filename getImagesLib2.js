@@ -3353,7 +3353,8 @@ exports.customQualityMosaic  = customQualityMosaic;
 exports.compositeDates = compositeDates;
 exports.defringeLandsat = defringeLandsat;
 
-exports.testAreaCO = 
+exports.testAreas = {};
+exports.testAreas.CO = 
     /* color: #d63000 */
     /* displayProperties: [
       {
@@ -3365,7 +3366,7 @@ exports.testAreaCO =
           [-108.28630509064759, 37.18051220092945],
           [-106.74821915314759, 37.18051220092945],
           [-106.74821915314759, 38.085343638120925]]], null, false),
-    exports.testAreaCA = 
+    exports.testAreas.CA = 
     /* color: #d63000 */
     /* displayProperties: [
       {
