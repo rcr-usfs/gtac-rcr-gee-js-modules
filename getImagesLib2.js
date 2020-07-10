@@ -95,7 +95,7 @@ function setNoData(){
     };
   var args = prepArgumentsObject(arguments,defaultArgs);
 
-  return args.image.unmask(args.noDataValue,false);
+  return args.image.unmask(args.noDataValue,false).set(args);
 }
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
@@ -103,6 +103,7 @@ function setNoData(){
 //See default args below
 //Must provide image 
 //mmu is an optional parameter with default of 4 pixels
+//Example usage: sieve(anEEImage,4) or sieve({'image':anEEImage,'mmu':4})
 function sieve(){
   var defaultArgs = {
     'image':null,
