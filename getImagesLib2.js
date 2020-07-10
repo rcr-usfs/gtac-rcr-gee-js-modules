@@ -3333,6 +3333,7 @@ exports.vizParamsFalse10k = vizParamsFalse10k;
 exports.vizParamsTrue10k = vizParamsTrue10k;
 exports.landsatCloudScore = landsatCloudScore;
 exports.sentinel2CloudScore = sentinel2CloudScore;
+exports.projectShadowsWrapper = projectShadowsWrapper;
 exports.applyCloudScoreAlgorithm = applyCloudScoreAlgorithm;
 exports.cFmask = cFmask;
 exports.simpleTDOM2 = simpleTDOM2;
