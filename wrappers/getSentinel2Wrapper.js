@@ -206,7 +206,7 @@ var processedComposites = sentinel2.processedComposites;
 print(processedScenes)
 
 var composite = ee.Image(processedComposites.first());
-var url = composite.visualize({min:0.05,max:0.35,bands:'swir2,nir,red'}).getThumbURL({'dimensions':500, 'region':geometry,'format':'jpg'});
+var url = composite.visualize({min:0.05,max:0.35,bands:'swir2,nir,red'}).getThumbURL({'dimensions':500, 'region':args.studyArea,'format':'jpg'});
 print(url)
 ////////////////////////////////////////////////////////////////////////////////
 // Load the study region, with a blue outline.
