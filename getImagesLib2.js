@@ -208,15 +208,15 @@ function harmonizationChastain(){
     };
   var args = prepArgumentsObject(arguments,defaultArgs);
   //Get the model for the given from and to sensor
-  var comboKey = fromSensor.toUpperCase()+'_'+toSensor.toUpperCase();
-  var coeffList = chastainCoeffDict[comboKey];
-  var slopes = coeffList[0];
-  var intercepts = coeffList[1];
-  var direction = ee.Number(coeffList[2]);
+  args.comboKey = argsfromSensor.toUpperCase()+'_'+argstoSensor.toUpperCase();
+  args.coeffList = chastainCoeffDict[args.comboKey];
+  var slopes = args.coeffList[0];
+  var intercepts = args.coeffList[1];
+  var direction = ee.Number(args.coeffList[2]);
   
   //Apply the model in the respective direction
-  var out = ee.Algorithms.If(direction.eq(0),dir0Regression(img,slopes,intercepts),dir1Regression(img,slopes,intercepts));
-  return ee.Image(out).copyProperties(img).copyProperties(img,['system:time_start']);
+  var out = ee.Algorithms.If(direction.eq(0),dir0Regression(args.image,slopes,intercepts),dir1Regression(args.image,slopes,intercepts));
+  return ee.Image(out).copyProperties(args.image).copyProperties(args.image,['system:time_start']).set(args);
 }
 ///////////////////////////////////////////////////////////
 //Function to create a multiband image from a collection
