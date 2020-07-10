@@ -201,6 +201,12 @@ function dir1Regression(img,slopes,intercepts){
 //mmu is an optional parameter with default of 4 pixels
 //Example usage: harmonizationChastain(anEEImage,'MSI','ETM) or sieve({'image':anEEImage,'fromSensor':'MSI','toSensor':'ETM'})
 function harmonizationChastain(){
+  var defaultArgs = {
+    'image':null,
+    'fromSensor':null,
+    'toSensor':null
+    };
+  var args = prepArgumentsObject(arguments,defaultArgs);
   //Get the model for the given from and to sensor
   var comboKey = fromSensor.toUpperCase()+'_'+toSensor.toUpperCase();
   var coeffList = chastainCoeffDict[comboKey];
