@@ -208,7 +208,7 @@ function harmonizationChastain(){
     };
   var args = prepArgumentsObject(arguments,defaultArgs);
   //Get the model for the given from and to sensor
-  args.comboKey = argsfromSensor.toUpperCase()+'_'+argstoSensor.toUpperCase();
+  args.comboKey = args.fromSensor.toUpperCase()+'_'+args.toSensor.toUpperCase();
   args.coeffList = chastainCoeffDict[args.comboKey];
   var slopes = args.coeffList[0];
   var intercepts = args.coeffList[1];
