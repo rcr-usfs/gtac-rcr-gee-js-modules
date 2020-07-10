@@ -792,7 +792,7 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
     var shadowCastedDistance = zenR.tan().multiply(cloudHeight);//Distance shadow is cast
     var x = azR.sin().multiply(shadowCastedDistance).divide(nominalScale);//X distance of shadow
     var y = azR.cos().multiply(shadowCastedDistance).divide(nominalScale).multiply(yMult);//Y distance of shadow
-    // print(x,y)
+    print(x,y)
    
     return cloudMask.changeProj(cloudMask.projection(), cloudMask.projection().translate(x, y));
     
