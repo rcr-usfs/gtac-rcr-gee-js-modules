@@ -769,7 +769,7 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
   ///////////////////////////////////////////////////////
   // print('a',meanAzimuth);
   // print('z',meanZenith)
-  print(cloudMask.projection())
+  
   //Find dark pixels
   var darkPixels = image.select(['nir','swir1','swir2']).reduce(ee.Reducer.sum()).lt(irSumThresh)
     .focal_min(contractPixels).focal_max(dilatePixels)
@@ -777,14 +777,14 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
   
   
   //Get scale of image
-  var nominalScale = 20;//cloudMask.projection().nominalScale();
+  var nominalScale = cloudMask.projection().nominalScale();
   //Find where cloud shadows should be based on solar geometry
   //Convert to radians
   var azR =ee.Number(meanAzimuth).add(180).multiply(Math.PI).divide(180.0);
   var zenR  =ee.Number(meanZenith).multiply(Math.PI).divide(180.0);
   
   
-
+ 
   //Find the shadows
   var shadows = cloudHeights.map(function(cloudHeight){
     cloudHeight = ee.Number(cloudHeight);
@@ -792,7 +792,7 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
     var shadowCastedDistance = zenR.tan().multiply(cloudHeight);//Distance shadow is cast
     var x = azR.sin().multiply(shadowCastedDistance).divide(nominalScale);//X distance of shadow
     var y = azR.cos().multiply(shadowCastedDistance).divide(nominalScale).multiply(yMult);//Y distance of shadow
-    print(x,y)
+    // print(x,y)
    
     return cloudMask.changeProj(cloudMask.projection(), cloudMask.projection().translate(x, y));
     
@@ -801,7 +801,7 @@ function projectShadows(cloudMask,image,irSumThresh,contractPixels,dilatePixels,
   
   
   var shadowMask = ee.ImageCollection.fromImages(shadows).max();
-  Map.addLayer(shadowMask)
+  
   //Create shadow mask
   shadowMask = shadowMask.and(cloudMask.not());
   shadowMask = shadowMask.and(darkPixels).focal_min(contractPixels).focal_max(dilatePixels);
@@ -830,7 +830,7 @@ function projectShadowsWrapper(){
   
   var cloudMask = sentinel2CloudScore(args.img).gt(args.cloudThresh)
     .focal_min(args.contractPixels).focal_max(args.dilatePixels);
-  Map.addLayer(cloudMask,{},'cloudMask')
+
   var img = projectShadows(cloudMask,args.img,args.irSumThresh,args.contractPixels,args.dilatePixels,args.cloudHeights);
 
   return img.set(args);
