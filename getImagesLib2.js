@@ -218,7 +218,7 @@ function harmonizationChastain(){
   
   //Apply the model in the respective direction
   var out = ee.Algorithms.If(direction.eq(0),dir0Regression(args.image,slopes,intercepts),dir1Regression(args.image,slopes,intercepts));
-  return ee.Image(out).copyProperties(args.image).copyProperties(args.image,['system:time_start']).set(args);
+  return ee.Image(out.copyProperties(args.image).copyProperties(args.image,['system:time_start']).set(args));
 }
 ///////////////////////////////////////////////////////////
 //Function to create a multiband image from a collection
