@@ -23,7 +23,8 @@ var boulderMt =
         [[[-112.58487547936136, 38.49957891519434],
           [-112.58487547936136, 38.28861908573503],
           [-112.23331297936136, 38.28861908573503],
-          [-112.23331297936136, 38.49957891519434]]], null, false);
+          [-112.23331297936136, 38.49957891519434]]], null, false),
+    redEdgeVizParams = {"opacity":1,"bands":["re1","re2","re3"],"min":0.20256242187301,"max":0.33442950850893194,"gamma":2.418};
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 /////////////////////////////////////////////////////////////////////////////
@@ -89,9 +90,16 @@ var vizParamsTrue = {
   'bands': 'red,green,blue', 
 };
 //Show some example options
+
+//Example of using pre-defined params
 Map.addLayer(composite,vizParamsTrue,'True Color',false);
 Map.addLayer(composite,vizParamsFalse,'False Color',true);
+
+//Example of hue, saturation, value transformation
 Map.addLayer(composite.select(['brightness','greenness','wetness']).clamp(0,1).rgbToHsv(),{},'HSV',false);
+
+//Example of using vizParams from the layer gui
+Map.addLayer(composite,redEdgeVizParams,'Red Edge',false);
 
 //Choose viz params to use for final output and make various thumbs
 var vizParams = vizParamsFalse;
@@ -99,6 +107,13 @@ var url = composite
           .visualize(vizParams)//Convert to 3 band byte
           .getThumbURL({'dimensions':2000, 'region':args.studyArea,'format':'jpg'});
 print('False:',url);
+
+//Make thumb from vizParams from gui
+var vizParams = redEdgeVizParams;
+var url = composite
+          .visualize(vizParams)//Convert to 3 band byte
+          .getThumbURL({'dimensions':2000, 'region':args.studyArea,'format':'jpg'});
+print('Red Edge:',url);
 
 //Attempt at hue,saturation,value transform
 var url = composite
