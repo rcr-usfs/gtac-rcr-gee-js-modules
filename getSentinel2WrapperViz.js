@@ -30,10 +30,10 @@ var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 //User params
 var args = {};
 args.studyArea = boulderMt;//Draw study area on map and point to that variable name
-args.startYear = 2017;
+args.startYear = 2018;
 args.endYear = 2019;
-args.startJulian = 1;
-args.endJulian = 365;
+args.startJulian = 190;
+args.endJulian = 210;
 args.applyTDOM = false;//Change to true if cloud shadow artifacts are a problem- will likely need to make the dimensions 500 or so in the getThumbURL call below 
 
 //////////////////////////////////////////
