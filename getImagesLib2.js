@@ -2462,7 +2462,7 @@ function getProcessedSentinel2Scenes(){
     'startJulian':null,
     'endJulian':null,
     'applyQABand':false,
-    'applyCloudScore':true,
+    'applyCloudScore':false,
     'applyShadowShift':false,
     'applyTDOM':true,
     'cloudScoreThresh':20,
