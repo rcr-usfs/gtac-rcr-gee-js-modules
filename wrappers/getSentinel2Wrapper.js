@@ -203,11 +203,7 @@ var sentinel2 =getImagesLib.getSentinel2Wrapper(args);
 //Separate into scenes and composites for subsequent analysis
 var processedScenes = sentinel2.processedScenes;
 var processedComposites = sentinel2.processedComposites;
-print(processedScenes)
 
-var composite = ee.Image(processedComposites.first());
-var url = composite.visualize({min:0.05,max:0.35,bands:'swir2,nir,red'}).getThumbURL({'dimensions':500, 'region':args.studyArea,'format':'jpg'});
-print(url)
 ////////////////////////////////////////////////////////////////////////////////
 // Load the study region, with a blue outline.
 // Create an empty image into which to paint the features, cast to byte.
