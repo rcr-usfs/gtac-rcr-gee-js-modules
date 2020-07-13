@@ -2562,7 +2562,7 @@ function getSentinel2Wrapper(args){
     'weights':[1],
     'compositingMethod':'medoid',
     'applyQABand':false,
-    'applyCloudScore':true,
+    'applyCloudScore':false,
     'applyShadowShift':false,
     'applyTDOM':true,
     'cloudScoreThresh':20,
