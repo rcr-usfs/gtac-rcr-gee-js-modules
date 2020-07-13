@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var boulderMt = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -22,30 +23,17 @@ var boulderMt =
         [[[-112.58487547936136, 38.49957891519434],
           [-112.58487547936136, 38.28861908573503],
           [-112.23331297936136, 38.28861908573503],
-          [-112.23331297936136, 38.49957891519434]]], null, false),
-    geometry = 
-    /* color: #0b4a8b */
-    /* shown: false */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[91.99565042593281, 51.83622447539623],
-          [91.99565042593281, 51.43391507774735],
-          [92.91850198843281, 51.43391507774735],
-          [92.91850198843281, 51.83622447539623]]], null, false);
+          [-112.23331297936136, 38.49957891519434]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 /////////////////////////////////////////////////////////////////////////////
 //User params
 var args = {};
-args.studyArea = geometry;//Draw study area on map and point to that variable name
-args.startYear = 2018;
+args.studyArea = boulderMt;//Draw study area on map and point to that variable name
+args.startYear = 2017;
 args.endYear = 2019;
-args.startJulian = 190;
-args.endJulian = 210;
+args.startJulian = 1;
+args.endJulian = 365;
 args.applyTDOM = false;//Change to true if cloud shadow artifacts are a problem- will likely need to make the dimensions 500 or so in the getThumbURL call below 
 
 //////////////////////////////////////////
@@ -58,7 +46,9 @@ args.preComputedTDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDe
 var s2s = getImagesLib.getProcessedSentinel2Scenes(args);
 var composite = s2s.median();
 var coeffsPredicted =getImagesLib.getHarmonicCoefficientsAndFit(s2s,['nir','swir1','swir2','NDVI']);
- 
+ //Get predicted values for visualization
+  var predicted = coeffsPredicted[1];
+  Map.addLayer(predicted,{},'harm predicted',false);
 print('BandNames:',composite.bandNames());
 /////////////////////////////////////////////
 //Band names to choose from:
