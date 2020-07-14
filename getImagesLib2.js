@@ -2818,7 +2818,7 @@ function getLandsatAndSentinel2HybridWrapper(){
   var merged = getProcessedLandsatAndSentinel2Scenes(args);
 
   args.ls = merged;
-  print('here',args)
+  
   //Create hybrid composites
   var composites = compositeTimeSeries(args);
   args.collection = composites;
