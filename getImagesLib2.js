@@ -1360,7 +1360,7 @@ function wrapDates(startJulian,endJulian){
 // Create composites for each year within startYear and endYear range
 //See default args for necessary params
 //There are no default params- all must be provided either listed out in the function call or as an object
-function compositeTimeSeries(ls,startYear,endYear,startJulian,endJulian,timebuffer,weights,compositingMethod,compositingReducer){
+function compositeTimeSeries(){
   var defaultArgs = {
     'ls':null,
     'startYear':null,
