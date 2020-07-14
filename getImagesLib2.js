@@ -2703,12 +2703,16 @@ function getProcessedLandsatAndSentinel2Scenes(){
     args.preComputedCloudScoreOffset = args.preComputedLandsatCloudScoreOffset;
     args.preComputedTDOMIRMean = args.preComputedLandsatTDOMIRMean;
     args.preComputedTDOMIRStdDev = args.preComputedSentinel2TDOMIRStdDev;
+    args.applyCloudScore = args.applyCloudScoreLandsat;
+    args.applyTDOM = args.applyTDOMLandsat;
     var ls = getProcessedLandsatScenes(args);
     
     //Get Sentinel 2
     args.preComputedCloudScoreOffset = args.preComputedSentinel2CloudScoreOffset;
     args.preComputedTDOMIRMean = args.preComputedSentinel2TDOMIRMean;
     args.preComputedTDOMIRStdDev = args.preComputedSentinel2TDOMIRStdDev;
+    args.applyCloudScore = args.applyCloudScoreSentinel2;
+    args.applyTDOM = args.applyTDOMSentinel2;
     var s2s = getProcessedSentinel2Scenes(args);
     // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
     // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
