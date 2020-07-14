@@ -2697,7 +2697,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     var args = prepArgumentsObject(arguments,defaultArgs);
   
     args.toaOrSR =  args.toaOrSR.toUpperCase();
-    args.origin = 'Landsat-Sentinel2-Hybrid';
+    
     
     print('initial args:',typeof(args),args)
     //Get Landsat
@@ -2764,6 +2764,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     
     // Merge Landsat and S2
     var merged = ls.merge(s2s);
+    args.origin = 'Landsat-Sentinel2-Hybrid';
     merged = merged.set(args);
     return merged
 }
