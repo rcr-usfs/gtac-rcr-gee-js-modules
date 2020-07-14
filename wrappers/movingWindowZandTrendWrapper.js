@@ -228,10 +228,13 @@ var slopeThresh = -0.05;
 var exportStartYear = 2019;
 var exportEndYear = 2019;
 
+var processingMask = ee.Image("USGS/NLCD/NLCD2016").select(['percent_tree_cover']).gt(10).selfMask();
+
 var exportName = 'SNE-ORS-2019';
 var exportFolder = 'ORS';
 var noDataValue = -9999;
 
+Map.addLayer(processingMask,{min:1,max:1}, 'Processing Mask')
 Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);         
 var changeObj = dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThresh*10000,exportStartYear,exportEndYear);
 var zChange = changeObj.zChange.max().int16().unmask(noDataValue,false);
