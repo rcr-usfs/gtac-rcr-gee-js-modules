@@ -1678,7 +1678,7 @@ function thresholdZAndTrend(zAndTrendCollection,zThresh,slopeThresh,startYear,en
   
   Map.addLayer(zChange.max().select([0]),{'min':startYear,'max':endYear,'palette':'FF0,F00'},'Z Most Recent Change Year '+negativeOrPositiveChange,true);
   Map.addLayer(trendChange.max().select([0]),{'min':startYear,'max':endYear,'palette':'FF0,F00'},'Trend Most Recent Change Year '+negativeOrPositiveChange,false);
-  
+  return {'zChange':zChange,'trendChange':trendChange};
 }
 
 function thresholdZAndTrendSubtle(zAndTrendCollection,zThreshLow,zThreshHigh,slopeThreshLow,slopeThreshHigh,startYear,endYear,negativeOrPositiveChange){
