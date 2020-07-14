@@ -2832,6 +2832,7 @@ function getLandsatAndSentinel2HybridWrapper(){
   //Create hybrid composites
   var composites = compositeTimeSeries(args);
   args.collection = composites;
+  args.origin = 'Landsat-Sentinel2-Hybrid';
   print(composites)
   if(args.exportComposites){// Export composite collection
     
@@ -2852,7 +2853,7 @@ function getLandsatAndSentinel2HybridWrapper(){
   
   args.processedScenes = merged;
   args.processedComposites = composites;
-  args.origin = 'Landsat-Sentinel2-Hybrid';
+  
   return args;
  
   
