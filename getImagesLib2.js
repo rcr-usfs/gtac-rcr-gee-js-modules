@@ -60,7 +60,7 @@ function prepArgumentsObject(args,defaultArgs){
       
   if(typeof(argList[0]) === 'object' && argList.length === 1 && !firstArgumentIsEEObj){
     argsAreObject = true;
-    outArgs = argList;
+    outArgs = argList[0];
   }
   //Iterate through each expected argument to create the obj with all parameters
   Object.keys(defaultArgs).forEach(function(key, i) {
