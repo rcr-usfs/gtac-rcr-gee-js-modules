@@ -236,7 +236,8 @@ var changeObj = dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThre
 var zChange = changeObj.zChange.max();
 var trendChange = changeObj.trendChange.max();
 
-Export.image.toDrive(zChange, exportName, exportFolder, exportName, null, studyArea, null, crs, transform, 1e13);
+Export.image.toDrive(zChange, exportName +'-zChange', exportFolder, exportName+'-zChange', null, studyArea, null, crs, transform, 1e13);
+Export.image.toDrive(trendChange, exportName +'-trendChange', exportFolder, exportName+'-trendChange', null, studyArea, null, crs, transform, 1e13);
 
 Map.addLayer(zChange,{},'zChange',false);
 Map.addLayer(trendChange,{},'trendChange',false);
