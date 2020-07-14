@@ -224,12 +224,14 @@ var zAndTrendCollection =
 dLib.zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,startJulian,endJulian,
           baselineLength,baselineGap,epochLength,zReducer,useAnnualMedianForTrend,
           exportImages,exportPathRoot,studyArea,scale,crs,transform,minBaselineObservationsNeeded);
-var zThresh = -3;
+var zThresh = -2;
 var slopeThresh = -0.05;
 var exportStartYear = 2019;
 var exportEndYear = 2019;
 Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);         
-dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThresh*10000,exportStartYear,exportEndYear);
+var changeObj = dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThresh*10000,exportStartYear,exportEndYear);
+var zChange = changeObj.zChange;
+var trendChange = changeObj.trendChange;
 
 
 Map.setOptions('HYBRID');
