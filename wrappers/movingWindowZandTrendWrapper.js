@@ -232,6 +232,8 @@ Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);
 var changeObj = dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThresh*10000,exportStartYear,exportEndYear);
 var zChange = changeObj.zChange;
 var trendChange = changeObj.trendChange;
+Map.addLayer(zChange,{},'zChange',false);
+Map.addLayer(trendChange,{},'trendChange',false);
 
 
 Map.setOptions('HYBRID');
