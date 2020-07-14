@@ -1667,6 +1667,8 @@ function thresholdZAndTrend(zAndTrendCollection,zThresh,slopeThresh,startYear,en
   var dir;
   if(negativeOrPositiveChange === 'negative'){dir = -1}
   else{dir = 1};
+  
+  zAndTrendCollection = zAndTrendCollection.filter(ee.Filter.calendarRange(startYear,endYear,'year'))
   var zCollection = zAndTrendCollection.select('.*_Z');
   var trendCollection = zAndTrendCollection.select('.*_slope');
   
