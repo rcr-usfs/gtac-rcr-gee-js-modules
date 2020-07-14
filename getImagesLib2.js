@@ -2852,6 +2852,7 @@ function getLandsatAndSentinel2HybridWrapper(){
   
   args.processedScenes = merged;
   args.processedComposites = composites;
+  args.origin = 'Landsat-Sentinel2-Hybrid';
   return args;
  
   
