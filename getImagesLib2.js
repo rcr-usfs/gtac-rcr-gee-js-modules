@@ -47,7 +47,7 @@ var changeDirDict = {
 function prepArgumentsObject(args,defaultArgs){
   var argList = [].slice.call(args);
   var outArgs = {};
-  // print('Default args:',defaultArgs);
+  print('Default args:',defaultArgs);
   //See if first argument is an ee object instead of a vanilla js object
   var firstArgumentIsEEObj = false;
   var argsAreObject = false;
@@ -81,7 +81,7 @@ function prepArgumentsObject(args,defaultArgs){
   // if(argsAreObject){
     
   // }
-  // print('Out args:',outArgs);
+  print('Out args:',outArgs);
   return outArgs;
 }
 //////////////////////////////////////////////////
