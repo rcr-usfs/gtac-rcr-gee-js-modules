@@ -230,8 +230,10 @@ var exportStartYear = 2019;
 var exportEndYear = 2019;
 Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);         
 var changeObj = dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThresh*10000,exportStartYear,exportEndYear);
-var zChange = changeObj.zChange;
-var trendChange = changeObj.trendChange;
+var zChange = changeObj.zChange.max();
+var trendChange = changeObj.trendChange.max();
+
+
 Map.addLayer(zChange,{},'zChange',false);
 Map.addLayer(trendChange,{},'trendChange',false);
 
