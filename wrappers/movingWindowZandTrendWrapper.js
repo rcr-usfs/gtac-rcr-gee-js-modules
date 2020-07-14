@@ -228,11 +228,15 @@ var zThresh = -2;
 var slopeThresh = -0.05;
 var exportStartYear = 2019;
 var exportEndYear = 2019;
+
+var exportName = 'SNE-ORS-2019';
+var exportFolder = 'ORS';
 Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);         
 var changeObj = dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThresh*10000,exportStartYear,exportEndYear);
 var zChange = changeObj.zChange.max();
 var trendChange = changeObj.trendChange.max();
 
+Export.image.toDrive(zChange, exportName, exportFolder, exportName, null, studyArea, null, crs, transform, 1e13);
 
 Map.addLayer(zChange,{},'zChange',false);
 Map.addLayer(trendChange,{},'trendChange',false);
