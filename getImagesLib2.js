@@ -2549,7 +2549,7 @@ function getProcessedSentinel2Scenes(){
 
 /////////////////////////////////////////////////////////////////////
 //Wrapper function for getting Landsat imagery
-function getSentinel2Wrapper(args){
+function getSentinel2Wrapper(){
   
   
    var defaultArgs = {
@@ -2648,9 +2648,62 @@ function getSentinel2Wrapper(args){
   return args;
 }
 ////////////////////////////////////////////////////////////////////////////////
+//Hybrid get Landsat and Sentinel 2 processed scenes
+//Handles getting processed scenes  with Landsat and Sentinel 2
+function getProcessedLandsatAndSentinel2Scenes(){
+  
+  var defaultArgs = {
+          'studyArea':null,
+          'startYear':null,
+          'endYear':null,
+          'startJulian':null,
+          'endJulian':null,
+          'timebuffer': 0,
+          'weights': [1],
+          'compositingMethod':'medoid',
+          'toaOrSR':'TOA',
+          'includeSLCOffL7':false,
+          'defringeL5':false,
+          'applyQABand':false,
+          'applyCloudProbability':true,
+          'applyShadowShift':false,
+          'applyCloudScore':false,
+          'applyTDOM':true,
+          'applyFmaskCloudMask':true,
+          'applyFmaskCloudShadowMask':true,
+          'applyFmaskSnowMask':false,
+          'cloudHeights':ee.List.sequence(500,10000,500),
+          'cloudScoreThresh':20,
+          'performCloudScoreOffset':true,
+          'cloudScorePctl':10,
+          'zScoreThresh':-1,
+          'shadowSumThresh':0.35,
+          'contractPixels':1.5,
+          'dilatePixels':0.35,
+          'landsatResampleMethod':'near',
+          'sentinel2ResampleMethod':'aggregate',
+          'convertToDailyMosaics':true,
+          'runChastainHarmonization':true,
+          'correctIllumination':false,
+          'correctScale':250,
+          'exportComposites':false,
+          'outputName':'Landsat-Sentinel2-Hybrid',
+          'exportPathRoot':'users/iwhousman/test/compositeCollection',
+          'crs':'EPSG:5070',
+          'transform':null,
+          'scale':null,
+          'preComputedLandsatCloudScoreOffset':null,
+          'preComputedLandsatTDOMIRMean':null,
+          'preComputedLandsatTDOMIRStdDev':null,
+          'preComputedSentinel2CloudScoreOffset':null,
+          'preComputedSentinel2TDOMIRMean':null,
+          'preComputedSentinel2TDOMIRStdDev':null
+        }
+}
+////////////////////////////////////////////////////////////////////////////////
 //Hybrid get Landsat and Sentinel 2 wrapper function
 //Handles getting processed scenes and composites with Landsat and Sentinel 2
-function getLandsatAndSentinel2HybridWrapper(args){
+function getLandsatAndSentinel2HybridWrapper(){
   
   var defaultArgs = {
           'studyArea':null,
