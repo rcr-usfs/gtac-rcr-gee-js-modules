@@ -1420,7 +1420,7 @@ function compositeTimeSeries(){
     var count = lsT.select([0]).count().rename(['compositeObsCount']);
     // Compute median or medoid or apply reducer
     var composite;
-    if(compositingReducer !== undefined && compositingReducer !== null){
+    if(args.compositingReducer !== undefined && args.compositingReducer !== null){
       composite = lsT.reduce(args.compositingReducer);
     }
     else if (args.compositingMethod.toLowerCase() === 'median') {
