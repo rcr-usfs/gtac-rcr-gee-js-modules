@@ -1,17 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-74.00225729730654, 42.88789955537193],
-          [-74.00225729730654, 41.30242754457999],
-          [-70.72833151605653, 41.30242754457999],
-          [-70.72833151605653, 42.88789955537193]]], null, false);
+        [[[-72.56870253979419, 41.670466608520734],
+          [-72.56870253979419, 41.59656503861213],
+          [-72.43961318432544, 41.59656503861213],
+          [-72.43961318432544, 41.670466608520734]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running z-score and linear trend across a moving window of years
 
@@ -231,10 +230,12 @@ var exportEndYear = 2019;
 
 var exportName = 'SNE-ORS-2019';
 var exportFolder = 'ORS';
+var noDataValue = -9999;
+
 Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);         
 var changeObj = dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThresh*10000,exportStartYear,exportEndYear);
-var zChange = changeObj.zChange.max();
-var trendChange = changeObj.trendChange.max();
+var zChange = changeObj.zChange.max().int16().unmask(noDataValue,false);
+var trendChange = changeObj.trendChange.max().int16().unmask(noDataValue,false);
 
 Export.image.toDrive(zChange, exportName +'-zChange', exportFolder, exportName+'-zChange', null, studyArea, null, crs, transform, 1e13);
 Export.image.toDrive(trendChange, exportName +'-trendChange', exportFolder, exportName+'-trendChange', null, studyArea, null, crs, transform, 1e13);
