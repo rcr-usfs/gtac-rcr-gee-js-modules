@@ -1,6 +1,3 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 ///////////////////////////////////////////////////////////////////////////////
@@ -9,7 +6,7 @@ var args = {};
 // 1. Specify study area: Study area
 // Can specify a country, provide a fusion table  or asset table (must add 
 // .geometry() after it), or draw a polygon and make studyArea = drawnPolygon
-args.studyArea = geometry;
+args.studyArea = getImagesLib.testAreas.CA;
 
 // 2. Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
@@ -23,7 +20,7 @@ args.endJulian = 210;
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
 args.startYear = 2014;
-args.endYear = 2018;
+args.endYear = 2020;
 
 // 4. Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
@@ -79,8 +76,11 @@ var defringeL5 = false;
 
 //CloudScore and TDOM switches- for both Sentinel 2 and Landsat
 //We generally use these
-args.applyCloudScore = true;
-args.applyTDOM = true;
+args.applyCloudScoreLandsat = true;
+args.applyCloudScoreSentinel2 = true;
+
+args.applyTDOMLandsat = true;
+args.applyTDOMSentinel2 = true;
 
 //S2 only cloud/cloud shadow masking methods switches- generally do not use these
 //QA band method is fast but is generally awful- don't use if you like good composites
