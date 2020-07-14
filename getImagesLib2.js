@@ -2120,10 +2120,7 @@ collection,startYear,endYear,startJulian,endJulian,compositingReducer,timebuffer
 // Function to export composite collection
 //See below for necessary arguments
 //All parameters must be provided
-function exportCompositeCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
-collection,startYear,endYear,startJulian,endJulian,compositingMethod,timebuffer,exportBands,toaOrSR,weights,
-applyCloudScore, applyFmaskCloudMask,applyTDOM,applyFmaskCloudShadowMask,applyFmaskSnowMask,includeSLCOffL7,correctIllumination,
-nonDivideBands,resampleMethod){
+function exportCompositeCollection(){
   
   
    var defaultArgs = {
