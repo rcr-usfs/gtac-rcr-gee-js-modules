@@ -1,16 +1,17 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-72.56870253979419, 41.670466608520734],
-          [-72.56870253979419, 41.59656503861213],
-          [-72.43961318432544, 41.59656503861213],
-          [-72.43961318432544, 41.670466608520734]]], null, false);
+        [[[-72.94981544396632, 42.17559629866104],
+          [-72.94981544396632, 41.343803207973515],
+          [-71.19200294396632, 41.343803207973515],
+          [-71.19200294396632, 42.17559629866104]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Wrapper for running z-score and linear trend across a moving window of years
 
@@ -60,6 +61,7 @@ args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_
 args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
 args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
 
+args.includeSLCOffL7 = true;
 
 //Set up Names for the export
 // var outputName = 'Test_Z_';
