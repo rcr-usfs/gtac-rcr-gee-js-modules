@@ -2761,6 +2761,9 @@ function getProcessedLandsatAndSentinel2Scenes(){
     
     // Merge Landsat and S2
     var merged = ls.merge(s2s);
+    merged = merged.map(simpleAddIndices)
+              .map(getTasseledCap)
+              .map(simpleAddTCAngles);
     args.origin = 'Landsat-Sentinel2-Hybrid';
     merged = merged.set(args);
     return merged
