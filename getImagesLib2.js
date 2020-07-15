@@ -302,7 +302,8 @@ var sensorPropDict = ee.Dictionary({'landsat':
 
 function addSensorBand(img,whichProgram,toaOrSR){
   var sensorProp = ee.Dictionary(sensorPropDict.get(whichProgram)).get(toaOrSR);
-  return img.addBands(ee.Image.constant(sensorDict.get(img.get(sensorProp))).rename(['sensor']).byte());
+  var sensorName = img.get(sensorProp);
+  return img.addBands(ee.Image.constant(sensorDict.get(sensorName)).rename(['sensor']).byte()).set('sensor',sensorName);
 }
 /////////////////////////////////////////////////////////////////
 //Adds the float year with julian proportion to image
