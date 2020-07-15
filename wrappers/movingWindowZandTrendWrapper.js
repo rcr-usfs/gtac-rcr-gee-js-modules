@@ -41,6 +41,24 @@ args.endJulian = 200
 args.startYear = 2010;
 args.endYear = 2019;
 
+//If available, bring in preComputed cloudScore offsets and TDOM stats
+//Set to null if computing on-the-fly is wanted
+//These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
+//and are appropriate to use for any time period within the growing season
+//The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
+args.cloudScorePctl = 10;
+var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic();
+args.preComputedLandsatCloudScoreOffset = preComputedCloudScoreOffset.select(['Landsat_CloudScore_p'+args.cloudScorePctl.toString()]);
+args.preComputedSentinel2CloudScoreOffset = preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p'+args.cloudScorePctl.toString()]);
+
+//The TDOM stats are the mean and standard deviations of the two bands used in TDOM
+//By default, TDOM uses the nir and swir1 bands
+var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
+args.preComputedLandsatTDOMIRMean = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
+args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
+
+args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
+args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
 
 
 //Set up Names for the export
