@@ -124,7 +124,7 @@ var epochLength =5;
 ////////////////////////////////////////////////////////////////////////////////
 //Function Calls
 //Get all images
-var allScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args).select(indexNames);
+var allScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args)//.select(indexNames);
 print(allScenes)
 
 ////////////////////////////////////////////////////////////
