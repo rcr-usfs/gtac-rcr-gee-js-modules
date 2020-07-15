@@ -61,6 +61,8 @@ args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_
 args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
 args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
 
+// 8. Choose whether to include Landat 7
+// Generally only included when data are limited
 args.includeSLCOffL7 = true;
 
 //Set up Names for the export
