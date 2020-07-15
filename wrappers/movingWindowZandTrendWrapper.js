@@ -143,7 +143,7 @@ args.epochLength =5;
 //Function Calls
 //Get all images
 var allScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args).select(args.indexNames);
-print(allScenes)
+print(allScenes.aggregate_histogram('sensor'))
 
 ////////////////////////////////////////////////////////////
 
