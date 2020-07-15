@@ -3416,7 +3416,7 @@ exports.exportCompositeCollection = exportCompositeCollection;
 
 exports.getProcessedLandsatScenes = getProcessedLandsatScenes;
 exports.getProcessedSentinel2Scenes = getProcessedSentinel2Scenes;
-
+exports.getProcessedLandsatAndSentinel2Scenes = getProcessedLandsatAndSentinel2Scenes;
 exports.getLandsatWrapper = getLandsatWrapper;
 exports.getSentinel2Wrapper =getSentinel2Wrapper;
 
