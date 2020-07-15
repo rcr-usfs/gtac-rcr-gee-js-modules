@@ -74,10 +74,10 @@ var defringeL5 = false;
 //If pre-computed cloudScore offsets and/or TDOM stats are provided below, cloudScore
 //and TDOM will run quite quickly
 
-//CloudScore and TDOM switches- for both Sentinel 2 and Landsat
+//CloudScore and TDOM switches- for both Sentinel 2 and Landsat separately
 //We generally use these
 args.applyCloudScoreLandsat = true;
-args.applyCloudScoreSentinel2 = true;
+args.applyCloudScoreSentinel2 = false;
 
 args.applyTDOMLandsat = true;
 args.applyTDOMSentinel2 = true;
