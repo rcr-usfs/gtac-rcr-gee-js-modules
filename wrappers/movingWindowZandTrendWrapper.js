@@ -48,19 +48,19 @@ args.endYear = 2019;
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
-var exportPathRoot = 'users/iwhousman/test/ChangeCollection';
+args.exportPathRoot = 'users/iwhousman/test/ChangeCollection';
 
 // var exportPathRoot = 'projects/USFS/LCMS-NFS/R4/BT/Base-Learners/Base-Learners-Collection';
 //CRS- must be provided.  
 //Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
 //WGS84 UTM N hemisphere is EPSG:326+ zone number (zone 12 N would be EPSG:32612) and S hemisphere is EPSG:327+ zone number
-var crs = 'EPSG:5070';
+args.crs = 'EPSG:5070';
 
 //Specify transform if scale is null and snapping to known grid is needed
-var transform = [30,0,-2361915.0,0,-30,3177735.0];
+args.transform = [30,0,-2361915.0,0,-30,3177735.0];
 
 //Specify scale if transform is null
-var scale = null;
+args.scale = null;
 
 
 ////////////////////////////////////////////////
@@ -71,52 +71,52 @@ var scale = null;
 //Number of julian days for each analysis
 //Generally want it to be >= 32 or the output will be noisy
 //Should almost never be less than 16
-var nDays = 50;
+args.nDays = 50;
 
 //Which bands/indices to run the analysis with
 //Can be any of ['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','NDSI','tcAngleBG']
-var indexNames = ['NBR','NDVI'];//['nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];//['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];
+args.indexNames = ['NBR','NDVI'];//['nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];//['blue','green','red','nir','swir1','swir2','NDMI','NDVI','NBR','tcAngleBG'];
 
 //Whether each output should be exported to asset
-var exportImages = false;
+args.exportImages = false;
 
 ////////////////////////////////////
 //Moving window z parameters
 
 //Number of years in baseline
 //Generally 5 years works best in the Western CONUS and 3 in the Eastern CONUS
-var baselineLength = 5;
+args.baselineLength = 5;
 
 //Number of years between the analysis year and the last year of the baseline
 //This helps ensure the z-test is being performed data that are less likely to be 
 //temporally auto-correlated
 //E.g. if the analysis year is 1990, the last year of the baseline would be 1987
 //Set to 0 if the last year of the baseline needs to be the year just before the analysis year
-var baselineGap = 1;
+args.baselineGap = 1;
 
 //Number of cloud/cloud shadow free observations necessary to have in the baseline for a 
 //pixel to run the analysis for a given year
 //Generally 5-30 works well.  If false positives are prevalant, use something toward 30
 //If there are too many holes in the outputs where data are sparse, this method may not work, but try 
 //using a lower minBaselineObservationsNeeded
-var minBaselineObservationsNeeded = 10;
+args.minBaselineObservationsNeeded = 10;
 
 //Since there could be multiple z values for a given pixel on a given analysis period, how to summarize
 //Generally use ee.Reducer.mean() or ee.Reducer.median()
-var zReducer = ee.Reducer.mean();
+args.zReducer = ee.Reducer.mean();
 
 //Whether to reduce the collection to an annual median stack
 //Since linear regression can be leveraged by outliers, this generally
 //improves the trend analysis, but does get rid of a lot of potentially
 //good data
-var useAnnualMedianForTrend = true;
+args.useAnnualMedianForTrend = true;
 ////////////////////////////////////
 //Moving window trend parameters
 
 //Number of years in a given trend analysis inclusive of the analysis year
 //E.g. if the analysis year was 1990 and the epochLength was 5, 
 //the years included in the trend analysis would be 1986,1987,1988,1989, and 1990
-var epochLength =5;
+args.epochLength =5;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -124,42 +124,42 @@ var epochLength =5;
 ////////////////////////////////////////////////////////////////////////////////
 //Function Calls
 //Get all images
-var allScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args)//.select(indexNames);
+var allScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args).select(args.indexNames);
 print(allScenes)
 
 ////////////////////////////////////////////////////////////
 
 //The time series of both z scores (scaled by 10) and trend (scaled by 10000)
 //These can then be thresholded to find years of departure from "normal" and negative trends
-// var zAndTrendCollection = 
-// dLib.zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,startJulian,endJulian,
-//           baselineLength,baselineGap,epochLength,zReducer,useAnnualMedianForTrend,
-//           exportImages,exportPathRoot,studyArea,scale,crs,transform,minBaselineObservationsNeeded);
-// var zThresh = -2;
-// var slopeThresh = -0.05;
-// var exportStartYear = 2016;
-// var exportEndYear = 2019;
+var zAndTrendCollection = 
+dLib.zAndTrendChangeDetection(allScenes,args.indexNames,args.nDays,args.startYear,args.endYear,args.startJulian,args.endJulian,
+          args.baselineLength,args.baselineGap,args.epochLength,args.zReducer,args.useAnnualMedianForTrend,
+          args.exportImages,args.exportPathRoot,args.studyArea,args.scale,args.crs,args.transform,args.minBaselineObservationsNeeded);
+var zThresh = -2;
+var slopeThresh = -0.05;
+var exportStartYear = 2016;
+var exportEndYear = 2019;
 
-// var processingMask = ee.Image("USGS/NLCD/NLCD2016").select(['percent_tree_cover']).gt(10).selfMask();
+var processingMask = ee.Image("USGS/NLCD/NLCD2016").select(['percent_tree_cover']).gt(10).selfMask();
 
-// var exportName = 'SNE-ORS-'+exportStartYear.toString()+ '-'+exportEndYear.toString();
-// var exportFolder = 'ORS';
-// var noDataValue = -9999;
+var exportName = 'SNE-ORS-'+exportStartYear.toString()+ '-'+exportEndYear.toString();
+var exportFolder = 'ORS';
+var noDataValue = -9999;
 
 
-// Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);         
-// var changeObj = dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThresh*10000,exportStartYear,exportEndYear);
-// var zChange = changeObj.zChange.max().int16().unmask(noDataValue,false);
-// zChange = zChange.where(processingMask.and(zChange.eq(noDataValue)),1);
+Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);         
+var changeObj = dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThresh*10000,exportStartYear,exportEndYear);
+var zChange = changeObj.zChange.max().int16().unmask(noDataValue,false);
+zChange = zChange.where(processingMask.and(zChange.eq(noDataValue)),1);
 
-// var trendChange = changeObj.trendChange.max().int16().unmask(noDataValue,false);
-// trendChange = trendChange.where(processingMask.and(trendChange.eq(noDataValue)),1);
+var trendChange = changeObj.trendChange.max().int16().unmask(noDataValue,false);
+trendChange = trendChange.where(processingMask.and(trendChange.eq(noDataValue)),1);
 
-// Export.image.toDrive(zChange, exportName +'-zChange', exportFolder, exportName+'-zChange', null, studyArea, null, crs, transform, 1e13);
-// Export.image.toDrive(trendChange, exportName +'-trendChange', exportFolder, exportName+'-trendChange', null, studyArea, null, crs, transform, 1e13);
+Export.image.toDrive(zChange, exportName +'-zChange', exportFolder, exportName+'-zChange', null, studyArea, null, crs, transform, 1e13);
+Export.image.toDrive(trendChange, exportName +'-trendChange', exportFolder, exportName+'-trendChange', null, studyArea, null, crs, transform, 1e13);
 
-// Map.addLayer(zChange,{},'zChange',false);
-// Map.addLayer(trendChange,{},'trendChange',false);
+Map.addLayer(zChange,{},'zChange',false);
+Map.addLayer(trendChange,{},'trendChange',false);
 
 
 Map.setOptions('HYBRID');
