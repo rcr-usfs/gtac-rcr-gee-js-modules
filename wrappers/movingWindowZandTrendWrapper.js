@@ -173,7 +173,7 @@ zChange = zChange.where(processingMask.and(zChange.eq(noDataValue)),1);
 var trendChange = changeObj.trendChange.max().int16().unmask(noDataValue,false);
 trendChange = trendChange.where(processingMask.and(trendChange.eq(noDataValue)),1);
 
-Export.image.toDrive(zChange, exportName +'-zChange', exportFolder, exportName+'-zChange', null, studyArea, null, crs, transform, 1e13);
+Export.image.toDrive(zChange, exportName +'-zChange', exportFolder, exportName+'-zChange', null, args.studyArea, null, crs, transform, 1e13);
 Export.image.toDrive(trendChange, exportName +'-trendChange', exportFolder, exportName+'-trendChange', null, studyArea, null, crs, transform, 1e13);
 
 Map.addLayer(zChange,{},'zChange',false);
