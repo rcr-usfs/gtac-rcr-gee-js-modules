@@ -15,114 +15,33 @@ var geometry =
 //Wrapper for running z-score and linear trend across a moving window of years
 
 //Module imports
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 dLib.getExistingChangeData();
 // Define user parameters:
-
+var args = {};
 // 1. Specify study area: Study area
 // Can specify a country, provide a fusion table  or asset table (must add 
 // .geometry() after it), or draw a polygon and make studyArea = drawnPolygon
-var studyArea =geometry;
+args.studyArea =geometry;
 
 // 2. Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-var startJulian = 150;
-var endJulian = 200
+args.startJulian = 150;
+args.endJulian = 200
 
 // 3. Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
-var startYear = 2010;
-var endYear = 2019;
+args.startYear = 2010;
+args.endYear = 2019;
 
 
-
-// 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
-// Specify TOA or SR
-// Current implementation does not support Fmask for TOA
-var toaOrSR = 'SR';
-
-// 8. Choose whether to include Landat 7
-// Generally only included when data are limited
-var includeSLCOffL7 = true;
-
-//9. Whether to defringe L5
-//Landsat 5 data has fringes on the edges that can introduce anomalies into 
-//the analysis.  This method removes them, but is somewhat computationally expensive
-var defringeL5 = false;
-
-// 10. Choose cloud/cloud shadow masking method
-// Choices are a series of booleans for cloudScore, TDOM, and elements of Fmask
-//Fmask masking options will run fastest since they're precomputed
-//CloudScore runs pretty quickly, but does look at the time series to find areas that 
-//always have a high cloudScore to reduce comission errors- this takes some time
-//and needs a longer time series (>5 years or so)
-//TDOM also looks at the time series and will need a longer time series
-var applyCloudScore = false;
-var applyFmaskCloudMask = true;
-
-var applyTDOM = false;
-var applyFmaskCloudShadowMask = true;
-
-var applyFmaskSnowMask = true;
-
-// 11. Cloud and cloud shadow masking parameters.
-// If cloudScoreTDOM is chosen
-// cloudScoreThresh: If using the cloudScoreTDOMShift method-Threshold for cloud 
-//    masking (lower number masks more clouds.  Between 10 and 30 generally 
-//    works best)
-var cloudScoreThresh = 20;
-
-//Whether to find if an area typically has a high cloudScore
-//If an area is always cloudy, this will result in cloud masking omission
-//For bright areas that may always have a high cloudScore
-//but not actually be cloudy, this will result in a reduction of commission errors
-//This procedure needs at least 5 years of data to work well
-var performCloudScoreOffset = false;
-
-// Percentile of cloud score to pull from time series to represent a minimum for 
-// the cloud score over time for a given pixel. Reduces comission errors over 
-// cool bright surfaces. Generally between 5 and 10 works well. 0 generally is a
-// bit noisy
-var cloudScorePctl = 10; 
-
-// zScoreThresh: Threshold for cloud shadow masking- lower number masks out 
-//    less. Between -0.8 and -1.2 generally works well
-var zScoreThresh = -1;
-
-// shadowSumThresh: Sum of IR bands to include as shadows within TDOM and the 
-//    shadow shift method (lower number masks out less)
-var shadowSumThresh = 0.35;
-
-// contractPixels: The radius of the number of pixels to contract (negative 
-//    buffer) clouds and cloud shadows by. Intended to eliminate smaller cloud 
-//    patches that are likely errors
-// (1.5 results in a -1 pixel buffer)(0.5 results in a -0 pixel buffer)
-// (1.5 or 2.5 generally is sufficient)
-var contractPixels = 1.5; 
-
-// dilatePixels: The radius of the number of pixels to dilate (buffer) clouds 
-//    and cloud shadows by. Intended to include edges of clouds/cloud shadows 
-//    that are often missed
-// (1.5 results in a 1 pixel buffer)(0.5 results in a 0 pixel buffer)
-// (2.5 or 3.5 generally is sufficient)
-var dilatePixels = 2.5;
-
-// 12. correctIllumination: Choose if you want to correct the illumination using
-// Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
-// correction is calculated in meters.
-var correctIllumination = false;
-var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
-
-//13. Export params
-//Whether to export composites
-var exportComposites = false;
 
 //Set up Names for the export
 // var outputName = 'Test_Z_';
@@ -205,49 +124,42 @@ var epochLength =5;
 ////////////////////////////////////////////////////////////////////////////////
 //Function Calls
 //Get all images
-var allScenes = getImageLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
-  
-  toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
-  applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudScoreThresh,performCloudScoreOffset,cloudScorePctl,
-  zScoreThresh,shadowSumThresh,
-  contractPixels,dilatePixels
-  ).select(indexNames);
-
+var allScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args).select(indexNames);
+print(allScenes)
 
 ////////////////////////////////////////////////////////////
 
 //The time series of both z scores (scaled by 10) and trend (scaled by 10000)
 //These can then be thresholded to find years of departure from "normal" and negative trends
-var zAndTrendCollection = 
-dLib.zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,startJulian,endJulian,
-          baselineLength,baselineGap,epochLength,zReducer,useAnnualMedianForTrend,
-          exportImages,exportPathRoot,studyArea,scale,crs,transform,minBaselineObservationsNeeded);
-var zThresh = -2;
-var slopeThresh = -0.05;
-var exportStartYear = 2016;
-var exportEndYear = 2019;
+// var zAndTrendCollection = 
+// dLib.zAndTrendChangeDetection(allScenes,indexNames,nDays,startYear,endYear,startJulian,endJulian,
+//           baselineLength,baselineGap,epochLength,zReducer,useAnnualMedianForTrend,
+//           exportImages,exportPathRoot,studyArea,scale,crs,transform,minBaselineObservationsNeeded);
+// var zThresh = -2;
+// var slopeThresh = -0.05;
+// var exportStartYear = 2016;
+// var exportEndYear = 2019;
 
-var processingMask = ee.Image("USGS/NLCD/NLCD2016").select(['percent_tree_cover']).gt(10).selfMask();
+// var processingMask = ee.Image("USGS/NLCD/NLCD2016").select(['percent_tree_cover']).gt(10).selfMask();
 
-var exportName = 'SNE-ORS-'+exportStartYear.toString()+ '-'+exportEndYear.toString();
-var exportFolder = 'ORS';
-var noDataValue = -9999;
+// var exportName = 'SNE-ORS-'+exportStartYear.toString()+ '-'+exportEndYear.toString();
+// var exportFolder = 'ORS';
+// var noDataValue = -9999;
 
 
-Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);         
-var changeObj = dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThresh*10000,exportStartYear,exportEndYear);
-var zChange = changeObj.zChange.max().int16().unmask(noDataValue,false);
-zChange = zChange.where(processingMask.and(zChange.eq(noDataValue)),1);
+// Map.addLayer(zAndTrendCollection,{},'zAndTrendCollection',false);         
+// var changeObj = dLib.thresholdZAndTrend(zAndTrendCollection,zThresh*10,slopeThresh*10000,exportStartYear,exportEndYear);
+// var zChange = changeObj.zChange.max().int16().unmask(noDataValue,false);
+// zChange = zChange.where(processingMask.and(zChange.eq(noDataValue)),1);
 
-var trendChange = changeObj.trendChange.max().int16().unmask(noDataValue,false);
-trendChange = trendChange.where(processingMask.and(trendChange.eq(noDataValue)),1);
+// var trendChange = changeObj.trendChange.max().int16().unmask(noDataValue,false);
+// trendChange = trendChange.where(processingMask.and(trendChange.eq(noDataValue)),1);
 
-Export.image.toDrive(zChange, exportName +'-zChange', exportFolder, exportName+'-zChange', null, studyArea, null, crs, transform, 1e13);
-Export.image.toDrive(trendChange, exportName +'-trendChange', exportFolder, exportName+'-trendChange', null, studyArea, null, crs, transform, 1e13);
+// Export.image.toDrive(zChange, exportName +'-zChange', exportFolder, exportName+'-zChange', null, studyArea, null, crs, transform, 1e13);
+// Export.image.toDrive(trendChange, exportName +'-trendChange', exportFolder, exportName+'-trendChange', null, studyArea, null, crs, transform, 1e13);
 
-Map.addLayer(zChange,{},'zChange',false);
-Map.addLayer(trendChange,{},'trendChange',false);
+// Map.addLayer(zChange,{},'zChange',false);
+// Map.addLayer(trendChange,{},'trendChange',false);
 
 
 Map.setOptions('HYBRID');
