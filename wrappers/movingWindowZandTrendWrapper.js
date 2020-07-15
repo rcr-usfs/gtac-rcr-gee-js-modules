@@ -158,7 +158,7 @@ dLib.zAndTrendChangeDetection(allScenes,args.indexNames,args.nDays,args.startYea
           args.baselineLength,args.baselineGap,args.epochLength,args.zReducer,args.useAnnualMedianForTrend,
           args.exportImages,args.exportPathRoot,args.studyArea,args.scale,args.crs,args.transform,args.minBaselineObservationsNeeded);
 var zThresh = -2;
-var slopeThresh = -0.05;
+var slopeThresh = -0.03;
 var exportStartYear = 2016;
 var exportEndYear = 2019;
 
