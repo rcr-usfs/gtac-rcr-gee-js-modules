@@ -636,11 +636,11 @@ function multiBandLANDTRENDRFitMagSlopeDiffCollection(ts, indexNames, run_params
   
   // Run LandTrendr and convert to VertStack format
   var landtrendrOut = ee.ImageCollection(indexNames.map(function(indexName){
-    return dLib.LANDTRENDRVertStack(ts, indexName, run_params, startYear, endYear);
+    return LANDTRENDRVertStack(ts, indexName, run_params, startYear, endYear);
   }));
   
   // Convert to durFitMagSlope format
-  var durFitMagSlope = dLib.convertStack_To_DurFitMagSlope(landtrendrOut, 'LT');
+  var durFitMagSlope = convertStack_To_DurFitMagSlope(landtrendrOut, 'LT');
   // Prep data for export
   // durFitMagSlope = durFitMagSlope.map(function(img){return LT_VT_multBands(img, 10000)});
   // durFitMagSlope = durFitMagSlope.map(function(img){return img.int16()});
