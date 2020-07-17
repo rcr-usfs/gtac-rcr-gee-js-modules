@@ -627,7 +627,26 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts, indexName, run_params){
   
   return durFitMagSlope;
 } 
-
+///////////////////////////////////////////////////////////////////////////////////////////
+//Function for running LANDTRENDR across multiple bands and converting output to annual image collection
+//with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
+function multiBandLANDTRENDRFitMagSlopeDiffCollection(ts, indexNames, run_params){
+  var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
+  var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
+  
+  // Run LandTrendr and convert to VertStack format
+  var landtrendrOut = ee.ImageCollection(indexNames.map(function(indexName){
+    return dLib.LANDTRENDRVertStack(ts, indexName, run_params, startYear, endYear);
+  }));
+  
+  // Convert to durFitMagSlope format
+  var durFitMagSlope = dLib.convertStack_To_DurFitMagSlope(landtrendrOut, 'LT');
+  // Prep data for export
+  // durFitMagSlope = durFitMagSlope.map(function(img){return LT_VT_multBands(img, 10000)});
+  // durFitMagSlope = durFitMagSlope.map(function(img){return img.int16()});
+  
+  return durFitMagSlope;
+}
 //----------------------------------------------------------------------------------------------------
 //        Functions for both Verdet and Landtrendr
 //----------------------------------------------------------------------------------------------------
@@ -2203,6 +2222,7 @@ exports.LT_VT_vertStack_multBands = LT_VT_vertStack_multBands;
 exports.fitStackToCollection = fitStackToCollection;
 exports.convertStack_To_DurFitMagSlope = convertStack_To_DurFitMagSlope;
 exports.LANDTRENDRFitMagSlopeDiffCollection = LANDTRENDRFitMagSlopeDiffCollection;
+exports.multiBandLANDTRENDRFitMagSlopeDiffCollection = multiBandLANDTRENDRFitMagSlopeDiffCollection;
 exports.applyLinearInterp = applyLinearInterp;
 exports.updateVerdetMasks = updateVerdetMasks;
 exports.VERDETVertStack = VERDETVertStack;
