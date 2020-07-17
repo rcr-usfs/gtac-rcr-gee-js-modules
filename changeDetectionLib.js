@@ -613,11 +613,11 @@ function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYe
 function LANDTRENDRFitMagSlopeDiffCollection(ts, indexName, run_params){
   var startYear = ee.Date(ts.first().get('system:time_start')).get('year');
   var endYear = ee.Date(ts.sort('system:time_start',false).first().get('system:time_start')).get('year');
-  print(startYear,endYear);
+  
   // Run LandTrendr and convert to VertStack format
   var landtrendrOut = LANDTRENDRVertStack(ts, indexName, run_params, startYear, endYear);
   var ltStack = ee.Image(landtrendrOut.ltStack);
-  
+  print(landtrendrOut)
   // Convert to durFitMagSlope format
   var durFitMagSlope = convertStack_To_DurFitMagSlope(ltStack, 'LT');
   
