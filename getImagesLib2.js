@@ -263,7 +263,7 @@ function compositeDates(images,composite,bandNames){
     var t = images.select([bn,bn.cat('_diff'),'year']).qualityMosaic(bn.cat('_diff'));
     return t.select(['year']).rename(['YYYYDD']);
   });
-  //Convert to ann image and rename
+  //Convert to an image and rename
   out  = collectionToImage(ee.ImageCollection(out));
   // var outBns = bandNames.map(function(bn){return ee.String(bn).cat('YYYYDD')});
   // out = out.rename(outBns);
@@ -330,12 +330,6 @@ function addYearFractionBand(img){
   db = db;//.updateMask(img.select([0]).mask())
   return img.addBands(db);
 }
-function offsetImageDate(img,n,unit){
-  var date = ee.Date(img.get('system:time_start'));
-  date = date.advance(n,unit);
-  // date = ee.Date.fromYMD(100,date.get('month'),date.get('day'))
-  return img.set('system:time_start',date.millis());
-}
 function addYearYearFractionBand(img){
   var d = ee.Date(img.get('system:time_start'));
   var y = d.get('year');
@@ -375,7 +369,12 @@ function addFullYearJulianDayBand(img){
   
   return img.addBands(yj).float();
 }
-
+function offsetImageDate(img,n,unit){
+  var date = ee.Date(img.get('system:time_start'));
+  date = date.advance(n,unit);
+  // date = ee.Date.fromYMD(100,date.get('month'),date.get('day'))
+  return img.set('system:time_start',date.millis());
+}
 ////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 var fringeCountThreshold = 279;//Define number of non null observations for pixel to not be classified as a fringe
@@ -455,12 +454,12 @@ function uniqueValues(collection,field){
 function dailyMosaics(imgs){
   //Simplify date to exclude time of day
   imgs = imgs.map(function(img){
-  var d = ee.Date(img.get('system:time_start'));
-  var day = d.get('day');
-  var m = d.get('month');
-  var y = d.get('year');
-  var simpleDate = ee.Date.fromYMD(y,m,day);
-  return img.set('simpleTime',simpleDate.millis());
+    var d = ee.Date(img.get('system:time_start'));
+    var day = d.get('day');
+    var m = d.get('month');
+    var y = d.get('year');
+    var simpleDate = ee.Date.fromYMD(y,m,day);
+    return img.set('simpleTime',simpleDate.millis());
   });
   
   //Find the unique days
@@ -559,7 +558,7 @@ function getS2(){
     s2s = s2s.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
   }
   
-  //Convert to daily mosaics to avoid redundent observations in MGRS overlap areas and edge artifacts for shadow masking
+  //Convert to daily mosaics to avoid redundant observations in MGRS overlap areas and edge artifacts for shadow masking
   if(args.convertToDailyMosaics){
     s2s = dailyMosaics(s2s);
   }
