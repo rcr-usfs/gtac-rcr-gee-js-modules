@@ -714,7 +714,7 @@ function getLandsat(){
     
     
     }else{
-      print('Only including SLC On Landat 7 for TOA QA');
+      print('Only including SLC On Landsat 7 for TOA QA');
       var l7sTOAFMASK =  ee.ImageCollection(collectionDict['L7SR'])
               .filterDate(ee.Date.fromYMD(1998,1,1),ee.Date.fromYMD(2003,5,31))
               .filterDate(args.startDate,args.endDate)
