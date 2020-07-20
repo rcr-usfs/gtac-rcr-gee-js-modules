@@ -494,7 +494,7 @@ function getS2(){
     'resampleMethod':'aggregate',
     'toaOrSR':'TOA',
     'convertToDailyMosaics':true,
-    'addCloudProbabilty':true
+    'addCloudProbability':true //LSC
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -530,7 +530,7 @@ function getS2(){
 
   s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
   
-  if(args.addCloudProbabilty){
+  if(args.addCloudProbability){ //LSC
     print('Joining pre-computed cloud probabilities from: COPERNICUS/S2_CLOUD_PROBABILITY');
     var cloudProbabilities = ee.ImageCollection("COPERNICUS/S2_CLOUD_PROBABILITY")
                     .filterDate(args.startDate,args.endDate)
@@ -2487,7 +2487,7 @@ function getProcessedSentinel2Scenes(){
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   args.origin = 'Sentinel2';
-  args.addCloudProbabilty = args.applyCloudProbability;
+  args.addCloudProbability = args.applyCloudProbability; //LSC
   print(args)
   
   // Prepare dates
