@@ -280,6 +280,7 @@ function fillEmptyCollections(inCollection,dummyImage){
   return ee.ImageCollection(ee.Algorithms.If(imageCount.gt(0),inCollection,dummyCollection));
 
 }
+
 //////////////////////////////////////////////////////////////////////////
 //Add sensor band function
 var sensorDict = ee.Dictionary({'LANDSAT_4':4,
@@ -305,6 +306,7 @@ function addSensorBand(img,whichProgram,toaOrSR){
   var sensorName = img.get(sensorProp);
   return img.addBands(ee.Image.constant(sensorDict.get(sensorName)).rename(['sensor']).byte()).set('sensor',sensorName);
 }
+
 /////////////////////////////////////////////////////////////////
 //Adds the float year with julian proportion to image
 function addDateBand(img,maskTime){
@@ -3380,6 +3382,7 @@ var customQualityMosaic = function(inCollection,qualityBand,percentile){
 ////////////////////////////////////////////////////////////////////////////////
 exports.sieve = sieve;
 exports.setNoData = setNoData;
+exports.addSensorBand = addSensorBand;
 exports.addJulianDayBand = addJulianDayBand;
 exports.addYearYearFractionBand = addYearYearFractionBand;
 exports.addYearBand = addYearBand;
