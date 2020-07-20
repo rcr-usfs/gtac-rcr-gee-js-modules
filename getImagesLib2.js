@@ -537,9 +537,16 @@ function getS2(){
                     .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
                     .filterBounds(args.studyArea)
                     .select(['probability'],['cloud_probability']);
+                    
+    var cloudProbabilitiesIds = ee.List(ee.Dictionary(cloudProbabilities.aggregate_histogram('system:index')).keys());
+    var s2sIds = ee.List(ee.Dictionary(s2s.aggregate_histogram('system:index')).keys());
+    var missing = s2sIds.removeAll(cloudProbabilitiesIds);
+    print('Missing cloud probability ids:',missing);
     print('N s2 images before joining with cloud prob:',s2s.size());
     s2s = joinCollections(s2s,cloudProbabilities, false,'system:index');
     print('N s2 images after joining with cloud prob:',s2s.size());
+    
+    
   }
   
   
