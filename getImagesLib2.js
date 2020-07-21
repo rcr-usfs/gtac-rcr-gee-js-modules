@@ -1284,8 +1284,6 @@ function addZenithAzimuth(img,toaOrSR,zenithDict,azimuthDict){
   };
   }
   
-   
-  
   var zenith = ee.Image.constant(img.get(zenithDict[toaOrSR]))
     .multiply(Math.PI).divide(180).float().rename('zenith');
   
