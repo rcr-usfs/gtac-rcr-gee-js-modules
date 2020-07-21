@@ -1300,7 +1300,6 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
   // Find band names in first image
   var f = ee.Image(inCollection.first());
   var bandNames = f.bandNames();
-  //var bandNumbers = ee.List.sequence(1,bandNames.length());
   
   if (medoidIncludeBands === undefined || medoidIncludeBands === null) {
     medoidIncludeBands = bandNames;
@@ -1411,6 +1410,7 @@ function compositeTimeSeries(){
       return ee.List.repeat(i.get(0),i.get(1));
     }).flatten();
     // print('Weighted composite years for year:',year,yearsTT);
+    
     //Iterate across each year in list
     var images = yearsTT.map(function(yr){
       // Set up dates
