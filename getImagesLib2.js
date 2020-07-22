@@ -302,7 +302,7 @@ var sensorPropDict = ee.Dictionary({'landsat':
                                     });
 
 function addSensorBand(img,whichProgram,toaOrSR){
-  toaOrSR = toaOrSR.toUpperCase(); //LSC
+  toaOrSR = toaOrSR.toUpperCase(); 
   var sensorProp = ee.Dictionary(sensorPropDict.get(whichProgram)).get(toaOrSR);
   var sensorName = img.get(sensorProp);
   return img.addBands(ee.Image.constant(sensorDict.get(sensorName)).rename(['sensor']).byte()).set('sensor',sensorName);
@@ -2344,7 +2344,7 @@ function getLandsatWrapper(){
   }
   
   args.processedScenes = ls;
-  args.processedComposites = ts;
+  args.processedComposites = ts;getp
   return args;
 }
 
