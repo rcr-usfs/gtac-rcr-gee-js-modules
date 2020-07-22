@@ -2275,6 +2275,7 @@ function getLandsatWrapper(){
     'transform':null,
     'scale':null,
     'resampleMethod':'near', 
+    'harmonizeOLI': false,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
     'preComputedTDOMIRStdDev':null
