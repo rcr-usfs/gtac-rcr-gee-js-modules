@@ -2536,17 +2536,12 @@ function getProcessedSentinel2Scenes(){
     s2s = simpleTDOM2(args);
     // Map.addLayer(s2s.mosaic(),{min:0.05,max:0.4,bands:'swir1,nir,red'},'TDOM shadow masked');
   }
-  
-  
- 
-  
-  
+
   // Add common indices- can use addIndices for comprehensive indices 
   //or simpleAddIndices for only common indices
   s2s = s2s.map(simpleAddIndices)
           .map(getTasseledCap)
-          .map(simpleAddTCAngles);
-  
+          .map(simpleAddTCAngles);  
   
   //Add sensor band
   s2s = s2s.map(function(img){return addSensorBand(img,'sentinel2',args.toaOrSR)});
@@ -2556,8 +2551,7 @@ function getProcessedSentinel2Scenes(){
 
 /////////////////////////////////////////////////////////////////////
 //Wrapper function for getting Landsat imagery
-function getSentinel2Wrapper(){
-  
+function getSentinel2Wrapper(){  
   
    var defaultArgs = {
     'studyArea':null,
