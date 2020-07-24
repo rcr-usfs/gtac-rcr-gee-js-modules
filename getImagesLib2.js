@@ -16,7 +16,7 @@ var vizParamsFalse10k = {
 var vizParamsTrue = {
   'min': 0, 
   'max': [0.2,0.2,0.2], 
-  'bands': 'red,green,blue', 
+  'bands': 'red,greenexp,blue', 
 };
 var vizParamsTrue10k = {
   'min': 0, 
@@ -2443,15 +2443,11 @@ function getProcessedLandsatScenes(){
     ls = ls.map(function(img){return cFmask(img,'snow')});
   }
   
-  
-  
-  
   // Add common indices- can use addIndices for comprehensive indices 
   //or simpleAddIndices for only common indices
   ls = ls.map(simpleAddIndices)
           .map(getTasseledCap)
-          .map(simpleAddTCAngles);
-  
+          .map(simpleAddTCAngles);  
   
   //Add sensor band
   ls = ls.map(function(img){return addSensorBand(img,'landsat',args.toaOrSR)});
@@ -2596,9 +2592,7 @@ function getSentinel2Wrapper(){
   args.origin = 'Sentinel2';
   
   var s2s = getProcessedSentinel2Scenes(args);
-  
-  
-  
+
   // // Add zenith and azimuth
   // if (correctIllumination){
   //   s2s = s2s.map(function(img){
@@ -2611,6 +2605,7 @@ function getSentinel2Wrapper(){
   var ts = compositeTimeSeries(args);
   print('ts',ts)
   args.collection = ts;
+  
   // Correct illumination
   // if (correctIllumination){
   //   var f = ee.Image(ts.first());
@@ -2706,6 +2701,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     args.preComputedTDOMIRStdDev = args.preComputedSentinel2TDOMIRStdDev;
     args.applyCloudScore = args.applyCloudScoreLandsat;
     args.applyTDOM = args.applyTDOMLandsat;
+    args.resampleMethod = args.landsatResampleMethod;
     var ls = getProcessedLandsatScenes(args);
     
     //Get Sentinel 2
@@ -2714,6 +2710,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     args.preComputedTDOMIRStdDev = args.preComputedSentinel2TDOMIRStdDev;
     args.applyCloudScore = args.applyCloudScoreSentinel2;
     args.applyTDOM = args.applyTDOMSentinel2;
+    args.resampleMethod = args.sentinel2ResampleMethod
     var s2s = getProcessedSentinel2Scenes(args);
     // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
     // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
