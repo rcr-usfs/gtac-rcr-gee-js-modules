@@ -565,6 +565,7 @@ function getS2(){
   }
   return s2s.set(args);
 }
+var getSentinel2 = getS2;
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
 //See default arguments below
