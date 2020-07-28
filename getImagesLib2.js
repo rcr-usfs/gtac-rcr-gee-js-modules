@@ -490,11 +490,10 @@ function getS2(){
     'endDate':null,
     'startJulian':null,
     'endJulian':null,
-    'resampleMethod':'near',
+    'resampleMethod':'aggregate',
     'toaOrSR':'TOA',
     'convertToDailyMosaics':true,
-    'addCloudProbability':true, 
-    'aggregate':true
+    'addCloudProbability':true //LSC
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -549,24 +548,22 @@ function getS2(){
     
   }
   
-  if(args.aggregate === true || args.aggregate === 'true'){
-    print('Setting aggregate to true');
-    s2s = s2s.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
-  }
   
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
     s2s = s2s.map(function(img){return img.resample(args.resampleMethod)});
   }
- 
+  else if(args.resampleMethod === 'aggregate'){
+    print('Setting to aggregate instead of resample ');
+    s2s = s2s.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
+  }
+  
   //Convert to daily mosaics to avoid redundant observations in MGRS overlap areas and edge artifacts for shadow masking
   if(args.convertToDailyMosaics){
-    print('Converting S2 from MGRS to daily mosaics')
     s2s = dailyMosaics(s2s);
   }
   return s2s.set(args);
 }
-var getSentinel2 = getS2;
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat TOA image collection
 //See default arguments below
@@ -584,8 +581,7 @@ function getLandsat(){
     'includeSLCOffL7':false,
     'defringeL5':false,
     'addPixelQA':false,
-    'resampleMethod':'near',
-    'aggregate':true
+    'resampleMethod':'near'
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -744,17 +740,15 @@ function getLandsat(){
       .copyProperties(img,['system:time_start']).copyProperties(img);
   });
   
-  if(args.aggregate === true || args.aggregate === 'true'){
-    print('Setting aggregate to true');
-    ls = ls.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
-  }
-  
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
     ls = ls.map(function(img){return img.resample(args.resampleMethod)});
   }
   
-  
+  else if(args.resampleMethod === 'aggregate'){
+    print('Setting to aggregate instead of resample ');
+    ls = ls.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
+  }
   
   return ls.set(args);
 }
@@ -3397,7 +3391,6 @@ exports.collectionToImage = collectionToImage;
 exports.getImageCollection = getImageCollection;
 exports.getLandsat = getLandsat;
 exports.getS2 = getS2;
-exports.getSentinel2 = getS2;
 exports.vizParamsFalse = vizParamsFalse;
 exports.vizParamsTrue = vizParamsTrue;
 exports.vizParamsFalse10k = vizParamsFalse10k;
