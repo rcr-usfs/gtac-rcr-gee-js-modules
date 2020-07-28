@@ -16,7 +16,7 @@ var vizParamsFalse10k = {
 var vizParamsTrue = {
   'min': 0, 
   'max': [0.2,0.2,0.2], 
-  'bands': 'red,greenexp,blue', 
+  'bands': 'red,green,blue', 
 };
 var vizParamsTrue10k = {
   'min': 0, 
@@ -2344,7 +2344,7 @@ function getLandsatWrapper(){
   }
   
   args.processedScenes = ls;
-  args.processedComposites = ts;getp
+  args.processedComposites = ts;
   return args;
 }
 
