@@ -490,10 +490,11 @@ function getS2(){
     'endDate':null,
     'startJulian':null,
     'endJulian':null,
-    'resampleMethod':'aggregate',
+    'resampleMethod':'near',
     'toaOrSR':'TOA',
     'convertToDailyMosaics':true,
-    'addCloudProbability':true //LSC
+    'addCloudProbability':true, 
+    'aggregate':true
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -548,16 +549,16 @@ function getS2(){
     
   }
   
+  if(args.aggregate === true || args.aggregate === 'true'){
+    print('Setting aggregate to true');
+    s2s = s2s.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
+  }
   
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
     s2s = s2s.map(function(img){return img.resample(args.resampleMethod)});
   }
-  else if(args.resampleMethod === 'aggregate'){
-    print('Setting to aggregate instead of resample ');
-    s2s = s2s.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
-  }
-  
+ 
   //Convert to daily mosaics to avoid redundant observations in MGRS overlap areas and edge artifacts for shadow masking
   if(args.convertToDailyMosaics){
     s2s = dailyMosaics(s2s);
@@ -581,7 +582,8 @@ function getLandsat(){
     'includeSLCOffL7':false,
     'defringeL5':false,
     'addPixelQA':false,
-    'resampleMethod':'near'
+    'resampleMethod':'near',
+    'aggregate':true
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -740,15 +742,17 @@ function getLandsat(){
       .copyProperties(img,['system:time_start']).copyProperties(img);
   });
   
+  if(args.aggregate === true || args.aggregate === 'true'){
+    print('Setting aggregate to true');
+    ls = ls.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
+  }
+  
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
     ls = ls.map(function(img){return img.resample(args.resampleMethod)});
   }
   
-  else if(args.resampleMethod === 'aggregate'){
-    print('Setting to aggregate instead of resample ');
-    ls = ls.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
-  }
+  
   
   return ls.set(args);
 }
