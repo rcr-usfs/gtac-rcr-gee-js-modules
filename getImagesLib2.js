@@ -1356,9 +1356,9 @@ function exportToAssetWrapper(imageForExport,assetName,assetPath,
   assetName = assetName.replace(/\s+/g,'-');//Get rid of any spaces
   
   if(pyramidingPolicyObject === null || pyramidingPolicyObject === undefined){
-    pyramidingPolicyObject = {'.default':'mean'}
+    pyramidingPolicyObject = {'.default':'mean'};
   }else if(typeof(pyramidingPolicyObject)=== 'string'){
-    pyramidingPolicyObject = {'.default':pyramidingPolicyObject}
+    pyramidingPolicyObject = {'.default':pyramidingPolicyObject};
   }
   Export.image.toAsset(imageForExport, assetName, assetPath, 
     pyramidingPolicyObject, null, roi, scale, crs, transform, 1e13);
