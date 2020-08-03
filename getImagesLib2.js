@@ -1365,14 +1365,14 @@ function exportToDriveWrapper(imageForExport,outputName,driveFolderName,roi,scal
     roi = roi.geometry();
   }
   catch(e){
-    x = e;
+    var x = e;
   }
   //Ensure bounds are in web mercator
-  outRegion = roi.bounds().transform('EPSG:4326', 100).getInfo()['coordinates'][0];
+  var outRegion = roi.bounds().transform('EPSG:4326', 100)//.getInfo()['coordinates'][0];
   
-  Export.image.toDrive(imageForExport, outputName, driveFolderName, outputName, None, outRegion, scale, crs, transform, 1e13);
+  Export.image.toDrive(imageForExport, outputName, driveFolderName, outputName, null, outRegion, scale, crs, transform, 1e13);
 }
-exportToDriveWrapper(ee.Image(1),outputName,driveFolderName,roi,scale,crs,transform,outputNoData)
+// exportToDriveWrapper(ee.Image(1),'jsTest1','jsTest',geometry,30,'EPSG:5070')
 //////////////////////////////////////////////////
 //Function for wrapping dates when the startJulian < endJulian
 //Checks for year with majority of the days and the wrapOffset
