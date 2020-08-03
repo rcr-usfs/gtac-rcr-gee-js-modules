@@ -1,3 +1,10 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var geometry = /* color: #d63000 */ee.Geometry.Polygon(
+        [[[-110.38039407546616, 37.982818054990645],
+          [-110.72097024734116, 37.38289312617559],
+          [-109.38063821609116, 37.33923196626389],
+          [-108.09523782546616, 37.887503150229435]]]);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 ////////////////////////////////////////////////////////////////////////////////
 //Module for getting Landsat, Sentinel 2 and MODIS images/composites
 // Define visualization parameters
@@ -1349,6 +1356,7 @@ var exportToAssetWrapper2 = exportToAssetWrapper;
 var exportToAssetWrapper3 = exportToAssetWrapper;
 //Function to export to Drive and properly take care of clipping/no data
 function exportToDriveWrapper(imageForExport,outputName,driveFolderName,roi,scale,crs,transform,outputNoData){
+  if(outputNoData === null || outputNoData === undefined){outputNoData = -32768}
   //Make sure image is clipped to roi in case it's a multi-part polygon
   imageForExport = imageForExport.clip(roi).unmask(outputNoData,false);
 
@@ -1364,6 +1372,7 @@ function exportToDriveWrapper(imageForExport,outputName,driveFolderName,roi,scal
   
   Export.image.toDrive(imageForExport, outputName, driveFolderName, outputName, None, outRegion, scale, crs, transform, 1e13);
 }
+exportToDriveWrapper(ee.Image(1),outputName,driveFolderName,roi,scale,crs,transform,outputNoData)
 //////////////////////////////////////////////////
 //Function for wrapping dates when the startJulian < endJulian
 //Checks for year with majority of the days and the wrapOffset
