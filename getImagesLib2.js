@@ -1347,6 +1347,7 @@ function exportToAssetWrapper(imageForExport,assetName,assetPath,
 }
 var exportToAssetWrapper2 = exportToAssetWrapper;
 var exportToAssetWrapper3 = exportToAssetWrapper;
+//Function to export to Drive and properly take care of clipping/no data
 function exportToDriveWrapper(imageForExport,outputName,driveFolderName,roi,scale,crs,transform,outputNoData){
   //Make sure image is clipped to roi in case it's a multi-part polygon
   imageForExport = imageForExport.clip(roi).unmask(outputNoData,false);
