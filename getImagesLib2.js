@@ -1347,7 +1347,22 @@ function exportToAssetWrapper(imageForExport,assetName,assetPath,
 }
 var exportToAssetWrapper2 = exportToAssetWrapper;
 var exportToAssetWrapper3 = exportToAssetWrapper;
+function exportToDriveWrapper(imageForExport,outputName,driveFolderName,roi,scale,crs,transform,outputNoData){
+  //Make sure image is clipped to roi in case it's a multi-part polygon
+  imageForExport = imageForExport.clip(roi).unmask(outputNoData,false);
 
+  outputName = outputName.replace("/\s+/g",'-');//Get rid of any spaces
+  try{
+    roi = roi.geometry();
+  }
+  catch(e){
+    x = e;
+  }
+  //Ensure bounds are in web mercator
+  outRegion = roi.bounds().transform('EPSG:4326', 100).getInfo()['coordinates'][0];
+  
+  Export.image.toDrive(imageForExport, outputName, driveFolderName, outputName, None, outRegion, scale, crs, transform, 1e13);
+}
 //////////////////////////////////////////////////
 //Function for wrapping dates when the startJulian < endJulian
 //Checks for year with majority of the days and the wrapOffset
