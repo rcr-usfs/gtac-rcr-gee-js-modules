@@ -1331,24 +1331,6 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Function to export a provided image to an EE asset
-// function exportToAssetWrapper(imageForExport,assetName,assetPath,
-//   pyramidingPolicy,roi,scale,crs,transform){
-//   //Make sure image is clipped to roi in case it's a multi-part polygon
-//   imageForExport = imageForExport.clip(roi);
-//   assetName = assetName.replace(/\s+/g,'-');//Get rid of any spaces
-  
-//   Export.image.toAsset(imageForExport, assetName, assetPath, 
-//     {'.default': pyramidingPolicy}, null, roi, scale, crs, transform, 1e13);
-// }
-// function exportToAssetWrapper2(imageForExport,assetName,assetPath,
-//   pyramidingPolicyObject,roi,scale,crs,transform){
-//   //Make sure image is clipped to roi in case it's a multi-part polygon
-//   imageForExport = imageForExport.clip(roi);
-//   assetName = assetName.replace(/\s+/g,'-');//Get rid of any spaces
-  
-//   Export.image.toAsset(imageForExport, assetName, assetPath, 
-//     pyramidingPolicyObject, null, roi, scale, crs, transform, 1e13);
-// }
 function exportToAssetWrapper(imageForExport,assetName,assetPath,
   pyramidingPolicyObject,roi,scale,crs,transform){
   //Make sure image is clipped to roi in case it's a multi-part polygon
