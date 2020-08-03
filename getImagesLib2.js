@@ -1349,6 +1349,21 @@ function exportToAssetWrapper2(imageForExport,assetName,assetPath,
   Export.image.toAsset(imageForExport, assetName, assetPath, 
     pyramidingPolicyObject, null, roi, scale, crs, transform, 1e13);
 }
+function exportToAssetWrapper(imageForExport,assetName,assetPath,
+  pyramidingPolicyObject,roi,scale,crs,transform){
+  //Make sure image is clipped to roi in case it's a multi-part polygon
+  imageForExport = imageForExport.clip(roi);
+  assetName = assetName.replace(/\s+/g,'-');//Get rid of any spaces
+  
+  if(pyramidingPolicyObject === null || pyramidingPolicyObject === undefined){
+    pyramidingPolicyObject = {'.default':'mean'}
+  }else if(typeof(pyramidingPolicyObject)=== 'string'){
+    pyramidingPolicyObject = {'.default':pyramidingPolicyObject}
+  }
+  Export.image.toAsset(imageForExport, assetName, assetPath, 
+    pyramidingPolicyObject, null, roi, scale, crs, transform, 1e13);
+}
+
 //////////////////////////////////////////////////
 //Function for wrapping dates when the startJulian < endJulian
 //Checks for year with majority of the days and the wrapOffset
