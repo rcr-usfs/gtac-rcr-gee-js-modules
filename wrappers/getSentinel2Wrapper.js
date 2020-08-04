@@ -3,9 +3,9 @@ var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 var args = {};
+
 // Specify study area: Study area
-// Can specify a country, provide a fusion table  or asset table (must add 
-// .geometry() after it), or draw a polygon and make studyArea = drawnPolygon
+// Can be a featureCollection, feature, or geometry
 args.studyArea = getImagesLib.testAreas.CA;
 
 // Update the startJulian and endJulian variables to indicate your seasonal 
