@@ -129,27 +129,27 @@ args.contractPixels = 1.5;
 // (2.5 or 3.5 generally is sufficient)
 args.dilatePixels = 2.5;
 
-//Choose the resampling method: 'aggregate','near', 'bilinear', or 'bicubic'
-//Defaults to 'aggregate'
+// Choose the resampling method: 'aggregate','near', 'bilinear', or 'bicubic'
+// Defaults to 'aggregate'
 
-//Aggregate is generally useful for aggregating pixels when reprojecting instead of resampling
-//A good example would be reprojecting S2 data to 30 m
+// Aggregate is generally useful for aggregating pixels when reprojecting instead of resampling
+// A good example would be reprojecting S2 data to 30 m
 
-//If method other than 'near' is chosen, any map drawn on the fly that is not
-//reprojected, will appear blurred or not really represented properly
-//Use .reproject to view the actual resulting image (this will slow it down)
+// If method other than 'near' is chosen, any map drawn on the fly that is not
+// reprojected, will appear blurred or not really represented properly
+// Use .reproject to view the actual resulting image (this will slow it down)
 args.resampleMethod = 'aggregate';
 
 
-//If available, bring in preComputed cloudScore offsets and TDOM stats
-//Set to null if computing on-the-fly is wanted
-//These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
-//and are appropriate to use for any time period within the growing season
-//The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
+// If available, bring in preComputed cloudScore offsets and TDOM stats
+// Set to null if computing on-the-fly is wanted
+// These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
+// and are appropriate to use for any time period within the growing season
+// The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
 args.preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Sentinel2_CloudScore_p'+args.cloudScorePctl.toString()]);
 
-//The TDOM stats are the mean and standard deviations of the two bands used in TDOM
-//By default, TDOM uses the nir and swir1 bands
+// The TDOM stats are the mean and standard deviations of the two bands used in TDOM
+// By default, TDOM uses the nir and swir1 bands
 var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
 args.preComputedTDOMIRMean = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
 args.preComputedTDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
@@ -157,26 +157,26 @@ args.preComputedTDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDe
 
 // Export params
 
-//Whether to export composites
+// Whether to export composites
 args.exportComposites = true;
 
-//Set up Names for the export
+// Set up Names for the export
 args.outputName = 'Sentinel2';
 
-//Provide location composites will be exported to
-//This should be an asset folder, or more ideally, an asset imageCollection
+// Provide location composites will be exported to
+// This should be an asset folder, or more ideally, an asset imageCollection
 args.exportPathRoot = 'users/iwhousman/test/compositeCollection';
 
 
-//CRS- must be provided.  
-//Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
-//WGS84 UTM N hemisphere is EPSG:326+ zone number (zone 12 N would be EPSG:32612) and S hemisphere is EPSG:327+ zone number
+// CRS- must be provided.  
+// Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
+// WGS84 UTM N hemisphere is EPSG:326+ zone number (zone 12 N would be EPSG:32612) and S hemisphere is EPSG:327+ zone number
 args.crs = 'EPSG:5070';
 
-//Specify transform if scale is null and snapping to known grid is needed
+// Specify transform if scale is null and snapping to known grid is needed
 args.transform = [10,0,-2361915.0,0,-10,3177735.0];
 
-//Specify scale if transform is null
+// Specify scale if transform is null
 args.scale = null;
 ///////////////////////////////////////////////////////////////////////
 // End user parameters
