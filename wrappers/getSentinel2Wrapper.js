@@ -93,7 +93,7 @@ args.cloudScoreThresh = 20;
 args.performCloudScoreOffset = true;
 
 // If performCloudScoreOffset = true:
-//Percentile of cloud score to pull from time series to represent a minimum for 
+// Percentile of cloud score to pull from time series to represent a minimum for 
 // the cloud score over time for a given pixel. Reduces comission errors over 
 // cool bright surfaces. Generally between 5 and 10 works well. 0 generally is a
 // bit noisy but may be necessary in persistently cloudy areas
