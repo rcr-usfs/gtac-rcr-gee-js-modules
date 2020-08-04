@@ -94,6 +94,7 @@ args.cloudScoreThresh = 20;
 // For bright areas that may always have a high cloudScore
 // but not actually be cloudy, this will result in a reduction of commission errors
 // This procedure needs at least 5 years of data to work well
+// Precomputed offsets can be provided below
 args.performCloudScoreOffset = true;
 
 // If performCloudScoreOffset = true:
