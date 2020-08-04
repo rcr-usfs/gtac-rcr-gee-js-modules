@@ -132,20 +132,20 @@ args.resampleMethod = 'near';
 // The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
 args.preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Landsat_CloudScore_p'+args.cloudScorePctl.toString()]);
 
-//The TDOM stats are the mean and standard deviations of the two IR bands used in TDOM
-//By default, TDOM uses the nir and swir1 bands
+// The TDOM stats are the mean and standard deviations of the two IR bands used in TDOM
+// By default, TDOM uses the nir and swir1 bands
 var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
 args.preComputedTDOMIRMean = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
 args.preComputedTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
 
 
-// 12. correctIllumination: Choose if you want to correct the illumination using
+// correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
 // correction is calculated in meters.
 args.correctIllumination = false;
 args.correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
-//13. Export params
+// Export params
 //Whether to export composites
 args.exportComposites = true;
 
