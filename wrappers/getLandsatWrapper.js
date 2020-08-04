@@ -4,56 +4,56 @@ var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 // Define user parameters:
 var args = {};
 
-// 1. Specify study area: Study area
-// Can specify a country, provide a fusion table  or asset table (must add 
-// .geometry() after it), or draw a polygon and make studyArea = drawnPolygon
+// Specify study area: Study area
+// Can be a featureCollection, feature, or geometry
 args.studyArea = getImagesLib.testAreas.CA;
 
-// 2. Update the startJulian and endJulian variables to indicate your seasonal 
+// Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
+// If using wrapping and the majority of the days occur in the second year, the system:time_start will default 
+// to June 1 of that year.Otherwise, all system:time_starts will default to June 1 of the given year
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-args.startJulian = 150;
+args.startJulian = 190;
 args.endJulian = 250; 
 
-// 3. Specify start and end years for all analyses
+// Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
-// well. If using Fmask as the cloud/cloud shadow masking method, or pre-computed 
-//cloudScore offsets and/or tdom stats, this does not 
+// well. If providing pre-computed stats for cloudScore and TDOM, this does not 
 // matter
-args.startYear = 2018;
-args.endYear = 2018;
+args.startYear = 2019;
+args.endYear = 2019;
 
-// 4. Specify an annual buffer to include imagery from the same season 
+// Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
-// in a 3 year moving window
-args.timebuffer = 0;
+// in a 3 year moving window. If you want single-year composites, set to 0
+args.timebuffer =0;
 
-// 5. Specify the weights to be used for the moving window created by timeBuffer
-//For example- if timeBuffer is 1, that is a 3 year moving window
-//If the center year is 2000, then the years are 1999,2000, and 2001
-//In order to overweight the center year, you could specify the weights as
-//[1,5,1] which would duplicate the center year 5 times and increase its weight for
-//the compositing method
+// Specify the weights to be used for the moving window created by timeBuffer
+// For example- if timeBuffer is 1, that is a 3 year moving window
+// If the center year is 2000, then the years are 1999,2000, and 2001
+// In order to overweight the center year, you could specify the weights as
+// [1,5,1] which would duplicate the center year 5 times and increase its weight for
+// the compositing method. If timeBuffer = 0, set to [1]
 args.weights = [1];
 
-// 6. Choose medoid or median compositing method. 
+// Choose medoid or median compositing method. 
 // Median tends to be smoother, while medoid retains 
 // single date of observation across all bands
+// The date of each pixel is stored if medoid is used. This is not done for median
 // If not exporting indices with composites to save space, medoid should be used
 args.compositingMethod = 'medoid';
 
-// 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
-// Specify TOA or SR
+// Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 args.toaOrSR = 'SR';
 
-// 8. Choose whether to include Landat 7
+// Choose whether to include Landat 7
 // Generally only included when data are limited
 args.includeSLCOffL7 = true;
 
-//9. Whether to defringe L5
-//Landsat 5 data has fringes on the edges that can introduce anomalies into 
-//the analysis.  This method removes them, but is somewhat computationally expensive
+// Whether to defringe L4 and L5
+// Landsat 5 data has fringes on the edges that can introduce anomalies into 
+// the analysis.  This method removes them, but is somewhat computationally expensive
 args.defringeL5 = true;
 
 // 10. Choose cloud/cloud shadow masking method
