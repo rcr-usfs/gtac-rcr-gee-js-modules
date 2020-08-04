@@ -22,7 +22,7 @@ args.endJulian = 250;
 // well. If using Fmask as the cloud/cloud shadow masking method, or providing
 // pre-computed stats for cloudScore and TDOM, this does not 
 // matter
-args.startYear = 2019;
+args.startYear = 2016;
 args.endYear = 2019;
 
 // Specify an annual buffer to include imagery from the same season 
