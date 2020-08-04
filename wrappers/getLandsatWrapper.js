@@ -146,10 +146,10 @@ args.correctIllumination = false;
 args.correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
 // Export params
-//Whether to export composites
+// Whether to export composites
 args.exportComposites = true;
 
-//Set up Names for the export
+// Set up Names for the export
 args.outputName = 'Landsat';
 
 //Provide location composites will be exported to
