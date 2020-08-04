@@ -27,7 +27,7 @@ args.endYear = 2019;
 
 // Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
-// in a 3 year moving window
+// in a 3 year moving window. If you want single-year composites, set to 0
 args.timebuffer =0;
 
 // Specify the weights to be used for the moving window created by timeBuffer
@@ -35,7 +35,7 @@ args.timebuffer =0;
 // If the center year is 2000, then the years are 1999,2000, and 2001
 // In order to overweight the center year, you could specify the weights as
 // [1,5,1] which would duplicate the center year 5 times and increase its weight for
-// the compositing method
+// the compositing method. If timeBuffer = 0, set to [1]
 args.weights = [1];
 
 
