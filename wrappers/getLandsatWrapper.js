@@ -100,7 +100,7 @@ args.cloudScorePctl = 10;
 // lower number masks out less. Between -0.8 and -1.2 generally works well
 args.zScoreThresh = -1;
 
-// shadowSumThresh: Sum of IR bands to include as shadows within TDOM and the 
+// shadowSumThresh:  If applyTDOM is true, sum of IR bands to include as shadows within TDOM and the 
 //    shadow shift method (lower number masks out less)
 args.shadowSumThresh = 0.35;
 
@@ -118,18 +118,18 @@ args.contractPixels = 1.5;
 // (2.5 or 3.5 generally is sufficient)
 args.dilatePixels = 2.5;
 
-//Choose the resampling method: 'near', 'bilinear', or 'bicubic'
-//Defaults to 'near'
-//If method other than 'near' is chosen, any map drawn on the fly that is not
-//reprojected, will appear blurred
-//Use .reproject to view the actual resulting image (this will slow it down)
+// Choose the resampling method: 'near', 'bilinear', or 'bicubic'
+// Defaults to 'near'
+// If method other than 'near' is chosen, any map drawn on the fly that is not
+// reprojected, will appear blurred
+// Use .reproject to view the actual resulting image (this will slow it down)
 args.resampleMethod = 'near';
 
-//If available, bring in preComputed cloudScore offsets and TDOM stats
-//Set to null if computing on-the-fly is wanted
-//These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
-//and are appropriate to use for any time period within the growing season
-//The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
+// If available, bring in preComputed cloudScore offsets and TDOM stats
+// Set to null if computing on-the-fly is wanted
+// These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
+// and are appropriate to use for any time period within the growing season
+// The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
 args.preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Landsat_CloudScore_p'+args.cloudScorePctl.toString()]);
 
 //The TDOM stats are the mean and standard deviations of the two IR bands used in TDOM
