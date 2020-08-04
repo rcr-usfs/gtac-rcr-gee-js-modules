@@ -135,11 +135,6 @@ args.dilatePixels = 2.5;
 //Use .reproject to view the actual resulting image (this will slow it down)
 args.resampleMethod = 'aggregate';
 
-//Choose whether to apply the above resampling method or an aggregation method
-//This is generally useful for aggregating pixels when reprojecting instead of resampling
-//If this is true, the resampleMethod shouldn't matter
-//A good example would be reprojecting S2 data to 30 m
-args.aggregateInsteadOfResample = true;
 
 //If available, bring in preComputed cloudScore offsets and TDOM stats
 //Set to null if computing on-the-fly is wanted
@@ -154,14 +149,9 @@ var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mo
 args.preComputedTDOMIRMean = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
 args.preComputedTDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
 
-// 12. correctIllumination: Choose if you want to correct the illumination using
-// Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
-// correction is calculated in meters.
-//Currently not supported for S2
-args.correctIllumination = false;
-args.correctScale = 250;//Choose a scale to reduce on- 250 generally works well
 
-//13. Export params
+// Export params
+
 //Whether to export composites
 args.exportComposites = true;
 
@@ -171,7 +161,6 @@ args.outputName = 'Sentinel2';
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
 args.exportPathRoot = 'users/iwhousman/test/compositeCollection';
-
 
 
 //CRS- must be provided.  
