@@ -99,11 +99,11 @@ args.performCloudScoreOffset = true;
 // bit noisy but may be necessary in persistently cloudy areas
 args.cloudScorePctl = 10; 
 
-//Height of clouds to use to project cloud shadows
+// Height of clouds to use to project cloud shadows
 args.cloudHeights = ee.List.sequence(500,10000,500);
 
-// zScoreThresh: Threshold for cloud shadow masking- lower number masks out 
-//    less. Between -0.8 and -1.2 generally works well
+// zScoreThresh: If applyTDOM is true, this is the threshold for cloud shadow masking- 
+// lower number masks out less. Between -0.8 and -1.2 generally works well
 args.zScoreThresh = -1;
 
 // shadowSumThresh: Sum of IR bands to include as shadows within TDOM and the 
