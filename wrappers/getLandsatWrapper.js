@@ -52,22 +52,22 @@ args.toaOrSR = 'SR';
 args.includeSLCOffL7 = true;
 
 // Whether to defringe L4 and L5
-// Landsat 5 data has fringes on the edges that can introduce anomalies into 
+// Landsat 4 and 5 data have fringes on the edges that can introduce anomalies into 
 // the analysis.  This method removes them, but is somewhat computationally expensive
 args.defringeL5 = true;
 
-// 10. Choose cloud/cloud shadow masking method
+// Choose cloud/cloud shadow masking method
 // Choices are a series of booleans for cloudScore, TDOM, and elements of Fmask
-//Fmask masking options will run fastest since they're precomputed
-//Fmask cloud mask is generally very good, while the fMask cloud shadow
-//mask isn't great. TDOM tends to perform better than the Fmask cloud shadow mask. cloudScore 
-//is usually about as good as the Fmask cloud mask overall, but each failes in different instances.
-//CloudScore runs pretty quickly, but does look at the time series to find areas that 
-//always have a high cloudScore to reduce commission errors- this takes some time
-//and needs a longer time series (>5 years or so)
-//TDOM also looks at the time series and will need a longer time series
-//If pre-computed cloudScore offsets and/or TDOM stats are provided below, cloudScore
-//and TDOM will run quite quickly
+// Fmask masking options will run fastest since they're precomputed
+// Fmask cloud mask is generally very good, while the fMask cloud shadow
+// mask isn't great. TDOM tends to perform better than the Fmask cloud shadow mask. cloudScore 
+// is usually about as good as the Fmask cloud mask overall, but each fails in different instances.
+// CloudScore runs pretty quickly, but does look at the time series to find areas that 
+// always have a high cloudScore to reduce commission errors- this takes some time
+// and needs a longer time series (>5 years or so)
+// TDOM also looks at the time series and will need a longer time series
+// If pre-computed cloudScore offsets and/or TDOM stats are provided below, cloudScore
+// and TDOM will run quite quickly
 args.applyCloudScore = true;
 args.applyFmaskCloudMask = true;
 
