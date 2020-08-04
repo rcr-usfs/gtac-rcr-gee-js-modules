@@ -152,8 +152,8 @@ args.exportComposites = true;
 // Set up Names for the export
 args.outputName = 'Landsat';
 
-//Provide location composites will be exported to
-//This should be an asset folder, or more ideally, an asset imageCollection
+// Provide location composites will be exported to
+// This should be an asset folder, or more ideally, an asset imageCollection
 args.exportPathRoot = 'users/iwhousman/test/compositeCollection';
 
 
