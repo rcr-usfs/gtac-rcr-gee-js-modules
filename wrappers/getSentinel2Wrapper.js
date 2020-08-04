@@ -10,6 +10,8 @@ args.studyArea = getImagesLib.testAreas.CA;
 
 // Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
+// If using wrapping and the majority of the days occur in the second year, the system:time_start will default 
+// to June 1 of that year.Otherwise, all system:time_starts will default to June 1 of the given year
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
 args.startJulian = 190;
@@ -17,7 +19,8 @@ args.endJulian = 250;
 
 // Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
-// well. If using Fmask as the cloud/cloud shadow masking method, this does not 
+// well. If using Fmask as the cloud/cloud shadow masking method, or providing
+// pre-computed stats for cloudScore and TDOM, this does not 
 // matter
 args.startYear = 2019;
 args.endYear = 2019;
