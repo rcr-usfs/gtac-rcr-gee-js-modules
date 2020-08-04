@@ -1370,7 +1370,7 @@ function exportToDriveWrapper(imageForExport,outputName,driveFolderName,roi,scal
   }
   //Ensure bounds are in web mercator
   var outRegion = roi.bounds().transform('EPSG:4326', 100);//.getInfo()['coordinates'][0];
-  
+  print('Exporting:',outputName);
   Export.image.toDrive(imageForExport, outputName, driveFolderName, outputName, null, outRegion, scale, crs, transform, 1e13);
 }
 // exportToDriveWrapper(ee.Image(1),'jsTest1','jsTest',geometry,30,'EPSG:5070')
