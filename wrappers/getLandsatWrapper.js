@@ -76,29 +76,28 @@ args.applyFmaskCloudShadowMask = true;
 
 args.applyFmaskSnowMask = false;
 
-// 11. Cloud and cloud shadow masking parameters.
-// If cloudScoreTDOM is chosen
-// cloudScoreThresh: If using the cloudScoreTDOMShift method-Threshold for cloud 
-//    masking (lower number masks more clouds.  Between 10 and 30 generally 
-//    works best)
+// If applyCloudScore is set to true
+// cloudScoreThresh: lower number masks more clouds.  Between 10 and 30 generally 
+// works best
 args.cloudScoreThresh = 20;
 
-//Whether to find if an area typically has a high cloudScore
-//If an area is always cloudy, this will result in cloud masking omission
-//For bright areas that may always have a high cloudScore
-//but not actually be cloudy, this will result in a reduction of commission errors
-//This procedure needs at least 5 years of data to work well
+// Whether to find if an area typically has a high cloudScore
+// If an area is always cloudy, this will result in cloud masking omission
+// For bright areas that may always have a high cloudScore
+// but not actually be cloudy, this will result in a reduction of commission errors
+// This procedure needs at least 5 years of data to work well
+// Precomputed offsets can be provided below
 args.performCloudScoreOffset = true;
 
 // If performCloudScoreOffset = true:
-//Percentile of cloud score to pull from time series to represent a minimum for 
+// Percentile of cloud score to pull from time series to represent a minimum for 
 // the cloud score over time for a given pixel. Reduces comission errors over 
 // cool bright surfaces. Generally between 5 and 10 works well. 0 generally is a
 // bit noisy but may be necessary in persistently cloudy areas
-args.cloudScorePctl = 10;
+args.cloudScorePctl = 10; 
 
-// zScoreThresh: Threshold for cloud shadow masking- lower number masks out 
-//    less. Between -0.8 and -1.2 generally works well
+// zScoreThresh: If applyTDOM is true, this is the threshold for cloud shadow masking- 
+// lower number masks out less. Between -0.8 and -1.2 generally works well
 args.zScoreThresh = -1;
 
 // shadowSumThresh: Sum of IR bands to include as shadows within TDOM and the 
