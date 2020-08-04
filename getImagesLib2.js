@@ -1349,7 +1349,7 @@ function exportToAssetWrapper(imageForExport,assetName,assetPath,
   }else if(typeof(pyramidingPolicyObject)=== 'string'){
     pyramidingPolicyObject = {'.default':pyramidingPolicyObject};
   }
-  print('Exporting:',assetName)
+  print('Exporting:',assetName);
   Export.image.toAsset(imageForExport, assetName, assetPath, 
     pyramidingPolicyObject, null, roi, scale, crs, transform, 1e13);
 }
