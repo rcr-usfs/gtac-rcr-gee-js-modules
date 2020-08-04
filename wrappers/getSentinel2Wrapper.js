@@ -80,7 +80,7 @@ args.applyTDOM = true;
 
 // Whether to use the pre-computed cloud probabilities to mask
 // clouds for Sentinel 2
-// This method works really well
+// This method works really well and should be used instead of cloudScore (applyCloudScore)
 args.applyCloudProbability = true;
 
 
