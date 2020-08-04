@@ -3,7 +3,7 @@ var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 var lossYearPalette =  'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02';
 var lossMagPalette = 'D00,F5DEB3';
-var gainYearPalette =  '54A247,AFDEA8,80C476,308023,145B09';
+var gainYearPalette =  'AFDEA8,80C476,308023,145B09';
 var gainMagPalette = 'F5DEB3,006400';
 var changeDurationPalette = 'BD1600,E2F400,0C2780';
 exports.lossYearPalette = lossYearPalette;
