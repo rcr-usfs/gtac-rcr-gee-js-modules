@@ -3,88 +3,86 @@ var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 var args = {};
-// 1. Specify study area: Study area
+// Specify study area: Study area
 // Can specify a country, provide a fusion table  or asset table (must add 
 // .geometry() after it), or draw a polygon and make studyArea = drawnPolygon
 args.studyArea = getImagesLib.testAreas.CA;
 
-// 2. Update the startJulian and endJulian variables to indicate your seasonal 
+// Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
 args.startJulian = 190;
 args.endJulian = 250; 
 
-// 3. Specify start and end years for all analyses
+// Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, this does not 
 // matter
 args.startYear = 2019;
 args.endYear = 2019;
 
-// 4. Specify an annual buffer to include imagery from the same season 
+// Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
 // in a 3 year moving window
 args.timebuffer =0;
 
-// 5. Specify the weights to be used for the moving window created by timeBuffer
-//For example- if timeBuffer is 1, that is a 3 year moving window
-//If the center year is 2000, then the years are 1999,2000, and 2001
-//In order to overweight the center year, you could specify the weights as
-//[1,5,1] which would duplicate the center year 5 times and increase its weight for
-//the compositing method
+// Specify the weights to be used for the moving window created by timeBuffer
+// For example- if timeBuffer is 1, that is a 3 year moving window
+// If the center year is 2000, then the years are 1999,2000, and 2001
+// In order to overweight the center year, you could specify the weights as
+// [1,5,1] which would duplicate the center year 5 times and increase its weight for
+// the compositing method
 args.weights = [1];
 
 
 
-// 6. Choose medoid or median compositing method. 
+// Choose medoid or median compositing method. 
 // Median tends to be smoother, while medoid retains 
 // single date of observation across all bands
 // If not exporting indices with composites to save space, medoid should be used
 args.compositingMethod = 'medoid';
 
-// 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
-// Specify TOA or SR
-//SR S2 data also has a terrain correction applied which may or may not be best depending on how you are using the data
-//If using data from humid climates, terrain correction can be useful. Since vegetation types differ with respect to slope/aspect 
-//in dryer climates, terrain correction can remove some of the signal in dryer climates.  In higher latitudes terrain correction can fail.
+// Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
+// SR S2 data also has a terrain correction applied which may or may not be best depending on how you are using the data
+// If using data from humid climates, terrain correction can be useful. Since vegetation types differ more with respect to slope/aspect 
+// in dryer climates, terrain correction can remove some of the signal in dryer climates.  In higher latitudes terrain correction can fail.
 args.toaOrSR = 'TOA';
 
 //Whether to convert S2 images from the military grid reference system(MGRS) tiles to daily mosaics to avoid arbitrary
 //MGRS tile artifacts or not. In most cases, it is best to set this to true.
 args.convertToDailyMosaics = true;
 
-// 10. Choose cloud/cloud shadow masking method
+// Choose cloud/cloud shadow masking method
 // Choices are a series of booleans for applyQABand, applyCloudScore, 
-//applyShadowShift, and applyTDOM
-//CloudScore runs pretty quickly, but does look at the time series to find areas that 
-//always have a high cloudScore to reduce commission errors- this takes some time
-//and needs a longer time series (>5 years or so)
-//The cloud probability is provided as a pre-computed asset and seems better than cloudScore.
-//The cloudScoreThresh is applied to both the cloudScore and cloud probability as they work in a similar manner
-//TDOM also looks at the time series and will need a longer time series
-//QA band method is fast but is generally awful- don't use if you like good composites
-//Shadow shift is intended if you don't have a time series to use for TDOM or just want individual images
-//It will commit any dark area that the cloud mask is cast over (water, hill shadows, etc)
-//If pre-computed cloudScore offsets and/or TDOM stats are provided below, cloudScore
-//and TDOM will run quite quickly and a long time sereies is not needed 
+// applyShadowShift, and applyTDOM
+// CloudScore runs pretty quickly, but does look at the time series to find areas that 
+// always have a high cloudScore to reduce commission errors- this takes some time
+// and needs a longer time series (>5 years or so)
+// This an be turned off by setting "performCloudScoreOffset" to false
+// The cloud probability is provided as a pre-computed asset and seems better than cloudScore.
+// The cloudScoreThresh is applied to both the cloudScore and cloud probability as they work in a similar manner
+// TDOM also looks at the time series and will need a longer time series
+// QA band method is fast but is generally awful- don't use if you like good composites
+// Shadow shift is intended if you don't have a time series to use for TDOM or just want individual images - best not to use this method
+// It will commit any dark area that the cloud mask is cast over (water, hill shadows, etc)
+// If pre-computed cloudScore offsets and/or TDOM stats are provided below, cloudScore
+// and TDOM will run quite quickly and a long time sereies is not needed 
 args.applyQABand = false;
 
 args.applyCloudScore = false;
 args.applyShadowShift = false;
 args.applyTDOM = true;
 
-//Whether to use the pre-computed cloud probabilities to mask
-//clouds for Sentinel 2
-//This method works really well
+// Whether to use the pre-computed cloud probabilities to mask
+// clouds for Sentinel 2
+// This method works really well
 args.applyCloudProbability = true;
 
 
-// 11. Cloud and cloud shadow masking parameters.
-// If cloudScoreTDOM is chosen
-// cloudScoreThresh: If using the cloudScoreTDOMShift method-Threshold for cloud 
-//    masking (lower number masks more clouds.  Between 10 and 30 generally 
-//    works best)
+// If applyCloudScore is set to true
+// cloudScoreThresh: lower number masks more clouds.  Between 10 and 30 generally 
+// works best
 args.cloudScoreThresh = 20;
 
 //Whether to find if an area typically has a high cloudScore
