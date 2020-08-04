@@ -106,13 +106,13 @@ args.cloudHeights = ee.List.sequence(500,10000,500);
 // lower number masks out less. Between -0.8 and -1.2 generally works well
 args.zScoreThresh = -1;
 
-// shadowSumThresh: Sum of IR bands to include as shadows within TDOM and the 
+// shadowSumThresh:  If applyTDOM is true, sum of IR bands to include as shadows within TDOM and the 
 //    shadow shift method (lower number masks out less)
 args.shadowSumThresh = 0.35;
 
 // contractPixels: The radius of the number of pixels to contract (negative 
 //    buffer) clouds and cloud shadows by. Intended to eliminate smaller cloud 
-//    patches that are likely errors
+//    patches to reduce commission and then buffer cloud edges to reduce omission
 // (1.5 results in a -1 pixel buffer)(0.5 results in a -0 pixel buffer)
 // (1.5 or 2.5 generally is sufficient)
 args.contractPixels = 1.5; 
