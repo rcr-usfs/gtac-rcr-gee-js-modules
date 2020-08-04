@@ -43,6 +43,7 @@ args.weights = [1];
 // Choose medoid or median compositing method. 
 // Median tends to be smoother, while medoid retains 
 // single date of observation across all bands
+// The date of each pixel is stored if medoid is used. This is not done for median
 // If not exporting indices with composites to save space, medoid should be used
 args.compositingMethod = 'medoid';
 
