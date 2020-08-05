@@ -2507,7 +2507,8 @@ function getProcessedSentinel2Scenes(){
     'applyCloudProbability':true,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
-    'preComputedTDOMIRStdDev':null
+    'preComputedTDOMIRStdDev':null,
+    'cloudProbThresh':40
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2544,7 +2545,7 @@ function getProcessedSentinel2Scenes(){
   }
   if(args.applyCloudProbability){
     print('Applying cloud probability');
-    s2s = s2s.map(function(img){return img.updateMask(img.select(['cloud_probability']).lte(args.cloudScoreThresh))})
+    s2s = s2s.map(function(img){return img.updateMask(img.select(['cloud_probability']).lte(args.cloudProbThresh))})
   }
   if(args.applyShadowShift){
     print('Applying shadow shift');
@@ -2609,7 +2610,8 @@ function getSentinel2Wrapper(){
     'applyCloudProbability':true,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
-    'preComputedTDOMIRStdDev':null
+    'preComputedTDOMIRStdDev':null,
+    'cloudProbThresh': 40
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2711,7 +2713,8 @@ function getProcessedLandsatAndSentinel2Scenes(){
           'preComputedLandsatTDOMIRStdDev':null,
           'preComputedSentinel2CloudScoreOffset':null,
           'preComputedSentinel2TDOMIRMean':null,
-          'preComputedSentinel2TDOMIRStdDev':null
+          'preComputedSentinel2TDOMIRStdDev':null,
+          'cloudProbThresh': 40
         };
         
     var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2845,7 +2848,8 @@ function getLandsatAndSentinel2HybridWrapper(){
           'preComputedLandsatTDOMIRStdDev':null,
           'preComputedSentinel2CloudScoreOffset':null,
           'preComputedSentinel2TDOMIRMean':null,
-          'preComputedSentinel2TDOMIRStdDev':null
+          'preComputedSentinel2TDOMIRStdDev':null,
+          'cloudProbThresh':40
         }
         
   var args = prepArgumentsObject(arguments,defaultArgs);
