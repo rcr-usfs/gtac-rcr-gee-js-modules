@@ -8,10 +8,10 @@ var geometry =
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-73.84430548586525, 42.354124810674335],
-          [-73.84430548586525, 41.26505461833333],
-          [-71.70197150149025, 41.26505461833333],
-          [-71.70197150149025, 42.354124810674335]]], null, false);
+        [[[-135.24144855973452, 56.98337037289282],
+          [-135.24144855973452, 55.48763591967191],
+          [-129.94603840348452, 55.48763591967191],
+          [-129.94603840348452, 56.98337037289282]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 //If available, bring in preComputed cloudScore offsets and TDOM stats
@@ -38,17 +38,17 @@ var hiFormViz = {min: 0.05, max: 0.15, gamma: 1.2,bands:'red,green,blue'};
 //User parameters
 
 //Choose dates for pre and post
-var preStartYear = 2014;
-var preEndYear = 2015;
+var preStartYear = 2020;
+var preEndYear = 2020;
 
-var postStartYear = 2016;
-var postEndYear = 2016;
+var postStartYear = 2020;
+var postEndYear = 2020;
 
-var preStartJulian = ee.Date.fromYMD(9999,6,15).getRelative('day','year').add(1).getInfo();
-var preEndJulian = ee.Date.fromYMD(9999,7,15).getRelative('day','year').add(1).getInfo();
+var preStartJulian = ee.Date.fromYMD(9999,5,1).getRelative('day','year').add(1).getInfo();
+var preEndJulian = ee.Date.fromYMD(9999,7,1).getRelative('day','year').add(1).getInfo();
 
-var postStartJulian = ee.Date.fromYMD(9999,6,15).getRelative('day','year').add(1).getInfo();
-var postEndJulian = ee.Date.fromYMD(9999,7,15).getRelative('day','year').add(1).getInfo();
+var postStartJulian = ee.Date.fromYMD(9999,7,28).getRelative('day','year').add(1).getInfo();
+var postEndJulian = ee.Date.fromYMD(9999,7,30).getRelative('day','year').add(1).getInfo();
 
 var studyArea = geometry;
 
@@ -73,36 +73,40 @@ var treeMask = ee.Image("USGS/NLCD/NLCD2016").select(['percent_tree_cover']).gte
 //End User Inputs
 ////////////////////////////////////////////////////////////////////////////
 //Get images
-var preComposite = getImagesLib.getProcessedLandsatAndSentinel2Scenes({
+var preComposite = getImagesLib.getProcessedSentinel2Scenes({
   studyArea:studyArea,
   startYear:preStartYear,
   endYear:preEndYear,
   startJulian:preStartJulian,
   endJulian:preEndJulian,
-  toaOrSR :'TOA',
-  preComputedLandsatCloudScoreOffset:preComputedLandsatCloudScoreOffset,
-  preComputedLandsatTDOMIRMean:preComputedLandsatTDOMIRMean,
-  preComputedLandsatTDOMIRStdDev:preComputedLandsatTDOMIRStdDev,
-  preComputedSentinel2CloudScoreOffset:preComputedSentinel2CloudScoreOffset,
-  preComputedSentinel2TDOMIRMean:preComputedSentinel2TDOMIRMean,
-  preComputedSentinel2TDOMIRStdDev:preComputedSentinel2TDOMIRStdDev,
-  includeSLCOffL7:true
+  toaOrSR :'SR',
+  'applyCloudProbability':false,
+  'applyCloudScore':true,
+  // preComputedLandsatCloudScoreOffset:preComputedLandsatCloudScoreOffset,
+  // preComputedLandsatTDOMIRMean:preComputedLandsatTDOMIRMean,
+  // preComputedLandsatTDOMIRStdDev:preComputedLandsatTDOMIRStdDev,
+  preComputedCloudScoreOffset:preComputedSentinel2CloudScoreOffset,
+  preComputedTDOMIRMean:preComputedSentinel2TDOMIRMean,
+  preComputedTDOMIRStdDev:preComputedSentinel2TDOMIRStdDev,
+  // includeSLCOffL7:true
   });
 
-var postComposite  = getImagesLib.getProcessedLandsatAndSentinel2Scenes({
+var postComposite  = getImagesLib.getProcessedSentinel2Scenes({
   studyArea:studyArea,
   startYear:postStartYear,
   endYear:postEndYear,
   startJulian:postStartJulian,
   endJulian:postEndJulian,
-  toaOrSR :'TOA',
-  preComputedLandsatCloudScoreOffset:preComputedLandsatCloudScoreOffset,
-  preComputedLandsatTDOMIRMean:preComputedLandsatTDOMIRMean,
-  preComputedLandsatTDOMIRStdDev:preComputedLandsatTDOMIRStdDev,
-  preComputedSentinel2CloudScoreOffset:preComputedSentinel2CloudScoreOffset,
-  preComputedSentinel2TDOMIRMean:preComputedSentinel2TDOMIRMean,
-  preComputedSentinel2TDOMIRStdDev:preComputedSentinel2TDOMIRStdDev,
-  includeSLCOffL7:true
+  toaOrSR :'SR',
+  'applyCloudProbability':false,
+  'applyCloudScore':true,
+  // preComputedLandsatCloudScoreOffset:preComputedLandsatCloudScoreOffset,
+  // preComputedLandsatTDOMIRMean:preComputedLandsatTDOMIRMean,
+  // preComputedLandsatTDOMIRStdDev:preComputedLandsatTDOMIRStdDev,
+  preComputedCloudScoreOffset:preComputedSentinel2CloudScoreOffset,
+  preComputedTDOMIRMean:preComputedSentinel2TDOMIRMean,
+  preComputedTDOMIRStdDev:preComputedSentinel2TDOMIRStdDev,
+  // includeSLCOffL7:true
   
   });
 
