@@ -1,5 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
+var ak = 
     /* color: #d63000 */
     /* shown: false */
     /* displayProperties: [
@@ -32,7 +32,7 @@ var preEndJulian = ee.Date.fromYMD(5,8,15).getRelative('day','year').add(1).getI
 var postStartJulian = ee.Date.fromYMD(5,7,29).getRelative('day','year').add(1).getInfo();
 var postEndJulian = ee.Date.fromYMD(5,7,31).getRelative('day','year').add(1).getInfo();
 
-var studyArea = geometry;
+var studyArea = ak;
 
 //Choose how to create the composite
 //This is done in a band-wise fashion
