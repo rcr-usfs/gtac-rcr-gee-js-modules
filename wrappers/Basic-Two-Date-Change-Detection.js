@@ -84,6 +84,9 @@ var preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_n
 //This is done in a band-wise fashion
 var compositeReducer = ee.Reducer.percentile([50]);
 
+//List of acceptable sensors
+//Options include: Landsat_4, Landsat_5, Landsat_7, Landsat_8, Sentinel-2A, Sentinel-2B
+var sensorList = ['Sentinel-2A', 'Sentinel-2B'];
 //Choose which bands to use for loss detection
 //Can select more than one
 //If selecting more than one, the lossReducer output of change/not change will be shown
@@ -114,11 +117,11 @@ var images = getImagesLib.getProcessedLandsatAndSentinel2Scenes({
   toaOrSR :'TOA',
   performCloudScoreOffset:true,
   applyCloudProbability:true,
-  applyCloudScoreLandsat:true,
+  applyCloudScoreLandsat:false,
   applyCloudScoreSentinel2:false,
   applyTDOMLandsat:true,
   applyTDOMSentinel2:true,
-  applyFmaskCloudMask:false,
+  applyFmaskCloudMask:true,
   applyFmaskCloudShadowMask:false,
   applyFmaskSnowMask:false,
   convertToDailyMosaics:false,
@@ -130,7 +133,8 @@ var images = getImagesLib.getProcessedLandsatAndSentinel2Scenes({
   preComputedSentinel2TDOMIRStdDev : preComputedSentinel2TDOMIRStdDev
 
   });
-
+  images = images.filter(ee.Filter.inList('sensor',sensorList))
+print(images.aggregate_histogram('sensor'))
 //Filter down into composites
 var preComposite = images.filter(ee.Filter.calendarRange(preStartYear,preEndYear,'year'))
                   .filter(ee.Filter.calendarRange(preStartJulian,preEndJulian));
