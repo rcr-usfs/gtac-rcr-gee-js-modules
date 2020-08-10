@@ -124,7 +124,7 @@ var images = getImagesLib.getProcessedLandsatAndSentinel2Scenes({
   applyFmaskCloudMask:true,
   applyFmaskCloudShadowMask:false,
   applyFmaskSnowMask:false,
-  convertToDailyMosaics:false,
+  convertToDailyMosaics:true,
   preComputedLandsatCloudScoreOffset:preComputedLandsatCloudScoreOffset,
   preComputedSentinel2CloudScoreOffset:preComputedSentinel2CloudScoreOffset,
   preComputedLandsatTDOMIRMean : preComputedLandsatTDOMIRMean,
