@@ -14,7 +14,6 @@ var ak =
           [-129.94603840348452, 56.98337037289282]]], null, false),
     sne = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -53,11 +52,11 @@ var postStartYear = 2017;
 var postEndYear = 2017;
 
 //Offset by 1 day if you're looking at a leap year
-var preStartJulian = ee.Date.fromYMD(5,6,1).getRelative('day','year').add(1).getInfo();
-var preEndJulian = ee.Date.fromYMD(5,7,15).getRelative('day','year').add(1).getInfo();
+var preStartJulian = ee.Date.fromYMD(5,5,1).getRelative('day','year').add(1).getInfo();
+var preEndJulian = ee.Date.fromYMD(5,7,1).getRelative('day','year').add(1).getInfo();
 
-var postStartJulian = ee.Date.fromYMD(5,6,1).getRelative('day','year').add(1).getInfo();
-var postEndJulian = ee.Date.fromYMD(5,7,15).getRelative('day','year').add(1).getInfo();
+var postStartJulian = ee.Date.fromYMD(5,5,1).getRelative('day','year').add(1).getInfo();
+var postEndJulian = ee.Date.fromYMD(5,7,1).getRelative('day','year').add(1).getInfo();
 
 //Define study area
 var studyArea = sne;
@@ -149,8 +148,8 @@ var postComposite  = images.filter(ee.Filter.calendarRange(postStartYear,postEnd
 var bns = ee.Image(preComposite.first()).bandNames();
 
 //Reduce to composite and rename bands
-preComposite = preComposite.reduce(compositeReducer).rename(bns);
-postComposite = postComposite.reduce(compositeReducer).rename(bns);
+preComposite = preComposite.reduce(compositeReducer).rename(bns).clip(studyArea);
+postComposite = postComposite.reduce(compositeReducer).rename(bns).clip(studyArea);
 
 //Show composites
 Map.addLayer(preComposite,hiFormViz,'Pre Composite True Color',false);
