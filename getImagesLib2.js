@@ -2507,8 +2507,7 @@ function getProcessedSentinel2Scenes(){
     'applyCloudProbability':true,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
-    'preComputedTDOMIRStdDev':null,
-    'cloudProbThresh':40
+    'preComputedTDOMIRStdDev':null
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2545,7 +2544,7 @@ function getProcessedSentinel2Scenes(){
   }
   if(args.applyCloudProbability){
     print('Applying cloud probability');
-    s2s = s2s.map(function(img){return img.updateMask(img.select(['cloud_probability']).lte(args.cloudProbThresh))})
+    s2s = s2s.map(function(img){return img.updateMask(img.select(['cloud_probability']).lte(args.cloudScoreThresh))})
   }
   if(args.applyShadowShift){
     print('Applying shadow shift');
@@ -2610,8 +2609,7 @@ function getSentinel2Wrapper(){
     'applyCloudProbability':true,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
-    'preComputedTDOMIRStdDev':null,
-    'cloudProbThresh': 40
+    'preComputedTDOMIRStdDev':null
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2713,8 +2711,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
           'preComputedLandsatTDOMIRStdDev':null,
           'preComputedSentinel2CloudScoreOffset':null,
           'preComputedSentinel2TDOMIRMean':null,
-          'preComputedSentinel2TDOMIRStdDev':null,
-          'cloudProbThresh': 40
+          'preComputedSentinel2TDOMIRStdDev':null
         };
         
     var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2731,7 +2728,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     args.applyTDOM = args.applyTDOMLandsat;
     args.resampleMethod = args.landsatResampleMethod;
     var ls = getProcessedLandsatScenes(args);
-    
+    print(ls.size())
     //Get Sentinel 2
     args.preComputedCloudScoreOffset = args.preComputedSentinel2CloudScoreOffset;
     args.preComputedTDOMIRMean = args.preComputedSentinel2TDOMIRMean;
@@ -2740,6 +2737,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     args.applyTDOM = args.applyTDOMSentinel2;
     args.resampleMethod = args.sentinel2ResampleMethod
     var s2s = getProcessedSentinel2Scenes(args);
+    print(s2s.size())
     // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
     // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
     
@@ -2848,8 +2846,7 @@ function getLandsatAndSentinel2HybridWrapper(){
           'preComputedLandsatTDOMIRStdDev':null,
           'preComputedSentinel2CloudScoreOffset':null,
           'preComputedSentinel2TDOMIRMean':null,
-          'preComputedSentinel2TDOMIRStdDev':null,
-          'cloudProbThresh':40
+          'preComputedSentinel2TDOMIRStdDev':null
         }
         
   var args = prepArgumentsObject(arguments,defaultArgs);
