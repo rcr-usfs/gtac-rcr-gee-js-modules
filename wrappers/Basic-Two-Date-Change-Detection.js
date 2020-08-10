@@ -98,7 +98,7 @@ var lossThresh = [-0.2,-0.2,-0.2];
 //If you want to find loss in any of the bands (OR), use ee.Reducer.max() for lossReducer
 //If you want to find loss in all bands (AND), use ee.Reducer.min() for lossReducer
 //If you want to find loss in the majority of bands, use ee.Reducer.mode() for lossReducer
-var lossReducer = ee.Reducer.max();
+var lossReducer = ee.Reducer.mode();
 
 //Bring in a tree mask
 var treeMask = ee.ImageCollection("USGS/NLCD")
@@ -168,4 +168,6 @@ Map.addLayer(loss,{min:1,max:1,palette:'800'},'Loss',true);
 
 
 Map.setOptions('HYBRID');
-// Map.setCenter(-132.396, 56.4711, 7);
+if(!Map.getCenter().intersects(studyArea).getInfo()){
+  Map.centerObject(studyArea)
+}
