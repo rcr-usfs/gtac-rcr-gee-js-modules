@@ -2721,7 +2721,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     args.applyTDOM = args.applyTDOMLandsat;
     args.resampleMethod = args.landsatResampleMethod;
     var ls = getProcessedLandsatScenes(args);
-    print(ls.size())
+   
     //Get Sentinel 2
     args.preComputedCloudScoreOffset = args.preComputedSentinel2CloudScoreOffset;
     args.preComputedTDOMIRMean = args.preComputedSentinel2TDOMIRMean;
@@ -2730,7 +2730,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     args.applyTDOM = args.applyTDOMSentinel2;
     args.resampleMethod = args.sentinel2ResampleMethod
     var s2s = getProcessedSentinel2Scenes(args);
-    print(s2s.size())
+   
     // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
     // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
     
@@ -2783,7 +2783,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
       ls = ee.ImageCollection(tm.merge(oli));
     
     }
-    print('s2s',s2s)
+  
     // Merge Landsat and S2
     var merged = ls.merge(s2s);
     merged = merged.map(simpleAddIndices)
