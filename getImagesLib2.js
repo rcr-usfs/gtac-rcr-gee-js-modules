@@ -2748,7 +2748,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     
     //Fill in any empty collections
     //If they're both empty, this will not work
-    var dummyImage = ee.Image(ee.ImageCollection(ls.merge(s2s)).first());
+    var dummyImage =ee.Image(ee.ImageCollection(ee.Algorithms.If(ls.toList(1).length().gt(0),ls,s2s)).first());;
     ls = fillEmptyCollections(ls,dummyImage);
     s2s = fillEmptyCollections(s2s,dummyImage);
     
