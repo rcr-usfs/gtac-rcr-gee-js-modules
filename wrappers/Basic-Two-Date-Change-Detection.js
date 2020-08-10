@@ -85,8 +85,8 @@ var preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_n
 var compositeReducer = ee.Reducer.percentile([50]);
 
 //List of acceptable sensors
-//Options include: Landsat_4, Landsat_5, Landsat_7, Landsat_8, Sentinel-2A, Sentinel-2B
-var sensorList = ['Landsat_8','Sentinel-2A', 'Sentinel-2B'];
+//Options include: LANDSAT_4, LANDSAT_5, LANDSAT_7, LANDSAT_8, Sentinel-2A, Sentinel-2B
+var sensorList = ['LANDSAT_8','Sentinel-2A', 'Sentinel-2B'];
 
 //Choose which bands to use for loss detection
 //Can select more than one
@@ -133,8 +133,10 @@ var images = getImagesLib.getProcessedLandsatAndSentinel2Scenes({
   preComputedSentinel2TDOMIRStdDev : preComputedSentinel2TDOMIRStdDev
 
   });
-  images = images.filter(ee.Filter.inList('sensor',ee.List(sensorList)))
-print(images.aggregate_histogram('sensor'))
+  
+//Filter to only include wanted sensors
+images = images.filter(ee.Filter.inList('sensor',ee.List(sensorList)));
+
 //Filter down into composites
 var preComposite = images.filter(ee.Filter.calendarRange(preStartYear,preEndYear,'year'))
                   .filter(ee.Filter.calendarRange(preStartJulian,preEndJulian));
