@@ -49,8 +49,8 @@ var hiFormViz = {min: 0.05, max: 0.15, gamma: 1.2,bands:'red,green,blue'};
 var preStartYear = 2014;
 var preEndYear = 2015;
 
-var postStartYear = 2017;
-var postEndYear = 2017;
+var postStartYear = 2019;
+var postEndYear = 2019;
 
 //Offset by 1 day if you're looking at a leap year
 var preStartJulian = ee.Date.fromYMD(5,5,15).getRelative('day','year').add(1).getInfo();
