@@ -86,7 +86,7 @@ var compositeReducer = ee.Reducer.percentile([50]);
 
 //List of acceptable sensors
 //Options include: LANDSAT_4, LANDSAT_5, LANDSAT_7, LANDSAT_8, Sentinel-2A, Sentinel-2B
-var sensorList = ['LANDSAT_8','Sentinel-2A', 'Sentinel-2B'];
+var sensorList = ['LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'];
 
 //Choose which bands to use for loss detection
 //Can select more than one
@@ -115,6 +115,7 @@ var images = getImagesLib.getProcessedLandsatAndSentinel2Scenes({
   startJulian:Math.min(preStartJulian,postStartJulian),
   endJulian:Math.max(preEndJulian,postEndJulian),
   toaOrSR :'TOA',
+  includeSLCOffL7:true,
   performCloudScoreOffset:true,
   applyCloudProbability:true,
   applyCloudScoreLandsat:false,
