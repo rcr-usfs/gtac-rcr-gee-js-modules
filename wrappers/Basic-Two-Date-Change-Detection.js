@@ -92,6 +92,7 @@ var sensorList = ['LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A
 //Can select more than one
 //If selecting more than one, the lossReducer output of change/not change will be shown
 //Specify a corresponding threshold for each band
+//Band name options include: "blue","green","red","nir","swir1","swir2","NDVI","NBR","NDMI","NDSI","brightness","greenness","wetness","tcAngleBG"
 var dBands = ['NDVI','NBR','NDMI'];
 var lossThresh = [-0.15,-0.15,-0.15];
 
