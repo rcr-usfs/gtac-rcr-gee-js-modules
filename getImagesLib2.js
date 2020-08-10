@@ -2745,6 +2745,9 @@ function getProcessedLandsatAndSentinel2Scenes(){
     var commonBands =  ['blue', 'green', 'red','nir','swir1', 'swir2','sensor'];
     ls = ls.select(commonBands);
     s2s = s2s.select(commonBands);
+    var dummyImage = ee.Image(ee.ImageCollection(ls.merge(s2s)).first());
+    ls = fillEmptyCollections(ls,dummyImage);
+    s2s = fillEmptyCollections(s2s,dummyImage);
     
     if(args.runChastainHarmonization){
       
