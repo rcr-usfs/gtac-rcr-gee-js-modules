@@ -1,9 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.Polygon(
-        [[[-110.38039407546616, 37.982818054990645],
-          [-110.72097024734116, 37.38289312617559],
-          [-109.38063821609116, 37.33923196626389],
-          [-108.09523782546616, 37.887503150229435]]]);
+var geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ////////////////////////////////////////////////////////////////////////////////
 //Module for getting Landsat, Sentinel 2 and MODIS images/composites
