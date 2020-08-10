@@ -93,7 +93,7 @@ var sensorList = ['LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A
 //If selecting more than one, the lossReducer output of change/not change will be shown
 //Specify a corresponding threshold for each band
 var dBands = ['NDVI','NBR','NDMI'];
-var lossThresh = [-0.2,-0.2,-0.2];
+var lossThresh = [-0.15,-0.15,-0.15];
 
 //If you want to find loss in any of the bands (OR), use ee.Reducer.max() for lossReducer
 //If you want to find loss in all bands (AND), use ee.Reducer.min() for lossReducer
