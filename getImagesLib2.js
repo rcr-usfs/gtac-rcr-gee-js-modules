@@ -2790,7 +2790,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
       ls = ee.ImageCollection(tm.merge(oli));
     
     }
-    
+    print('s2s',s2s)
     // Merge Landsat and S2
     var merged = ls.merge(s2s);
     merged = merged.map(simpleAddIndices)
