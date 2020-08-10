@@ -34,13 +34,14 @@ var postEndJulian = ee.Date.fromYMD(5,7,31).getRelative('day','year').add(1).get
 
 var studyArea = geometry;
 
+//Choose how to create the composite
+//This is done in a band-wise fashion
 var compositeReducer = ee.Reducer.percentile([50]);
 
 //Choose which bands to use for loss detection
 //Can select more than one
 //If selecting more than one, the lossReducer output of change/not change will be shown
 //Specify a corresponding threshold for each band
-
 
 var dBands = ['NDVI','NBR','NDMI'];
 var lossThresh = [-0.2,-0.2,-0.2];
@@ -50,14 +51,15 @@ var lossThresh = [-0.2,-0.2,-0.2];
 //If you want to find loss in the majority of bands, use ee.Reducer.mode() for lossReducer
 var lossReducer = ee.Reducer.mode();
 
+//Bring in a tree mask
 var treeMask = ee.ImageCollection("USGS/NLCD")
                 .filter(ee.Filter.calendarRange(2011,2011,'year'))
                 .select(['percent_tree_cover']).mosaic().gte(10).selfMask();
 Map.addLayer(treeMask,{min:1,max:1,palette:'080'},'Tree Mask',false);
 //End User Inputs
 ////////////////////////////////////////////////////////////////////////////
-//Get images
-var images = getImagesLib.getProcessedSentinel2Scenes({
+//Get images for the union of the dates
+var images = getImagesLib.getProcessedLandsatAndSentinel2Scenes({
   studyArea:studyArea,
   startYear:preStartYear-1,
   endYear:postEndYear+1,
@@ -70,6 +72,8 @@ var images = getImagesLib.getProcessedSentinel2Scenes({
   applyTDOM:false,
   convertToDailyMosaics:false,
   });
+
+//Filter down into composites
 var preComposite = images.filter(ee.Filter.calendarRange(preStartYear,preEndYear,'year'))
                   .filter(ee.Filter.calendarRange(preStartJulian,preEndJulian));
 
