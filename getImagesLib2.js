@@ -1,6 +1,3 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 ////////////////////////////////////////////////////////////////////////////////
 //Module for getting Landsat, Sentinel 2 and MODIS images/composites
 // Define visualization parameters
