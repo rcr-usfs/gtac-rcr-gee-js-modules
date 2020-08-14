@@ -564,7 +564,7 @@ function getS2(){
     s2s = dailyMosaics(s2s);
   }
   
-  //s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
+  s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
   
   return s2s.set(args);
 }
