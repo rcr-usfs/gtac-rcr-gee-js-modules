@@ -526,8 +526,6 @@ function getS2(){
                       })
                       .select(['QA60'].concat(sensorBandDict[args.toaOrSR]),['QA60'].concat(sensorBandNameDict[args.toaOrSR]));
                       // .map(function(img){return img.resample('bicubic') }) ;
-
-  s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
   
   if(args.addCloudProbability){ 
     print('Joining pre-computed cloud probabilities from: COPERNICUS/S2_CLOUD_PROBABILITY');
@@ -564,7 +562,8 @@ function getS2(){
     s2s = dailyMosaics(s2s);
   }
   
-  //s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
+  // This needs to happen AFTER the mosaicking step or else we still have edge artifacts
+  s2s = s2s.map(function(img){return img.updateMask(img.mask().reduce(ee.Reducer.min()))});
   
   return s2s.set(args);
 }
