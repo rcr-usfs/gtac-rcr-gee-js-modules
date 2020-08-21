@@ -1228,6 +1228,7 @@ function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxS
     
   // Run Verdet and convert to vertStack format
   var vtStack = VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, doLinearInterp)
+  print('vtStack', vtStack)
   
   // Convert to durFitMagSlope format
   var durFitMagSlope = convertStack_To_DurFitMagSlope(vtStack, 'VT');
