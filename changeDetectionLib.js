@@ -1242,8 +1242,7 @@ function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxS
     print('durFitMagSlope linearInterp step', durFitMagSlope)
     durFitMagSlope = durFitMagSlope.map(function(img){
       var thisYear = ee.Date(img.get('system:time_start')).format('YYYY');
-      var thisYear_maskName = ee.String('mask_').cat(thisYear);
-      var thisMask = masks.select(thisYear_maskName);
+      var thisMask = masks.select(ee.String('.*_').cat(thisYear));
       img = img.updateMask(thisMask);
       return img;
     });
