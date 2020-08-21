@@ -1127,7 +1127,7 @@ function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor){
   //VERDET currently requires all pixels have a value
   var countMask = tsT.count().unmask().gte(endYear.subtract(startYear).add(1));
 
-  tsT = tsT.map(function(img){return nullFinder(img)});
+  tsT = tsT.map(function(img){return nullFinder(img, countMask)});
 
   run_params.timeSeries = tsT;
   
