@@ -1228,7 +1228,6 @@ function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxS
     
   // Run Verdet and convert to vertStack format
   var vtStack = VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, doLinearInterp)
-  print('vtStack', vtStack)
   
   // Convert to durFitMagSlope format
   var durFitMagSlope = convertStack_To_DurFitMagSlope(vtStack, 'VT');
@@ -1239,7 +1238,6 @@ function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxS
   
   // Update Mask from LinearInterp step
   if (doLinearInterp === true){
-    print('durFitMagSlope linearInterp step', durFitMagSlope)
     durFitMagSlope = durFitMagSlope.map(function(img){
       var thisYear = ee.Date(img.get('system:time_start')).format('YYYY');
       var thisMask = masks.select(ee.String('.*_').cat(thisYear));
