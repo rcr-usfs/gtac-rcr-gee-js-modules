@@ -1238,6 +1238,7 @@ function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxS
   
   // Update Mask from LinearInterp step
   if (doLinearInterp === true){
+    print('durFitMagSlope linearInterp step', durFitMagSlope)
     durFitMagSlope = durFitMagSlope.map(function(img){
       var thisYear = ee.Date(img.get('system:time_start')).format('YYYY');
       var thisYear_maskName = ee.String('mask_').cat(thisYear);
