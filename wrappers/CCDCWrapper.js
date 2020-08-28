@@ -109,7 +109,9 @@ var ccdcParams ={
   chiSquareProbability: 0.95,//The chi-square probability threshold for change detection in the range of [0, 1],
   minNumOfYearsScaler: 1.33,//Factors of minimum number of years to apply new fitting.,\
   lambda: 0.002,//Lambda for LASSO regression fitting. If set to 0, regular OLS is used instead of LASSO
-  maxIterations : 25000 //Maximum number of runs for LASSO regression convergence. If set to 0, regular OLS is used instead of LASSO.
+  maxIterations : 25000, //Maximum number of runs for LASSO regression convergence. If set to 0, regular OLS is used instead of LASSO.
+  dateFormat : 1
+  
 }; 
 
 ///////////////////////////////////////////////////////////////////////
@@ -132,7 +134,7 @@ processedScenes = processedScenes.map(function(img){
 });
 Map.addLayer(processedScenes)
 
-ccdcParams.dateFormat = 1;
+
 ccdcParams.collection = processedScenes;
 // //Run CCDC
 // var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
