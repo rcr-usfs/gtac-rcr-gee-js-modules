@@ -38,12 +38,12 @@ args.endJulian = 250;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If providing pre-computed stats for cloudScore and TDOM, this does not 
 // matter
-args.startYear = 2010;
-args.endYear = 2019;
+args.startYear = 1990;
+args.endYear = 2020;
 
 // Choose whether to include Landat 7
 // Generally only included when data are limited
-args.includeSLCOffL7 = false;
+args.includeSLCOffL7 = true;
 
 //Choose whether to use the Chastain et al 2019(https://www.sciencedirect.com/science/article/pii/S0034425718305212)
 //harmonization method
@@ -86,7 +86,7 @@ var exportBands = ["blue","green","red","nir","swir1","swir2","NDVI"];
 var nYearOffset = 0;
 
 // Set up Names for the export
-args.outputName = 'CCDC-Test';
+args.outputName = 'CCDC-Test2';
 
 // Provide location composites will be exported to
 // This should be an asset folder, or more ideally, an asset imageCollection
@@ -132,7 +132,7 @@ var ccdcParams ={
 
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
-var processedScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args);
+var processedScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args).select(exportBands);
 print(ee.Image(processedScenes.first()).bandNames())
 //Filter to only include wanted sensors
 processedScenes = processedScenes.filter(ee.Filter.inList('sensor',ee.List(sensorList)));
