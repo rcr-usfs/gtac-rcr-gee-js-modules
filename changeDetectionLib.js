@@ -2108,9 +2108,9 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
   
   //Add the segment-appropriate coefficients to each time image
   timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
- 
+  Map.addlayer(timeSeries,{},'time series')
   //Predict out the values for each image 
-  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
+  // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
   // print(timeSeriesd.first())
   return timeSeries;
  
