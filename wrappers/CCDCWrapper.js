@@ -42,20 +42,27 @@ args.endJulian = 365;
 args.startYear = 2019;
 args.endYear = 2019;
 
+// Choose whether to include Landat 7
+// Generally only included when data are limited
 args.includeSLCOffL7 = true;
 
-// If available, bring in preComputed cloudScore offsets and TDOM stats
-// Set to null if computing on-the-fly is wanted
-// These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
-// and are appropriate to use for any time period within the growing season
-// The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
-args.preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Landsat_CloudScore_p'+args.cloudScorePctl.toString()]);
+//If available, bring in preComputed cloudScore offsets and TDOM stats
+//Set to null if computing on-the-fly is wanted
+//These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
+//and are appropriate to use for any time period within the growing season
+//The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
+var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic();
+args.preComputedLandsatCloudScoreOffset = preComputedCloudScoreOffset.select(['Landsat_CloudScore_p10']);
+args.preComputedSentinel2CloudScoreOffset = preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p10']);
 
-// The TDOM stats are the mean and standard deviations of the two IR bands used in TDOM
-// By default, TDOM uses the nir and swir1 bands
+//The TDOM stats are the mean and standard deviations of the two bands used in TDOM
+//By default, TDOM uses the nir and swir1 bands
 var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
-args.preComputedTDOMIRMean = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
-args.preComputedTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
+args.preComputedLandsatTDOMIRMean = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
+args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
+
+args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
+args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
 
 
 //Whether to use Sentinel 2 along with Landsat
@@ -114,117 +121,83 @@ var ccdcParams ={
 
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
-var processedScenes;
-if(useLandsat){
-  processedScenes = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,startJulian,endJulian,
-  toaOrSR,includeSLCOffL7,defringeL5,applyCloudScore,applyFmaskCloudMask,applyTDOM,
-  applyFmaskCloudShadowMask,applyFmaskSnowMask,
-  cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,landsatResampleMethod,harmonizeOLI,
-  landsatPreComputedCloudScoreOffset,landsatTDOMMeans,landsatTDOMStdDevs
-  ).map(getImagesLib.addSAVIandEVI)
-  .select(ccdcParams.breakpointBands);
-  
-}
+var processedScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args);
 
-if(useS2){
-  print('Acquiring Sentinel 2 data');
-  var processedSentinel2Scenes = getImagesLib.getProcessedSentinel2Scenes(studyArea,startYear,endYear,startJulian,endJulian,
-  null,null,null,true,
-  null,null,null,
-  null,
-  null,null,
-  contractPixels,dilatePixels,sentinel2ResampleMethod,toaOrSR,true,
-  sentinel2PreComputedCloudScoreOffset,sentinel2TDOMMeans,sentinel2TDOMStdDevs);
 
-  Map.addLayer(processedSentinel2Scenes.median(),getImagesLib.vizParamsFalse,'S2');
-  processedSentinel2Scenes = processedSentinel2Scenes.select(ccdcParams.breakpointBands);
-  
-  if(processedScenes !== undefined){
-    processedScenes = processedScenes.merge(processedSentinel2Scenes);
-  }else{
-     processedScenes = processedSentinel2Scenes;
-  }
-  
-}
 
 //Remove any extremely high band/index values
 processedScenes = processedScenes.map(function(img){
-  var lte1 = img.lte(1).reduce(ee.Reducer.min());
+  var lte1 = img.select(['blue','green','nir','swir1','swir2']).lte(1).reduce(ee.Reducer.min());
   return img.updateMask(lte1);
 });
+Map.addLayer(processedScenes)
 
+// ccdcParams.dateFormat = 1;
+// ccdcParams.collection = processedScenes;
+// //Run CCDC
+// var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
-// ///Apply year offset
-// processedScenes = processedScenes.map(function(img){
-//   return getImagesLib.offsetImageDate(img,nYearOffset,'year');
-// });
-Map.addLayer(processedScenes,{},'Raw Time Series',false);
-ccdcParams.dateFormat = 1;
-ccdcParams.collection = processedScenes;
-//Run CCDC
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
+// // // //Run EWMACD 
+// // // var ewmacd = ee.Algorithms.TemporalSegmentation.Ewmacd({
+// // //     timeSeries: processedScenes.select(['NDVI']), 
+// // //     vegetationThreshold: -1, 
+// // //     trainingStartYear: startYear, 
+// // //     trainingEndYear: startYear+1, 
+// // //     harmonicCount: 2
+// // //   });
+// // // Map.addLayer(ewmacd,{},'ewmacd',false)
+// //Convert to image stack
+// var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
+// // ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
+// Map.addLayer(ccdcImg)
+// //Find the segment count for each pixel
+// var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
+// Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
 
-// // //Run EWMACD 
-// // var ewmacd = ee.Algorithms.TemporalSegmentation.Ewmacd({
-// //     timeSeries: processedScenes.select(['NDVI']), 
-// //     vegetationThreshold: -1, 
-// //     trainingStartYear: startYear, 
-// //     trainingEndYear: startYear+1, 
-// //     harmonicCount: 2
-// //   });
-// // Map.addLayer(ewmacd,{},'ewmacd',false)
-//Convert to image stack
-var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
-// ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
-Map.addLayer(ccdcImg)
-//Find the segment count for each pixel
-var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
-Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
+// //Set up time series for predicting values
+// processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
+// ccdcParams.breakpointBands.push('.*_predicted');
 
-//Set up time series for predicting values
-processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
-ccdcParams.breakpointBands.push('.*_predicted');
+// var change = dLib.getCCDCChange(ccdcImg);
 
-var change = dLib.getCCDCChange(ccdcImg);
+// Map.addLayer(change.breakLossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Break Loss Year',false);
+// Map.addLayer(change.segLossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Seg Loss Year',false);
 
-Map.addLayer(change.breakLossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Break Loss Year',false);
-Map.addLayer(change.segLossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Seg Loss Year',false);
-
-Map.addLayer(change.breakGainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Break Gain Year',false);
-Map.addLayer(change.segGainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Seg Gain Year',false);
-// // Export.Image.toDrive(changeYears.lossYears.reduce(ee.Reducer.max()),)  
+// Map.addLayer(change.breakGainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Break Gain Year',false);
+// Map.addLayer(change.segGainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Seg Gain Year',false);
+// // // Export.Image.toDrive(changeYears.lossYears.reduce(ee.Reducer.max()),)  
   
-//Predict CCDC model and visualize the actual vs. predicted
-var predicted = dLib.predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
-Map.addLayer(predicted,{},'Predicted CCDC',false);
+// //Predict CCDC model and visualize the actual vs. predicted
+// var predicted = dLib.predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
+// Map.addLayer(predicted,{},'Predicted CCDC',false);
 
-// //Visualize the seasonality of the first segment
-// var seg1 = ccdcImg.select(['S1.*']);
-// var sinCoeffs = seg1.select(['.*_SIN']);
-// var cosCoeffs = seg1.select(['.*_COS']);
-// var bands = ['.*swir2.*','.*nir.*','.*red.*'];
-// // var band = 'B4.*';
-// var phase = sinCoeffs.atan2(cosCoeffs)
-//                     .unitScale(-Math.PI, Math.PI);
+// // //Visualize the seasonality of the first segment
+// // var seg1 = ccdcImg.select(['S1.*']);
+// // var sinCoeffs = seg1.select(['.*_SIN']);
+// // var cosCoeffs = seg1.select(['.*_COS']);
+// // var bands = ['.*swir2.*','.*nir.*','.*red.*'];
+// // // var band = 'B4.*';
+// // var phase = sinCoeffs.atan2(cosCoeffs)
+// //                     .unitScale(-Math.PI, Math.PI);
  
-// var amplitude = sinCoeffs.hypot(cosCoeffs)
-//                     // .unitScale(0, 1)
-//                     .multiply(2);
-// Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
-// Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
+// // var amplitude = sinCoeffs.hypot(cosCoeffs)
+// //                     // .unitScale(0, 1)
+// //                     .multiply(2);
+// // Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
+// // Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
 
-//Set export asset properties
-ccdcImg = ccdcImg.set(ccdcParams).float();
-ccdcImg = ccdcImg.set({
-  'startYear':startYear,
-  'endYear':endYear,
-  'useLandsat':useLandsat,
-  'useS2':useS2,
-  'nSegments':nSegments
-})
-  .float();
+// //Set export asset properties
+// ccdcImg = ccdcImg.set(ccdcParams).float();
+// ccdcImg = ccdcImg.set({
+//   'startYear':startYear,
+//   'endYear':endYear,
+//   'useLandsat':useLandsat,
+//   'useS2':useS2,
+//   'nSegments':nSegments
+// })
+//   .float();
 
-//Export output
-Export.image.toAsset(ccdcImg, outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13);
+// //Export output
+// Export.image.toAsset(ccdcImg, outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13);
 
 Map.setOptions('HYBRID');
