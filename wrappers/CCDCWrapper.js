@@ -110,7 +110,7 @@ var ccdcParams ={
   minNumOfYearsScaler: 1.33,//Factors of minimum number of years to apply new fitting.,\
   lambda: 0.002,//Lambda for LASSO regression fitting. If set to 0, regular OLS is used instead of LASSO
   maxIterations : 25000, //Maximum number of runs for LASSO regression convergence. If set to 0, regular OLS is used instead of LASSO.
-  dateFormat : 1 //The time representation to use during fitting: 0 = jDays, 1 = fractional years, 2 = unix time in milliseconds. The start, end and break times for each temporal segment will be encoded this way.
+  dateFormat : 1 //'fractional' (1) is the easiest to work with. It is the time representation to use during fitting: 0 = jDays, 1 = fractional years, 2 = unix time in milliseconds. The start, end and break times for each temporal segment will be encoded this way.
   
 }; 
 
