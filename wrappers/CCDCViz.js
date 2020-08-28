@@ -194,7 +194,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
     return prev.where(segCoeffs.mask(),segCoeffs);
   },ee.Image.constant(ee.List.repeat(-9999,outBns.length())).rename(outBns)));
   out = out.updateMask(out.neq(-9999));
-  
+  print(out)
   timeImg = timeImg.addBands(out);
   return timeImg;
   }
