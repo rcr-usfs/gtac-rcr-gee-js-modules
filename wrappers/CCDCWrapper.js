@@ -77,11 +77,11 @@ var useS2 = true;
 var nYearOffset = 0;
 
 // Set up Names for the export
-args.outputName = 'Landsat';
+args.outputName = 'CCDC-Test';
 
 // Provide location composites will be exported to
 // This should be an asset folder, or more ideally, an asset imageCollection
-args.exportPathRoot = 'users/iwhousman/test/compositeCollection';
+args.exportPathRoot = 'users/iwhousman/test/ChangeCollection';
 
 
 // CRS- must be provided.  
@@ -132,8 +132,8 @@ processedScenes = processedScenes.map(function(img){
 });
 Map.addLayer(processedScenes)
 
-// ccdcParams.dateFormat = 1;
-// ccdcParams.collection = processedScenes;
+ccdcParams.dateFormat = 1;
+ccdcParams.collection = processedScenes;
 // //Run CCDC
 // var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
