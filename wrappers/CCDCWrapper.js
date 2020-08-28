@@ -65,10 +65,9 @@ args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.select(['Sentinel2_ni
 args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
 
 
-//Whether to use Sentinel 2 along with Landsat
-//If using Sentinel 2, be sure to select SR for Landsat toaOrSR
-var useLandsat = true;
-var useS2 = true;
+//List of acceptable sensors
+//Options include: 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'
+var sensorList = ['Sentinel-2A', 'Sentinel-2B'];
 
 //Whether to offset the years so the intercept values aren't too large
 //Set to -1900 if you want intercepts to be closer to the mean of the value of the band/index
@@ -125,7 +124,8 @@ var ccdcParams ={
 //Call on master wrapper function to get Landat scenes and composites
 var processedScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args);
 
-
+//Filter to only include wanted sensors
+processedScenes = processedScenes.filter(ee.Filter.inList('sensor',ee.List(sensorList)));
 
 //Remove any extremely high band/index values
 processedScenes = processedScenes.map(function(img){
