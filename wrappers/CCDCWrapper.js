@@ -50,7 +50,7 @@ args.endYear = 2019;
 
 // Choose whether to include Landat 7
 // Generally only included when data are limited
-args.includeSLCOffL7 = true;
+args.includeSLCOffL7 = false;
 
 //Choose whether to use the Chastain et al 2019(https://www.sciencedirect.com/science/article/pii/S0034425718305212)
 //harmonization method
@@ -149,6 +149,9 @@ Map.addLayer(processedScenes)
 ccdcParams.collection = processedScenes;
 //Run CCDC
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
+
+ccdc = ccdc.set(args);
+ccdc = ccdc.set(args.)
 print(ccdc)
 Map.addLayer(ccdc)
 //Export output
