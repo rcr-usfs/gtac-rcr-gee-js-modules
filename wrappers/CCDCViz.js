@@ -164,7 +164,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
   
   //Find how many segments there are
   var nSegs = ccdcImg.select([tStartKey]).bandNames().length();
-  
+  print(nSegs)
   //Iterate through each segment to pull the correct values
   var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
     n = ee.Number(n);
