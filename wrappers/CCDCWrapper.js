@@ -151,7 +151,7 @@ ccdcParams.collection = processedScenes;
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
 
 ccdc = ccdc.set(args);
-ccdc = ccdc.set(args.)
+ccdc = ccdc.set(ccdcParams)
 print(ccdc)
 Map.addLayer(ccdc)
 //Export output
