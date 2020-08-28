@@ -14,135 +14,47 @@ var geometry =
           [-106.70549677098843, 37.95180391281335]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
-var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 
 dLib.getExistingChangeData();
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
+var args = {};
 
-// 1. Specify study area: Study area
-// Can specify a country, provide a fusion table  or asset table (must add 
-// .geometry() after it), or draw a polygon and make studyArea = drawnPolygon
-var studyArea = geometry;//paramDict[studyAreaName][3];
+// Specify study area: Study area
+// Can be a featureCollection, feature, or geometry
+args.studyArea = getImagesLib.testAreas.CA;
 
-// 2. Update the startJulian and endJulian variables to indicate your seasonal 
+// Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
+// If using wrapping and the majority of the days occur in the second year, the system:time_start will default 
+// to June 1 of that year.Otherwise, all system:time_starts will default to June 1 of the given year
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-var startJulian = 1;
-var endJulian = 365; 
+args.startJulian = 1;
+args.endJulian = 365; 
 
-// 3. Specify start and end years for all analyses
+// Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
-// well. If using Fmask as the cloud/cloud shadow masking method, this does not 
+// well. If providing pre-computed stats for cloudScore and TDOM, this does not 
 // matter
-var startYear = 2010;
-var endYear = 2020;
+args.startYear = 2019;
+args.endYear = 2019;
 
 
+// If available, bring in preComputed cloudScore offsets and TDOM stats
+// Set to null if computing on-the-fly is wanted
+// These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
+// and are appropriate to use for any time period within the growing season
+// The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
+args.preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Landsat_CloudScore_p'+args.cloudScorePctl.toString()]);
 
-// 7. Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
-// Specify TOA or SR
-// Current implementation does not support Fmask for TOA
-var toaOrSR = 'TOA';
-
-// 8. Choose whether to include Landat 7
-// Generally only included when data are limited
-var includeSLCOffL7 = false;
-
-//9. Whether to defringe L5
-//Landsat 5 data has fringes on the edges that can introduce anomalies into 
-//the analysis.  This method removes them, but is somewhat computationally expensive
-var defringeL5 = false;
-
-// 10. Choose cloud/cloud shadow masking method
-// Choices are a series of booleans for cloudScore, TDOM, and elements of Fmask
-//Fmask masking options will run fastest since they're precomputed
-//CloudScore runs pretty quickly, but does look at the time series to find areas that 
-//always have a high cloudScore to reduce comission errors- this takes some time
-//and needs a longer time series (>5 years or so)
-//TDOM also looks at the time series and will need a longer time series
-var applyCloudScore = false;
-var applyFmaskCloudMask = true;
-
-var applyTDOM = false;
-var applyFmaskCloudShadowMask = true;
-
-var applyFmaskSnowMask = true;
-
-// 11. Cloud and cloud shadow masking parameters.
-// If cloudScoreTDOM is chosen
-// cloudScoreThresh: If using the cloudScoreTDOMShift method-Threshold for cloud 
-//    masking (lower number masks more clouds.  Between 10 and 30 generally 
-//    works best)
-var cloudScoreThresh = 20;
-
-// Percentile of cloud score to pull from time series to represent a minimum for 
-// the cloud score over time for a given pixel. Reduces comission errors over 
-// cool bright surfaces. Generally between 5 and 10 works well. 0 generally is a
-// bit noisy
-var cloudScorePctl = 10; 
-
-// zScoreThresh: Threshold for cloud shadow masking- lower number masks out 
-//    less. Between -0.8 and -1.2 generally works well
-var zScoreThresh = -1;
-
-// shadowSumThresh: Sum of IR bands to include as shadows within TDOM and the 
-//    shadow shift method (lower number masks out less)
-var shadowSumThresh = 0.35;
-
-// contractPixels: The radius of the number of pixels to contract (negative 
-//    buffer) clouds and cloud shadows by. Intended to eliminate smaller cloud 
-//    patches that are likely errors
-// (1.5 results in a -1 pixel buffer)(0.5 results in a -0 pixel buffer)
-// (1.5 or 2.5 generally is sufficient)
-var contractPixels = 1.5; 
-
-// dilatePixels: The radius of the number of pixels to dilate (buffer) clouds 
-//    and cloud shadows by. Intended to include edges of clouds/cloud shadows 
-//    that are often missed
-// (1.5 results in a 1 pixel buffer)(0.5 results in a 0 pixel buffer)
-// (2.5 or 3.5 generally is sufficient)
-var dilatePixels = 2.5;
-
-// 12. correctIllumination: Choose if you want to correct the illumination using
-// Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
-// correction is calculated in meters.
-var correctIllumination = false;
-var correctScale = 250;//Choose a scale to reduce on- 250 generally works well
-
-//Choose the resampling method: 'aggregate','near', 'bilinear', or 'bicubic'
-//Defaults to 'aggregate' for Sentinel 2 and 'near' for Landsat
-
-//Aggregate is generally useful for aggregating pixels when reprojecting instead of resampling
-//A good example would be reprojecting S2 data to 30 m
-
-//If method other than 'near' is chosen, any map drawn on the fly that is not
-//reprojected, will appear blurred or not really represented properly
-//Use .reproject to view the actual resulting image (this will slow it down)
-var landsatResampleMethod = 'near';
-
-var sentinel2ResampleMethod = 'aggregate';
-
-//Choose whether to harmonize S2 and OLI
-var harmonizeOLI = false;
-
-//If available, bring in preComputed cloudScore offsets and TDOM stats
-//These have been pre-computed for all CONUS and are appropriate to use for any time period within
-//the growing season
-//The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
-var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic();
-var landsatPreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['Landsat_CloudScore_p10']);
-var sentinel2PreComputedCloudScoreOffset = preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p10']);
-
-//The TDOM stats are the mean and standard deviations of the two bands used in TDOM
-//By default, TDOM uses the nir and swir1 bands
+// The TDOM stats are the mean and standard deviations of the two IR bands used in TDOM
+// By default, TDOM uses the nir and swir1 bands
 var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
-var landsatTDOMMeans = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
-var landsatTDOMStdDevs = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
-var sentinel2TDOMMeans = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
-var sentinel2TDOMStdDevs = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
+args.preComputedTDOMIRMean = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
+args.preComputedTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
 
 
 //Whether to use Sentinel 2 along with Landsat
@@ -156,31 +68,31 @@ var useS2 = true;
 //Set to 0 if you want the years to remain as they are
 var nYearOffset = 0;
 
-//Set up Names for the export
-var outputName = 'CCDC_Test13';
+// Set up Names for the export
+args.outputName = 'Landsat';
 
-//Provide location composites will be exported to
-//This should be an asset folder, or more ideally, an asset imageCollection
-var exportPathRoot = 'users/ianhousman/test/CCDC_Collection/';
+// Provide location composites will be exported to
+// This should be an asset folder, or more ideally, an asset imageCollection
+args.exportPathRoot = 'users/iwhousman/test/compositeCollection';
 
-// var exportPathRoot = 'projects/USFS/LCMS-NFS/R4/BT/Base-Learners/Base-Learners-Collection';
-//CRS- must be provided.  
-//Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
-//WGS84 UTM N hemisphere is EPSG:326+ zone number (zone 12 N would be EPSG:32612) and S hemisphere is EPSG:327+ zone number
-var crs = 'EPSG:5070';
 
-//Specify transform if scale is null and snapping to known grid is needed
-var transform = [30,0,-2361915.0,0,-30,3177735.0];
+// CRS- must be provided.  
+// Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
+// WGS84 UTM N hemisphere is EPSG:326+ zone number (zone 12 N would be EPSG:32612) and S hemisphere is EPSG:327+ zone number
+args.crs = 'EPSG:5070';
 
-//Specify scale if transform is null
-var scale = null;
+// Specify transform if scale is null and snapping to known grid is needed
+args.transform = [30,0,-2361915.0,0,-30,3177735.0];
+
+// Specify scale if transform is null
+args.scale = null;
 
 //How many segments to export
 //Agricultural and wetland areas generally will need about 1 for every 2-5 years
 //Other areas need about 1 for every 10-30 years
 var nSegments = 9;
 ///////////////////////////////////////////////////////////////////////
-//CCDC Parsams
+//CCDC Params
 var ccdcParams ={
   breakpointBands:['green','red','nir','swir1','swir2','NDVI'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
                                                               //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
