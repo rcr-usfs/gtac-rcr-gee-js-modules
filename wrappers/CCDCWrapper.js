@@ -155,7 +155,7 @@ ccdc = ccdc.set(ccdcParams)
 print(ccdc)
 Map.addLayer(ccdc)
 //Export output
-Export.image.toAsset(ccdc, args.outputName, args.exportPathRoot +args.outputName , {'.default':'sample'}, null, args.studyArea, args.scale, args.crs, args.transform, 1e13);
+Export.image.toAsset(ccdc, args.outputName, args.exportPathRoot +'/'+args.outputName , {'.default':'sample'}, null, args.studyArea, args.scale, args.crs, args.transform, 1e13);
 
 
 // //Convert to image stack
