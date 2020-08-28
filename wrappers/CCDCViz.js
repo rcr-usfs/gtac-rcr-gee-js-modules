@@ -152,9 +152,9 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
   //Pop off the coefficients and find the output band names
   var coeffs =  ccdcImg.select([coeffKey,rmseKey]);
   var coeffBns = coeffs.bandNames();
-  var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
-  print(outBns)
-  //Find the start and end time for the segmeents
+  var outBns = coeffs.select(['S1_.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
+  
+  //Find the start and end time for the segments
   // var tStarts = ccdcImg.select(['.*tStart']);
   var tEnds = ccdcImg.select([tEndKey]);
   
@@ -169,8 +169,8 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
   var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
     n = ee.Number(n);
     prev = ee.Image(prev);
-    var segBN = ee.String('S').cat(ee.Number(n).byte().format()).cat('.*');
-    var segBNBefore = ee.String('S').cat(ee.Number(n).subtract(1).byte().format()).cat('.*');
+    var segBN = ee.String('S').cat(ee.Number(n).byte().format()).cat('_.*');
+    var segBNBefore = ee.String('S').cat(ee.Number(n).subtract(1).byte().format()).cat('_.*');
     
     var segCoeffs = ccdcImg.select([segBN]);
     segCoeffs = segCoeffs.select([coeffKey,rmseKey]);
@@ -194,8 +194,9 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
     return prev.where(segCoeffs.mask(),segCoeffs);
   },ee.Image.constant(ee.List.repeat(-9999,outBns.length())).rename(outBns)));
   out = out.updateMask(out.neq(-9999));
-  print(ccdcImg)
+
   timeImg = timeImg.addBands(out);
+  
   return timeImg;
   }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -276,9 +277,9 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
 function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   
   //Add the segment-appropriate coefficients to each time image
-  getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
-  // timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
-  // Map.addLayer(timeSeries,{},'time series')
+  // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
+  timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
+  Map.addLayer(timeSeries,{},'time series')
   //Predict out the values for each image 
   // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
   // print(timeSeriesd.first())
