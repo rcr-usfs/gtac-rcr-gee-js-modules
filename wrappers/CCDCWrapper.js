@@ -1,17 +1,23 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
-    /* shown: false */
     /* displayProperties: [
+      {
+        "type": "rectangle"
+      },
       {
         "type": "rectangle"
       }
     ] */
-    ee.Geometry.Polygon(
-        [[[-107.28502557958218, 37.95180391281335],
-          [-107.28502557958218, 37.57181970608451],
-          [-106.70549677098843, 37.57181970608451],
-          [-106.70549677098843, 37.95180391281335]]], null, false);
+    ee.Geometry.MultiPolygon(
+        [[[[-107.28502557958218, 37.95180391281335],
+           [-107.28502557958218, 37.57181970608451],
+           [-106.70549677098843, 37.57181970608451],
+           [-106.70549677098843, 37.95180391281335]]],
+         [[[-118.93183248812555, 36.94269993936479],
+           [-118.93183248812555, 36.74928026456],
+           [-118.63520162875055, 36.74928026456],
+           [-118.63520162875055, 36.94269993936479]]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
@@ -24,7 +30,7 @@ var args = {};
 
 // Specify study area: Study area
 // Can be a featureCollection, feature, or geometry
-args.studyArea = getImagesLib.testAreas.CA;
+args.studyArea = geometry;//getImagesLib.testAreas.CA;
 
 // Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
@@ -45,6 +51,11 @@ args.endYear = 2019;
 // Choose whether to include Landat 7
 // Generally only included when data are limited
 args.includeSLCOffL7 = true;
+
+//Choose whether to use the Chastain et al 2019(https://www.sciencedirect.com/science/article/pii/S0034425718305212)
+//harmonization method
+//All harmonization models apply a rather small correction and are likely not needed
+args.runChastainHarmonization = false;
 
 //If available, bring in preComputed cloudScore offsets and TDOM stats
 //Set to null if computing on-the-fly is wanted
@@ -67,7 +78,7 @@ args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_
 
 //List of acceptable sensors
 //Options include: 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'
-var sensorList = ['Sentinel-2A', 'Sentinel-2B'];
+var sensorList = [ 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'];
 
 //Whether to offset the years so the intercept values aren't too large
 //Set to -1900 if you want intercepts to be closer to the mean of the value of the band/index
@@ -105,7 +116,7 @@ var ccdcParams ={
                                                               //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
   tmaskBands : null,//['green','swir2'],//The name or index of the bands to use for iterative TMask cloud detection. These are typically the green band and the SWIR2 band. If unspecified, TMask is not used. If specified, 'tmaskBands' must be included in 'breakpointBands'., 
   minObservations: 6,//Factors of minimum number of years to apply new fitting.
-  chiSquareProbability: 0.95,//The chi-square probability threshold for change detection in the range of [0, 1],
+  chiSquareProbability: 0.99,//The chi-square probability threshold for change detection in the range of [0, 1],
   minNumOfYearsScaler: 1.33,//Factors of minimum number of years to apply new fitting.,\
   lambda: 0.002,//Lambda for LASSO regression fitting. If set to 0, regular OLS is used instead of LASSO
   maxIterations : 25000, //Maximum number of runs for LASSO regression convergence. If set to 0, regular OLS is used instead of LASSO.
@@ -138,7 +149,12 @@ Map.addLayer(processedScenes)
 ccdcParams.collection = processedScenes;
 //Run CCDC
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
+print(ccdc)
 Map.addLayer(ccdc)
+//Export output
+Export.image.toAsset(ccdc, args.outputName, args.exportPathRoot +args.outputName , {'.default':'sample'}, null, args.studyArea, args.scale, args.crs, args.transform, 1e13);
+
+
 // //Convert to image stack
 // var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
 // // ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
@@ -190,7 +206,5 @@ Map.addLayer(ccdc)
 // })
 //   .float();
 
-// //Export output
-// Export.image.toAsset(ccdcImg, outputName, exportPathRoot +outputName , null, null, geometry, scale, crs, transform, 1e13);
 
 Map.setOptions('HYBRID');
