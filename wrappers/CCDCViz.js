@@ -152,7 +152,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
   //Pop off the coefficients and find the output band names
   var coeffs =  ccdcImg.select([coeffKey,rmseKey]);
   var coeffBns = coeffs.bandNames();
-  var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
+  var outBns = coeffs.select(['S1_.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
   
   //Find the start and end time for the segments
   // var tStarts = ccdcImg.select(['.*tStart']);
@@ -169,8 +169,8 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
   var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
     n = ee.Number(n);
     prev = ee.Image(prev);
-    var segBN = ee.String('S').cat(ee.Number(n).byte().format()).cat('.*');
-    var segBNBefore = ee.String('S').cat(ee.Number(n).subtract(1).byte().format()).cat('.*');
+    var segBN = ee.String('S').cat(ee.Number(n).byte().format()).cat('_.*');
+    var segBNBefore = ee.String('S').cat(ee.Number(n).subtract(1).byte().format()).cat('_.*');
     
     var segCoeffs = ccdcImg.select([segBN]);
     segCoeffs = segCoeffs.select([coeffKey,rmseKey]);
@@ -276,7 +276,8 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
 function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   
   //Add the segment-appropriate coefficients to each time image
-  timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
+  timeSeries = timeSeries.limit(1).map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
+  print(timeSeries)
   Map.addLayer(timeSeries,{},'time series')
   //Predict out the values for each image 
   // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
@@ -286,7 +287,7 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
 }
 ///////////////////////////////////////////////////////////////////////
 var startYear = 2010;
-var endYear = 2020.5;
+var endYear = 2015;
 var bands = ['NDVI'];
 // var idsFolder = 'projects/USFS/LCMS-NFS/CONUS-Ancillary-Data/IDS';
 // var ids = ee.data.getList({id:idsFolder}).map(function(t){return t.id});
@@ -419,9 +420,9 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
 // // coeffs = coeffs.rename(bns)
 // // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
 // var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted','.*_RMSEs']);
-var predicted1 = predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
+var predicted1 = predictCCDC(ccdcImg,yearImages,null,'year',true,[1])//.select(['.*_predicted']);
 //predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
-print(predicted1)
+// print(predicted1)
 // // // var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2]).select(['.*_predicted']);
 // // var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3]).select(['.*_predicted','.*_RMSEs']);//.select(bands.concat(['.*_predicted','.*_RMSEs']));
 // print(predicted0)
