@@ -153,8 +153,8 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
   var coeffs =  ccdcImg.select([coeffKey,rmseKey]);
   var coeffBns = coeffs.bandNames();
   var outBns = coeffs.select(['S1.*']).bandNames().map(function(bn){return ee.String(bn).split('_').slice(1,null).join('_')});
-  
-  //Find the start and end time for the segments
+  print(outBns)
+  //Find the start and end time for the segmeents
   // var tStarts = ccdcImg.select(['.*tStart']);
   var tEnds = ccdcImg.select([tEndKey]);
   
@@ -164,7 +164,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
   
   //Find how many segments there are
   var nSegs = ccdcImg.select([tStartKey]).bandNames().length();
-  print(ccdcImg)
+  
   //Iterate through each segment to pull the correct values
   var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
     n = ee.Number(n);
@@ -194,7 +194,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
     return prev.where(segCoeffs.mask(),segCoeffs);
   },ee.Image.constant(ee.List.repeat(-9999,outBns.length())).rename(outBns)));
   out = out.updateMask(out.neq(-9999));
-  
+  print(ccdcImg)
   timeImg = timeImg.addBands(out);
   return timeImg;
   }
