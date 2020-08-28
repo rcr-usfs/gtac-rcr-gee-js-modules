@@ -4,20 +4,13 @@ var geometry =
     /* displayProperties: [
       {
         "type": "rectangle"
-      },
-      {
-        "type": "rectangle"
       }
     ] */
-    ee.Geometry.MultiPolygon(
-        [[[[-107.28502557958218, 37.95180391281335],
-           [-107.28502557958218, 37.57181970608451],
-           [-106.70549677098843, 37.57181970608451],
-           [-106.70549677098843, 37.95180391281335]]],
-         [[[-118.93183248812555, 36.94269993936479],
-           [-118.93183248812555, 36.74928026456],
-           [-118.63520162875055, 36.74928026456],
-           [-118.63520162875055, 36.94269993936479]]]], null, false);
+    ee.Geometry.Polygon(
+        [[[-118.93183248812555, 36.94269993936479],
+          [-118.93183248812555, 36.74928026456],
+          [-118.63520162875055, 36.74928026456],
+          [-118.63520162875055, 36.94269993936479]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
@@ -80,6 +73,12 @@ args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_
 //Options include: 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'
 var sensorList = [ 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'];
 
+//Which bands/indices to export
+//These will not always be used to find breaks - that is specified below in the ccdcParams
+//Options are: ["blue","green","red","nir","swir1","swir2","NDVI","NBR","NDMI","NDSI","brightness","greenness","wetness","fourth","fifth","sixth","tcAngleBG"]
+//Be sure that any bands in ccdcParams.breakpointBands are in this list
+var exportBands = ["blue","green","red","nir","swir1","swir2","NDVI"];
+
 //Whether to offset the years so the intercept values aren't too large
 //Set to -1900 if you want intercepts to be closer to the mean of the value of the band/index
 //Any pixel with a steep slope will have a very high/low intercept
@@ -134,7 +133,7 @@ var ccdcParams ={
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
 var processedScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args);
-
+print(ee.Image(processedScenes.first()).bandNames())
 //Filter to only include wanted sensors
 processedScenes = processedScenes.filter(ee.Filter.inList('sensor',ee.List(sensorList)));
 
