@@ -32,14 +32,14 @@ args.studyArea = getImagesLib.testAreas.CA;
 // to June 1 of that year.Otherwise, all system:time_starts will default to June 1 of the given year
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-args.startJulian = 1;
-args.endJulian = 365; 
+args.startJulian = 190;
+args.endJulian = 250; 
 
 // Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
 // well. If providing pre-computed stats for cloudScore and TDOM, this does not 
 // matter
-args.startYear = 2019;
+args.startYear = 2010;
 args.endYear = 2019;
 
 // Choose whether to include Landat 7
@@ -138,7 +138,7 @@ Map.addLayer(processedScenes)
 ccdcParams.collection = processedScenes;
 //Run CCDC
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
-
+Map.addLayer(ccdc)
 // //Convert to image stack
 // var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
 // // ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
