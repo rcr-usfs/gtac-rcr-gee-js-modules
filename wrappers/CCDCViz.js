@@ -109,7 +109,7 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
   return img.set('system:time_start',d)
 }));
-Map.addLayer(yearImages)
+// Map.addLayer(yearImages)
 // var studyArea =ccdcImg.geometry();
 // // var yearImages = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,1,365)
 // // .map(getImagesLib.addSAVIandEVI)
@@ -142,14 +142,14 @@ Map.addLayer(yearImages)
 // // coeffs = coeffs.rename(bns)
 // // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
 var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted','.*_RMSEs']);
-// // // var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
+var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1]).select(['.*_predicted']);
 // // // var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2]).select(['.*_predicted']);
 // // var predicted3 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2,3]).select(['.*_predicted','.*_RMSEs']);//.select(bands.concat(['.*_predicted','.*_RMSEs']));
-print(predicted0)
-// // var joined = getImagesLib.joinCollections(predicted0,predicted3);
+// print(predicted0)
+var joined = getImagesLib.joinCollections(predicted0,predicted3);
 // // // joined = getImagesLib.joinCollections(joined,predicted2)
 // // // joined = getImagesLib.joinCollections(joined,predicted3)
-// // Map.addLayer(joined,{},'Predicted With Filling',false)
+Map.addLayer(joined,{},'Predicted With Filling',false)
 // // ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments
 // var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[],0).select(['.*_predicted']);
 // // var predicted1 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1],0).select(['.*_predicted']);
