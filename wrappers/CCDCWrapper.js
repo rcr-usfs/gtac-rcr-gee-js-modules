@@ -42,6 +42,7 @@ args.endJulian = 365;
 args.startYear = 2019;
 args.endYear = 2019;
 
+args.includeSLCOffL7 = true;
 
 // If available, bring in preComputed cloudScore offsets and TDOM stats
 // Set to null if computing on-the-fly is wanted
