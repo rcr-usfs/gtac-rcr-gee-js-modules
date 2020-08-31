@@ -234,7 +234,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   
   harmImg = ee.Algorithms.If(detrended, harmImg.addBands(tBand),harmImg);
   neededCoeffs = ee.Algorithms.If(detrended, neededCoeffs.cat(['.*_SLP']),neededCoeffs);
-  
+ 
   
   harmImg = ee.Image(ee.List(whichHarmonics).iterate(function(n,prev){
     var omImg = tBand.multiply(omega.multiply(n));
@@ -245,39 +245,39 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
     prev = ee.List(prev);
     return prev.cat([ee.String('.*_COS').cat(harmDict.get(n)),ee.String('.*_SIN').cat(harmDict.get(n))]);
   },neededCoeffs);
-  
+ 
   //Ensure just coeffs for ccdc coeffs
   coeffImg = coeffImg.select(['.*_coef.*']).select(neededCoeffs);
+  Map.addLayer(coeffImg)
+  // //Parse through bands to find individual bands that need predicted
+  // var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
+  // actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
+  // var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
  
-  //Parse through bands to find individual bands that need predicted
-  var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
-  actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
-  var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
- 
-  //Apply respective coeffs for each of those bands to predict 
-  var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
-    bn = ee.String(bn);
-    var predictedT = coeffImg.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
-    return predictedT;
-  })).toBands().rename(bnsOut);
+  // //Apply respective coeffs for each of those bands to predict 
+  // var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
+  //   bn = ee.String(bn);
+  //   var predictedT = coeffImg.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
+  //   return predictedT;
+  // })).toBands().rename(bnsOut);
   
-  //Add rmses if specified
-  function getRMSES(){
-  var rmses = ee.Image(ee.List(nRMSEs).iterate(function(n,prev){
-      n = ee.Number(n);
-      var plusBns = bnsOut.map(function(bn){return ee.String(bn).cat('_Plus_').cat(n.format()).cat('_RMSEs')});
-      var minusBns = bnsOut.map(function(bn){return ee.String(bn).cat('_Minus_').cat(n.format()).cat('_RMSEs')});
-      var plus = predicted.add(rmseImg.multiply(n)).rename(plusBns);
-      var minus = predicted.subtract(rmseImg.multiply(n)).rename(minusBns);
-      return ee.Image.cat(prev,plus,minus);
-    },ee.Image()));
-    var rmsesBns = rmses.bandNames().slice(1,null);
-    rmses = rmses.select(rmsesBns);
-    return rmses;
-  }
-  var out = timeImg.addBands(predicted);
-  out = ee.Image(ee.Algorithms.If(addRMSE,out.addBands(getRMSES()),out));
-  return out.updateMask(tBand.mask());
+  // //Add rmses if specified
+  // function getRMSES(){
+  // var rmses = ee.Image(ee.List(nRMSEs).iterate(function(n,prev){
+  //     n = ee.Number(n);
+  //     var plusBns = bnsOut.map(function(bn){return ee.String(bn).cat('_Plus_').cat(n.format()).cat('_RMSEs')});
+  //     var minusBns = bnsOut.map(function(bn){return ee.String(bn).cat('_Minus_').cat(n.format()).cat('_RMSEs')});
+  //     var plus = predicted.add(rmseImg.multiply(n)).rename(plusBns);
+  //     var minus = predicted.subtract(rmseImg.multiply(n)).rename(minusBns);
+  //     return ee.Image.cat(prev,plus,minus);
+  //   },ee.Image()));
+  //   var rmsesBns = rmses.bandNames().slice(1,null);
+  //   rmses = rmses.select(rmsesBns);
+  //   return rmses;
+  // }
+  // var out = timeImg.addBands(predicted);
+  // out = ee.Image(ee.Algorithms.If(addRMSE,out.addBands(getRMSES()),out));
+  // return out.updateMask(tBand.mask());
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to take a given CCDC results stack and predict values for a given time series
