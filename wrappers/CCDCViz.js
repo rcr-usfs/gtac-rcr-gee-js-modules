@@ -270,6 +270,13 @@ function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
   var coss = img.select(['.*_COS.*']);
   coss = coss.select(harmSelect);
   
+  var predicted = whichBands.map(function(bn){
+    bn = ee.String(bn);
+    return ee.Image([intercepts.select(bn.cat('.*')),
+                    slopes.select(bn.cat('.*')),
+                    sins.select(bn.cat('.*')),
+                    coss.select(bn.cat('.*'))]).reduce(ee.Reducer.sum());
+  })
   
 }
 function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
@@ -294,7 +301,7 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
   
   //Predict out the values for each image 
   var img = ee.Image(timeSeries.first());
-  simpleCCDCPredictionWrapper(timeSeries,'year',[1,2])
+  simpleCCDCPredictionWrapper(timeSeries,'year',[1,2,3])
   // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
   // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
   // print(timeSeries);
