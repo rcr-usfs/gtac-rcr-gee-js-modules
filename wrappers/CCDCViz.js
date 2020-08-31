@@ -257,7 +257,8 @@ function simpleCCDCPrediction(img,timeBandName){
   var omega = ee.Number(2.0).multiply(Math.PI);
   
   var intercepts = img.select(['.*_INTP']);
-  print(img)
+  var slopes = img.select(['.*_SLP']).multiply(img.select([timeBandName]));
+  print(slopes)
   
 }
 function simpleCCDCPredictionWrapper(c,timeBandName){
