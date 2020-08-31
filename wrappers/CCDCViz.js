@@ -307,9 +307,9 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
  
 }
 ///////////////////////////////////////////////////////////////////////
-var startYear = 2010;
-var endYear = 2015;
-var bands = ['NDVI'];
+// var startYear = 2010;
+// var endYear = 2015;
+// var bands = ['NDVI'];
 // var idsFolder = 'projects/USFS/LCMS-NFS/CONUS-Ancillary-Data/IDS';
 // var ids = ee.data.getList({id:idsFolder}).map(function(t){return t.id});
 
@@ -403,7 +403,7 @@ var ccdcImg = c;
 // // ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
 // // Map.addLayer(ccdcImg)
 
-var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).map(function(n){
+var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.05).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n).float().rename(['year']);
   var y = n.int16();
