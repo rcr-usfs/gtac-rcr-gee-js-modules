@@ -167,7 +167,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
   
   //Find how many segments there are
   var nSegs = ccdcImg.select([tStartKey]).bandNames().length();
-  
+ 
   //Create a mask stack for a given timage
   var segMask = tBand.gte(tStarts).and(tBand.lt(tEnds)).selfMask().unmask().toArray().arrayRepeat(1, outBns.length()).arrayFlatten([segBns,outBns]).toArray();
   coeffs = coeffs.unmask().toArray().arrayMask(segMask).arrayFlatten([outBns]);//.updateMask(segMask)//.arrayProject([0])
@@ -293,10 +293,10 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
 function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   
   //Add the segment-appropriate coefficients to each time image
-  // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
+  getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
   // timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
   // print(timeSeries)
-  Map.addLayer(timeSeries)
+  // Map.addLayer(timeSeries)
   //Predict out the values for each image 
   // var img = ee.Image(timeSeries.first());
   // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
