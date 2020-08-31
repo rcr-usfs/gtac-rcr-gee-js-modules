@@ -252,28 +252,31 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   return out.updateMask(tBand.mask());
 }
 
-function simpleCCDCPrediction(img,timeBandName,whichHarmonics){
+function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
   //Unit of each harmonic (1 cycle)
   var omega = ee.Number(2.0).multiply(Math.PI);
-  var tBand = img.select([timeBandName])
+  var tBand = img.select([timeBandName]);
   var intercepts = img.select(['.*_INTP']);
   var slopes = img.select(['.*_SLP']).multiply(tBand);
  
   var tOmega = ee.Image(whichHarmonics).multiply(omega).multiply(tBand);
   var cosHarm = tOmega.cos();
-  var sinHarm = tOmega.sin()
+  var sinHarm = tOmega.sin();
   
-  var harmSelect = whichHarmonics.map(function(n){return ee.String('.*').cat(ee.Number(n).format())})
+  var harmSelect = whichHarmonics.map(function(n){return ee.String('.*').cat(ee.Number(n).format())});
   
   var sins = img.select(['.*_SIN.*']);
   sins = sins.select(harmSelect);
   var coss = img.select(['.*_COS.*']);
   coss = coss.select(harmSelect);
-  print(coss)
+  
   
 }
 function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
-  simpleCCDCPrediction(ee.Image(c.first()),timeBandName,whichHarmonics)
+  var whichBands = ee.Image(c.first()).select(['.*_INTP']).bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
+  whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys();
+  print(whichBands)
+  simpleCCDCPrediction(ee.Image(c.first()),timeBandName,whichHarmonics,whichBands)
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 
