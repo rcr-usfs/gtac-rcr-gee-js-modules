@@ -335,7 +335,7 @@ var bands = ['NDVI'];
 var c = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test3');
 var startJulian = c.get('startJulian').getInfo();
 var endJulian = c.get('endJulian').getInfo();
-var startYear = c.get('startYear').getInfo();
+var startYear = c.get('startYear').getInfo()+10;
 var endYear = c.get('endYear').getInfo();
 print(startJulian)
 function getMaxSegs(ccdcImg){
