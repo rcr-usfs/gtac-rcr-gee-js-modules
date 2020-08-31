@@ -332,7 +332,7 @@ var bands = ['NDVI'];
 // Map.addLayer(ids,{},'ids');
 // var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test14');//.reproject('EPSG:5070',null,30);
 // var c = ee.ImageCollection('users/chastainr/CCDC_Collection/CCDC_Collection_imagecoll');
-var c = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test2');
+var c = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test3');
 var startJulian = c.get('startJulian').getInfo();
 var endJulian = c.get('endJulian').getInfo();
 var startYear = c.get('startYear').getInfo();
