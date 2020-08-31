@@ -270,19 +270,19 @@ function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
   var coss = img.select(['.*_COS.*']);
   coss = coss.select(harmSelect);
   
-  var predicted = whichBands.map(function(bn){
+  var predicted = ee.ImageCollection(whichBands.map(function(bn){
     bn = ee.String(bn);
     return ee.Image([intercepts.select(bn.cat('.*')),
                     slopes.select(bn.cat('.*')),
                     sins.select(bn.cat('.*')),
-                    coss.select(bn.cat('.*'))]).reduce(ee.Reducer.sum());
-  })
-  
+                    coss.select(bn.cat('.*'))]).reduce(ee.Reducer.sum()).rename(bn.cat('_predicted'));
+  })).toBands()
+  print(predicted)
 }
 function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
   var whichBands = ee.Image(c.first()).select(['.*_INTP']).bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
   whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys();
-  print(whichBands)
+
   simpleCCDCPrediction(ee.Image(c.first()),timeBandName,whichHarmonics,whichBands)
 }
 ////////////////////////////////////////////////////////////////////////////////////////
