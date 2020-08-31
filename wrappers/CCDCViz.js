@@ -258,7 +258,8 @@ function simpleCCDCPrediction(img,timeBandName){
   
   var intercepts = img.select(['.*_INTP']);
   var slopes = img.select(['.*_SLP']).multiply(img.select([timeBandName]));
-  print(slopes)
+  print(img)
+  // var first = img
   
 }
 function simpleCCDCPredictionWrapper(c,timeBandName){
