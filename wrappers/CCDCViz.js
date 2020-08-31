@@ -282,9 +282,9 @@ function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
 }
 function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
   var whichBands = ee.Image(c.first()).select(['.*_INTP']).bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
-  whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys();
+  whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys().getInfo();
   print(whichBands)
-  var whichBands = ['NDVI']
+  // var whichBands = ['NDVI','nir']
   // var out = simpleCCDCPrediction(ee.Image(c.first()),timeBandName,whichHarmonics,whichBands);
   var out = c.map(function(img){return simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands)});
   Map.addLayer(out.select(['.*_predicted']))
