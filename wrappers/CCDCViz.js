@@ -295,8 +295,8 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
   //Add the segment-appropriate coefficients to each time image
   // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
   // timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
-  print(timeSeries)
-  // Map.addLayer(timeSeries.select(['nir_coefs_SLP']))
+  // print(timeSeries)
+  Map.addLayer(timeSeries)
   //Predict out the values for each image 
   // var img = ee.Image(timeSeries.first());
   // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
