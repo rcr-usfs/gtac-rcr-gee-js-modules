@@ -253,15 +253,15 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
   actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
   var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
- print(bnsOut)
-  // //Apply respective coeffs for each of those bands to predict 
-  // var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
-  //   bn = ee.String(bn);
-  //   var predictedT = coeffImg.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
-  //   return predictedT;
-  // })).toBands().rename(bnsOut);
-  
-  // //Add rmses if specified
+
+  //Apply respective coeffs for each of those bands to predict 
+  var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
+    bn = ee.String(bn);
+    var predictedT = coeffImg.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
+    return predictedT;
+  })).toBands().rename(bnsOut);
+ 
+  //Add rmses if specified
   // function getRMSES(){
   // var rmses = ee.Image(ee.List(nRMSEs).iterate(function(n,prev){
   //     n = ee.Number(n);
@@ -275,9 +275,13 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   //   rmses = rmses.select(rmsesBns);
   //   return rmses;
   // }
-  // var out = timeImg.addBands(predicted);
+  var out = timeImg.addBands(predicted);
+
   // out = ee.Image(ee.Algorithms.If(addRMSE,out.addBands(getRMSES()),out));
-  // return out.updateMask(tBand.mask());
+  out = out.updateMask(tBand.mask());
+ 
+ 
+  return out
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to take a given CCDC results stack and predict values for a given time series
@@ -292,11 +296,11 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
   // print(timeSeries)
   
   //Predict out the values for each image 
-  var img = ee.Image(timeSeries.first());
-  getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
-  // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
+  // var img = ee.Image(timeSeries.first());
+  // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
+  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
   // print(timeSeries.first());
-  // Map.addLayer(timeSeries,{},'time series')
+  Map.addLayer(timeSeries,{},'time series')
   // return timeSeries;
  
 }
