@@ -277,13 +277,14 @@ function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
                     sins.select(bn.cat('.*')),
                     coss.select(bn.cat('.*'))]).reduce(ee.Reducer.sum()).rename(bn.cat('_predicted'));
   })).toBands()
-  print(predicted)
+  return img.addBands(predicted)
 }
 function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
   var whichBands = ee.Image(c.first()).select(['.*_INTP']).bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
   whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys();
 
-  simpleCCDCPrediction(ee.Image(c.first()),timeBandName,whichHarmonics,whichBands)
+  var out = simpleCCDCPrediction(ee.Image(c.first()),timeBandName,whichHarmonics,whichBands);
+  print(out)
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 
