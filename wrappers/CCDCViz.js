@@ -74,7 +74,7 @@ var buildCoefs = function(fit, nSegments,harmonicTag) {
     nSegments = 4;
   }
   if(harmonicTag === null || harmonicTag === undefined){
-    harmonicTag = ['INTP','SLP','COS','SIN','COS2','SIN2','COS3','SIN3'];
+    harmonicTag = ['INTP','SLP','COS1','SIN1','COS2','SIN2','COS3','SIN3'];
   }
   
   
@@ -253,6 +253,11 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
 }
 
 function simpleCCDCPrediction(img,timeBandName){
+  //Unit of each harmonic (1 cycle)
+  var omega = ee.Number(2.0).multiply(Math.PI);
+  
+  var intercepts = img.select(['.*_INTP']);
+  print(img)
   
 }
 function simpleCCDCPredictionWrapper(c,timeBandName){
