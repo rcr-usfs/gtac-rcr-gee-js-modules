@@ -283,6 +283,58 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
  
   return out
 }
+
+function newGetCCDCPrediction(collection,detrended,whichHarmonics,timeBandName,coeffKey,rmseKey){
+  var harmDict = ee.Dictionary({1:'',2:'2',3:'3',4:'4'});
+  if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
+  if(detrended === null || detrended === undefined){detrended = true}
+  if(whichHarmonics === null || whichHarmonics === undefined){whichHarmonics = [1,2,3]};
+  
+  var tBand = collection.select([timeBandName]);
+  var neededCoeffs = ee.List([]);
+  
+  //Unit of each harmonic (1 cycle)
+  var omega = ee.Number(2.0).multiply(Math.PI);
+  
+  //Constant raster for each coefficient
+  //Constant, slope, first harmonic, second harmonic, and third harmonic
+  var harmImg = ee.Image([1]);
+  neededCoeffs = neededCoeffs.cat(['.*_INTP']);
+  
+  harmImg = ee.Algorithms.If(detrended, harmImg.addBands(tBand),harmImg);
+  neededCoeffs = ee.Algorithms.If(detrended, neededCoeffs.cat(['.*_SLP']),neededCoeffs);
+ 
+  
+
+  
+  neededCoeffs = ee.List(whichHarmonics).iterate(function(n,prev){
+    prev = ee.List(prev);
+    return prev.cat([ee.String('.*_COS').cat(harmDict.get(n)),ee.String('.*_SIN').cat(harmDict.get(n))]);
+  },neededCoeffs);
+ 
+  // Ensure just coeffs for ccdc coeffs
+  var coeffImgs = collection.select(['.*_coef.*']).select(neededCoeffs);
+  var coeffImg = ee.Image(coeffImgs.first());
+  
+  var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
+  actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
+  var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
+
+   
+   // harmImg = ee.Image(ee.List(whichHarmonics).iterate(function(n,prev){
+  //   var omImg = tBand.multiply(omega.multiply(n));
+  //   return ee.Image(prev).addBands(omImg.cos()).addBands(omImg.sin());
+  // },harmImg));
+  //Parse through bands to find individual bands that need predicted
+ 
+  // //Apply respective coeffs for each of those bands to predict 
+  // var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
+  //   bn = ee.String(bn);
+  //   var predictedT = coeffImg.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
+  //   return predictedT;
+  // })).toBands().rename(bnsOut);
+  
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to take a given CCDC results stack and predict values for a given time series
 //The ccdcImg is assumed to have coefficients for a set of segments and a tStart and tEnd for 
@@ -297,10 +349,11 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
   
   //Predict out the values for each image 
   // var img = ee.Image(timeSeries.first());
+  newGetCCDCPrediction(timeSeries,detrended,whichHarmonics,timeBandName);//,detrended,whichHarmonics,timeKey,coeffKey,rmseKey)
   // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
-  timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
+  // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
   // print(timeSeries.first());
-  Map.addLayer(timeSeries,{},'time series')
+  // Map.addLayer(timeSeries,{},'time series')
   // return timeSeries;
  
 }
