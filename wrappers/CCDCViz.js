@@ -170,47 +170,13 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
  
   //Create a mask stack for a given timage
   var segMask = tBand.gte(tStarts).and(tBand.lt(tEnds)).unmask().toArray().arrayRepeat(1, outBns.length()).arrayFlatten([segBns,outBns]).toArray();
-  var nullMask = ee.Image(ee.Array(ee.List.repeat(0,outBns.length())))
+  
+  //Create null value mask in case there is no segment for that time period
+  var nullMask = ee.Image(ee.Array(ee.List.repeat(0,outBns.length())));
+  
+  //Mask out any coeffs not within the seg mask
   coeffs = coeffs.unmask().toArray().arrayMask(segMask).arrayCat(nullMask,0).arraySlice(0,0,outBns.length()).arrayFlatten([outBns]);//.updateMask(segMask)//.arrayProject([0])
-  // Map.addLayer(nullMask)
-  // Map.addLayer(coeffs);
-  // Map.addLayer(tStarts);
-  // Map.addLayer(tEnds);
-  // Map.addLayer(tBand)
-  // //Iterate through each segment to pull the correct values
-  // var prev = ee.Image.constant(ee.List.repeat(-9999,outBns.length())).rename(outBns);
-  // // var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
-  //   n = ee.Number(n).byte();
-  //   prev = ee.Image(prev);
-  //   var segBN = ee.String('S').cat(ee.Number(n).byte().format()).cat('_.*');
-  //   var segBNBefore = ee.String('S').cat(ee.Number(n).subtract(1).byte().format()).cat('_.*');
-    
-  //   var segCoeffs = ccdcImg.select([segBN]);
-  //   segCoeffs = segCoeffs.select([coeffKey,rmseKey]);
-    
-  //   //Handle whether to go back to breakpoint for any segement after the first
-  //   var tStarts1 = ccdcImg.select([segBN]);
-  //   tStarts1 = tStarts1.select([tStartKey]);
-    
-  //   //Go back to previous breakpont if the segment n is > 1
-  //   var tStartsGT1T = ccdcImg.select([segBNBefore]);
-  //   tStartsGT1T = tStartsGT1T.select([tEndKey]);
-  //   var tStartsT =ee.Algorithms.If(n.gt(1).and(ee.Number(fillGapBetweenSegments).eq(1)),tStartsGT1T,tStarts1);
-    
-  //   var tEndsT = tEnds.select([segBN]);
-  //   //Mask out segments that the time does not intersect
-  //   var segMaskT  = tBand.gte(tStartsT).and(tBand.lt(tEndsT));
   
-  
-  //   // var segMaskT = segMask.select([segBN]);
-  //   segCoeffs = segCoeffs.updateMask(segMaskT);
-  //   segCoeffs = prev.where(segCoeffs.mask(),segCoeffs);
-  //   prev = segCoeffs
-  //   // return segCoeffs;
-  // }
-  // // ,prev));
-  // out = out.updateMask(out.neq(-9999));
-
   timeImg = timeImg.addBands(coeffs);
   return timeImg;
   }
@@ -239,7 +205,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   
   harmImg = ee.Algorithms.If(detrended, harmImg.addBands(tBand),harmImg);
   neededCoeffs = ee.Algorithms.If(detrended, neededCoeffs.cat(['.*_SLP']),neededCoeffs);
- 
+  
   
   harmImg = ee.Image(ee.List(whichHarmonics).iterate(function(n,prev){
     var omImg = tBand.multiply(omega.multiply(n));
@@ -250,44 +216,42 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
     prev = ee.List(prev);
     return prev.cat([ee.String('.*_COS').cat(harmDict.get(n)),ee.String('.*_SIN').cat(harmDict.get(n))]);
   },neededCoeffs);
- 
+  
   //Ensure just coeffs for ccdc coeffs
   coeffImg = coeffImg.select(['.*_coef.*']).select(neededCoeffs);
-
+ Map.addLayer(coeffImg)
   //Parse through bands to find individual bands that need predicted
   var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
   actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
   var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
-
+ 
   //Apply respective coeffs for each of those bands to predict 
   var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
     bn = ee.String(bn);
     var predictedT = coeffImg.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
     return predictedT;
   })).toBands().rename(bnsOut);
- 
+  
   //Add rmses if specified
-  // function getRMSES(){
-  // var rmses = ee.Image(ee.List(nRMSEs).iterate(function(n,prev){
-  //     n = ee.Number(n);
-  //     var plusBns = bnsOut.map(function(bn){return ee.String(bn).cat('_Plus_').cat(n.format()).cat('_RMSEs')});
-  //     var minusBns = bnsOut.map(function(bn){return ee.String(bn).cat('_Minus_').cat(n.format()).cat('_RMSEs')});
-  //     var plus = predicted.add(rmseImg.multiply(n)).rename(plusBns);
-  //     var minus = predicted.subtract(rmseImg.multiply(n)).rename(minusBns);
-  //     return ee.Image.cat(prev,plus,minus);
-  //   },ee.Image()));
-  //   var rmsesBns = rmses.bandNames().slice(1,null);
-  //   rmses = rmses.select(rmsesBns);
-  //   return rmses;
-  // }
+  function getRMSES(){
+  var rmses = ee.Image(ee.List(nRMSEs).iterate(function(n,prev){
+      n = ee.Number(n);
+      var plusBns = bnsOut.map(function(bn){return ee.String(bn).cat('_Plus_').cat(n.format()).cat('_RMSEs')});
+      var minusBns = bnsOut.map(function(bn){return ee.String(bn).cat('_Minus_').cat(n.format()).cat('_RMSEs')});
+      var plus = predicted.add(rmseImg.multiply(n)).rename(plusBns);
+      var minus = predicted.subtract(rmseImg.multiply(n)).rename(minusBns);
+      return ee.Image.cat(prev,plus,minus);
+    },ee.Image()));
+    var rmsesBns = rmses.bandNames().slice(1,null);
+    rmses = rmses.select(rmsesBns);
+    return rmses;
+  }
   var out = timeImg.addBands(predicted);
-  print(out)
-  // out = ee.Image(ee.Algorithms.If(addRMSE,out.addBands(getRMSES()),out));
-  out = out.updateMask(tBand.mask());
-  // Map.addLayer(out)
- 
-  return out
+  out = ee.Image(ee.Algorithms.If(addRMSE,out.addBands(getRMSES()),out));
+  Map.addLayer(out)
+  return out.updateMask(tBand.mask());
 }
+////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to take a given CCDC results stack and predict values for a given time series
@@ -300,11 +264,10 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
   //Add the segment-appropriate coefficients to each time image
   // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
   timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
-  print(timeSeries)
-  Map.addLayer(timeSeries)
+  
   //Predict out the values for each image 
-  // var img = ee.Image(timeSeries.first());
-  // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
+  var img = ee.Image(timeSeries.first());
+  getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
   // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
   // print(timeSeries);
   // Map.addLayer(timeSeries,{},'time series')
@@ -314,7 +277,7 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
 ///////////////////////////////////////////////////////////////////////
 // var startYear = 2010;
 // var endYear = 2015;
-// var bands = ['NDVI'];
+var bands = ['NDVI'];
 // var idsFolder = 'projects/USFS/LCMS-NFS/CONUS-Ancillary-Data/IDS';
 // var ids = ee.data.getList({id:idsFolder}).map(function(t){return t.id});
 
@@ -354,17 +317,18 @@ Map.addLayer(c)
 // c = c.mosaic();
 var ccdcImg = c;
 // // print(ccdcImg)
-// var selectBands = bands.map(function(b){return '.*'+b+'.*'});
+var selectBands = bands.map(function(b){return '.*'+b+'.*'});
 
-// selectBands = selectBands.concat(['.*tStart','.*_changeProb']);
+selectBands = selectBands.concat(['.*tStart','.*_changeProb']);
 
-// var tEnds = ccdcImg.select(['.*tEnd']);
-// var tBreaks = ccdcImg.select(['.*tBreak']);
-// tBreaks = tBreaks.where(tBreaks.eq(0),tEnds);
+var tEnds = ccdcImg.select(['.*tEnd']);
+var tBreaks = ccdcImg.select(['.*tBreak']);
+tBreaks = tBreaks.where(tBreaks.eq(0),tEnds);
 
 // ccdcImg = ccdcImg.select(selectBands);
 
-// ccdcImg = ee.Image.cat([ccdcImg,tEnds,tBreaks])
+// ccdcImg = ee.Image.cat([ccdcImg,tEnds,tBreaks]);
+// print(ccdcImg)
 // // print(ccdcImg.bandNames())
 // Map.addLayer(ccdcImg,{},'CCDC Img',false);
 // // var change = dLib.getCCDCChange2(ccdcImg);
