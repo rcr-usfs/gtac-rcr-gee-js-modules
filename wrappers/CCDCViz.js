@@ -169,8 +169,11 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
   var nSegs = ccdcImg.select([tStartKey]).bandNames().length();
  
   //Create a mask stack for a given timage
-  var segMask = tBand.gte(tStarts).and(tBand.lt(tEnds)).selfMask().unmask().toArray().arrayRepeat(1, outBns.length()).arrayFlatten([segBns,outBns]).toArray();
+  var segMask = tBand.gte(tStarts).and(tBand.lt(tEnds)).unmask().toArray().arrayRepeat(1, outBns.length()).arrayFlatten([segBns,outBns]).toArray();
+  var nullMask = ee.Image(ee.List.repeat(0,outBns.length()))
   // coeffs = coeffs.unmask().toArray().arrayMask(segMask).arrayFlatten([outBns]);//.updateMask(segMask)//.arrayProject([0])
+  Map.addLayer(nullMask)
+  // Map.addLayer(segMask);
   Map.addLayer(tStarts);
   Map.addLayer(tEnds);
   Map.addLayer(tBand)
