@@ -146,7 +146,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
   if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
   if(fillGapBetweenSegments === null || fillGapBetweenSegments === undefined){fillGapBetweenSegments = 1}
   if(tStartKey === null || tStartKey === undefined){tStartKey = '.*tStart'}
-  if(tEndKey === null || tEndKey === undefined){tEndKey = '.*tBreak'}
+  if(tEndKey === null || tEndKey === undefined){tEndKey = '.*tEnd'}
   if(coeffKey === null || coeffKey === undefined){coeffKey = '.*_coef.*'}
   if(rmseKey === null || rmseKey === undefined){rmseKey = '.*_rmse'}
   //Pop off the coefficients and find the output band names
@@ -276,83 +276,32 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   //   return rmses;
   // }
   var out = timeImg.addBands(predicted);
-
+  print(out)
   // out = ee.Image(ee.Algorithms.If(addRMSE,out.addBands(getRMSES()),out));
   out = out.updateMask(tBand.mask());
- 
+  // Map.addLayer(out)
  
   return out
 }
 
-function newGetCCDCPrediction(collection,detrended,whichHarmonics,timeBandName,coeffKey,rmseKey){
-  var harmDict = ee.Dictionary({1:'',2:'2',3:'3',4:'4'});
-  if(timeBandName === null || timeBandName === undefined){timeBandName = 'year'}
-  if(detrended === null || detrended === undefined){detrended = true}
-  if(whichHarmonics === null || whichHarmonics === undefined){whichHarmonics = [1,2,3]};
-  
-  var tBand = collection.select([timeBandName]);
-  var neededCoeffs = ee.List([]);
-  
-  //Unit of each harmonic (1 cycle)
-  var omega = ee.Number(2.0).multiply(Math.PI);
-  
-  //Constant raster for each coefficient
-  //Constant, slope, first harmonic, second harmonic, and third harmonic
-  var harmImg = ee.Image([1]);
-  neededCoeffs = neededCoeffs.cat(['.*_INTP']);
-  
-  harmImg = ee.Algorithms.If(detrended, harmImg.addBands(tBand),harmImg);
-  neededCoeffs = ee.Algorithms.If(detrended, neededCoeffs.cat(['.*_SLP']),neededCoeffs);
- 
-  
-
-  
-  neededCoeffs = ee.List(whichHarmonics).iterate(function(n,prev){
-    prev = ee.List(prev);
-    return prev.cat([ee.String('.*_COS').cat(harmDict.get(n)),ee.String('.*_SIN').cat(harmDict.get(n))]);
-  },neededCoeffs);
- 
-  // Ensure just coeffs for ccdc coeffs
-  var coeffImgs = collection.select(['.*_coef.*']).select(neededCoeffs);
-  var coeffImg = ee.Image(coeffImgs.first());
-  
-  var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
-  actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
-  var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
-
-   
-   // harmImg = ee.Image(ee.List(whichHarmonics).iterate(function(n,prev){
-  //   var omImg = tBand.multiply(omega.multiply(n));
-  //   return ee.Image(prev).addBands(omImg.cos()).addBands(omImg.sin());
-  // },harmImg));
-  //Parse through bands to find individual bands that need predicted
- 
-  // //Apply respective coeffs for each of those bands to predict 
-  // var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
-  //   bn = ee.String(bn);
-  //   var predictedT = coeffImg.select([bn.cat('.*')]).multiply(harmImg).reduce(ee.Reducer.sum());
-  //   return predictedT;
-  // })).toBands().rename(bnsOut);
-  
-}
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to take a given CCDC results stack and predict values for a given time series
 //The ccdcImg is assumed to have coefficients for a set of segments and a tStart and tEnd for 
 //each segment. 
 //It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
+
 function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   
   //Add the segment-appropriate coefficients to each time image
   // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
-  timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
-  // print(timeSeries)
-  
+  // timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
+  print(timeSeries)
+  // Map.addLayer(timeSeries.select(['nir_coefs_SLP']))
   //Predict out the values for each image 
   // var img = ee.Image(timeSeries.first());
-  newGetCCDCPrediction(timeSeries,detrended,whichHarmonics,timeBandName);//,detrended,whichHarmonics,timeKey,coeffKey,rmseKey)
   // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
   // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
-  // print(timeSeries.first());
+  // print(timeSeries);
   // Map.addLayer(timeSeries,{},'time series')
   // return timeSeries;
  
@@ -376,8 +325,11 @@ var bands = ['NDVI'];
 // var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test14');//.reproject('EPSG:5070',null,30);
 // var c = ee.ImageCollection('users/chastainr/CCDC_Collection/CCDC_Collection_imagecoll');
 var c = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test2');
-
-
+var startJulian = c.get('startJulian').getInfo();
+var endJulian = c.get('endJulian').getInfo();
+var startYear = c.get('startYear').getInfo();
+var endYear = c.get('endYear').getInfo();
+print(startJulian)
 function getMaxSegs(ccdcImg){
   var scale = ccdcImg.projection().nominalScale();
   var geo = ccdcImg.geometry();
@@ -459,6 +411,8 @@ var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.1).ma
   var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
   return img.set('system:time_start',d)
 }));
+yearImages = yearImages.filter(ee.Filter.calendarRange(startYear,endYear,'year'))
+                      .filter(ee.Filter.calendarRange(startJulian,endJulian))
 // Map.addLayer(yearImages)
 // var studyArea =ccdcImg.geometry();
 // // var yearImages = getImagesLib.getProcessedLandsatScenes(studyArea,startYear,endYear,1,365)
