@@ -248,12 +248,12 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
  
   //Ensure just coeffs for ccdc coeffs
   coeffImg = coeffImg.select(['.*_coef.*']).select(neededCoeffs);
-  Map.addLayer(coeffImg)
-  // //Parse through bands to find individual bands that need predicted
-  // var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
-  // actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
-  // var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
- 
+
+  //Parse through bands to find individual bands that need predicted
+  var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
+  actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
+  var bnsOut = actualBandNames.map(function(bn){return ee.String(bn).cat('_predicted')});
+ print(bnsOut)
   // //Apply respective coeffs for each of those bands to predict 
   // var predicted = ee.ImageCollection(actualBandNames.map(function(bn){
   //   bn = ee.String(bn);
