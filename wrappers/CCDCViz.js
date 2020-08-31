@@ -170,13 +170,13 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,timeBandName, fillGapBetweenSegments,t
  
   //Create a mask stack for a given timage
   var segMask = tBand.gte(tStarts).and(tBand.lt(tEnds)).unmask().toArray().arrayRepeat(1, outBns.length()).arrayFlatten([segBns,outBns]).toArray();
-  var nullMask = ee.Image(ee.List.repeat(0,outBns.length()))
-  // coeffs = coeffs.unmask().toArray().arrayMask(segMask).arrayFlatten([outBns]);//.updateMask(segMask)//.arrayProject([0])
-  Map.addLayer(nullMask)
-  // Map.addLayer(segMask);
-  Map.addLayer(tStarts);
-  Map.addLayer(tEnds);
-  Map.addLayer(tBand)
+  var nullMask = ee.Image(ee.Array(ee.List.repeat(0,outBns.length())))
+  coeffs = coeffs.unmask().toArray().arrayMask(segMask).arrayCat(nullMask,0).arraySlice(0,0,outBns.length()).arrayFlatten([outBns]);//.updateMask(segMask)//.arrayProject([0])
+  // Map.addLayer(nullMask)
+  // Map.addLayer(coeffs);
+  // Map.addLayer(tStarts);
+  // Map.addLayer(tEnds);
+  // Map.addLayer(tBand)
   // //Iterate through each segment to pull the correct values
   // var prev = ee.Image.constant(ee.List.repeat(-9999,outBns.length())).rename(outBns);
   // // var out = ee.Image(ee.List.sequence(1,nSegs).iterate(function(n,prev){
@@ -298,10 +298,10 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
 function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   
   //Add the segment-appropriate coefficients to each time image
-  getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
-  // timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
-  // print(timeSeries)
-  // Map.addLayer(timeSeries)
+  // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
+  timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
+  print(timeSeries)
+  Map.addLayer(timeSeries)
   //Predict out the values for each image 
   // var img = ee.Image(timeSeries.first());
   // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
@@ -408,7 +408,7 @@ var ccdcImg = c;
 // // ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
 // // Map.addLayer(ccdcImg)
 
-var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear+1,0.05).map(function(n){
+var yearImages = ee.ImageCollection(ee.List.sequence(startYear+1,endYear+1,0.05).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n).float().rename(['year']);
   var y = n.int16();
