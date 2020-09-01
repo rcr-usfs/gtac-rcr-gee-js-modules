@@ -315,8 +315,11 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   coeffs = coeffs.arrayMask(tMask).arrayProject([2,1]).arrayTranspose(1,0).arrayFlatten([bns,harmonicTag]);
   return timeImg.addBands(coeffs);
 }
-function predictCCDC(ccdcImg,timeImgs){//,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
+function predictCCDC(ccdcImg,timeImgs,detrended,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   // var timeImg = ee.Image(timeImgs.first());
+  var timeBandName = ee.Image(timeImgs.first()).bandNames();
+
+  
   // getCCDCSegCoeffs(timeImg,ccdcImg)
   // Add the segment-appropriate coefficients to each time image
   timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
@@ -329,7 +332,7 @@ function predictCCDC(ccdcImg,timeImgs){//,harmonicTag,timeBandName,detrended,whi
   // simpleCCDCPredictionWrapper(timeSeries,'year',[1,2,3]);
   // Map.addLayer(predicted)
   // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
-  timeImgs = timeImgs.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
+  timeImgs = timeImgs.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics)});
   print(timeImgs);
   // Map.addLayer(timeSeries,{},'time series')
   // return timeSeries;
@@ -478,7 +481,7 @@ yearImages = yearImages.filter(ee.Filter.calendarRange(startYear,endYear,'year')
 // // coeffs = coeffs.rename(bns)
 // // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
 // var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted','.*_RMSEs']);
-var predicted1 = predictCCDC(ccdcImg,yearImages)//.select(['.*_predicted']);
+var predicted1 = predictCCDC(ccdcImg,yearImages,true,[1])//.select(['.*_predicted']);
 //predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
 // print(predicted1)
 // // // var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2]).select(['.*_predicted']);
