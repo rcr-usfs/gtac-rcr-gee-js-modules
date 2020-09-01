@@ -304,13 +304,13 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   // coeffs = coeffs.select([0])
   var bns = coeffs.bandNames();
   var nBns = bns.length()
-  var harmonicTag = ['INTP','SLP','COS1','SIN1','COS2','SIN2','COS3','SIN3'];
+  var harmonicTag = ee.List(['INTP','SLP','COS1','SIN1','COS2','SIN2','COS3','SIN3']);
   coeffs = coeffs.toArray(1);
   var tStarts = ccdcImg.select(tStartKeys);
   var tEnds = ccdcImg.select(tEndKeys);
   
   var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,1);
-  coeffs = coeffs.arrayMask(tMask).arrayProject([1]).arrayReshape([nBns,harmonicTag.length]);
+  coeffs = coeffs.arrayMask(tMask).arrayProject([1]).arrayReshape([nBns,harmonicTag.length()]);
   Map.addLayer(tMask)
   Map.addLayer(coeffs)
 }
