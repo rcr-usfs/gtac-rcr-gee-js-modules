@@ -302,7 +302,15 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var tEndKeys = ['tEnd'];
   var coeffs = ccdcImg.select(coeffKeys);
   var tStarts = ccdcImg.select(tStartKeys);
-  Map.addLayer(tStarts)
+  var tEnds = ccdcImg.select(tEndKeys);
+  
+  var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg));
+  // Map.addLayer(tStarts);
+  // Map.addLayer(tEnds);
+  // Map.addLayer(tMask)
+  // Map.addLayer(timeImg)
+  Map.addLayer(coeffs)
+  Map.addLayer(coeffs.toArray(1))
 }
 function predictCCDC(ccdcImg,timeImgs){//,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   var timeImg = ee.Image(timeImgs.first());
@@ -345,7 +353,7 @@ var bands = ['NDVI'];
 var ccdcImg = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test3');
 var startJulian = ccdcImg.get('startJulian').getInfo();
 var endJulian = ccdcImg.get('endJulian').getInfo();
-var startYear = ccdcImg.get('startYear').getInfo()+10;
+var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
 // print(startJulian)
 // function getMaxSegs(ccdcImg){
@@ -422,7 +430,7 @@ var endYear = ccdcImg.get('endYear').getInfo();
 // // ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
 // // Map.addLayer(ccdcImg)
 
-var yearImages = ee.ImageCollection(ee.List.sequence(startYear+1,endYear+1,0.05).map(function(n){
+var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.05).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n).float().rename(['year']);
   var y = n.int16();
