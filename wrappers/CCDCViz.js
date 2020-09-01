@@ -306,6 +306,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var harmonicTag = ee.List(['INTP','SLP','COS1','SIN1','COS2','SIN2','COS3','SIN3']);
   var outBns = ee.List([]);
   
+  //Get coeffs, start and end times
   coeffs = coeffs.toArray(2);
   var tStarts = ccdcImg.select(tStartKeys);
   var tEnds = ccdcImg.select(tEndKeys);
@@ -315,9 +316,11 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   return timeImg.addBands(coeffs);
 }
 function predictCCDC(ccdcImg,timeImgs){//,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
-  var timeImg = ee.Image(timeImgs.first());
-  getCCDCSegCoeffs(timeImg,ccdcImg)
-  //Add the segment-appropriate coefficients to each time image
+  // var timeImg = ee.Image(timeImgs.first());
+  // getCCDCSegCoeffs(timeImg,ccdcImg)
+  // Add the segment-appropriate coefficients to each time image
+  timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
+ 
   // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
   // timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
   
@@ -326,8 +329,8 @@ function predictCCDC(ccdcImg,timeImgs){//,harmonicTag,timeBandName,detrended,whi
   // simpleCCDCPredictionWrapper(timeSeries,'year',[1,2,3]);
   // Map.addLayer(predicted)
   // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
-  // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
-  // print(timeSeries);
+  timeImgs = timeImgs.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
+  print(timeImgs);
   // Map.addLayer(timeSeries,{},'time series')
   // return timeSeries;
  
