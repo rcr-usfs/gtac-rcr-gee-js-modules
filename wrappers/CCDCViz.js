@@ -314,6 +314,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   
   var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,1).arrayRepeat(2,1);
   coeffs = coeffs.arrayMask(tMask).arrayProject([2,1]).arrayTranspose(1,0).arrayFlatten([bns,harmonicTag]);
+  coeffs = coeffs.updateMask(coeffs.reduce(ee.Reducer.max()).neq(0))
   return timeImg.addBands(coeffs);
 }
 
