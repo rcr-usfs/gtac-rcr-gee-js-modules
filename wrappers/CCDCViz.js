@@ -301,16 +301,19 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var tStartKeys = ['tStart'];
   var tEndKeys = ['tEnd'];
   var coeffs = ccdcImg.select(coeffKeys);
+  
+  var nBns = coeffs.bandNames().length();
+  coeffs = coeffs.toArray(1);
   var tStarts = ccdcImg.select(tStartKeys);
   var tEnds = ccdcImg.select(tEndKeys);
   
-  var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg));
-  // Map.addLayer(tStarts);
+  var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,nBns.multiply(8));
+  Map.addLayer(tMask);
   // Map.addLayer(tEnds);
   // Map.addLayer(tMask)
   // Map.addLayer(timeImg)
   Map.addLayer(coeffs)
-  Map.addLayer(coeffs.toArray(1))
+  Map.addLayer(coeffs.arrayMask(tMask))
 }
 function predictCCDC(ccdcImg,timeImgs){//,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   var timeImg = ee.Image(timeImgs.first());
@@ -430,7 +433,7 @@ var endYear = ccdcImg.get('endYear').getInfo();
 // // ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
 // // Map.addLayer(ccdcImg)
 
-var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.05).map(function(n){
+var yearImages = ee.ImageCollection(ee.List.sequence(startYear+1,endYear,0.05).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n).float().rename(['year']);
   var y = n.int16();
