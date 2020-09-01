@@ -296,16 +296,24 @@ function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
 //The ccdcImg is assumed to have coefficients for a set of segments and a tStart and tEnd for 
 //each segment. 
 //It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
-
-function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
-  
+function getCCDCSegCoeffs(timeImg,ccdcImg){
+  var coeffKeys = ['.*_coefs'];
+  var tStartKeys = ['tStart'];
+  var tEndKeys = ['tEnd'];
+  var coeffs = ccdcImg.select(coeffKeys);
+  var tStarts = ccdcImg.select(tStartKeys);
+  Map.addLayer(tStarts)
+}
+function predictCCDC(ccdcImg,timeImgs){//,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
+  var timeImg = ee.Image(timeImgs.first());
+  getCCDCSegCoeffs(timeImg,ccdcImg)
   //Add the segment-appropriate coefficients to each time image
   // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
-  timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
+  // timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
   
   //Predict out the values for each image 
 
-  simpleCCDCPredictionWrapper(timeSeries,'year',[1,2,3]);
+  // simpleCCDCPredictionWrapper(timeSeries,'year',[1,2,3]);
   // Map.addLayer(predicted)
   // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
   // timeSeries = timeSeries.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)});
@@ -314,6 +322,8 @@ function predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,which
   // return timeSeries;
  
 }
+
+
 ///////////////////////////////////////////////////////////////////////
 // var startYear = 2010;
 // var endYear = 2015;
@@ -332,38 +342,38 @@ var bands = ['NDVI'];
 // Map.addLayer(ids,{},'ids');
 // var ccdcImg = ee.Image('users/ianhousman/test/CCDC_Collection/CCDC_Test14');//.reproject('EPSG:5070',null,30);
 // var c = ee.ImageCollection('users/chastainr/CCDC_Collection/CCDC_Collection_imagecoll');
-var c = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test3');
-var startJulian = c.get('startJulian').getInfo();
-var endJulian = c.get('endJulian').getInfo();
-var startYear = c.get('startYear').getInfo()+10;
-var endYear = c.get('endYear').getInfo();
-print(startJulian)
-function getMaxSegs(ccdcImg){
-  var scale = ccdcImg.projection().nominalScale();
-  var geo = ccdcImg.geometry();
-  var nSegs = ccdcImg.select([0]).arrayLength(0);
-  var maxSegs = ee.Dictionary(nSegs.reduceRegion(ee.Reducer.max(),geo, scale,null,null, true,1e13,2)).values().get(0);
-  return maxSegs;
-}
-c =  buildCcdcImage(c,getMaxSegs(c).getInfo())
+var ccdcImg = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test3');
+var startJulian = ccdcImg.get('startJulian').getInfo();
+var endJulian = ccdcImg.get('endJulian').getInfo();
+var startYear = ccdcImg.get('startYear').getInfo()+10;
+var endYear = ccdcImg.get('endYear').getInfo();
+// print(startJulian)
+// function getMaxSegs(ccdcImg){
+//   var scale = ccdcImg.projection().nominalScale();
+//   var geo = ccdcImg.geometry();
+//   var nSegs = ccdcImg.select([0]).arrayLength(0);
+//   var maxSegs = ee.Dictionary(nSegs.reduceRegion(ee.Reducer.max(),geo, scale,null,null, true,1e13,2)).values().get(0);
+//   return maxSegs;
+// }
+// c =  buildCcdcImage(c,getMaxSegs(c).getInfo())
 
-Map.addLayer(c)
-// c = c.map(function(img){
-//   var bCount = ee.Image(img).bandNames().length();
-//   return img.set('bandCount',bCount);
-// });
-// print(c)
-// c = c.filter(ee.Filter.eq('bandCount',576));
-// c = c.mosaic();
-var ccdcImg = c;
-// // print(ccdcImg)
-var selectBands = bands.map(function(b){return '.*'+b+'.*'});
+// Map.addLayer(c)
+// // c = c.map(function(img){
+// //   var bCount = ee.Image(img).bandNames().length();
+// //   return img.set('bandCount',bCount);
+// // });
+// // print(c)
+// // c = c.filter(ee.Filter.eq('bandCount',576));
+// // c = c.mosaic();
+// var ccdcImg = c;
+// // // print(ccdcImg)
+// var selectBands = bands.map(function(b){return '.*'+b+'.*'});
 
-selectBands = selectBands.concat(['.*tStart','.*_changeProb']);
+// selectBands = selectBands.concat(['.*tStart','.*_changeProb']);
 
-var tEnds = ccdcImg.select(['.*tEnd']);
-var tBreaks = ccdcImg.select(['.*tBreak']);
-tBreaks = tBreaks.where(tBreaks.eq(0),tEnds);
+// var tEnds = ccdcImg.select(['.*tEnd']);
+// var tBreaks = ccdcImg.select(['.*tBreak']);
+// tBreaks = tBreaks.where(tBreaks.eq(0),tEnds);
 
 // ccdcImg = ccdcImg.select(selectBands);
 
@@ -455,7 +465,7 @@ yearImages = yearImages.filter(ee.Filter.calendarRange(startYear,endYear,'year')
 // // coeffs = coeffs.rename(bns)
 // // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
 // var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted','.*_RMSEs']);
-var predicted1 = predictCCDC(ccdcImg,yearImages,null,'year',true,[1])//.select(['.*_predicted']);
+var predicted1 = predictCCDC(ccdcImg,yearImages)//.select(['.*_predicted']);
 //predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
 // print(predicted1)
 // // // var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2]).select(['.*_predicted']);
