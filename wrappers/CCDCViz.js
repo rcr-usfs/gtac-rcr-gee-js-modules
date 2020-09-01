@@ -292,19 +292,17 @@ function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
 ////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////
-//Function to take a given CCDC results stack and predict values for a given time series
-//The ccdcImg is assumed to have coefficients for a set of segments and a tStart and tEnd for 
-//each segment. 
+//Function to get the coeffs corresponding to a given date on a pixel-wise basis
+//The raw CCDC image is expected
 //It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
 function getCCDCSegCoeffs(timeImg,ccdcImg){
   var coeffKeys = ['.*_coefs'];
   var tStartKeys = ['tStart'];
   var tEndKeys = ['tEnd'];
+  
   var coeffs = ccdcImg.select(coeffKeys);
-  // coeffs = coeffs.select([0])
   var bns = coeffs.bandNames();
   var nBns = bns.length();
-  print(bns)
   var harmonicTag = ee.List(['INTP','SLP','COS1','SIN1','COS2','SIN2','COS3','SIN3']);
   var outBns = ee.List([]);
   
@@ -314,8 +312,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   
   var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,1).arrayRepeat(2,1);
   coeffs = coeffs.arrayMask(tMask).arrayProject([2,1]).arrayTranspose(1,0).arrayFlatten([bns,harmonicTag]);
-  Map.addLayer(tMask)
-  Map.addLayer(coeffs)
+  return timeImg.addBands(coeffs);
 }
 function predictCCDC(ccdcImg,timeImgs){//,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   var timeImg = ee.Image(timeImgs.first());
