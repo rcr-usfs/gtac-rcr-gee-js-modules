@@ -302,13 +302,15 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var tEndKeys = ['tEnd'];
   var coeffs = ccdcImg.select(coeffKeys);
   // coeffs = coeffs.select([0])
-  var nBns = coeffs.bandNames().length();
+  var bns = coeffs.bandNames();
+  var nBns = bns.length()
+  var harmonicTag = ['INTP','SLP','COS1','SIN1','COS2','SIN2','COS3','SIN3'];
   coeffs = coeffs.toArray(1);
   var tStarts = ccdcImg.select(tStartKeys);
   var tEnds = ccdcImg.select(tEndKeys);
   
   var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,1);
-  coeffs = coeffs.arrayMask(tMask);
+  coeffs = coeffs.arrayMask(tMask).arrayProject([1]).arrayReshape([]);
   Map.addLayer(tMask)
   Map.addLayer(coeffs)
 }
