@@ -310,7 +310,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var tEnds = ccdcImg.select(tEndKeys);
   
   var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,1);
-  coeffs = coeffs.arrayMask(tMask).arrayProject([1]).arrayReshape([]);
+  coeffs = coeffs.arrayMask(tMask).arrayProject([1]).arrayReshape([nBns,harmonicTag.length]);
   Map.addLayer(tMask)
   Map.addLayer(coeffs)
 }
