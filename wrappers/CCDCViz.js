@@ -301,19 +301,16 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var tStartKeys = ['tStart'];
   var tEndKeys = ['tEnd'];
   var coeffs = ccdcImg.select(coeffKeys);
-  
+  // coeffs = coeffs.select([0])
   var nBns = coeffs.bandNames().length();
   coeffs = coeffs.toArray(1);
   var tStarts = ccdcImg.select(tStartKeys);
   var tEnds = ccdcImg.select(tEndKeys);
   
-  var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,nBns.multiply(8));
-  Map.addLayer(tMask);
-  // Map.addLayer(tEnds);
-  // Map.addLayer(tMask)
-  // Map.addLayer(timeImg)
+  var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,1);
+  coeffs = coeffs.arrayMask(tMask);
+  Map.addLayer(tMask)
   Map.addLayer(coeffs)
-  Map.addLayer(coeffs.arrayMask(tMask))
 }
 function predictCCDC(ccdcImg,timeImgs){//,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   var timeImg = ee.Image(timeImgs.first());
