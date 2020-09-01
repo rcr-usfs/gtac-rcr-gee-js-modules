@@ -219,7 +219,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   
   //Ensure just coeffs for ccdc coeffs
   coeffImg = coeffImg.select(['.*_coef.*']).select(neededCoeffs);
- Map.addLayer(coeffImg)
+// Map.addLayer(coeffImg)
   //Parse through bands to find individual bands that need predicted
   var actualBandNames = coeffImg.bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
   actualBandNames = ee.Dictionary(actualBandNames.reduce(ee.Reducer.frequencyHistogram())).keys();
@@ -248,7 +248,7 @@ function getCCDCPrediction(timeImg,coeffImg,timeBandName,detrended,whichHarmonic
   }
   var out = timeImg.addBands(predicted);
   out = ee.Image(ee.Algorithms.If(addRMSE,out.addBands(getRMSES()),out));
-  Map.addLayer(out)
+  // Map.addLayer(out)
   return out.updateMask(tBand.mask());
 }
 
@@ -260,8 +260,8 @@ function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
   var slopes = img.select(['.*_SLP']).multiply(tBand);
  
   var tOmega = ee.Image(whichHarmonics).multiply(omega).multiply(tBand);
-  var cosHarm = tOmega.cos();
-  var sinHarm = tOmega.sin();
+  // var cosHarm = tOmega.cos();
+  // var sinHarm = tOmega.sin();
   
   var harmSelect = whichHarmonics.map(function(n){return ee.String('.*').cat(ee.Number(n).format())});
   
@@ -275,8 +275,9 @@ function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
     bn = ee.String(bn);
     return ee.Image([intercepts.select(bn.cat('.*')),
                     slopes.select(bn.cat('.*')),
-                    sins.select(bn.cat('.*')),
-                    coss.select(bn.cat('.*'))]).reduce(ee.Reducer.sum());
+                    sins.select(bn.cat('.*')).multiply(tOmega.sin()),
+                    coss.select(bn.cat('.*')).multiply(tOmega.cos())
+                    ]).reduce(ee.Reducer.sum());
   })).toBands().rename(outBns);
   return img.addBands(predicted);
 }
@@ -315,6 +316,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   coeffs = coeffs.arrayMask(tMask).arrayProject([2,1]).arrayTranspose(1,0).arrayFlatten([bns,harmonicTag]);
   return timeImg.addBands(coeffs);
 }
+
 function predictCCDC(ccdcImg,timeImgs,detrended,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   // var timeImg = ee.Image(timeImgs.first());
   var timeBandName = ee.Image(timeImgs.first()).bandNames();
@@ -323,7 +325,7 @@ function predictCCDC(ccdcImg,timeImgs,detrended,whichHarmonics){//,fillGapBetwee
   // getCCDCSegCoeffs(timeImg,ccdcImg)
   // Add the segment-appropriate coefficients to each time image
   timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
- 
+ simpleCCDCPredictionWrapper(timeImgs,'year',[1,2,3])
   // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
   // timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
   
@@ -332,8 +334,8 @@ function predictCCDC(ccdcImg,timeImgs,detrended,whichHarmonics){//,fillGapBetwee
   // simpleCCDCPredictionWrapper(timeSeries,'year',[1,2,3]);
   // Map.addLayer(predicted)
   // getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics,addRMSE,rmseImg,nRMSEs)
-  timeImgs = timeImgs.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics)});
-  print(timeImgs);
+  // timeImgs = timeImgs.map(function(img){return getCCDCPrediction(img,img.select(['.*_coef.*','.*_rmse']),timeBandName,detrended,whichHarmonics)});
+  // print(timeImgs);
   // Map.addLayer(timeSeries,{},'time series')
   // return timeSeries;
  
@@ -438,7 +440,7 @@ var endYear = ccdcImg.get('endYear').getInfo();
 // // ccdcImg = ccdcImgCoeffs.addBands(ccdcImgT);
 // // Map.addLayer(ccdcImg)
 
-var yearImages = ee.ImageCollection(ee.List.sequence(startYear+1,endYear,0.05).map(function(n){
+var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.1).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n).float().rename(['year']);
   var y = n.int16();
