@@ -109,15 +109,18 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   return timeImg.addBands(coeffs);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-//
+//Wrapper function for predicting CCDC across a set of time images
 function predictCCDC(ccdcImg,timeImgs,fillGaps,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
   // Add the segment-appropriate coefficients to each time image
   timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,fillGaps)});
+  
+  //Predict across each time image
   return simpleCCDCPredictionWrapper(timeImgs,timeBandName,whichHarmonics);
 }
-
-
+////////////////////////////////////////////////////////////////////////////////////////
+//Function for getting a set of time images
+//This is generally used for methods such as CCDC
 function getTimeImageCollection(startYear,endYear,startJulian,endJulian,step){
   if(startJulian === undefined || startJulian === null){
     startJulian = 1;
@@ -139,12 +142,16 @@ function getTimeImageCollection(startYear,endYear,startJulian,endJulian,step){
   return yearImages.filter(ee.Filter.calendarRange(startYear,endYear,'year'))
                       .filter(ee.Filter.calendarRange(startJulian,endJulian));
 }
+////////////////////////////////////////////////////////////////////////////////////////
+//Function for getting change years and magnitudes for a specified band from CCDC outputs
+//Only change from the breaks is extracted
+//As of now, if a segment has a high slope value, this method will not extract that 
 function ccdcChangeDetection(ccdcImg,bandName){
   var magKeys = ['.*_magnitude'];
   var tBreakKeys = ['tBreak'];
   var changeProbKeys = ['changeProb'];
   
-  
+  //Pull out pieces from CCDC output
   var magnitudes = ccdcImg.select(magKeys);
   var breaks = ccdcImg.select(tBreakKeys);
   
@@ -156,13 +163,14 @@ function ccdcChangeDetection(ccdcImg,bandName){
   var loss = magnitudes.lt(0);
   var gain = magnitudes.gt(0);
   
-  
+  //Sort by magnitude and years
   var breaksSortedByMag = breaks.arraySort(magnitudes);
   var magnitudesSortedByMag = magnitudes.arraySort();
   
   var breaksSortedByYear = breaks.arraySort();
   var magnitudesSortedByYear = magnitudes.arraySort(breaks);
   
+  //Get the loss and gain years and magnitudes for each sorting method
   var highestMagLossYear = breaksSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_year']]);
   var highestMagLossMag = magnitudesSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_mag']]);
   highestMagLossYear = highestMagLossYear.updateMask(highestMagLossMag.lt(0));
@@ -218,8 +226,8 @@ var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
 
 var changeObj = ccdcChangeDetection(ccdcImg,'NDVI');
-Map.addLayer(changeObj.highestMag.loss.year,{min:startYear,max:endYear,palette:lossYearPalette},'Loss Year')
-Map.addLayer(changeObj.highestMag.loss.mag,{min:-0.5,max:-0.1,palette:lossMagPalette},'Loss Mag',false)
+Map.addLayer(changeObj.highestMag.loss.year,{min:startYear,max:endYear,palette:lossYearPalette},'Loss Year');
+Map.addLayer(changeObj.highestMag.loss.mag,{min:-0.5,max:-0.1,palette:lossMagPalette},'Loss Mag',false);
 
 var yearImages = getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1);
 var fitted = predictCCDC(ccdcImg,yearImages,true,whichHarmonics);
