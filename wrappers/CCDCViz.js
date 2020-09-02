@@ -23,22 +23,32 @@ var geometry =
 function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
   //Unit of each harmonic (1 cycle)
   var omega = ee.Number(2.0).multiply(Math.PI);
+  
+  //Pull out the time band in the yyyy.ff format
   var tBand = img.select([timeBandName]);
+  
+  //Pull out the intercepts and slopes
   var intercepts = img.select(['.*_INTP']);
   var slopes = img.select(['.*_SLP']).multiply(tBand);
- 
+  
+  //Set up the omega for each harmonic for the given time band
   var tOmega = ee.Image(whichHarmonics).multiply(omega).multiply(tBand);
   var cosHarm = tOmega.cos();
   var sinHarm = tOmega.sin();
   
+  //Set up which harmonics to select
   var harmSelect = whichHarmonics.map(function(n){return ee.String('.*').cat(ee.Number(n).format())});
   
+  //Select the harmonics specified
   var sins = img.select(['.*_SIN.*']);
   sins = sins.select(harmSelect);
   var coss = img.select(['.*_COS.*']);
   coss = coss.select(harmSelect);
   
+  //Set up final output band names
   var outBns = whichBands.map(function(bn){return ee.String(bn).cat('_predicted')});
+  
+  //Iterate across each band and predict value
   var predicted = ee.ImageCollection(whichBands.map(function(bn){
     bn = ee.String(bn);
     return ee.Image([intercepts.select(bn.cat('.*')),
@@ -60,7 +70,6 @@ function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
   return out;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to get the coeffs corresponding to a given date on a pixel-wise basis
 //The raw CCDC image is expected
@@ -98,7 +107,8 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   
   return timeImg.addBands(coeffs);
 }
-
+////////////////////////////////////////////////////////////////////////////////////////
+//
 function predictCCDC(ccdcImg,timeImgs,fillGaps,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
   // Add the segment-appropriate coefficients to each time image
