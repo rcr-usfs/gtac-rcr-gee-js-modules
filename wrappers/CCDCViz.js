@@ -314,7 +314,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var tStarts = ccdcImg.select(tStartKeys);
   var tEnds = ccdcImg.select(tEndKeys);
   var tBreaks = ccdcImg.select(tBreakKeys);
-  tEnds = tEnds.arrayCat(tBreaks, 1).arrayReduce(ee.Reducer.max(), [1])//.arrayCat(tBreaks.arrayRepeat(1,1), 1)
+  tEnds = tEnds.arrayCat(tBreaks, 1).arrayReduce(ee.Reducer.max(), [1]).arrayProject([0]);//.arrayCat(tBreaks.arrayRepeat(1,1), 1)
   
 
   //Set up a mask for segments that the time band intersects
@@ -328,14 +328,14 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
 }
 
 function predictCCDC(ccdcImg,timeImgs,detrended,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
-  var timeImg = ee.Image(timeImgs.first());
+  // var timeImg = ee.Image(timeImgs.first());
   var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
 
   
-  getCCDCSegCoeffs(timeImg,ccdcImg)
+  // getCCDCSegCoeffs(timeImg,ccdcImg)
   // Add the segment-appropriate coefficients to each time image
-  // timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
-// simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1,2,3])
+  timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
+simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1,2,3])
 // simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1])
 
   // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
