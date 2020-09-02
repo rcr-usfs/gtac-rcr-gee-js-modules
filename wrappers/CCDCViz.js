@@ -28,9 +28,13 @@ Map.addLayer(changeObj.highestMag.loss.mag,{min:-0.5,max:-0.1,palette:dLib.lossM
 Map.addLayer(changeObj.highestMag.gain.year,{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Gain Year');
 Map.addLayer(changeObj.highestMag.gain.mag,{min:0.05,max:0.2,palette:dLib.gainMagPalette},'Gain Mag',false);
 
+//Apply the CCDC harmonic model across a time series
+//First get a time series of time images 
 var yearImages = dLib.getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1);
+
+//Then predict the CCDC models
 var fitted = dLib.predictCCDC(ccdcImg,yearImages,true,whichHarmonics);
-Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC',false)
+Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC',false);
 
 
 Map.setOptions('HYBRID');
