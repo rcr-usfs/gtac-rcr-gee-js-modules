@@ -63,7 +63,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   var coeffKeys = ['.*_coefs'];
   var tStartKeys = ['tStart'];
   var tEndKeys = ['tEnd'];
-  var tBreakKeys = ['tBreak']
+  var tBreakKeys = ['tBreak'];
   
   //Get coeffs and find how many bands have coeffs
   var coeffs = ccdcImg.select(coeffKeys);
@@ -98,7 +98,7 @@ function predictCCDC(ccdcImg,timeImgs,fillGaps,whichHarmonics){//,fillGapBetween
   // Add the segment-appropriate coefficients to each time image
   timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,fillGaps)});
   return simpleCCDCPredictionWrapper(timeImgs,timeBandName,whichHarmonics);
-  }
+}
 
 
 function getTimeImageCollection(startYear,endYear,startJulian,endJulian,step){
@@ -133,7 +133,7 @@ var endJulian = ccdcImg.get('endJulian').getInfo();
 var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
 
-var yearImages = getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1);
+var yearImages = getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1).limit(10);
 var fitted = predictCCDC(ccdcImg,yearImages,true,whichHarmonics);
 Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC')
 
