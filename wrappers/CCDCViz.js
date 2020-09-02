@@ -143,17 +143,43 @@ function ccdcChangeDetection(ccdcImg,bandName,changeProbThresh){
   var magKeys = ['.*_magnitude'];
   var tBreakKeys = ['tBreak'];
   var changeProbKeys = ['changeProb'];
-  Map.addLayer(ccdcImg);
+  
   
   var magnitudes = ccdcImg.select(magKeys);
   var breaks = ccdcImg.select(tBreakKeys);
+  
+  Map.addLayer(breaks.arrayLength(0),{min:1,max:10});
   var changeProbs = ccdcImg.select(changeProbKeys);
   var changeMask = changeProbs.gte(changeProbThresh);
-  magnitudes = magnitudes.select(bandName + '.*').arrayMask(changeMask);
-  breaks = breaks.arrayMask(changeMask);
-  Map.addLayer(breaks);
-  Map.addLayer(magnitudes);
-  Map.addLayer(changeProbs)
+  magnitudes = magnitudes.select(bandName + '.*')//.arrayMask(changeMask);
+  // breaks = breaks.arrayMask(changeMask);
+  
+  var loss = magnitudes.lt(0);
+  var gain = magnitudes.gt(0);
+  
+  
+  var breaksSortedByMag = breaks.arraySort(magnitudes);
+  var magnitudesSortedByMag = magnitudes.arraySort();
+  
+  var breaksSortedByYear = breaks.arraySort();
+  var magnitudesSortedByYear = magnitudes.arraySort(breaks);
+  
+  var highestMagLossYear = breaksSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_year']]);
+  var highestMagLossMag = magnitudesSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_mag']]);
+  
+  var highestMagGainYear = breaksSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_year']]);
+  var highestMagGainMag = magnitudesSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
+  Map.addLayer(highestMagGainYear);
+  Map.addLayer(highestMagGainMag)
+  // var highestMagLoss = magnitudesSortedByMag.arrayMask(magnitudesSortedByMag.lt(0)).arrayGet(0);
+  // // var highestMagGain = magnitudesSortedByMag.arrayGet(0)
+  
+  
+  // Map.addLayer(breaks);
+  // Map.addLayer(magnitudesSortedByMag);
+  // Map.addLayer(highestMagLoss);
+  // Map.addLayer(magnitudesSortedByYear);
+  // Map.addLayer(changeProbs)
 }
 ///////////////////////////////////////////////////////////////////////
 var ccdcImg = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test3');
@@ -166,9 +192,9 @@ var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
 
 ccdcChangeDetection(ccdcImg,'NDVI',0.5)
-// var yearImages = getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1);
-// var fitted = predictCCDC(ccdcImg,yearImages,true,whichHarmonics);
-// Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC')
+var yearImages = getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1);
+var fitted = predictCCDC(ccdcImg,yearImages,true,whichHarmonics);
+Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC')
 
 
 Map.setOptions('HYBRID');
