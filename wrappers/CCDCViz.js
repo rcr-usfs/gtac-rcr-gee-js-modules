@@ -17,6 +17,7 @@ var geometry =
 // var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 // var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 //-------------------- BEGIN CCDC Helper Function -------------------//
+/////////////////////////////////////////////////////////////////////////////
 //Function to predict a CCDC harmonic model at a given time
 //The whichHarmonics options are [1,2,3] - denoting which harmonics to include
 //Which bands is a list of the names of the bands to predict across
@@ -138,7 +139,22 @@ function getTimeImageCollection(startYear,endYear,startJulian,endJulian,step){
   return yearImages.filter(ee.Filter.calendarRange(startYear,endYear,'year'))
                       .filter(ee.Filter.calendarRange(startJulian,endJulian));
 }
-
+function ccdcChangeDetection(ccdcImg,bandName,changeProbThresh){
+  var magKeys = ['.*_magnitude'];
+  var tBreakKeys = ['tBreak'];
+  var changeProbKeys = ['changeProb'];
+  Map.addLayer(ccdcImg);
+  
+  var magnitudes = ccdcImg.select(magKeys);
+  var breaks = ccdcImg.select(tBreakKeys);
+  var changeProbs = ccdcImg.select(changeProbKeys);
+  var changeMask = changeProbs.gte(changeProbThresh);
+  magnitudes = magnitudes.select(bandName + '.*').arrayMask(changeMask);
+  breaks = breaks.arrayMask(changeMask);
+  Map.addLayer(breaks);
+  Map.addLayer(magnitudes);
+  Map.addLayer(changeProbs)
+}
 ///////////////////////////////////////////////////////////////////////
 var ccdcImg = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test3');
 
@@ -149,9 +165,10 @@ var endJulian = ccdcImg.get('endJulian').getInfo();
 var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
 
-var yearImages = getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1);
-var fitted = predictCCDC(ccdcImg,yearImages,true,whichHarmonics);
-Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC')
+ccdcChangeDetection(ccdcImg,'NDVI',0.5)
+// var yearImages = getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1);
+// var fitted = predictCCDC(ccdcImg,yearImages,true,whichHarmonics);
+// Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC')
 
 
 Map.setOptions('HYBRID');
