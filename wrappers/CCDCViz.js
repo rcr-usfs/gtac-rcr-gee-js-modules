@@ -314,13 +314,18 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var tStarts = ccdcImg.select(tStartKeys);
   var tEnds = ccdcImg.select(tEndKeys);
   var tBreaks = ccdcImg.select(tBreakKeys);
-  
+  Map.addLayer(tStarts)
+  tStarts = tStarts.arraySlice(0,0,1).arrayCat(tBreaks.arraySlice(0,0,-1),0);
   var segCount =tStarts.arrayLength(0)
   Map.addLayer(segCount,{min:1,max:4}, 'Seg count')
   // tEnds = tEnds.arrayCat(tBreaks, 1).arrayReduce(ee.Reducer.max(), [1]).arrayProject([0])//.arrayCat(tBreaks.arrayRepeat(1,1), 1)
   // var tStartsCombined = tStarts.arrayCat(tBreaks, 1)
-  Map.addLayer(tStarts.arrayCat(tBreaks, 1))
-  Map.addLayer(tStarts.firstNonZero(tBreaks))
+  Map.addLayer(tStarts)
+  Map.addLayer(tEnds.arrayCat(tBreaks, 1))
+  
+  // Map.addLayer(tStarts.arraySlice(0,0,1))
+  // Map.addLayer(tBreaks.arraySlice(0,0,-1))
+  // Map.addLayer()
   // Map.addLayer(tBreaks.firstNonZero(tEnds))
   //Set up a mask for segments that the time band intersects
   var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,1).arrayRepeat(2,1);
