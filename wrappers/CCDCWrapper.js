@@ -145,6 +145,7 @@ ccdc = ccdc.set(args.ccdcParams);
 
 Map.addLayer(ccdc,{},'CCDC Output',false);
 
+args.outputName = args.outputName + '_' + startYear.toString() + '_' + endYear.toString() + '_' + startJulian.toString() + '_' + endJulian.toString();
 //Export output
 Export.image.toAsset(ccdc, args.outputName, args.exportPathRoot +'/'+args.outputName , {'.default':'sample'}, null, args.studyArea, args.scale, args.crs, args.transform, 1e13);
 
