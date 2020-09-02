@@ -1962,3 +1962,9 @@ exports.thresholdZAndTrend = thresholdZAndTrend;
 exports.thresholdZAndTrendSubtle = thresholdZAndTrendSubtle;
 exports.thresholdSubtleChange = thresholdSubtleChange;
 
+exports.simpleCCDCPrediction = simpleCCDCPrediction;
+exports.simpleCCDCPredictionWrapper = simpleCCDCPredictionWrapper;
+exports.getCCDCSegCoeffs = getCCDCSegCoeffs;
+exports.predictCCDC = predictCCDC;
+exports.getTimeImageCollection = getTimeImageCollection;
+exports.ccdcChangeDetection = ccdcChangeDetection;
