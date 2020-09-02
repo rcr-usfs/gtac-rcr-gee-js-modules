@@ -111,7 +111,7 @@ function getTimeImageCollection(startYear,endYear,startJulian,endJulian,step){
   if(step === undefined || step === null){
     step = 0.1;
   }
-  var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,0.1).map(function(n){
+  var yearImages = ee.ImageCollection(ee.List.sequence(startYear,endYear,step).map(function(n){
   n = ee.Number(n);
   var img = ee.Image(n).float().rename(['year']);
   var y = n.int16();
