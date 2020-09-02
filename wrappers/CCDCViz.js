@@ -314,14 +314,11 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var tStarts = ccdcImg.select(tStartKeys);
   var tEnds = ccdcImg.select(tEndKeys);
   var tBreaks = ccdcImg.select(tBreakKeys);
-  Map.addLayer(tStarts)
+  
   tStarts = tStarts.arraySlice(0,0,1).arrayCat(tBreaks.arraySlice(0,0,-1),0);
+  tEnds = tBreaks.arraySlice(0,0,-1).arrayCat(tEnds.arraySlice(0,-1,null),0);
   var segCount =tStarts.arrayLength(0)
-  Map.addLayer(segCount,{min:1,max:4}, 'Seg count')
-  // tEnds = tEnds.arrayCat(tBreaks, 1).arrayReduce(ee.Reducer.max(), [1]).arrayProject([0])//.arrayCat(tBreaks.arrayRepeat(1,1), 1)
-  // var tStartsCombined = tStarts.arrayCat(tBreaks, 1)
-  Map.addLayer(tStarts)
-  Map.addLayer(tEnds.arrayCat(tBreaks, 1))
+  
   
   // Map.addLayer(tStarts.arraySlice(0,0,1))
   // Map.addLayer(tBreaks.arraySlice(0,0,-1))
