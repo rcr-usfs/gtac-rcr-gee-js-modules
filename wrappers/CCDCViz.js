@@ -296,7 +296,7 @@ function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
 //Function to get the coeffs corresponding to a given date on a pixel-wise basis
 //The raw CCDC image is expected
 //It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
-function getCCDCSegCoeffs(timeImg,ccdcImg){
+function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   var coeffKeys = ['.*_coefs'];
   var tStartKeys = ['tStart'];
   var tEndKeys = ['tEnd'];
@@ -315,9 +315,12 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var tEnds = ccdcImg.select(tEndKeys);
   var tBreaks = ccdcImg.select(tBreakKeys);
   
+  //If filling to the tBreak, use this
+  if(fillGaps){
   tStarts = tStarts.arraySlice(0,0,1).arrayCat(tBreaks.arraySlice(0,0,-1),0);
   tEnds = tBreaks.arraySlice(0,0,-1).arrayCat(tEnds.arraySlice(0,-1,null),0);
-  var segCount =tStarts.arrayLength(0)
+  }
+  // var segCount =tStarts.arrayLength(0)
   
   
   // Map.addLayer(tStarts.arraySlice(0,0,1))
@@ -335,14 +338,14 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
 }
 
 function predictCCDC(ccdcImg,timeImgs,detrended,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
-  var timeImg = ee.Image(timeImgs.first());
+  // var timeImg = ee.Image(timeImgs.first());
   var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
 
   
-  getCCDCSegCoeffs(timeImg,ccdcImg)
+  // getCCDCSegCoeffs(timeImg,ccdcImg)
   // Add the segment-appropriate coefficients to each time image
-  // timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
-// simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1,2,3])
+  timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
+simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1,2,3])
 // simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1])
 
   // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
