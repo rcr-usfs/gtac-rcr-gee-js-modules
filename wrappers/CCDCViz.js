@@ -79,8 +79,8 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   var tBreaks = ccdcImg.select(tBreakKeys);
   
   //If filling to the tBreak, use this
-  // tStarts = ee.Image(ee.Algorithms.If(fillGaps,tStarts.arraySlice(0,0,1).arrayCat(tBreaks.arraySlice(0,0,-1),0),tStarts));
-  // tEnds = ee.Image(ee.Algorithms.If(fillGaps,tBreaks.arraySlice(0,0,-1).arrayCat(tEnds.arraySlice(0,-1,null),0),tEnds));
+  tStarts = ee.Image(ee.Algorithms.If(fillGaps,tStarts.arraySlice(0,0,1).arrayCat(tBreaks.arraySlice(0,0,-1),0),tStarts));
+  tEnds = ee.Image(ee.Algorithms.If(fillGaps,tBreaks.arraySlice(0,0,-1).arrayCat(tEnds.arraySlice(0,-1,null),0),tEnds));
   
   
   //Set up a mask for segments that the time band intersects
@@ -88,7 +88,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   coeffs = coeffs.arrayMask(tMask).arrayProject([2,1]).arrayTranspose(1,0).arrayFlatten([bns,harmonicTag]);
   
   //If time band doesn't intersect any segments, set it to null
-  // coeffs = coeffs.updateMask(coeffs.reduce(ee.Reducer.max()).neq(0));
+  coeffs = coeffs.updateMask(coeffs.reduce(ee.Reducer.max()).neq(0));
   
   return timeImg.addBands(coeffs);
 }
