@@ -139,7 +139,7 @@ function getTimeImageCollection(startYear,endYear,startJulian,endJulian,step){
   return yearImages.filter(ee.Filter.calendarRange(startYear,endYear,'year'))
                       .filter(ee.Filter.calendarRange(startJulian,endJulian));
 }
-function ccdcChangeDetection(ccdcImg,bandName,changeProbThresh){
+function ccdcChangeDetection(ccdcImg,bandName){
   var magKeys = ['.*_magnitude'];
   var tBreakKeys = ['tBreak'];
   var changeProbKeys = ['changeProb'];
@@ -149,8 +149,8 @@ function ccdcChangeDetection(ccdcImg,bandName,changeProbThresh){
   var breaks = ccdcImg.select(tBreakKeys);
   
   // Map.addLayer(breaks.arrayLength(0),{min:1,max:10});
-  var changeProbs = ccdcImg.select(changeProbKeys);
-  var changeMask = changeProbs.gte(changeProbThresh);
+  // var changeProbs = ccdcImg.select(changeProbKeys);
+  // var changeMask = changeProbs.gte(changeProbThresh);
   magnitudes = magnitudes.select(bandName + '.*');
   
   var loss = magnitudes.lt(0);
@@ -203,6 +203,11 @@ function ccdcChangeDetection(ccdcImg,bandName,changeProbThresh){
   
 }
 ///////////////////////////////////////////////////////////////////////
+var lossYearPalette =  'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02';
+var lossMagPalette = 'D00,F5DEB3';
+var gainYearPalette =  'AFDEA8,80C476,308023,145B09';
+var gainMagPalette = 'F5DEB3,006400';
+
 var ccdcImg = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test3');
 
 var whichHarmonics = [1,2,3];
@@ -212,10 +217,13 @@ var endJulian = ccdcImg.get('endJulian').getInfo();
 var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
 
-ccdcChangeDetection(ccdcImg,'NDVI',0.5)
+var changeObj = ccdcChangeDetection(ccdcImg,'NDVI');
+Map.addLayer(changeObj.highestMag.loss.year,{min:startYear,max:endYear,palette:lossYearPalette},'Loss Year')
+Map.addLayer(changeObj.highestMag.loss.mag,{min:-0.5,max:-0.1,palette:lossMagPalette},'Loss Mag',false)
+
 var yearImages = getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1);
 var fitted = predictCCDC(ccdcImg,yearImages,true,whichHarmonics);
-Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC')
+Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC',false)
 
 
 Map.setOptions('HYBRID');
