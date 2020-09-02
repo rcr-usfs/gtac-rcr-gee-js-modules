@@ -164,11 +164,11 @@ function ccdcChangeDetection(ccdcImg,bandName,changeProbThresh){
   var breaksSortedByYear = breaks.arraySort();
   var magnitudesSortedByYear = magnitudes.arraySort(breaks);
   
-  var highestMagLossYear = breaksSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_year']]);
-  var highestMagLossMag = magnitudesSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_mag']]);
+  var highestMagLossYear = breaksSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_year']]).selfMask();
+  var highestMagLossMag = magnitudesSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_mag']]).selfMask();
   
-  var highestMagGainYear = breaksSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_year']]);
-  var highestMagGainMag = magnitudesSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
+  var highestMagGainYear = breaksSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_year']]).selfMask();
+  var highestMagGainMag = magnitudesSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]).selfMask();
   Map.addLayer(highestMagGainYear);
   Map.addLayer(highestMagGainMag)
   // var highestMagLoss = magnitudesSortedByMag.arrayMask(magnitudesSortedByMag.lt(0)).arrayGet(0);
