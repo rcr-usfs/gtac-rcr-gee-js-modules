@@ -134,17 +134,19 @@ processedScenes = processedScenes.map(function(img){
   var lte1 = img.select(['blue','green','nir','swir1','swir2']).lte(1).reduce(ee.Reducer.min());
   return img.updateMask(lte1);
 });
-Map.addLayer(processedScenes)
+Map.addLayer(processedScenes,{},'Processed Input Data',false);
 
-
+//Set the scene collection in the ccdcParams
 ccdcParams.collection = processedScenes;
+
 //Run CCDC
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(args.ccdcParams);
 
+//Set properties for asset
 ccdc = ccdc.set(args);
 ccdc = ccdc.set(args.ccdcParams);
-print(ccdc)
-Map.addLayer(ccdc)
+
+Map.addLayer(ccdc,{},'CCDC Output',false);
 //Export output
 Export.image.toAsset(ccdc, args.outputName, args.exportPathRoot +'/'+args.outputName , {'.default':'sample'}, null, args.studyArea, args.scale, args.crs, args.transform, 1e13);
 
