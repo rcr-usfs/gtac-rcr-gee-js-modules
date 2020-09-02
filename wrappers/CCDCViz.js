@@ -11,6 +11,9 @@ var ccdcImg = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test3');
 //If you would like a tighter fit in the predicted value, include the second or third harmonic as well [1,2,3]
 var whichHarmonics = [1,2,3];
 
+//Whether to fill gaps between segments' end year and the subsequent start year to the break date
+var fillGaps = true;
+
 //Specify which band to use for loss and gain. 
 //This is most important for the loss and gain magnitude since the year of change will be the same for all years
 var changeDetectionBandName = 'NDVI';
@@ -33,7 +36,7 @@ Map.addLayer(changeObj.highestMag.gain.mag,{min:0.05,max:0.2,palette:dLib.gainMa
 var yearImages = dLib.getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1);
 
 //Then predict the CCDC models
-var fitted = dLib.predictCCDC(ccdcImg,yearImages,true,whichHarmonics);
+var fitted = dLib.predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics);
 Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC',false);
 
 
