@@ -308,15 +308,20 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var nBns = bns.length();
   var harmonicTag = ee.List(['INTP','SLP','COS1','SIN1','COS2','SIN2','COS3','SIN3']);
 
-  
+   
   //Get coeffs, start and end times
   coeffs = coeffs.toArray(2);
   var tStarts = ccdcImg.select(tStartKeys);
   var tEnds = ccdcImg.select(tEndKeys);
   var tBreaks = ccdcImg.select(tBreakKeys);
-  tEnds = tEnds.arrayCat(tBreaks, 1).arrayReduce(ee.Reducer.max(), [1]).arrayProject([0]);//.arrayCat(tBreaks.arrayRepeat(1,1), 1)
   
-
+  var segCount =tStarts.arrayLength(0)
+  Map.addLayer(segCount,{min:1,max:4}, 'Seg count')
+  // tEnds = tEnds.arrayCat(tBreaks, 1).arrayReduce(ee.Reducer.max(), [1]).arrayProject([0])//.arrayCat(tBreaks.arrayRepeat(1,1), 1)
+  // var tStartsCombined = tStarts.arrayCat(tBreaks, 1)
+  Map.addLayer(tStarts.arrayCat(tBreaks, 1))
+  Map.addLayer(tStarts.firstNonZero(tBreaks))
+  // Map.addLayer(tBreaks.firstNonZero(tEnds))
   //Set up a mask for segments that the time band intersects
   var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,1).arrayRepeat(2,1);
   coeffs = coeffs.arrayMask(tMask).arrayProject([2,1]).arrayTranspose(1,0).arrayFlatten([bns,harmonicTag]);
@@ -328,14 +333,14 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
 }
 
 function predictCCDC(ccdcImg,timeImgs,detrended,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
-  // var timeImg = ee.Image(timeImgs.first());
+  var timeImg = ee.Image(timeImgs.first());
   var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
 
   
-  // getCCDCSegCoeffs(timeImg,ccdcImg)
+  getCCDCSegCoeffs(timeImg,ccdcImg)
   // Add the segment-appropriate coefficients to each time image
-  timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
-simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1,2,3])
+  // timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
+// simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1,2,3])
 // simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1])
 
   // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
