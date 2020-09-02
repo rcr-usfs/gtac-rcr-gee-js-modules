@@ -31,8 +31,8 @@ args.studyArea = geometry;//getImagesLib.testAreas.CA;
 // to June 1 of that year.Otherwise, all system:time_starts will default to June 1 of the given year
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-args.startJulian = 190;
-args.endJulian = 250; 
+args.startJulian = 1;
+args.endJulian = 365; 
 
 // Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
@@ -71,22 +71,17 @@ args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_
 
 //List of acceptable sensors
 //Options include: 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'
-var sensorList = [ 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'];
+args.sensorList = [ 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'];
 
 //Which bands/indices to export
 //These will not always be used to find breaks - that is specified below in the ccdcParams
 //Options are: ["blue","green","red","nir","swir1","swir2","NDVI","NBR","NDMI","NDSI","brightness","greenness","wetness","fourth","fifth","sixth","tcAngleBG"]
 //Be sure that any bands in ccdcParams.breakpointBands are in this list
-var exportBands = ["blue","green","red","nir","swir1","swir2","NDVI"];
+args.exportBands = ["blue","green","red","nir","swir1","swir2","NDVI"];
 
-//Whether to offset the years so the intercept values aren't too large
-//Set to -1900 if you want intercepts to be closer to the mean of the value of the band/index
-//Any pixel with a steep slope will have a very high/low intercept
-//Set to 0 if you want the years to remain as they are
-var nYearOffset = 0;
 
 // Set up Names for the export
-args.outputName = 'CCDC-Test2';
+args.outputName = 'CCDC-Test3';
 
 // Provide location composites will be exported to
 // This should be an asset folder, or more ideally, an asset imageCollection
@@ -104,13 +99,10 @@ args.transform = [30,0,-2361915.0,0,-30,3177735.0];
 // Specify scale if transform is null
 args.scale = null;
 
-//How many segments to export
-//Agricultural and wetland areas generally will need about 1 for every 2-5 years
-//Other areas need about 1 for every 10-30 years
-var nSegments = 9;
+
 ///////////////////////////////////////////////////////////////////////
 //CCDC Params
-var ccdcParams ={
+args.ccdcParams ={
   breakpointBands:['green','red','nir','swir1','swir2','NDVI'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
                                                               //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
   tmaskBands : null,//['green','swir2'],//The name or index of the bands to use for iterative TMask cloud detection. These are typically the green band and the SWIR2 band. If unspecified, TMask is not used. If specified, 'tmaskBands' must be included in 'breakpointBands'., 
@@ -131,11 +123,11 @@ var ccdcParams ={
 //Start function calls
 
 ////////////////////////////////////////////////////////////////////////////////
-//Call on master wrapper function to get Landat scenes and composites
-var processedScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args).select(exportBands);
-print(ee.Image(processedScenes.first()).bandNames())
+//Call on master wrapper function to get Landat and Sentinel 2 scenes
+var processedScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args).select(args.exportBands);
+
 //Filter to only include wanted sensors
-processedScenes = processedScenes.filter(ee.Filter.inList('sensor',ee.List(sensorList)));
+processedScenes = processedScenes.filter(ee.Filter.inList('sensor',ee.List(args.sensorList)));
 
 //Remove any extremely high band/index values
 processedScenes = processedScenes.map(function(img){
@@ -147,66 +139,15 @@ Map.addLayer(processedScenes)
 
 ccdcParams.collection = processedScenes;
 //Run CCDC
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams);
+var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(args.ccdcParams);
 
 ccdc = ccdc.set(args);
-ccdc = ccdc.set(ccdcParams)
+ccdc = ccdc.set(args.ccdcParams);
 print(ccdc)
 Map.addLayer(ccdc)
 //Export output
 Export.image.toAsset(ccdc, args.outputName, args.exportPathRoot +'/'+args.outputName , {'.default':'sample'}, null, args.studyArea, args.scale, args.crs, args.transform, 1e13);
 
-
-// //Convert to image stack
-// var ccdcImg = dLib.buildCcdcImage(ccdc, nSegments);
-// // ccdcImg = ccdcImg.updateMask(ccdcImg.neq(-32768));
-// Map.addLayer(ccdcImg)
-// //Find the segment count for each pixel
-// var count = ccdcImg.select(['.*tStart']).selfMask().reduce(ee.Reducer.count());
-// Map.addLayer(count,{min:1,max:nSegments},'Segment Count');
-
-// //Set up time series for predicting values
-// processedScenes = processedScenes.map(getImagesLib.addYearYearFractionBand);
-// ccdcParams.breakpointBands.push('.*_predicted');
-
-// var change = dLib.getCCDCChange(ccdcImg);
-
-// Map.addLayer(change.breakLossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Break Loss Year',false);
-// Map.addLayer(change.segLossYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Most Recent Seg Loss Year',false);
-
-// Map.addLayer(change.breakGainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Break Gain Year',false);
-// Map.addLayer(change.segGainYears.reduce(ee.Reducer.max()),{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Most Recent Seg Gain Year',false);
-// // // Export.Image.toDrive(changeYears.lossYears.reduce(ee.Reducer.max()),)  
-  
-// //Predict CCDC model and visualize the actual vs. predicted
-// var predicted = dLib.predictCCDC(ccdcImg,processedScenes).select(ccdcParams.breakpointBands);
-// Map.addLayer(predicted,{},'Predicted CCDC',false);
-
-// // //Visualize the seasonality of the first segment
-// // var seg1 = ccdcImg.select(['S1.*']);
-// // var sinCoeffs = seg1.select(['.*_SIN']);
-// // var cosCoeffs = seg1.select(['.*_COS']);
-// // var bands = ['.*swir2.*','.*nir.*','.*red.*'];
-// // // var band = 'B4.*';
-// // var phase = sinCoeffs.atan2(cosCoeffs)
-// //                     .unitScale(-Math.PI, Math.PI);
- 
-// // var amplitude = sinCoeffs.hypot(cosCoeffs)
-// //                     // .unitScale(0, 1)
-// //                     .multiply(2);
-// // Map.addLayer(phase.select(bands),{min:0,max:1},'phase',false);
-// // Map.addLayer(amplitude.select(bands),{min:0,max:0.6},'amplitude',true);
-
-// //Set export asset properties
-// ccdcImg = ccdcImg.set(ccdcParams).float();
-// ccdcImg = ccdcImg.set({
-//   'startYear':startYear,
-//   'endYear':endYear,
-//   'useLandsat':useLandsat,
-//   'useS2':useS2,
-//   'nSegments':nSegments
-// })
-//   .float();
 
 
 Map.setOptions('HYBRID');
