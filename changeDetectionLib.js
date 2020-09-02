@@ -1716,7 +1716,8 @@ function thresholdZAndTrendSubtle(zAndTrendCollection,zThreshLow,zThreshHigh,slo
   Map.addLayer(trendChange.max().select([0]),{'min':startYear,'max':endYear,'palette':colorRamp},'Trend Most Recent Change Year '+negativeOrPositiveChange,false);
   
 }
-//-------------------- BEGIN CCDC Helper Function -------------------//
+/////////////////////////////////////////////////////////////////////////////
+//-------------------- BEGIN CCDC Helper Functions -------------------//
 /////////////////////////////////////////////////////////////////////////////
 //Function to predict a CCDC harmonic model at a given time
 //The whichHarmonics options are [1,2,3] - denoting which harmonics to include
