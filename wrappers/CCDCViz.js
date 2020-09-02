@@ -148,11 +148,10 @@ function ccdcChangeDetection(ccdcImg,bandName,changeProbThresh){
   var magnitudes = ccdcImg.select(magKeys);
   var breaks = ccdcImg.select(tBreakKeys);
   
-  Map.addLayer(breaks.arrayLength(0),{min:1,max:10});
+  // Map.addLayer(breaks.arrayLength(0),{min:1,max:10});
   var changeProbs = ccdcImg.select(changeProbKeys);
   var changeMask = changeProbs.gte(changeProbThresh);
-  magnitudes = magnitudes.select(bandName + '.*')//.arrayMask(changeMask);
-  // breaks = breaks.arrayMask(changeMask);
+  magnitudes = magnitudes.select(bandName + '.*');
   
   var loss = magnitudes.lt(0);
   var gain = magnitudes.gt(0);
@@ -173,19 +172,35 @@ function ccdcChangeDetection(ccdcImg,bandName,changeProbThresh){
   var highestMagGainMag = magnitudesSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
   highestMagGainYear = highestMagGainYear.updateMask(highestMagGainMag.gt(0));
   highestMagGainMag = highestMagGainMag.updateMask(highestMagGainMag.gt(0));
-  Map.addLayer(highestMagLossYear);
-  Map.addLayer(highestMagLossMag);
-  Map.addLayer(highestMagGainYear);
-  Map.addLayer(highestMagGainMag);
-  // var highestMagLoss = magnitudesSortedByMag.arrayMask(magnitudesSortedByMag.lt(0)).arrayGet(0);
-  // // var highestMagGain = magnitudesSortedByMag.arrayGet(0)
   
+  var mostRecentLossYear = breaksSortedByYear.arraySlice(0,0,1).arrayFlatten([['loss_year']]);
+  var mostRecentLossMag = magnitudesSortedByYear.arraySlice(0,0,1).arrayFlatten([['loss_mag']]);
+  mostRecentLossYear = mostRecentLossYear.updateMask(mostRecentLossMag.lt(0));
+  mostRecentLossMag = mostRecentLossMag.updateMask(mostRecentLossMag.lt(0));
   
-  // Map.addLayer(breaks);
-  // Map.addLayer(magnitudesSortedByMag);
-  // Map.addLayer(highestMagLoss);
-  // Map.addLayer(magnitudesSortedByYear);
-  // Map.addLayer(changeProbs)
+  var mostRecentGainYear = breaksSortedByYear.arraySlice(0,-1,null).arrayFlatten([['gain_year']]);
+  var mostRecentGainMag = magnitudesSortedByYear.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
+  mostRecentGainYear = mostRecentGainYear.updateMask(mostRecentGainMag.gt(0));
+  mostRecentGainMag = mostRecentGainMag.updateMask(mostRecentGainMag.gt(0));
+  
+  return {mostRecent:{
+    loss:{year:mostRecentLossYear,
+          mag: mostRecentLossMag
+        },
+    gain:{year:mostRecentGainYear,
+          mag: mostRecentGainMag
+        }
+    },
+    highestMag:{
+    loss:{year:highestMagLossYear,
+          mag: highestMagLossMag
+        },
+    gain:{year:highestMagGainYear,
+          mag: highestMagGainMag
+        }
+    }    
+  };
+  
 }
 ///////////////////////////////////////////////////////////////////////
 var ccdcImg = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test3');
