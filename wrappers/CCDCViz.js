@@ -337,15 +337,15 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   return timeImg.addBands(coeffs);
 }
 
-function predictCCDC(ccdcImg,timeImgs,detrended,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
+function predictCCDC(ccdcImg,timeImgs,fillGaps,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   // var timeImg = ee.Image(timeImgs.first());
   var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
 
   
   // getCCDCSegCoeffs(timeImg,ccdcImg)
   // Add the segment-appropriate coefficients to each time image
-  timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
-simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1,2,3])
+  timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,fillGaps)});
+simpleCCDCPredictionWrapper(timeImgs,timeBandName,whichHarmonics)
 // simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1])
 
   // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
