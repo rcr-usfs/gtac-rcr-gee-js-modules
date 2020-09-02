@@ -17,7 +17,9 @@ var geometry =
 // var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 // var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 //-------------------- BEGIN CCDC Helper Function -------------------//
-
+//Function to predict a CCDC harmonic model at a given time
+//The whichHarmonics options are [1,2,3] - denoting which harmonics to include
+//Which bands is a list of the names of the bands to predict across
 function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
   //Unit of each harmonic (1 cycle)
   var omega = ee.Number(2.0).multiply(Math.PI);
@@ -47,6 +49,10 @@ function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
   })).toBands().rename(outBns);
   return img.addBands(predicted);
 }
+/////////////////////////////////////////////////////////////
+//Wrapper to predict CCDC values from a collection containing a time image and ccdc coeffs
+//It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
+//The whichHarmonics options are [1,2,3] - denoting which harmonics to include
 function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
   var whichBands = ee.Image(c.first()).select(['.*_INTP']).bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
   whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys().getInfo();
