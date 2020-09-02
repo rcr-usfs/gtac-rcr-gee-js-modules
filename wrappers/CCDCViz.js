@@ -505,7 +505,8 @@ yearImages = yearImages.filter(ee.Filter.calendarRange(startYear,endYear,'year')
 // // coeffs = coeffs.rename(bns)
 // // var predicted = getCCDCPrediction(ee.Image(yearImages.first()),coeffs,'year',false,[1])
 // var predicted0 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[]).select(['.*_predicted','.*_RMSEs']);
-var predicted1 = predictCCDC(ccdcImg,yearImages,true,[1])//.select(['.*_predicted']);
+ predictCCDC(ccdcImg,yearImages,true,[1])//.select(['.*_predicted']);
+ predictCCDC(ccdcImg,yearImages,false,[1])
 //predictCCDC(ccdcImg,timeSeries,harmonicTag,timeBandName,detrended,whichHarmonics,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
 // print(predicted1)
 // // // var predicted2 = dLib.predictCCDC(ccdcImg,yearImages,null,'year',true,[1,2]).select(['.*_predicted']);
