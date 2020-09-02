@@ -21,9 +21,12 @@ var endJulian = ccdcImg.get('endJulian').getInfo();
 var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
 
+//Extract the change years and magnitude
 var changeObj = dLib.ccdcChangeDetection(ccdcImg,changeDetectionBandName);
 Map.addLayer(changeObj.highestMag.loss.year,{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Loss Year');
 Map.addLayer(changeObj.highestMag.loss.mag,{min:-0.5,max:-0.1,palette:dLib.lossMagPalette},'Loss Mag',false);
+Map.addLayer(changeObj.highestMag.gain.year,{min:startYear,max:endYear,palette:dLib.gainYearPalette},'Gain Year');
+Map.addLayer(changeObj.highestMag.gain.mag,{min:0.05,max:0.2,palette:dLib.gainMagPalette},'Gain Mag',false);
 
 var yearImages = dLib.getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1);
 var fitted = dLib.predictCCDC(ccdcImg,yearImages,true,whichHarmonics);
