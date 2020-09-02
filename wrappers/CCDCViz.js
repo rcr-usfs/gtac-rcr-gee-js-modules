@@ -164,12 +164,15 @@ function ccdcChangeDetection(ccdcImg,bandName,changeProbThresh){
   var breaksSortedByYear = breaks.arraySort();
   var magnitudesSortedByYear = magnitudes.arraySort(breaks);
   
-  var highestMagLossYear = breaksSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_year']]).selfMask();
+  var highestMagLossYear = breaksSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_year']]);
   var highestMagLossMag = magnitudesSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_mag']]);
-  highestMagLossMag = highestMagLossMag.updateMask(highestMagLossMag.neq(0))
-  var highestMagGainYear = breaksSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_year']]).selfMask();
-  var highestMagGainMag = magnitudesSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_mag']])
-  highestMagGainMag = highestMagGainMag.updateMask(highestMagGainMag.neq(0));
+  highestMagLossYear = highestMagLossYear.updateMask(highestMagLossMag.lt(0));
+  highestMagLossMag = highestMagLossMag.updateMask(highestMagLossMag.lt(0));
+  
+  var highestMagGainYear = breaksSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_year']]);
+  var highestMagGainMag = magnitudesSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
+  highestMagGainYear = highestMagGainYear.updateMask(highestMagGainMag.gt(0));
+  highestMagGainMag = highestMagGainMag.updateMask(highestMagGainMag.gt(0));
   Map.addLayer(highestMagLossYear);
   Map.addLayer(highestMagLossMag);
   Map.addLayer(highestMagGainYear);
