@@ -260,8 +260,8 @@ function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
   var slopes = img.select(['.*_SLP']).multiply(tBand);
  
   var tOmega = ee.Image(whichHarmonics).multiply(omega).multiply(tBand);
-  // var cosHarm = tOmega.cos();
-  // var sinHarm = tOmega.sin();
+  var cosHarm = tOmega.cos();
+  var sinHarm = tOmega.sin();
   
   var harmSelect = whichHarmonics.map(function(n){return ee.String('.*').cat(ee.Number(n).format())});
   
@@ -275,8 +275,8 @@ function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
     bn = ee.String(bn);
     return ee.Image([intercepts.select(bn.cat('.*')),
                     slopes.select(bn.cat('.*')),
-                    sins.select(bn.cat('.*')).multiply(tOmega.sin()),
-                    coss.select(bn.cat('.*')).multiply(tOmega.cos())
+                    sins.select(bn.cat('.*')).multiply(sinHarm),
+                    coss.select(bn.cat('.*')).multiply(cosHarm)
                     ]).reduce(ee.Reducer.sum());
   })).toBands().rename(outBns);
   return img.addBands(predicted);
@@ -300,33 +300,44 @@ function getCCDCSegCoeffs(timeImg,ccdcImg){
   var coeffKeys = ['.*_coefs'];
   var tStartKeys = ['tStart'];
   var tEndKeys = ['tEnd'];
+  var tBreakKeys = ['tBreak']
   
+  //Get coeffs and find how many bands have coeffs
   var coeffs = ccdcImg.select(coeffKeys);
   var bns = coeffs.bandNames();
   var nBns = bns.length();
   var harmonicTag = ee.List(['INTP','SLP','COS1','SIN1','COS2','SIN2','COS3','SIN3']);
-  var outBns = ee.List([]);
+
   
   //Get coeffs, start and end times
   coeffs = coeffs.toArray(2);
   var tStarts = ccdcImg.select(tStartKeys);
   var tEnds = ccdcImg.select(tEndKeys);
+  var tBreaks = ccdcImg.select(tBreakKeys);
   
+  Map.addLayer(tBreaks);
+  Map.addLayer(tEnds);
+  //Set up a mask for segments that the time band intersects
   var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,1).arrayRepeat(2,1);
   coeffs = coeffs.arrayMask(tMask).arrayProject([2,1]).arrayTranspose(1,0).arrayFlatten([bns,harmonicTag]);
-  coeffs = coeffs.updateMask(coeffs.reduce(ee.Reducer.max()).neq(0))
+  
+  //If time band doesn't intersect any segments, set it to null
+  coeffs = coeffs.updateMask(coeffs.reduce(ee.Reducer.max()).neq(0));
+  
   return timeImg.addBands(coeffs);
 }
 
 function predictCCDC(ccdcImg,timeImgs,detrended,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
-  // var timeImg = ee.Image(timeImgs.first());
-  var timeBandName = ee.Image(timeImgs.first()).bandNames();
+  var timeImg = ee.Image(timeImgs.first());
+  var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
 
   
-  // getCCDCSegCoeffs(timeImg,ccdcImg)
+  getCCDCSegCoeffs(timeImg,ccdcImg)
   // Add the segment-appropriate coefficients to each time image
-  timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
- simpleCCDCPredictionWrapper(timeImgs,'year',[1,2,3])
+  // timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg)});
+// simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1,2,3])
+// simpleCCDCPredictionWrapper(timeImgs,timeBandName,[1])
+
   // getCCDCSegCoeffs(ee.Image(timeSeries.first()),ccdcImg,timeBandName,fillGapBetweenSegments)
   // timeSeries = timeSeries.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,timeBandName,fillGapBetweenSegments)});
   
