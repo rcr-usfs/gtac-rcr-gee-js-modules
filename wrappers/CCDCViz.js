@@ -133,7 +133,7 @@ var endJulian = ccdcImg.get('endJulian').getInfo();
 var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
 
-var yearImages = getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1).limit(10);
+var yearImages = getTimeImageCollection(startYear,endYear,startJulian,endJulian,0.1);
 var fitted = predictCCDC(ccdcImg,yearImages,true,whichHarmonics);
 Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC')
 
