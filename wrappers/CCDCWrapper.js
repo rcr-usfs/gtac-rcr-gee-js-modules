@@ -121,7 +121,6 @@ args.ccdcParams ={
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 //Start function calls
-
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat and Sentinel 2 scenes
 var processedScenes = getImagesLib.getProcessedLandsatAndSentinel2Scenes(args).select(args.exportBands);
@@ -143,10 +142,11 @@ ccdcParams.collection = processedScenes;
 var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(args.ccdcParams);
 
 //Set properties for asset
-ccdc = ccdc.set(args);
+ccdc = ccdc.copyProperties(processedScenes);
 ccdc = ccdc.set(args.ccdcParams);
 
 Map.addLayer(ccdc,{},'CCDC Output',false);
+
 //Export output
 Export.image.toAsset(ccdc, args.outputName, args.exportPathRoot +'/'+args.outputName , {'.default':'sample'}, null, args.studyArea, args.scale, args.crs, args.transform, 1e13);
 
