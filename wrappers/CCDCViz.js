@@ -25,7 +25,7 @@ var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
 
 //Add the raw array image
-Map.addLayer(ccdcImg,{},'Raw CCDC Output',false)
+Map.addLayer(ccdcImg,{},'Raw CCDC Output',false);
 
 //Extract the change years and magnitude
 var changeObj = dLib.ccdcChangeDetection(ccdcImg,changeDetectionBandName);
