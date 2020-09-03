@@ -24,6 +24,9 @@ var endJulian = ccdcImg.get('endJulian').getInfo();
 var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
 
+//Add the raw array image
+Map.addLayer(ccdcImg,{},'Raw CCDC Output',false)
+
 //Extract the change years and magnitude
 var changeObj = dLib.ccdcChangeDetection(ccdcImg,changeDetectionBandName);
 Map.addLayer(changeObj.highestMag.loss.year,{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Loss Year');
