@@ -83,7 +83,7 @@ args.outputName = 'CCDC-Test3';
 
 // Provide location composites will be exported to
 // This should be an asset folder, or more ideally, an asset imageCollection
-args.exportPathRoot = 'users/iwhousman/test/ChangeCollection';
+args.exportPathRoot = 'users/leahscampbell/scratch/ccdc-test';
 
 
 // CRS- must be provided.  
@@ -100,7 +100,7 @@ args.scale = null;
 
 ///////////////////////////////////////////////////////////////////////
 //CCDC Params
-args.ccdcParams ={
+var ccdcParams ={
   breakpointBands:['green','red','nir','swir1','swir2','NDVI'],//The name or index of the bands to use for change detection. If unspecified, all bands are used.//Can include: 'blue','green','red','nir','swir1','swir2'
                                                               //'NBR','NDVI','wetness','greenness','brightness','tcAngleBG'
   tmaskBands : null,//['green','swir2'],//The name or index of the bands to use for iterative TMask cloud detection. These are typically the green band and the SWIR2 band. If unspecified, TMask is not used. If specified, 'tmaskBands' must be included in 'breakpointBands'., 
@@ -137,18 +137,26 @@ Map.addLayer(processedScenes,{},'Processed Input Data',false);
 ccdcParams.collection = processedScenes;
 
 //Run CCDC
-var ccdc = ee.Algorithms.TemporalSegmentation.Ccdc(args.ccdcParams);
+var ccdc = ee.Image(ee.Algorithms.TemporalSegmentation.Ccdc(ccdcParams));
 
 //Set properties for asset
-ccdc = ccdc.copyProperties(processedScenes);
-ccdc = ccdc.set(args.ccdcParams);
+ccdc = ccdc.copyProperties(processedScenes)
+            .set(ccdcParams);
 
-Map.addLayer(ccdc,{},'CCDC Output',false);
+//Map.addLayer(ccdc,{},'CCDC Output',false);
 
-args.outputName = args.outputName + '_' + startYear.toString() + '_' + endYear.toString() + '_' + startJulian.toString() + '_' + endJulian.toString();
+args.outputName = args.outputName + '_' + args.startYear.toString() + '_' + args.endYear.toString() + '_' + args.startJulian.toString() + '_' + args.endJulian.toString();
 //Export output
-Export.image.toAsset(ccdc, args.outputName, args.exportPathRoot +'/'+args.outputName , {'.default':'sample'}, null, args.studyArea, args.scale, args.crs, args.transform, 1e13);
-
+Export.image.toAsset({image: ccdc, 
+                    description: args.outputName, 
+                    assetId: args.exportPathRoot +'/'+args.outputName, 
+                    pyramidingPolicy: {'.default':'sample'}, 
+                    dimensions: null, 
+                    region: args.studyArea, 
+                    scale: args.scale, 
+                    crs: args.crs, 
+                    crsTransform: args.transform, 
+                    maxPixels: 1e13});
 
 
 Map.setOptions('HYBRID');
