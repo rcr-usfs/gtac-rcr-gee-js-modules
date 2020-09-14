@@ -3360,6 +3360,7 @@ function getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulia
           .filterDate(startDate,endDate)
           .filter(ee.Filter.calendarRange(startJulian,endJulian));
   
+  c = c.map(function(img){return img.resample('bicubic')});
   // Create composite time series
   var ts = compositeTimeSeries(c,startYear,endYear,startJulian,endJulian,timebuffer,weights,null,compositingReducer);
   
