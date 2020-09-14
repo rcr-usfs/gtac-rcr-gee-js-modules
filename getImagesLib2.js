@@ -2127,10 +2127,10 @@ collection,startYear,endYear,startJulian,endJulian,compositingReducer,timebuffer
     Map.addLayer(composite.reproject(crs,transform,scale), vizParamsTrue, year.toString() + ' True Color ' , false);
     Map.addLayer(composite.reproject(crs,transform,scale), vizParamsFalse, year.toString() + ' False Color ', false);
     // Add metadata, cast to integer, and export composite
-    // composite = composite.set({
-    //   'system:time_start': ee.Date.fromYMD(year,6,1).millis(),
-    //   'yearBuffer':timebuffer
-    // });
+    composite = composite.set({
+      'system:time_start': ee.Date.fromYMD(year+yearWithMajority,6,1).millis(),
+      'yearBuffer':timebuffer
+    });
   
     // Export the composite 
     // Set up export name and path
