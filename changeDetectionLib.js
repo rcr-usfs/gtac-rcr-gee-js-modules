@@ -1815,7 +1815,7 @@ function predictCCDC(ccdcImg,timeImgs,fillGaps,whichHarmonics){//,fillGapBetween
   var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
   // Add the segment-appropriate coefficients to each time image
   timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,fillGaps)});
-  
+  print('timeImgs', timeImgs)
   //Predict across each time image
   return simpleCCDCPredictionWrapper(timeImgs,timeBandName,whichHarmonics);
 }
