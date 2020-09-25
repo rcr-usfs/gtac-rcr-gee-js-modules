@@ -1813,9 +1813,9 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
 //Function to get yearly ccdc coefficients. 
 //To have any break be contained within the calendar year that it occurred, set yearEndMonth = 12, yearEndDay = 31
 function annualizeCCDC(ccdcImg, startYear, endYear, startJulian, endJulian, yearEndMonth, yearEndDay){
-  var timeImgs = dLib.getTimeImageCollection(startYear-1,endYear,startJulian,endJulian,1,yearEndMonth, yearEndDay);
+  var timeImgs = getTimeImageCollection(startYear-1,endYear,startJulian,endJulian,1,yearEndMonth, yearEndDay);
   var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
-  timeImgs = timeImgs.map(function(img){return dLib.getCCDCSegCoeffs(img,ccdcImg,true)});
+  timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,true)});
   return timeImgs;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
