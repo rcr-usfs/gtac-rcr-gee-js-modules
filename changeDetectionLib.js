@@ -1753,10 +1753,10 @@ function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
   //Iterate across each band and predict value
   var predicted = ee.ImageCollection(whichBands.map(function(bn){
     bn = ee.String(bn);
-    return ee.Image([intercepts.select(bn.cat('.*')),
-                    slopes.select(bn.cat('.*')),
-                    sins.select(bn.cat('.*')).multiply(sinHarm),
-                    coss.select(bn.cat('.*')).multiply(cosHarm)
+    return ee.Image([intercepts.select(bn.cat('_.*')),
+                    slopes.select(bn.cat('_.*')),
+                    sins.select(bn.cat('_.*')).multiply(sinHarm),
+                    coss.select(bn.cat('_.*')).multiply(cosHarm)
                     ]).reduce(ee.Reducer.sum());
   })).toBands().rename(outBns);
   return img.addBands(predicted);
@@ -1815,7 +1815,7 @@ function predictCCDC(ccdcImg,timeImgs,fillGaps,whichHarmonics){//,fillGapBetween
   var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
   // Add the segment-appropriate coefficients to each time image
   timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,fillGaps)});
-  print('timeImgs', timeImgs)
+
   //Predict across each time image
   return simpleCCDCPredictionWrapper(timeImgs,timeBandName,whichHarmonics);
 }
