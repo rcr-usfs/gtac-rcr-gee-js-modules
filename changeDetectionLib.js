@@ -1810,6 +1810,15 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   return timeImg.addBands(coeffs);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
+//Function to get yearly ccdc coefficients. 
+//To have any break be contained within the calendar year that it occurred, set yearEndMonth = 12, yearEndDay = 31
+function annualizeCCDC(ccdcImg, startYear, endYear, startJulian, endJulian, yearEndMonth, yearEndDay){
+  var timeImgs = dLib.getTimeImageCollection(startYear-1,endYear,startJulian,endJulian,1,yearEndMonth, yearEndDay);
+  var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
+  timeImgs = timeImgs.map(function(img){return dLib.getCCDCSegCoeffs(img,ccdcImg,true)});
+  return timeImgs;
+}
+////////////////////////////////////////////////////////////////////////////////////////
 //Wrapper function for predicting CCDC across a set of time images
 function predictCCDC(ccdcImg,timeImgs,fillGaps,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
   var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
@@ -1963,6 +1972,7 @@ exports.thresholdSubtleChange = thresholdSubtleChange;
 exports.simpleCCDCPrediction = simpleCCDCPrediction;
 exports.simpleCCDCPredictionWrapper = simpleCCDCPredictionWrapper;
 exports.getCCDCSegCoeffs = getCCDCSegCoeffs;
+exports.annualizeCCDC = annualizeCCDC;
 exports.predictCCDC = predictCCDC;
 exports.getTimeImageCollection = getTimeImageCollection;
 exports.ccdcChangeDetection = ccdcChangeDetection;
