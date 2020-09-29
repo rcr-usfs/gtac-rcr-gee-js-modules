@@ -1870,35 +1870,36 @@ function ccdcChangeDetection(ccdcImg,bandName){
   var changeMask = changeProbs.gte(changeProbThresh);
   magnitudes = magnitudes.select(bandName + '.*');
 
-  breaks = breaks.updateMask(changeMask);
-  magnitudes = magnitudes.updateMask(changeMask);
+  
   //Sort by magnitude and years
   var breaksSortedByMag = breaks.arraySort(magnitudes);
   var magnitudesSortedByMag = magnitudes.arraySort();
+  var changeMaskSortedByMag = changeMask.arraySort(magnitudes);
   
   var breaksSortedByYear = breaks.arraySort();
   var magnitudesSortedByYear = magnitudes.arraySort(breaks);
+  var changeMaskSortedByYear = changeMask.arraySort(breaks);
   
   //Get the loss and gain years and magnitudes for each sorting method
   var highestMagLossYear = breaksSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_year']]);
   var highestMagLossMag = magnitudesSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_mag']]);
-  highestMagLossYear = highestMagLossYear.updateMask(highestMagLossMag.lt(0));
-  highestMagLossMag = highestMagLossMag.updateMask(highestMagLossMag.lt(0));
+  highestMagLossYear = highestMagLossYear.updateMask(highestMagLossMag.lt(0).and(changeMaskSortedByMag));
+  highestMagLossMag = highestMagLossMag.updateMask(highestMagLossMag.lt(0).and(changeMaskSortedByMag));
   
   var highestMagGainYear = breaksSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_year']]);
   var highestMagGainMag = magnitudesSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
-  highestMagGainYear = highestMagGainYear.updateMask(highestMagGainMag.gt(0));
-  highestMagGainMag = highestMagGainMag.updateMask(highestMagGainMag.gt(0));
+  highestMagGainYear = highestMagGainYear.updateMask(highestMagGainMag.gt(0).and(changeMaskSortedByMag));
+  highestMagGainMag = highestMagGainMag.updateMask(highestMagGainMag.gt(0).and(changeMaskSortedByMag));
   
   var mostRecentLossYear = breaksSortedByYear.arraySlice(0,0,1).arrayFlatten([['loss_year']]);
   var mostRecentLossMag = magnitudesSortedByYear.arraySlice(0,0,1).arrayFlatten([['loss_mag']]);
-  mostRecentLossYear = mostRecentLossYear.updateMask(mostRecentLossMag.lt(0));
-  mostRecentLossMag = mostRecentLossMag.updateMask(mostRecentLossMag.lt(0));
+  mostRecentLossYear = mostRecentLossYear.updateMask(mostRecentLossMag.lt(0).and(changeMaskSortedByYear));
+  mostRecentLossMag = mostRecentLossMag.updateMask(mostRecentLossMag.lt(0).and(changeMaskSortedByYear));
   
   var mostRecentGainYear = breaksSortedByYear.arraySlice(0,-1,null).arrayFlatten([['gain_year']]);
   var mostRecentGainMag = magnitudesSortedByYear.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
-  mostRecentGainYear = mostRecentGainYear.updateMask(mostRecentGainMag.gt(0));
-  mostRecentGainMag = mostRecentGainMag.updateMask(mostRecentGainMag.gt(0));
+  mostRecentGainYear = mostRecentGainYear.updateMask(mostRecentGainMag.gt(0).and(changeMaskSortedByYear));
+  mostRecentGainMag = mostRecentGainMag.updateMask(mostRecentGainMag.gt(0).and(changeMaskSortedByYear));
   
   return {mostRecent:{
     loss:{year:mostRecentLossYear,
