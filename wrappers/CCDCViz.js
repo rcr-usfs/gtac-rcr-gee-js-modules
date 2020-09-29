@@ -11,10 +11,10 @@ ccdcImg = ee.Image(ccdcImg.mosaic().copyProperties(f));
 //CCDC exports the first 3 harmonics (1 cycle/yr, 2 cycles/yr, and 3 cycles/yr)
 //If you only want to see yearly patterns, specify [1]
 //If you would like a tighter fit in the predicted value, include the second or third harmonic as well [1,2,3]
-var whichHarmonics = [1,2,3];
+var whichHarmonics = [1];
 
 //Whether to fill gaps between segments' end year and the subsequent start year to the break date
-var fillGaps = false;
+var fillGaps = true;
 
 //Specify which band to use for loss and gain. 
 //This is most important for the loss and gain magnitude since the year of change will be the same for all years
@@ -44,5 +44,9 @@ var yearImages = dLib.getTimeImageCollection(startYear,endYear,startJulian,endJu
 var fitted = dLib.predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics);
 Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC',false);
 
-
+fitted = fitted.map(function(img){
+  var ndvi = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NDVI_predicted_after'])
+  return img.addBands(ndvi);
+})
+print(fitted.first())
 Map.setOptions('HYBRID');
