@@ -3,7 +3,9 @@ var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////
 //Bring in ccdc image asset
 //This is assumed to be an image of arrays that is returned from the ee.Algorithms.TemporalSegmentation.Ccdc method
-var ccdcImg = ee.Image('users/iwhousman/test/ChangeCollection/CCDC-Test3');
+var ccdcImg = ee.ImageCollection("projects/CCDC/LandsatSentinel");
+var f= ee.Image(ccdcImg.first());
+ccdcImg = ee.Image(ccdcImg.mosaic().copyProperties(f));
 
 //Specify which harmonics to use when predicting the CCDC model
 //CCDC exports the first 3 harmonics (1 cycle/yr, 2 cycles/yr, and 3 cycles/yr)
