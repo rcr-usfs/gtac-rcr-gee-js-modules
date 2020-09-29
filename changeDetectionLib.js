@@ -1892,18 +1892,22 @@ function ccdcChangeDetection(ccdcImg,bandName){
   var highestMagGainMag = magnitudesSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
   var highestMagGainMask = changeMaskSortedByMag.arraySlice(0,-1,null).arrayFlatten([['change_mask']]);
   
-  highestMagGainYear = highestMagGainYear.updateMask(highestMagGainMag.gt(0).and(changeMaskSortedByMag));
-  highestMagGainMag = highestMagGainMag.updateMask(highestMagGainMag.gt(0).and(changeMaskSortedByMag));
+  highestMagGainYear = highestMagGainYear.updateMask(highestMagGainMag.gt(0).and(highestMagGainMask));
+  highestMagGainMag = highestMagGainMag.updateMask(highestMagGainMag.gt(0).and(highestMagGainMask));
   
   var mostRecentLossYear = breaksSortedByYear.arraySlice(0,0,1).arrayFlatten([['loss_year']]);
   var mostRecentLossMag = magnitudesSortedByYear.arraySlice(0,0,1).arrayFlatten([['loss_mag']]);
-  mostRecentLossYear = mostRecentLossYear.updateMask(mostRecentLossMag.lt(0).and(changeMaskSortedByYear));
-  mostRecentLossMag = mostRecentLossMag.updateMask(mostRecentLossMag.lt(0).and(changeMaskSortedByYear));
+  var mostRecentLossMask = changeMaskSortedByYear.arraySlice(0,0,1).arrayFlatten([['loss_mask']]);
+  
+  mostRecentLossYear = mostRecentLossYear.updateMask(mostRecentLossMag.lt(0).and(mostRecentLossMask));
+  mostRecentLossMag = mostRecentLossMag.updateMask(mostRecentLossMag.lt(0).and(mostRecentLossMask));
   
   var mostRecentGainYear = breaksSortedByYear.arraySlice(0,-1,null).arrayFlatten([['gain_year']]);
   var mostRecentGainMag = magnitudesSortedByYear.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
-  mostRecentGainYear = mostRecentGainYear.updateMask(mostRecentGainMag.gt(0).and(changeMaskSortedByYear));
-  mostRecentGainMag = mostRecentGainMag.updateMask(mostRecentGainMag.gt(0).and(changeMaskSortedByYear));
+  var mostRecentGainMask = changeMaskSortedByYear.arraySlice(0,-1,null).arrayFlatten([['gain_mask']]);
+  
+  mostRecentGainYear = mostRecentGainYear.updateMask(mostRecentGainMag.gt(0).and(mostRecentGainMask));
+  mostRecentGainMag = mostRecentGainMag.updateMask(mostRecentGainMag.gt(0).and(mostRecentGainMask));
   
   return {mostRecent:{
     loss:{year:mostRecentLossYear,
