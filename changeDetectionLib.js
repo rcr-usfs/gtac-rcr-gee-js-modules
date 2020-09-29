@@ -1870,7 +1870,8 @@ function ccdcChangeDetection(ccdcImg,bandName){
   var changeMask = changeProbs.gte(changeProbThresh);
   magnitudes = magnitudes.select(bandName + '.*');
 
-  
+  breaks = breaks.updateMask(changeMask);
+  magnitudes = magnitudes.updateMask(changeMask);
   //Sort by magnitude and years
   var breaksSortedByMag = breaks.arraySort(magnitudes);
   var magnitudesSortedByMag = magnitudes.arraySort();
