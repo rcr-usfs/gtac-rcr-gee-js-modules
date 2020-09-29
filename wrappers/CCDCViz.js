@@ -45,9 +45,9 @@ var fitted = dLib.predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics);
 Map.addLayer(fitted.select(['.*_predicted']),{},'Fitted CCDC',false);
 
 fitted = fitted.map(function(img){
-  var ndvi = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NDVI_predicted_after'])
+  var ndvi = img.normalizedDifference(['nir_predicted','red_predicted']).rename(['NDVI_predicted_after']);
   return img.addBands(ndvi);
-})
-Map.addLayer(fitted.select(['NDVI_predicted','NDVI_predicted_after']),{},'NDVI Fitted vs NDVI after',false)
-print(fitted.first())
+});
+Map.addLayer(fitted.select(['NDVI_predicted','NDVI_predicted_after']),{},'NDVI Fitted vs NDVI after',false);
+
 Map.setOptions('HYBRID');
