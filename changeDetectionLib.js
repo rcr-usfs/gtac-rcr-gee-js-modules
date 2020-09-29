@@ -1883,11 +1883,15 @@ function ccdcChangeDetection(ccdcImg,bandName){
   //Get the loss and gain years and magnitudes for each sorting method
   var highestMagLossYear = breaksSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_year']]);
   var highestMagLossMag = magnitudesSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_mag']]);
-  highestMagLossYear = highestMagLossYear.updateMask(highestMagLossMag.lt(0).and(changeMaskSortedByMag));
-  highestMagLossMag = highestMagLossMag.updateMask(highestMagLossMag.lt(0).and(changeMaskSortedByMag));
+  var highestMagLossMask = changeMaskSortedByMag.arraySlice(0,0,1).arrayFlatten([['loss_mask']]);
+  
+  highestMagLossYear = highestMagLossYear.updateMask(highestMagLossMag.lt(0).and(highestMagLossMask));
+  highestMagLossMag = highestMagLossMag.updateMask(highestMagLossMag.lt(0).and(highestMagLossMask));
   
   var highestMagGainYear = breaksSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_year']]);
   var highestMagGainMag = magnitudesSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
+  var highestMagGainMask = changeMaskSortedByMag.arraySlice(0,-1,null).arrayFlatten([['change_mask']]);
+  
   highestMagGainYear = highestMagGainYear.updateMask(highestMagGainMag.gt(0).and(changeMaskSortedByMag));
   highestMagGainMag = highestMagGainMag.updateMask(highestMagGainMag.gt(0).and(changeMaskSortedByMag));
   
