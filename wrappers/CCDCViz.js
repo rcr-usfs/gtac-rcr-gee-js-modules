@@ -52,5 +52,5 @@ Map.addLayer(fitted.select(['NDVI_predicted','NDVI_predicted_after']),{},'NDVI F
 var diff = fitted.map(function(img){
   return img.select(['NDVI_predicted']).subtract(img.select(['NDVI_predicted_after'])).pow(2)
 }).mean();
-Map.addLayer(diff,{min:0.01,max:0.1},'Mean sq diff NDVI before and after')
+Map.addLayer(diff,{min:0,max:0.01},'Mean sq diff NDVI before and after')
 Map.setOptions('HYBRID');
