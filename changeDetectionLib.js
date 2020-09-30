@@ -1890,7 +1890,7 @@ function ccdcChangeDetection(ccdcImg,bandName){
   
   var highestMagGainYear = breaksSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_year']]);
   var highestMagGainMag = magnitudesSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
-  var highestMagGainMask = changeMaskSortedByMag.arraySlice(0,-1,null).arrayFlatten([['change_mask']]);
+  var highestMagGainMask = changeMaskSortedByMag.arraySlice(0,-1,null).arrayFlatten([['gain_mask']]);
   
   highestMagGainYear = highestMagGainYear.updateMask(highestMagGainMag.gt(0).and(highestMagGainMask));
   highestMagGainMag = highestMagGainMag.updateMask(highestMagGainMag.gt(0).and(highestMagGainMask));
