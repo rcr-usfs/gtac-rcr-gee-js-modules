@@ -1879,6 +1879,27 @@ function spatioTemporalJoin(primary,secondary,hourDiff,outKey){
   return joined;
     
 }
+//Simple inner join function for featureCollections
+
+function joinFeatureCollections(primary,secondary,fieldName){
+  // Use an equals filter to specify how the collections match.
+  var f = ee.Filter.equals({
+    leftField: fieldName,
+    rightField: fieldName
+  });
+  
+  // Define the join.
+  var innerJoin = ee.Join.inner('primary', 'secondary');
+  
+  // Apply the join.
+  var joined = innerJoin.apply(primary, secondary, f);
+  joined = joined.map(function(f){
+    var p = ee.Feature(f.get('primary'));
+    var s = ee.Feature(f.get('secondary'));
+    return p.copyProperties(s);
+  });
+  return joined;
+}
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 //Method for removing spikes in time series
