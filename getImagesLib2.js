@@ -1880,7 +1880,8 @@ function spatioTemporalJoin(primary,secondary,hourDiff,outKey){
     
 }
 //Simple inner join function for featureCollections
-
+//Matches features based on an exact match of the fieldName parameter
+//Retains the geometry of the primary, but copies the properties of the secondary collection
 function joinFeatureCollections(primary,secondary,fieldName){
   // Use an equals filter to specify how the collections match.
   var f = ee.Filter.equals({
