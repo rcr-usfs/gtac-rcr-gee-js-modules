@@ -3487,6 +3487,7 @@ exports.exportCollection = exportCollection;
 exports.joinCollections = joinCollections;
 exports.smartJoin = smartJoin;
 exports.spatioTemporalJoin = spatioTemporalJoin;
+exports.joinFeatureCollections = joinFeatureCollections;
 exports.listToString = listToString;
 exports.harmonizationRoy = harmonizationRoy;
 exports.harmonizationChastain = harmonizationChastain;
