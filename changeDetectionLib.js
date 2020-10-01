@@ -1810,13 +1810,56 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   return timeImg.addBands(coeffs);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-//Function to get yearly ccdc coefficients. 
-//To have any break be contained within the calendar year that it occurred, set yearEndMonth = 12, yearEndDay = 31
+//      Functions for Annualizing CCDC:
+//////////////////////////////////////////////////////////////////////////////////////
 function annualizeCCDC(ccdcImg, startYear, endYear, startJulian, endJulian, yearEndMonth, yearEndDay){
-  var timeImgs = getTimeImageCollection(startYear,endYear,startJulian,endJulian,1,yearEndMonth, yearEndDay);
-  var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
-  timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,true)});
-  return timeImgs;
+  var timeImgs = getTimeImageCollection(startYear, endYear, startJulian ,endJulian, 1, yearEndMonth, yearEndDay);
+  var annualSegCoeffs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,true)});
+  return annualSegCoeffs
+}
+
+// Using annualized time series, get fitted values and slopes from fitted values.
+function getFitSlope(annualSegCoeffs, startYear, endYear){
+  //Predict across each time image
+  var whichBands = ee.Image(annualSegCoeffs.first()).select(['.*_INTP']).bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
+  whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys().getInfo();
+  var fitted = annualSegCoeffs.map(function(img){return simpleCCDCPredictionAnnualized(img,'year',whichBands)});
+  
+  // Get back-casted slope using the fitted values
+  var diff = ee.ImageCollection(ee.List.sequence(startYear+1, endYear).map(function(rightYear){
+    var leftYear = ee.Number(rightYear).subtract(1);
+    var rightFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(rightYear, rightYear, 'year')).first());
+    var leftFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(leftYear, leftYear, 'year')).first());
+    var slopeNames = rightFitted.select(['.*_predicted']).bandNames().map(function(name){
+      return ee.String(ee.String(name).split('_predicted').get(0)).cat(ee.String('_fittedSlope'))
+    });
+    var slope = rightFitted.select(['.*_predicted']).subtract(leftFitted.select(['.*_predicted']))
+                  .rename(slopeNames);
+    return rightFitted.addBands(slope);
+  }))  
+  return diff;
+}
+
+function simpleCCDCPredictionAnnualized(img,timeBandName,whichBands){
+  
+  //Pull out the time band in the yyyy.ff format
+  var tBand = img.select([timeBandName]);
+  
+  //Pull out the intercepts and slopes
+  var intercepts = img.select(['.*_INTP']);
+  var slopes = img.select(['.*_SLP']).multiply(tBand);
+  
+  //Set up final output band names
+  var outBns = whichBands.map(function(bn){return ee.String(bn).cat('_predicted')});
+  
+  //Iterate across each band and predict value
+  var predicted = ee.ImageCollection(whichBands.map(function(bn){
+    bn = ee.String(bn);
+    return ee.Image([intercepts.select(bn.cat('.*')),
+                    slopes.select(bn.cat('.*')),
+                    ]).reduce(ee.Reducer.sum());
+  })).toBands().rename(outBns);
+  return img.addBands(predicted);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //Wrapper function for predicting CCDC across a set of time images
