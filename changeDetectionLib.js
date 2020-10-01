@@ -1801,7 +1801,7 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   
   
   //Set up a mask for segments that the time band intersects
-  var tMask = tStarts.lte(timeImg).and(tEnds.gt(timeImg)).arrayRepeat(1,1).arrayRepeat(2,1);
+  var tMask = tStarts.lt(timeImg).and(tEnds.gte(timeImg)).arrayRepeat(1,1).arrayRepeat(2,1);
   coeffs = coeffs.arrayMask(tMask).arrayProject([2,1]).arrayTranspose(1,0).arrayFlatten([bns,harmonicTag]);
   
   //If time band doesn't intersect any segments, set it to null
