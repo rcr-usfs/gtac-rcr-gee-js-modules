@@ -2036,6 +2036,9 @@ exports.simpleCCDCPrediction = simpleCCDCPrediction;
 exports.simpleCCDCPredictionWrapper = simpleCCDCPredictionWrapper;
 exports.getCCDCSegCoeffs = getCCDCSegCoeffs;
 exports.annualizeCCDC = annualizeCCDC;
+exports.getFitSlope = getFitSlope;
+exports.simpleCCDCPredictionAnnualized = simpleCCDCPredictionAnnualized;
 exports.predictCCDC = predictCCDC;
 exports.getTimeImageCollection = getTimeImageCollection;
 exports.ccdcChangeDetection = ccdcChangeDetection;
+
