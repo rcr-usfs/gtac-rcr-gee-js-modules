@@ -1850,13 +1850,13 @@ function simpleCCDCPredictionAnnualized(img,timeBandName,whichBands){
   var slopes = img.select(['.*_SLP']).multiply(tBand);
   
   //Set up final output band names
-  var outBns = whichBands.map(function(bn){return ee.String(bn).cat('_predicted')});
+  var outBns = whichBands.map(function(bn){return ee.String(bn).cat('_CCDC_fitted')});
   
   //Iterate across each band and predict value
   var predicted = ee.ImageCollection(whichBands.map(function(bn){
     bn = ee.String(bn);
-    return ee.Image([intercepts.select(bn.cat('.*')),
-                    slopes.select(bn.cat('.*')),
+    return ee.Image([intercepts.select(bn.cat('_.*')),
+                    slopes.select(bn.cat('_.*')),
                     ]).reduce(ee.Reducer.sum());
   })).toBands().rename(outBns);
   return img.addBands(predicted);
