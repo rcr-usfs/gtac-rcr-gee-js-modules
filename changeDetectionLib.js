@@ -1836,7 +1836,13 @@ function getFitSlope(annualSegCoeffs, startYear, endYear){
     var slope = rightFitted.select(['.*_fitted']).subtract(leftFitted.select(['.*_fitted']))
                   .rename(slopeNames);
     return rightFitted.addBands(slope);
-  }))  
+  }))
+  
+  // Rename bands
+  var bandNames = diff.first().bandNames();
+  var newBandNames = bandNames.map(function(name){return name.replace('coefs','CCDC')});
+  diff = diff.select(bandNames, newBandNames);
+  
   return diff;
 }
 
