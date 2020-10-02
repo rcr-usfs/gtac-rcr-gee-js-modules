@@ -1874,10 +1874,10 @@ function predictCCDC(ccdcImg,timeImgs,fillGaps,whichHarmonics){//,fillGapBetween
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function for getting a set of time images
 //This is generally used for methods such as CCDC
-// yearEndMonth and yearEndDay are the date that you want the CCDC "year" to end at. This is mostly important for Annualized CCDC.
-// For LCMS, this is Sept. 1. So any change that occurs before Sept 1 in that year will be counted in that year, and after
+// yearStartMonth and yearStartDay are the date that you want the CCDC "year" to start at. This is mostly important for Annualized CCDC.
+// For LCMS, this is Sept. 1. So any change that occurs before Sept 1 in that year will be counted in that year, and Sept. 1 and after
 // will be counted in the following year.
-function getTimeImageCollection(startYear,endYear,startJulian,endJulian,step, yearEndMonth, yearEndDay){
+function getTimeImageCollection(startYear,endYear,startJulian,endJulian,step, yearStartMonth, yearStartDay){
   if(startJulian === undefined || startJulian === null){
     startJulian = 1;
   }
@@ -1887,19 +1887,19 @@ function getTimeImageCollection(startYear,endYear,startJulian,endJulian,step, ye
   if(step === undefined || step === null){
     step = 0.1;
   }
-  if(yearEndMonth === undefined || yearEndMonth === null){
-    yearEndMonth = 1;
+  if(yearStartMonth === undefined || yearStartMonth === null){
+    yearStartMonth = 1;
   }
-  if(yearEndDay === undefined || yearEndDay === null){
-    yearEndDay = 1;
+  if(yearStartDay === undefined || yearStartDay === null){
+    yearStartDay = 1;
   }
-  var monthDayFraction = ee.Number.parse(ee.Date.fromYMD(startYear, yearEndMonth, yearEndDay).format('DDD')).divide(365);  
+  var monthDayFraction = ee.Number.parse(ee.Date.fromYMD(startYear, yearStartMonth, yearStartDay).format('DDD')).divide(365);  
   var yearImages = ee.ImageCollection(ee.List.sequence(ee.Number(startYear).add(monthDayFraction),ee.Number(endYear).add(monthDayFraction),step).map(function(n){
     n = ee.Number(n);
     var img = ee.Image(n).float().rename(['year']);
     var y = n.int16();
     var fraction = n.subtract(y);
-    var d = ee.Date.fromYMD(y,1,1).advance(fraction,'year').millis();
+    var d = ee.Date.fromYMD(y.subtract(ee.Number(1)),12,31).advance(fraction,'year').millis();
     return img.set('system:time_start',d);
   }));
   return yearImages.filter(ee.Filter.calendarRange(startYear,endYear,'year'))
