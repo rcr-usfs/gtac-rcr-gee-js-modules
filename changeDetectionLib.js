@@ -1831,7 +1831,7 @@ function getFitSlope(annualSegCoeffs, startYear, endYear){
     var rightFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(rightYear, rightYear, 'year')).first());
     var leftFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(leftYear, leftYear, 'year')).first());
     var slopeNames = rightFitted.select(['.*_predicted']).bandNames().map(function(name){
-      return ee.String(ee.String(name).split('_predicted').get(0)).cat(ee.String('_fittedSlope'))
+      return ee.String(ee.String(name).split('_predicted').get(0)).cat(ee.String('_fitSlope'))
     });
     var slope = rightFitted.select(['.*_predicted']).subtract(leftFitted.select(['.*_predicted']))
                   .rename(slopeNames);
