@@ -1840,7 +1840,7 @@ function getFitSlope(annualSegCoeffs, startYear, endYear){
   
   // Rename bands
   var bandNames = diff.first().bandNames();
-  var newBandNames = bandNames.map(function(name){return name.replace('coefs','CCDC')});
+  var newBandNames = bandNames.map(function(name){return ee.String(name).replace('coefs','CCDC')});
   diff = diff.select(bandNames, newBandNames);
   
   return diff;
