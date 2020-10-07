@@ -1829,7 +1829,7 @@ function getFitSlopeCCDC(annualSegCoeffs, startYear, endYear){
   var fitted = annualSegCoeffs.map(function(img){return simpleCCDCPredictionAnnualized(img,'year',whichBands)});
   
   // Get back-casted slope using the fitted values
-  var diff = ee.ImageCollection(ee.List.sequence(startYear+1, endYear).map(function(rightYear){
+  var diff = ee.ImageCollection(ee.List.sequence(ee.Number(startYear).add(1), endYear).map(function(rightYear){
     var leftYear = ee.Number(rightYear).subtract(1);
     var rightFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(rightYear, rightYear, 'year')).first());
     var leftFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(leftYear, leftYear, 'year')).first());
