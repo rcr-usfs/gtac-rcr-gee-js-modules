@@ -1812,14 +1812,17 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
 ////////////////////////////////////////////////////////////////////////////////////////
 //      Functions for Annualizing CCDC:
 //////////////////////////////////////////////////////////////////////////////////////
-function annualizeCCDC(ccdcImg, startYear, endYear, startJulian, endJulian, yearEndMonth, yearEndDay){
-  var timeImgs = getTimeImageCollection(startYear, endYear, startJulian ,endJulian, 1, yearEndMonth, yearEndDay);
+// yearStartMonth and yearStartDay are the date that you want the CCDC "year" to start at. This is mostly important for Annualized CCDC.
+// For LCMS, this is Sept. 1. So any change that occurs before Sept 1 in that year will be counted in that year, and Sept. 1 and after
+// will be counted in the following year.
+function annualizeCCDC(ccdcImg, startYear, endYear, startJulian, endJulian, yearStartMonth, yearStartDay){
+  var timeImgs = getTimeImageCollection(startYear, endYear, startJulian ,endJulian, 1, yearStartMonth, yearStartDay);
   var annualSegCoeffs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,true)});
   return annualSegCoeffs
 }
 
 // Using annualized time series, get fitted values and slopes from fitted values.
-function getFitSlope(annualSegCoeffs, startYear, endYear){
+function getFitSlopeCCDC(annualSegCoeffs, startYear, endYear){
   //Predict across each time image
   var whichBands = ee.Image(annualSegCoeffs.first()).select(['.*_INTP']).bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
   whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys().getInfo();
@@ -2042,7 +2045,7 @@ exports.simpleCCDCPrediction = simpleCCDCPrediction;
 exports.simpleCCDCPredictionWrapper = simpleCCDCPredictionWrapper;
 exports.getCCDCSegCoeffs = getCCDCSegCoeffs;
 exports.annualizeCCDC = annualizeCCDC;
-exports.getFitSlope = getFitSlope;
+exports.getFitSlopeCCDC = getFitSlopeCCDC;
 exports.simpleCCDCPredictionAnnualized = simpleCCDCPredictionAnnualized;
 exports.predictCCDC = predictCCDC;
 exports.getTimeImageCollection = getTimeImageCollection;
