@@ -182,7 +182,7 @@ ccdcImg = ee.Image(ccdcImg.mosaic().copyProperties(f));
 var whichHarmonics = [1,2,3];
 
 //Whether to fill gaps between segments' end year and the subsequent start year to the break date
-var fillGaps = false;
+var fillGaps = true;
 
 //Specify which band to use for loss and gain. 
 //This is most important for the loss and gain magnitude since the year of change will be the same for all years
@@ -217,7 +217,7 @@ function simpleGetTimeImageCollection(startYear,endYear,step){
 }
 function simpleAnnualizeCCDC(ccdcImg,startYear,endYear,targetMonth,targetDay){
   var fraction = ee.Date.fromYMD(1900,targetMonth,targetDay).getFraction('year');
-  var yearImages = simpleGetTimeImageCollection(ee.Number(startYear).add(fraction),ee.Number(endYear).add(fraction),1);
+  var yearImages = simpleGetTimeImageCollection(ee.Number(startYear).add(fraction),ee.Number(endYear).add(1).add(fraction),1);
   var predicted = predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics);
   
   var predBns = ee.Image(predicted.select(['.*_predicted']).first()).bandNames();
@@ -235,12 +235,12 @@ function simpleAnnualizeCCDC(ccdcImg,startYear,endYear,targetMonth,targetDay){
   return out;
 }
 
-var yearImages = simpleGetTimeImageCollection(ee.Number(startYear),ee.Number(endYear),1/12);
+var yearImages = simpleGetTimeImageCollection(ee.Number(startYear),ee.Number(endYear+1),1/12);
 var predicted = predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics);
 var fraction = ee.Number(ee.Date.fromYMD(1900,9,1).getFraction('year'));
 predicted = predicted.select(['.*_predicted']).map(function(img){
-  var f = ee.Number(ee.Date(img.get('system:time_start')));
-  var m = ee.Image(fraction.eq(fraction))
+  var f = ee.Number(ee.Date(img.get('system:time_start')).getFraction('year'));
+  var m = ee.Image(fraction.subtract(f).abs().lt(0.01))
   var masked = img.updateMask(m);
   
   return img.addBands(masked)
