@@ -171,7 +171,7 @@ function predictCCDC(ccdcImg,timeImgs,fillGaps,whichHarmonics){//,fillGapBetween
 var ccdcImg =  ee.ImageCollection("projects/CCDC/USA_V2")
           .filter(ee.Filter.eq('spectral', 'SR'))
           .select(['tStart','tEnd','tBreak','changeProb',
-                      'NBR_.*']);;
+                      'NDVI_.*']);;
 var f= ee.Image(ccdcImg.first());
 ccdcImg = ee.Image(ccdcImg.mosaic().copyProperties(f));
 
