@@ -171,7 +171,7 @@ function predictCCDC(ccdcImg,timeImgs,fillGaps,whichHarmonics){//,fillGapBetween
 var ccdcImg =  ee.ImageCollection("projects/CCDC/USA_V2")
           .filter(ee.Filter.eq('spectral', 'SR'))
           .select(['tStart','tEnd','tBreak','changeProb',
-                      'NDVI_.*','NBR_.*']);;
+                      'NBR_.*']);;
 var f= ee.Image(ccdcImg.first());
 ccdcImg = ee.Image(ccdcImg.mosaic().copyProperties(f));
 
@@ -214,13 +214,31 @@ function simpleGetTimeImageCollection(startYear,endYear,step){
   }));
   return yearImages
 }
-function annualizeCCDC(ccdcImg,startYear,endYear,targetMonth,targetDay){
+function simpleAnnualizeCCDC(ccdcImg,startYear,endYear,targetMonth,targetDay){
   var fraction = ee.Date.fromYMD(1900,targetMonth,targetDay).getFraction('year');
   var yearImages = simpleGetTimeImageCollection(ee.Number(startYear).add(fraction),ee.Number(endYear).add(fraction),1);
-  predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics)
+  var predicted = predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics);
+  
+  var predBns = ee.Image(predicted.select(['.*_predicted']).first()).bandNames();
+  var outBns = predBns.map(function(bn){
+    return ee.String(ee.String(bn).split('_').get(0)).cat('_slope');
+  });
+  var out = ee.ImageCollection(ee.List.sequence(startYear+1,endYear).map(function(y2){
+    y2 = ee.Number(y2);
+    var y1 = y2.subtract(1);
+    var predYr1 = ee.Image(predicted.filter(ee.Filter.calendarRange(y1,y1,'year')).first());
+    var predYr2 = ee.Image(predicted.filter(ee.Filter.calendarRange(y2,y2,'year')).first());
+    var diff = predYr2.select(['.*_predicted']).subtract(predYr1.select(['.*_predicted'])).rename(outBns);
+    return predYr2.addBands(diff);
+  }));
+  return out;
 }
-annualizeCCDC(ccdcImg,startYear,endYear,9,1)
 
+var yearImages = simpleGetTimeImageCollection(ee.Number(startYear),ee.Number(endYear),0.1);
+var predicted = predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics);
+  Map.addLayer(predicted.select(['.*_predicted']))
+var out = simpleAnnualizeCCDC(ccdcImg,startYear,endYear,9,1);
+Map.addLayer(out.select(['.*_predicted','.*_slope']))
 
 //Apply the CCDC harmonic model across a time series
 //First get a time series of time images 
