@@ -193,7 +193,7 @@ var startJulian = ccdcImg.get('startJulian').getInfo();
 var endJulian = ccdcImg.get('endJulian').getInfo();
 var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
-startYear = 2000;
+// startYear = 2000;
 endYear = 2020
 //Add the raw array image
 Map.addLayer(ccdcImg,{},'Raw CCDC Output',false);
@@ -235,7 +235,7 @@ function simpleAnnualizeCCDC(ccdcImg,startYear,endYear,targetMonth,targetDay){
   return out;
 }
 
-var yearImages = simpleGetTimeImageCollection(ee.Number(startYear),ee.Number(endYear+1),1/12);
+var yearImages = simpleGetTimeImageCollection(ee.Number(startYear),ee.Number(endYear+1),1/24);
 var predicted = predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics);
 var fraction = ee.Number(ee.Date.fromYMD(1900,9,1).getFraction('year'));
 predicted = predicted.select(['.*_predicted']).map(function(img){
