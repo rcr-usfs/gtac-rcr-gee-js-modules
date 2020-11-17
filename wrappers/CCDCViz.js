@@ -193,11 +193,11 @@ var startJulian = ccdcImg.get('startJulian').getInfo();
 var endJulian = ccdcImg.get('endJulian').getInfo();
 var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
-// startYear = 2005;
-// endYear = 2020
+startYear = 2000;
+endYear = 2020
 //Add the raw array image
 Map.addLayer(ccdcImg,{},'Raw CCDC Output',false);
-
+Map.addLayer(ccdcImg.select(['tStart']).arrayLength(0),{min:1,max:7},'Seg Count')
 //Extract the change years and magnitude
 // var changeObj = dLib.ccdcChangeDetection(ccdcImg,changeDetectionBandName);
 // Map.addLayer(changeObj.highestMag.loss.year,{min:startYear,max:endYear,palette:dLib.lossYearPalette},'Loss Year');
