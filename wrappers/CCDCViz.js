@@ -179,10 +179,10 @@ ccdcImg = ee.Image(ccdcImg.mosaic().copyProperties(f));
 //CCDC exports the first 3 harmonics (1 cycle/yr, 2 cycles/yr, and 3 cycles/yr)
 //If you only want to see yearly patterns, specify [1]
 //If you would like a tighter fit in the predicted value, include the second or third harmonic as well [1,2,3]
-var whichHarmonics = [1];
+var whichHarmonics = [1,2,3];
 
 //Whether to fill gaps between segments' end year and the subsequent start year to the break date
-var fillGaps = true;
+var fillGaps = false;
 
 //Specify which band to use for loss and gain. 
 //This is most important for the loss and gain magnitude since the year of change will be the same for all years
@@ -193,7 +193,8 @@ var startJulian = ccdcImg.get('startJulian').getInfo();
 var endJulian = ccdcImg.get('endJulian').getInfo();
 var startYear = ccdcImg.get('startYear').getInfo();
 var endYear = ccdcImg.get('endYear').getInfo();
-
+// startYear = 2005;
+// endYear = 2020
 //Add the raw array image
 Map.addLayer(ccdcImg,{},'Raw CCDC Output',false);
 
@@ -234,7 +235,7 @@ function simpleAnnualizeCCDC(ccdcImg,startYear,endYear,targetMonth,targetDay){
   return out;
 }
 
-var yearImages = simpleGetTimeImageCollection(ee.Number(startYear),ee.Number(endYear),0.1);
+var yearImages = simpleGetTimeImageCollection(ee.Number(startYear),ee.Number(endYear),1/12);
 var predicted = predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics);
   Map.addLayer(predicted.select(['.*_predicted']))
 var out = simpleAnnualizeCCDC(ccdcImg,startYear,endYear,9,1);
