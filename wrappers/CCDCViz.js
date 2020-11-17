@@ -137,7 +137,7 @@ function simpleGetTimeImageCollection(startYear,endYear,step){
 function annualizeCCDC(ccdcImg,startYear,endYear,targetMonth,targetDay){
   var fraction = ee.Date.fromYMD(1900,targetMonth,targetDay).getFraction('year');
   var yearImages = simpleGetTimeImageCollection(ee.Number(startYear).add(fraction),ee.Number(endYear).add(fraction),1);
-  predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics)
+  // predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics)
 }
 annualizeCCDC(ccdcImg,startYear,endYear,9,1)
 
