@@ -237,13 +237,13 @@ function simpleAnnualizeCCDC(ccdcImg,startYear,endYear,targetMonth,targetDay){
 
 var yearImages = simpleGetTimeImageCollection(ee.Number(startYear),ee.Number(endYear),1/12);
 var predicted = predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics);
-var fraction = ee.Date.fromYMD(1900,9,1).getFraction('year');
+var fraction = ee.Number(ee.Date.fromYMD(1900,9,1).getFraction('year'));
 predicted = predicted.select(['.*_predicted']).map(function(img){
-  var d = ee.Date(img.get('system:time_start'));
- 
-  var m = img.updateMask(ee.Image(d.getFraction('year')).eq(f));
+  var f = ee.Number(ee.Date(img.get('system:time_start')));
+  var m = ee.Image(fraction.eq(fraction))
+  var masked = img.updateMask(m);
   
-  return img.addBands(img)
+  return img.addBands(m)
 })
   Map.addLayer(predicted.select(['.*_predicted']))
 var out = simpleAnnualizeCCDC(ccdcImg,startYear,endYear,9,1);
