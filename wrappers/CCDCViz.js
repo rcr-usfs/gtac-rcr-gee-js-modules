@@ -1,5 +1,59 @@
 ///Module imports
 // var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+/////////////////////////////////////////////////////////////////////////////
+//Function to predict a CCDC harmonic model at a given time
+//The whichHarmonics options are [1,2,3] - denoting which harmonics to include
+//Which bands is a list of the names of the bands to predict across
+function simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands){
+  //Unit of each harmonic (1 cycle)
+  var omega = ee.Number(2.0).multiply(Math.PI);
+  
+  //Pull out the time band in the yyyy.ff format
+  var tBand = img.select([timeBandName]);
+  
+  //Pull out the intercepts and slopes
+  var intercepts = img.select(['.*_INTP']);
+  var slopes = img.select(['.*_SLP']).multiply(tBand);
+  
+  //Set up the omega for each harmonic for the given time band
+  var tOmega = ee.Image(whichHarmonics).multiply(omega).multiply(tBand);
+  var cosHarm = tOmega.cos();
+  var sinHarm = tOmega.sin();
+  
+  //Set up which harmonics to select
+  var harmSelect = whichHarmonics.map(function(n){return ee.String('.*').cat(ee.Number(n).format())});
+  
+  //Select the harmonics specified
+  var sins = img.select(['.*_SIN.*']);
+  sins = sins.select(harmSelect);
+  var coss = img.select(['.*_COS.*']);
+  coss = coss.select(harmSelect);
+  
+  //Set up final output band names
+  var outBns = whichBands.map(function(bn){return ee.String(bn).cat('_predicted')});
+  
+  //Iterate across each band and predict value
+  var predicted = ee.ImageCollection(whichBands.map(function(bn){
+    bn = ee.String(bn);
+    return ee.Image([intercepts.select(bn.cat('_.*')),
+                    slopes.select(bn.cat('_.*')),
+                    sins.select(bn.cat('_.*')).multiply(sinHarm),
+                    coss.select(bn.cat('_.*')).multiply(cosHarm)
+                    ]).reduce(ee.Reducer.sum());
+  })).toBands().rename(outBns);
+  return img.addBands(predicted);
+}
+/////////////////////////////////////////////////////////////
+//Wrapper to predict CCDC values from a collection containing a time image and ccdc coeffs
+//It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
+//The whichHarmonics options are [1,2,3] - denoting which harmonics to include
+function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
+  var whichBands = ee.Image(c.first()).select(['.*_INTP']).bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
+  whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys().getInfo();
+  var out = c.map(function(img){return simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands)});
+  return out;
+}
+////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function to get the coeffs corresponding to a given date on a pixel-wise basis
 //The raw CCDC image is expected
@@ -38,53 +92,6 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   return timeImg.addBands(coeffs);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-// Using annualized time series, get fitted values and slopes from fitted values.
-function getFitSlopeCCDC(annualSegCoeffs, startYear, endYear){
-  //Predict across each time image
-  var whichBands = ee.Image(annualSegCoeffs.first()).select(['.*_INTP']).bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
-  whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys().getInfo();
-  var fitted = annualSegCoeffs.map(function(img){return simpleCCDCPredictionAnnualized(img,'year',whichBands)});
-  
-  // Get back-casted slope using the fitted values
-  var diff = ee.ImageCollection(ee.List.sequence(ee.Number(startYear).add(1), endYear).map(function(rightYear){
-    var leftYear = ee.Number(rightYear).subtract(1);
-    var rightFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(rightYear, rightYear, 'year')).first());
-    var leftFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(leftYear, leftYear, 'year')).first());
-    var slopeNames = rightFitted.select(['.*_fitted']).bandNames().map(function(name){
-      return ee.String(ee.String(name).split('_fitted').get(0)).cat(ee.String('_fitSlope'))
-    });
-    var slope = rightFitted.select(['.*_fitted']).subtract(leftFitted.select(['.*_fitted']))
-                  .rename(slopeNames);
-    return rightFitted.addBands(slope);
-  }))
-  
-  // Rename bands
-  var bandNames = diff.first().bandNames();
-  var newBandNames = bandNames.map(function(name){return ee.String(name).replace('coefs','CCDC')});
-  diff = diff.select(bandNames, newBandNames);
-  
-  return diff;
-}
-//Wrapper to predict CCDC values from a collection containing a time image and ccdc coeffs
-//It is also assumed that the time format is yyyy.ff where the .ff is the proportion of the year
-//The whichHarmonics options are [1,2,3] - denoting which harmonics to include
-function simpleCCDCPredictionWrapper(c,timeBandName,whichHarmonics){
-  var whichBands = ee.Image(c.first()).select(['.*_INTP']).bandNames().map(function(bn){return ee.String(bn).split('_').get(0)});
-  whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys().getInfo();
-  var out = c.map(function(img){return simpleCCDCPrediction(img,timeBandName,whichHarmonics,whichBands)});
-  return out;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-//Wrapper function for predicting CCDC across a set of time images
-function predictCCDC(ccdcImg,timeImgs,fillGaps,whichHarmonics){//,fillGapBetweenSegments,addRMSE,rmseImg,nRMSEs){
-  var timeBandName = ee.Image(timeImgs.first()).select([0]).bandNames().get(0);
-  // Add the segment-appropriate coefficients to each time image
-  timeImgs = timeImgs.map(function(img){return getCCDCSegCoeffs(img,ccdcImg,fillGaps)});
-
-  //Predict across each time image
-  return simpleCCDCPredictionWrapper(timeImgs,timeBandName,whichHarmonics);
-}
 ///////////////////////////////////////////////////////////////////////
 //Bring in ccdc image asset
 //This is assumed to be an image of arrays that is returned from the ee.Algorithms.TemporalSegmentation.Ccdc method
@@ -137,7 +144,7 @@ function simpleGetTimeImageCollection(startYear,endYear,step){
 function annualizeCCDC(ccdcImg,startYear,endYear,targetMonth,targetDay){
   var fraction = ee.Date.fromYMD(1900,targetMonth,targetDay).getFraction('year');
   var yearImages = simpleGetTimeImageCollection(ee.Number(startYear).add(fraction),ee.Number(endYear).add(fraction),1);
-  // predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics)
+  predictCCDC(ccdcImg,yearImages,fillGaps,whichHarmonics)
 }
 annualizeCCDC(ccdcImg,startYear,endYear,9,1)
 
