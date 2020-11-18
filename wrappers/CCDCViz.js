@@ -245,7 +245,7 @@ predicted = predicted.select(['.*_predicted']).map(function(img){
   
   return img.addBands(masked)
 })
-  Map.addLayer(predicted)
+  Map.addLayer(predicted.select([0,1],['All Predictions','Annual September 1 Prediction']))
 var out = simpleAnnualizeCCDC(ccdcImg,startYear,endYear,9,1);
 Map.addLayer(out.select(['.*_predicted','.*_slope']))
 
