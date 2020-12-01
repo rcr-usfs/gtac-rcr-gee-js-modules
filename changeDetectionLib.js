@@ -830,6 +830,81 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
   return outputCollection;
 }
 
+//////////////////////////////////////////////////////////////////////////
+//Simplified method to convert LANDTRENDR stack to annual collection of
+//Duration, fitted, magnitude, slope, and diff
+//Improved handling of start year delay found in older method
+function simpleFit(ltStack,startYear,endYear,indexName){
+  if(indexName === undefined || indexName === null){indexName = ''};
+  
+  //Separate years and fitted values of vertices
+  var yrs = ltStack.select('yrs_.*').selfMask();
+  var fit = ltStack.select('fit_.*').updateMask(yrs.mask());
+  
+  //Find the first and last vertex years
+  var isStartYear = yrs.reduce(ee.Reducer.firstNonNull());
+  var isEndYear = yrs.reduce(ee.Reducer.lastNonNull());
+  
+  var blankMask = yrs.gte(100000);
+  // Map.addLayer(isStartYear,{},'isStartYear');
+  // Map.addLayer(isEndYear,{},'isEndYear')
+  // Map.addLayer(yrs.reduce(ee.Reducer.firstNonNull()).eq(1986),{},'not start year');
+  // Map.addLayer(yrs,{},'yrs');
+  // Map.addLayer(fit,{},'fit')
+  
+  //Iterate across each year to find the values for that year
+  var out = ee.ImageCollection(ee.List.sequence(startYear,endYear).map(function(yr){
+    yr = ee.Number(yr);
+    
+    //Find the segment the year belongs to
+    //Handle whether the year is the same as the first vertex year
+    var startYrMask =  blankMask;
+    startYrMask = startYrMask.where(isStartYear.eq(yr),yrs.lte(yr));
+    startYrMask = startYrMask.where(isStartYear.lt(yr),yrs.lt(yr));
+    
+    //Handle whether the year is the same as the last vertex year
+    var endYrMask =  blankMask;
+    endYrMask = endYrMask.where(isStartYear.eq(yr),yrs.gt(yr));
+    endYrMask = endYrMask.where(isStartYear.lt(yr),yrs.gte(yr));
+    
+    // var startYrMask =yrs.lt(yr);
+    // var endYrMask = yrs.gte(yr)
+    //Get fitted values for the vertices segment the year is within
+    var fitStart = fit.updateMask(startYrMask).reduce(ee.Reducer.lastNonNull());
+    var fitEnd = fit.updateMask(endYrMask).reduce(ee.Reducer.firstNonNull());
+    
+    //Get start and end year for the vertices segment the year is within
+    var yearStart = yrs.updateMask(startYrMask).reduce(ee.Reducer.lastNonNull());
+    var yearEnd = yrs.updateMask(endYrMask).reduce(ee.Reducer.firstNonNull());
+    
+    //Get the difference and duration of the segment
+    var segDiff = fitEnd.subtract(fitStart);
+    var segDur = yearEnd.subtract(yearStart);
+    
+    //Get the varius annual derivatives
+    var tDiff = ee.Image(yr).subtract(yearStart);
+    var segSlope = segDiff.divide(segDur);
+    var fitDiff = segSlope.multiply(tDiff);
+    var fitted = fitStart.add(fitDiff);
+    // Map.addLayer(startYrMask,{},'start'+yr.getInfo().toString(),false)
+    // Map.addLayer(endYrMask,{},'end'+yr.getInfo().toString(),false)
+    // Map.addLayer(fitStart,{},'fitStart'+yr.getInfo().toString(),false)
+    // Map.addLayer(fitEnd,{},'fitEnd'+yr.getInfo().toString(),false)
+    // Map.addLayer(yearStart,{},'yearStart'+yr.getInfo().toString(),false)
+    // Map.addLayer(yearEnd,{},'yearEnd'+yr.getInfo().toString(),false)
+    // Map.addLayer(segDur,{},'segDur'+yr.getInfo().toString(),false)
+    
+    return segDur 
+    .addBands(fitted)
+    .addBands(segDiff)
+    .addBands(segSlope)
+    .addBands(fitDiff)
+    .rename([indexName +'_LT_dur',indexName +'_LT_fitted',indexName +'_LT_mag',indexName +'_LT_slope',indexName +'_LT_diff'])
+    .set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
+  }));
+  return out;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Function to convert from raw Landtrendr Output OR Landtrendr/VerdetVertStack output to Loss & Gain Space
 // format = 'rawLandtrendr' (Landtrendr only) or 'vertStack' (Verdet or Landtrendr)
