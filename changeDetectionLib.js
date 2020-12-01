@@ -834,7 +834,7 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
 //Simplified method to convert LANDTRENDR stack to annual collection of
 //Duration, fitted, magnitude, slope, and diff
 //Improved handling of start year delay found in older method
-function simpleFit(ltStack,startYear,endYear,indexName){
+function simpleLTFit(ltStack,startYear,endYear,indexName){
   if(indexName === undefined || indexName === null){indexName = ''};
   
   //Separate years and fitted values of vertices
@@ -2083,7 +2083,7 @@ exports.getLTStack = getLTStack;
 exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
 exports.convertToLossGain = convertToLossGain;
-exports.simpleFit = simpleFit;
+exports.simpleLTFit = simpleLTFit;
 exports.prepTimeSeriesForLandTrendr = prepTimeSeriesForLandTrendr;
 exports.LANDTRENDRVertStack =  LANDTRENDRVertStack;
 exports.applyDistDir_vertStack = applyDistDir_vertStack;
