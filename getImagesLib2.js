@@ -521,7 +521,7 @@ function getS2(){
                       
                       var t = img.select(sensorBandDict[args.toaOrSR]).divide(10000);//Rescale to 0-1
                       t = t.addBands(img.select(['QA60']));
-                      var out = t.copyProperties(img).copyProperties(img,['system:time_start']);
+                      var out = t.copyProperties(img).copyProperties(img,['system:time_start','system:footprint']);
                     return out;
                       })
                       .select(['QA60'].concat(sensorBandDict[args.toaOrSR]),['QA60'].concat(sensorBandNameDict[args.toaOrSR]));
@@ -740,7 +740,7 @@ function getLandsat(){
   ls = ls.map(function(img){
     img = img.updateMask(img.mask().reduce(ee.Reducer.min()));
     return img.multiply(multImageDict[args.toaOrSR]).float()
-      .copyProperties(img,['system:time_start']).copyProperties(img);
+      .copyProperties(img,['system:time_start','system:footprint']).copyProperties(img);
   });
   
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
