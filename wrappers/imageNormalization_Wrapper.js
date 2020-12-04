@@ -449,3 +449,19 @@ function addPrefix(list,prefix){
 
 
 
+exports.normImages = normImages; 
+exports.normImages2 = normImages2;
+exports.getOrig = getOrig;
+exports.exportMaster = exportMaster;
+exports.exportNorm = exportNorm;
+exports.newCollectionToImage = newCollectionToImage; 
+exports.S2rescale = S2rescale;
+exports.PCA_PD = PCA_PD;
+exports.addIndices = addIndices;
+exports.getTasseledCap = getTasseledCap;
+exports.addYearDOY = addYearDOY;
+exports.addPathRow = addPathRow;
+exports.setNoData = setNoData;
+exports.getPIFsPair = getPIFsPair;
+exports.imgNormalizerMultiConstant = imgNormalizerMultiConstant;
+exports.addPrefix = addPrefix;
