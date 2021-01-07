@@ -1871,8 +1871,8 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
   var tBreaks = ccdcImg.select(tBreakKeys);
   
   //If filling to the tBreak, use this
-  tStarts = ee.Image(ee.Algorithms.If(fillGaps,tStarts.arraySlice(0,0,1).arrayCat(tBreaks.arraySlice(0,0,-1),0),tStarts));
-  tEnds = ee.Image(ee.Algorithms.If(fillGaps,tBreaks.arraySlice(0,0,-1).arrayCat(tEnds.arraySlice(0,-1,null),0),tEnds));
+  tStarts = ee.Image(ee.Algorithms.If(fillGaps, tStarts.arraySlice(0,0,1).arrayCat(tBreaks.arraySlice(0,0,-1),0), tStarts));
+  tEnds = ee.Image(ee.Algorithms.If(fillGaps, tBreaks.arraySlice(0,0,-1).arrayCat(tEnds.arraySlice(0,-1,null),0), tEnds));
   
   
   //Set up a mask for segments that the time band intersects
