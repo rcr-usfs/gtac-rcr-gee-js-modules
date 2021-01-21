@@ -1316,6 +1316,7 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
       .pow(ee.Image.constant(2));
     img = addYearBand(img);
     img = addJulianDayBand(img);
+    img = addSensor(img);
     return diff.reduce('sum').addBands(img);
   });
   // When exported as CSV, this provides a weighted list of the scenes being included in the composite
@@ -2026,7 +2027,7 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
                 if(maskWQA === true){print('Masking with QA band:',c)}
                 images = images
               .map(function(img){
-                img = img.mask(img.mask().and(img.select(['SensorZenith']).lt(zenithThresh*100)));
+                img = img.mask(img.mask().and(img.select(['addsensorbandZenith']).lt(zenithThresh*100)));
                 if(maskWQA === true){
                   
                   img = maskCloudsWQA (img);
