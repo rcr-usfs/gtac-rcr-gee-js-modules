@@ -1316,7 +1316,6 @@ function medoidMosaicMSD(inCollection,medoidIncludeBands) {
       .pow(ee.Image.constant(2));
     img = addYearBand(img);
     img = addJulianDayBand(img);
-    img = addSensor(img);
     return diff.reduce('sum').addBands(img);
   });
   // When exported as CSV, this provides a weighted list of the scenes being included in the composite
