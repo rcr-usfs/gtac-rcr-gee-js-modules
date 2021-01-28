@@ -37,6 +37,9 @@ var changeDirDict = {
 "tcAngleBG":-1,"tcAngleGW":-1,"tcAngleBW":-1,"tcDistBG":1,"tcDistGW":1,"tcDistBW":1,
 'NIRv':-1
 };
+exports.preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore')//.mosaic();
+exports.preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM')
+
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 /////////////////////////////////////////////////////////////////////////////////
