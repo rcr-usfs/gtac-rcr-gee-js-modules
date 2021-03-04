@@ -2721,7 +2721,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
           'zScoreThresh':-1,
           'shadowSumThresh':0.35,
           'contractPixels':1.5,
-          'dilatePixels':0.35,
+          'dilatePixels':3.5,
           'landsatResampleMethod':'near',
           'sentinel2ResampleMethod':'aggregate',
           'convertToDailyMosaics':true,
