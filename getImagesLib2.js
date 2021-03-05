@@ -49,6 +49,7 @@ var preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/C
 
 exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
 exports.preComputedTDOMStats = preComputedTDOMStats;
+
 exports.getPrecomputedCloudScoreOffsets = function(cloudScorePctl){
   return {'landsat': preComputedCloudScoreOffset.select(['Landsat_CloudScore_p'+args.cloudScorePctl.toString()]),
           'sentinel2':preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p'+args.cloudScorePctl.toString()])
@@ -63,7 +64,7 @@ exports.getPrecomputedTDOMStats = function(cloudScorePctl){
                       'mean':preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']),
                       'stdDev':preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev'])
                       }
-          }
+          };
 };
 
 
