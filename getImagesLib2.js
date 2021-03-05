@@ -51,8 +51,8 @@ exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
 exports.preComputedTDOMStats = preComputedTDOMStats;
 
 exports.getPrecomputedCloudScoreOffsets = function(cloudScorePctl){
-  return {'landsat': preComputedCloudScoreOffset.select(['Landsat_CloudScore_p'+args.cloudScorePctl.toString()]),
-          'sentinel2':preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p'+args.cloudScorePctl.toString()])
+  return {'landsat': preComputedCloudScoreOffset.select(['Landsat_CloudScore_p'+cloudScorePctl.toString()]),
+          'sentinel2':preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p'+cloudScorePctl.toString()])
           };
 };
 exports.getPrecomputedTDOMStats = function(cloudScorePctl){
