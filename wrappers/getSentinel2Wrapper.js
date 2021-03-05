@@ -83,6 +83,9 @@ args.applyTDOM = true;
 // This method works really well and should be used instead of cloudScore (applyCloudScore)
 args.applyCloudProbability = true;
 
+//If cloudProbability is chosen, choose a threshold 
+//(generally somewhere around 40-60 works well)
+args.cloudProbThresh = 40;
 
 // If applyCloudScore is set to true
 // cloudScoreThresh: lower number masks more clouds.  Between 10 and 30 generally 
@@ -146,13 +149,13 @@ args.resampleMethod = 'aggregate';
 // These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
 // and are appropriate to use for any time period within the growing season
 // The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
-args.preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic().select(['Sentinel2_CloudScore_p'+args.cloudScorePctl.toString()]);
+args.preComputedCloudScoreOffset = getImagesLib.getPrecomputedCloudScoreOffsets(args.cloudScorePctl).sentinel2;
 
 // The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 // By default, TDOM uses the nir and swir1 bands
-var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
-args.preComputedTDOMIRMean = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
-args.preComputedTDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
+var preComputedTDOMStats = getImagesLib.getPrecomputedTDOMStats();
+args.preComputedTDOMIRMean = preComputedTDOMStats.sentinel2.mean;
+args.preComputedTDOMIRStdDev = preComputedTDOMStats.sentinel2.stdDev;
 
 
 // Export params
