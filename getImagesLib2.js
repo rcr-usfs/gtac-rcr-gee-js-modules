@@ -44,10 +44,11 @@ var changeDirDict = {
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
-exports.preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore').mosaic();
-exports.preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').mosaic().divide(10000);
+var preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore').mosaic();
+var preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').mosaic().divide(10000);
 
-
+exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
+exports.preComputedTDOMStats = preComputedTDOMStats;
 exports.getPrecomputedCloudScoreOffsets = function(cloudScorePctl){
   return {'landsat': preComputedCloudScoreOffset.select(['Landsat_CloudScore_p'+args.cloudScorePctl.toString()]),
           'sentinel2':preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p'+args.cloudScorePctl.toString()])
