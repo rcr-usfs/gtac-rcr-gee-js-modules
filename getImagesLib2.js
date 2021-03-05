@@ -46,7 +46,7 @@ var changeDirDict = {
 //By default, TDOM uses the nir and swir1 bands
 exports.preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore').mosaic();
 exports.preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').mosaic().divide(10000);
-exports.cloudScorePctl = 10;
+
 
 exports.getPrecomputedCloudScoreOffsets = function(cloudScorePctl){
   return {'landsat': preComputedCloudScoreOffset.select(['Landsat_CloudScore_p'+args.cloudScorePctl.toString()]),
