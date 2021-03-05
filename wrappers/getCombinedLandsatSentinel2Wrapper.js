@@ -227,8 +227,8 @@ print(args)
 var processedAndComposites = getImagesLib.getLandsatAndSentinel2HybridWrapper(args);
 
 // //Separate into scenes and composites for subsequent analysis
-// var processedScenes = processedAndComposites[0];
-// var processedComposites = processedAndComposites[1];
+var processedScenes = processedAndComposites.processedScenes;
+var processedComposites = processedAndComposites.processedComposites;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load the study region, with a blue outline.
