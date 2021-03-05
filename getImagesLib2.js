@@ -39,8 +39,32 @@ var changeDirDict = {
 };
 
 //Precomputed cloudscore offsets and TDOM stats
+//These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
+//and are appropriate to use for any time period within the growing season
+//The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
+//The TDOM stats are the mean and standard deviations of the two bands used in TDOM
+//By default, TDOM uses the nir and swir1 bands
 exports.preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore').mosaic();
-exports.preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').mosaic();
+exports.preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').mosaic().divide(10000);
+exports.cloudScorePctl = 10;
+
+exports.getPrecomputedCloudScoreOffsets = function(cloudScorePctl){
+  return {'landsat': preComputedCloudScoreOffset.select(['Landsat_CloudScore_p'+args.cloudScorePctl.toString()]),
+          'sentinel2':preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p'+args.cloudScorePctl.toString()])
+          };
+};
+exports.getPrecomputedTDOMStats = function(cloudScorePctl){
+  return {'landsat': {
+                      'mean':preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']),
+                      'stdDev':preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev'])
+                      },
+          'sentinel2': {
+                      'mean':preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']),
+                      'stdDev':preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev'])
+                      }
+          }
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
