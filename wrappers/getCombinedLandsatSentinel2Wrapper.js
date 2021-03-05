@@ -96,7 +96,8 @@ args.cloudHeights = ee.List.sequence(500,10000,500);
 //This method works really well
 args.applyCloudProbability = true;
 
-//If cloudProbability is chosen, choose a threshold (generally somewhere around 40-60 works well)
+//If cloudProbability is chosen, choose a threshold 
+//(generally somewhere around 40-60 works well)
 args.cloudProbThresh = 40;
 
 //Fmask switches- only for Landsat
