@@ -2721,7 +2721,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
           'zScoreThresh':-1,
           'shadowSumThresh':0.35,
           'contractPixels':1.5,
-          'dilatePixels':3.5,
+          'dilatePixels':0.35,
           'landsatResampleMethod':'near',
           'sentinel2ResampleMethod':'aggregate',
           'convertToDailyMosaics':true,
@@ -2733,7 +2733,8 @@ function getProcessedLandsatAndSentinel2Scenes(){
           'preComputedLandsatTDOMIRStdDev':null,
           'preComputedSentinel2CloudScoreOffset':null,
           'preComputedSentinel2TDOMIRMean':null,
-          'preComputedSentinel2TDOMIRStdDev':null
+          'preComputedSentinel2TDOMIRStdDev':null,
+          'cloudProbThresh': 40
         };
         
     var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2856,7 +2857,7 @@ function getLandsatAndSentinel2HybridWrapper(){
           'zScoreThresh':-1,
           'shadowSumThresh':0.35,
           'contractPixels':1.5,
-          'dilatePixels':3.5,
+          'dilatePixels':0.35,
           'landsatResampleMethod':'near',
           'sentinel2ResampleMethod':'aggregate',
           'convertToDailyMosaics':true,
