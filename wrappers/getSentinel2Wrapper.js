@@ -23,7 +23,7 @@ args.endJulian = 250;
 // pre-computed stats for cloudScore and TDOM, this does not 
 // matter
 args.startYear = 2016;
-args.endYear = 2019;
+args.endYear = 2020;
 
 // Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
