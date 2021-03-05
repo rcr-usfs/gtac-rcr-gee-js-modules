@@ -178,8 +178,8 @@ var preComputedTDOMStats = getImagesLib.getPrecomputedTDOMStats();
 args.preComputedLandsatTDOMIRMean = preComputedTDOMStats.landsat.mean;
 args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.landsat.stdDev;
 
-args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
-args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
+args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.sentinel2.mean;
+args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.sentinel2.stdDev;
 
 // 12. correctIllumination: Choose if you want to correct the illumination using
 // Sun-Canopy-Sensor+C correction. Additionally, choose the scale at which the
