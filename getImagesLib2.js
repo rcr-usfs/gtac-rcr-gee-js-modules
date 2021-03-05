@@ -2529,7 +2529,8 @@ function getProcessedSentinel2Scenes(){
     'applyCloudProbability':true,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
-    'preComputedTDOMIRStdDev':null
+    'preComputedTDOMIRStdDev':null,
+    'cloudProbThresh': 40
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
