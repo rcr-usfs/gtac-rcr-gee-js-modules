@@ -39,8 +39,34 @@ var changeDirDict = {
 };
 
 //Precomputed cloudscore offsets and TDOM stats
-exports.preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore').mosaic();
-exports.preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').mosaic();
+//These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
+//and are appropriate to use for any time period within the growing season
+//The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
+//The TDOM stats are the mean and standard deviations of the two bands used in TDOM
+//By default, TDOM uses the nir and swir1 bands
+var preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore').mosaic();
+var preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').mosaic().divide(10000);
+
+exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
+exports.preComputedTDOMStats = preComputedTDOMStats;
+
+exports.getPrecomputedCloudScoreOffsets = function(cloudScorePctl){
+  return {'landsat': preComputedCloudScoreOffset.select(['Landsat_CloudScore_p'+cloudScorePctl.toString()]),
+          'sentinel2':preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p'+cloudScorePctl.toString()])
+          };
+};
+exports.getPrecomputedTDOMStats = function(cloudScorePctl){
+  return {'landsat': {
+                      'mean':preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']),
+                      'stdDev':preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev'])
+                      },
+          'sentinel2': {
+                      'mean':preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']),
+                      'stdDev':preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev'])
+                      }
+          };
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
@@ -2031,7 +2057,7 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
                 if(maskWQA === true){print('Masking with QA band:',c)}
                 images = images
               .map(function(img){
-                img = img.mask(img.mask().and(img.select(['SensorZenith']).lt(zenithThresh*100)));
+                img = img.mask(img.mask().and(img.select(['addsensorbandZenith']).lt(zenithThresh*100)));
                 if(maskWQA === true){
                   
                   img = maskCloudsWQA (img);
@@ -2529,7 +2555,8 @@ function getProcessedSentinel2Scenes(){
     'applyCloudProbability':true,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
-    'preComputedTDOMIRStdDev':null
+    'preComputedTDOMIRStdDev':null,
+    'cloudProbThresh': 40
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2566,7 +2593,7 @@ function getProcessedSentinel2Scenes(){
   }
   if(args.applyCloudProbability){
     print('Applying cloud probability');
-    s2s = s2s.map(function(img){return img.updateMask(img.select(['cloud_probability']).lte(args.cloudScoreThresh))})
+    s2s = s2s.map(function(img){return img.updateMask(img.select(['cloud_probability']).lte(args.cloudProbThresh))})
   }
   if(args.applyShadowShift){
     print('Applying shadow shift');
@@ -2631,7 +2658,8 @@ function getSentinel2Wrapper(){
     'applyCloudProbability':true,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
-    'preComputedTDOMIRStdDev':null
+    'preComputedTDOMIRStdDev':null,
+    'cloudProbThresh': 40
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2733,7 +2761,8 @@ function getProcessedLandsatAndSentinel2Scenes(){
           'preComputedLandsatTDOMIRStdDev':null,
           'preComputedSentinel2CloudScoreOffset':null,
           'preComputedSentinel2TDOMIRMean':null,
-          'preComputedSentinel2TDOMIRStdDev':null
+          'preComputedSentinel2TDOMIRStdDev':null,
+          'cloudProbThresh': 40
         };
         
     var args = prepArgumentsObject(arguments,defaultArgs);
