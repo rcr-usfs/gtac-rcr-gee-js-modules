@@ -3462,6 +3462,11 @@ var customQualityMosaic = function(inCollection,qualityBand,percentile){
 ////////////////////////////////////////////////////////////
 //Jeff Ho Method for algal bloom detection
 //https://www.nature.com/articles/s41586-019-1648-7
+
+/// Simplified Script for Landsat Water Quality
+// Produces a map of an algal bloom in Lake Erie on 2011/9/3
+// Created on 12/7/2015 by Jeff Ho
+
 // Specifies a threshold for hue to estimate "green" pixels
 // this is used as an additional filter to refine the algorithm above
 var HocalcGreenness = function (img) {
