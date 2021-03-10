@@ -3459,6 +3459,73 @@ var customQualityMosaic = function(inCollection,qualityBand,percentile){
   return inCollectionDelta.qualityMosaic('delta');
 
 };
+////////////////////////////////////////////////////////////
+//Jeff Ho Method for algal bloom detection
+//https://www.nature.com/articles/s41586-019-1648-7
+// Specifies a threshold for hue to estimate "green" pixels
+// this is used as an additional filter to refine the algorithm above
+var HocalcGreenness = function (img) {
+  // map r, g, and b for more readable algebra below
+  var r = img.select(['red']);
+  var g = img.select(['green']);
+  var b = img.select(['blue']);
+  
+  // calculate intensity, hue
+  var I = r.add(g).add(b).rename(['I']);
+  var mins = r.min(g).min(b).rename(['mins']);
+  var H = mins.where(mins.eq(r),
+    (b.subtract(r)).divide(I.subtract(r.multiply(3))).add(1) );
+  H = H.where(mins.eq(g),
+    (r.subtract(g)).divide(I.subtract(g.multiply(3))).add(2) );
+  H = H.where(mins.eq(b),
+    (g.subtract(b)).divide(I.subtract(b.multiply(3))) );
+    
+  //pixels with hue below 1.6 more likely to be bloom and not suspended sediment
+  var Hthresh = H.lte(1.6);
+  
+  return H.rename('H');
+};
+
+// Apply bloom detection algorithm
+var HocalcAlgorithm1 = function(image) {
+  // Algorithm 1 based on:
+  // Wang, M., & Shi, W. (2007). The NIR-SWIR combined atmospheric 
+  //  correction approach for MODIS ocean color data processing. 
+  //  Optics Express, 15(24), 15722–15733.
+  
+  // Add secondary filter using greenness function below
+  image = image.addBands(calcGreenness(image));
+
+  // Apply algorithm 1: B4 - 1.03*B5
+  var bloom1 = image.select('nir').subtract(image.select('swir1').multiply(1.03)).rename('bloom1');
+
+  // Get binary image by applying the threshold
+  var bloom1_mask = image.select("H").lte(greenessThreshold).rename(["bloom1_mask"]);
+  
+  //return original image + bloom, bloom_thresh
+  return image.addBands(image)
+          .addBands(bloom1)
+          .addBands(bloom1_mask);
+};
+//
+// Apply bloom detection algorithm
+var HocalcAlgorithm2 = function(image) {
+  // Algorithm 2 based on: 
+  // Matthews, M. (2011) A current review of empirical procedures 
+  //  of remote sensing in inland and near-coastal transitional 
+  //  waters, International Journal of Remote Sensing, 32:21, 
+  //  6855-6899, DOI: 10.1080/01431161.2010.512947
+  
+  // Apply algorithm 2: B2/B1
+  var bloom2 = image.select('green')
+              .divide(image.select('blue'))
+              .rename(['bloom2']);
+  
+  //return original image + bloom, bloom_thresh
+  return image.addBands(image)
+          .addBands(bloom2);
+};
+
 //////////////////////////////////////////////////////////////////////////
 // END FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
