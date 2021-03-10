@@ -3504,7 +3504,7 @@ var HoCalcAlgorithm1 = function(image) {
   //  Optics Express, 15(24), 15722–15733.
   
   // Add secondary filter using greenness function below
-  image = image.addBands(calcGreenness(image));
+  image = image.addBands(HoCalcGreenness(image));
 
   // Apply algorithm 1: B4 - 1.03*B5
   var bloom1 = image.select('nir').subtract(image.select('swir1').multiply(1.03)).rename('bloom1');
