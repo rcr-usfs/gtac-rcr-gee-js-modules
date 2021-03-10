@@ -3469,7 +3469,7 @@ var customQualityMosaic = function(inCollection,qualityBand,percentile){
 
 // Specifies a threshold for hue to estimate "green" pixels
 // this is used as an additional filter to refine the algorithm above
-var HocalcGreenness = function (img) {
+var HoCalcGreenness = function (img) {
   // map r, g, and b for more readable algebra below
   var r = img.select(['red']);
   var g = img.select(['green']);
@@ -3492,7 +3492,7 @@ var HocalcGreenness = function (img) {
 };
 
 // Apply bloom detection algorithm
-var HocalcAlgorithm1 = function(image) {
+var HoCalcAlgorithm1 = function(image) {
   var truecolor = 1;  // show true color image as well
   var testThresh = false; // add a binary image classifying into "bloom"and "non-bloom
   var bloomThreshold = 0.02346; //threshold for classification fit based on other data
@@ -3519,7 +3519,7 @@ var HocalcAlgorithm1 = function(image) {
 };
 //
 // Apply bloom detection algorithm
-var HocalcAlgorithm2 = function(image) {
+var HoCalcAlgorithm2 = function(image) {
   // Algorithm 2 based on: 
   // Matthews, M. (2011) A current review of empirical procedures 
   //  of remote sensing in inland and near-coastal transitional 
