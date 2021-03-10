@@ -3513,7 +3513,7 @@ exports.HoCalcAlgorithm1 = function(image) {
   var bloom1_mask = image.select("H").lte(greenessThreshold).rename(["bloom1_mask"]);
   
   //return original image + bloom, bloom_thresh
-  return image.addBands(image)
+  return image
           .addBands(bloom1)
           .addBands(bloom1_mask);
 };
@@ -3532,7 +3532,7 @@ exports.HoCalcAlgorithm2 = function(image) {
               .rename(['bloom2']);
   
   //return original image + bloom, bloom_thresh
-  return image.addBands(image)
+  return image
           .addBands(bloom2);
 };
 
