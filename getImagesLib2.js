@@ -3488,6 +3488,11 @@ var HocalcGreenness = function (img) {
 
 // Apply bloom detection algorithm
 var HocalcAlgorithm1 = function(image) {
+  var truecolor = 1;  // show true color image as well
+  var testThresh = false; // add a binary image classifying into "bloom"and "non-bloom
+  var bloomThreshold = 0.02346; //threshold for classification fit based on other data
+  var greenessThreshold = 1.6;
+
   // Algorithm 1 based on:
   // Wang, M., & Shi, W. (2007). The NIR-SWIR combined atmospheric 
   //  correction approach for MODIS ocean color data processing. 
