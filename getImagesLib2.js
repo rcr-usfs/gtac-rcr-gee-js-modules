@@ -3492,7 +3492,7 @@ var HoCalcGreenness = function (img) {
 };
 
 // Apply bloom detection algorithm
-var HoCalcAlgorithm1 = function(image) {
+exports.HoCalcAlgorithm1 = function(image) {
   var truecolor = 1;  // show true color image as well
   var testThresh = false; // add a binary image classifying into "bloom"and "non-bloom
   var bloomThreshold = 0.02346; //threshold for classification fit based on other data
@@ -3519,7 +3519,7 @@ var HoCalcAlgorithm1 = function(image) {
 };
 //
 // Apply bloom detection algorithm
-var HoCalcAlgorithm2 = function(image) {
+exports.HoCalcAlgorithm2 = function(image) {
   // Algorithm 2 based on: 
   // Matthews, M. (2011) A current review of empirical procedures 
   //  of remote sensing in inland and near-coastal transitional 
