@@ -2842,7 +2842,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
       ls = ee.ImageCollection(tm.merge(oli));
     
     }
-    print('Total S2s:',s2s.size())
+   
     // Merge Landsat and S2
     var merged = ls.merge(s2s);
     merged = merged.map(simpleAddIndices)
@@ -2850,6 +2850,9 @@ function getProcessedLandsatAndSentinel2Scenes(){
               .map(simpleAddTCAngles);
     args.origin = 'Landsat-Sentinel2-Hybrid';
     merged = merged.set(args);
+    print('Total s2s:',s2s.size());
+    print('Total landsats:',ls.size());
+    print('Total merged:',merged.size())
     return merged
 }
 ////////////////////////////////////////////////////////////////////////////////
