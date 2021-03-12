@@ -507,7 +507,7 @@ function dailyMosaics(imgs){
     return t;
     });
     imgs = ee.ImageCollection.fromImages(imgs);
-    
+    print('N s2 mosaics:',imgs.size());
     return imgs;
 }
 //////////////////////////////////////////////////////
