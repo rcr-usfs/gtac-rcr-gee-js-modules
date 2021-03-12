@@ -3558,6 +3558,7 @@ exports.vizParamsFalse = vizParamsFalse;
 exports.vizParamsTrue = vizParamsTrue;
 exports.vizParamsFalse10k = vizParamsFalse10k;
 exports.vizParamsTrue10k = vizParamsTrue10k;
+exports.rescale = rescale;
 exports.landsatCloudScore = landsatCloudScore;
 exports.sentinel2CloudScore = sentinel2CloudScore;
 exports.projectShadowsWrapper = projectShadowsWrapper;
