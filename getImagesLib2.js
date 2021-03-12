@@ -2789,7 +2789,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     args.applyTDOM = args.applyTDOMSentinel2;
     args.resampleMethod = args.sentinel2ResampleMethod
     var s2s = getProcessedSentinel2Scenes(args);
-    print('Total S2s:',s2s.size())
+    
     // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
     // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
     
@@ -2803,7 +2803,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     var dummyImage =ee.Image(ee.ImageCollection(ee.Algorithms.If(ls.toList(1).length().gt(0),ls,s2s)).first());;
     ls = fillEmptyCollections(ls,dummyImage);
     s2s = fillEmptyCollections(s2s,dummyImage);
-    
+    print('Total S2s:',s2s.size())
     if(args.runChastainHarmonization){
       
       //Seperate each sensor
