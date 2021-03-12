@@ -2803,7 +2803,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     var dummyImage =ee.Image(ee.ImageCollection(ee.Algorithms.If(ls.toList(1).length().gt(0),ls,s2s)).first());;
     ls = fillEmptyCollections(ls,dummyImage);
     s2s = fillEmptyCollections(s2s,dummyImage);
-    print('Total S2s:',s2s.size())
+    
     if(args.runChastainHarmonization){
       
       //Seperate each sensor
@@ -2842,7 +2842,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
       ls = ee.ImageCollection(tm.merge(oli));
     
     }
-  
+    print('Total S2s:',s2s.size())
     // Merge Landsat and S2
     var merged = ls.merge(s2s);
     merged = merged.map(simpleAddIndices)
