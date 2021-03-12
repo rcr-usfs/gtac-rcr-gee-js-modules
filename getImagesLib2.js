@@ -2853,6 +2853,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     print('Total s2s:',s2s.size());
     print('Total landsats:',ls.size());
     print('Total merged:',merged.size())
+    print(merged.aggregate_histogram('sensor'))
     return merged
 }
 ////////////////////////////////////////////////////////////////////////////////
