@@ -2789,7 +2789,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     args.applyTDOM = args.applyTDOMSentinel2;
     args.resampleMethod = args.sentinel2ResampleMethod
     var s2s = getProcessedSentinel2Scenes(args);
-   
+    print('Total S2s:',s2s.size())
     // Map.addLayer(ls.median(),getImagesLib.vizParamsFalse,'ls');
     // Map.addLayer(s2s.median(),getImagesLib.vizParamsFalse,'s2s');
     
