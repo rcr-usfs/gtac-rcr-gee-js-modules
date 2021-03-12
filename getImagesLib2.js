@@ -495,6 +495,7 @@ function dailyMosaics(imgs){
   
   //Find the unique days
   var days = ee.Dictionary(imgs.aggregate_histogram('simpleTime')).keys();
+  print('Days:',days)
   imgs = days.map(function(d){
     d = ee.Number.parse(d);
     d = ee.Date(d);
