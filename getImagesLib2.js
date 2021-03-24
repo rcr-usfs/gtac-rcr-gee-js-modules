@@ -3593,6 +3593,7 @@ exports.vizParamsTrue10k = vizParamsTrue10k;
 exports.rescale = rescale;
 exports.landsatCloudScore = landsatCloudScore;
 exports.sentinel2CloudScore = sentinel2CloudScore;
+exports.sentinel2SnowMask = sentinel2SnowMask;
 exports.projectShadowsWrapper = projectShadowsWrapper;
 exports.applyCloudScoreAlgorithm = applyCloudScoreAlgorithm;
 exports.cFmask = cFmask;
