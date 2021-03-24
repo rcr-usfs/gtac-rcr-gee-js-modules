@@ -1767,6 +1767,8 @@ function sentinel2SnowMask(img, dilatePixels){
   var fsc = ndsi.multiply(1.45).subtract(0.01);
   
   // final snow mask
+  if(dilatePixels === undefined || dilatePixels === null){dilatePixels = 3.5}
+  
   var snowMask = ((snowOpenLand.or(snowForest)).not()).focal_min(dilatePixels);
   return img.updateMask(snowMask);
 }
