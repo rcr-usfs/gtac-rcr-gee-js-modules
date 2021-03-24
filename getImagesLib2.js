@@ -1752,6 +1752,8 @@ function sentinel2CloudScore(img) {
 // https://earth.esa.int/documents/10174/3166008/ESA_Training_Vilnius_07072017_SAR_Optical_Snow_Ice_Exercises.pdf
 // dilate pixels = 3.5
 function sentinel2SnowMask(img, dilatePixels){
+  
+  // calculate ndsi
   var ndsi = img.normalizedDifference(['green', 'swir1']);
   
   // IF NDSI > 0.40 AND ρ(NIR) > 0.11 THEN snow in open land
