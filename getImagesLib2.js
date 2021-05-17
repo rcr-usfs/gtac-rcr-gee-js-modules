@@ -380,23 +380,20 @@ function addYearBand(img){
 }
 function addJulianDayBand(img){
   var d = ee.Date(img.get('system:time_start'));
-  var julian = ee.Image(ee.Number(d.getRelative('day','year')).add(1)).rename(['julianDay']);
+  var julian = ee.Image(ee.Number.parse(d.format('DD'))).rename(['julianDay']);
 
   return img.addBands(julian).float();
 }
 function addYearJulianDayBand(img){
   var d = ee.Date(img.get('system:time_start'));
-  var julian = ee.Number(d.getRelative('day','year')).add(1).format('%03d');
-  var y = ee.String(d.get('year')).slice(2,4);
-  var yj = ee.Image(ee.Number.parse(y.cat(julian))).rename(['yearJulian']);
-  
+  var yj = ee.Image(ee.Number.parse(d.format('YYDD'))).rename(['yearJulian']);
   return img.addBands(yj).float();
 }
 function addFullYearJulianDayBand(img){
   var d = ee.Date(img.get('system:time_start'));
   var julian = ee.Number(d.getRelative('day','year')).add(1).format('%03d');
   var y = ee.String(d.get('year'));
-  var yj = ee.Image(ee.Number.parse(y.cat(julian))).rename(['yearJulian']).int64();
+  var yj = yj = ee.Image(ee.Number.parse(d.format('YYYYDD'))).rename(['yearJulian']).int64();
   
   return img.addBands(yj).float();
 }
