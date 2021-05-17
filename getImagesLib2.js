@@ -485,19 +485,13 @@ function uniqueValues(collection,field){
 function dailyMosaics(imgs){
   //Simplify date to exclude time of day
   imgs = imgs.map(function(img){
-    var d = ee.Date(img.get('system:time_start'));
-    var day = d.get('day');
-    var m = d.get('month');
-    var y = d.get('year');
-    var simpleDate = ee.Date.fromYMD(y,m,day);
-    return img.set('simpleTime',simpleDate.millis());
-  });
+    return img.set('date',ee.Date(img.get('system:time_start')).format('YYYY-MM-dd'))
+  })
   
   //Find the unique days
-  var days = ee.Dictionary(imgs.aggregate_histogram('simpleTime')).keys();
+  var days =  ee.Dictionary(imgs.aggregate_histogram('date')).keys();
   print('Days:',days)
   imgs = days.map(function(d){
-    d = ee.Number.parse(d);
     d = ee.Date(d);
     var t = imgs.filterDate(d,d.advance(1,'day'));
     var f = ee.Image(t.first());
