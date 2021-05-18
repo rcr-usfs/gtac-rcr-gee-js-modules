@@ -482,7 +482,7 @@ function uniqueValues(collection,field){
 function dailyMosaics(imgs){
   //Simplify date to exclude time of day
   imgs = imgs.map(function(img){
-    var d = ee.String(ee.Date(img.get('system:time_start')).format('YYYY-MM-dd_'));
+    var d = ee.String(ee.Date(img.get('system:time_start')).format('YYYY-MM-dd'));
     // var orbit = ee.Number(img.get('SENSING_ORBIT_NUMBER')).format('%.0f');
     return img.set('date-orbit',d);
   });
