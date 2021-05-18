@@ -583,7 +583,7 @@ function getS2(){
   
   //Convert to daily mosaics to avoid redundant observations in MGRS overlap areas and edge artifacts for shadow masking
   if(args.convertToDailyMosaics){
-    print('Converting S2 data to daily mosaics');
+    print('Converting S2 data to daily orbit mosaics');
     s2s = dailyMosaics(s2s);
   }
   
