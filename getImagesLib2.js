@@ -491,11 +491,11 @@ function dailyMosaics(imgs){
   var dayOrbits =  ee.Dictionary(imgs.aggregate_histogram('date-orbit')).keys();
   print('Day-Orbits:',dayOrbits);
   imgs = dayOrbits.map(function(d){
-    
-    var t = imgs.filter(ee.Filter.eq('date-orbit',d));
+    var date = ee.Date(ee.String(d).split('_').get(0));
+    var t = imgs.filterDate(date,date.advance(1,'day'));
     var f = ee.Image(t.first());
     t = t.mosaic();
-    t = t.copyProperties(f,['system:time_start']);
+    t = t.set('system:time_start',date.millis());
     t = t.copyProperties(f);
     return t;
     });
