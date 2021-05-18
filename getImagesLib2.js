@@ -482,18 +482,20 @@ function uniqueValues(collection,field){
 function dailyMosaics(imgs){
   //Simplify date to exclude time of day
   imgs = imgs.map(function(img){
-    return img.set('date',ee.Date(img.get('system:time_start')).format('YYYY-MM-dd'))
+    var d = ee.String(ee.Date(img.get('system:time_start')).format('YYYY-MM-dd'));
+    var orbit = ee.String(img.get('SENSING_ORBIT_NUMBER'));
+    return img.set('date-orbit',d.cat(orbit))
   })
   
   //Find the unique days
-  var days =  ee.Dictionary(imgs.aggregate_histogram('date')).keys();
+  var days =  ee.Dictionary(imgs.aggregate_histogram('date-orbit')).keys();
   print('Days:',days)
   imgs = days.map(function(d){
-    d = ee.Date(d);
-    var t = imgs.filterDate(d,d.advance(1,'day'));
+    
+    var t = imgs.filter(ee.Filter.eq('date-orbit',d));
     var f = ee.Image(t.first());
     t = t.mosaic();
-    t = t.set('system:time_start',d.millis());
+    t = t.copyProperties(f,['system:time_start']);
     t = t.copyProperties(f);
     return t;
     });
