@@ -496,7 +496,7 @@ function dailyMosaics(imgs){
     // var t = imgs.filter(ee.Filter.eq('date-orbit',d));
     var f = ee.Image(t.first());
     t = t.mosaic();
-    t = t.copyProperties(f,['system:time_start']);
+    t = t.set('system:time_start',d.millis());
     t = t.copyProperties(f);
     return t;
     });
