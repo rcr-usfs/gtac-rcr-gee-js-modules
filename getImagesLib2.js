@@ -488,9 +488,9 @@ function dailyMosaics(imgs){
   })
   
   //Find the unique days
-  var days =  ee.Dictionary(imgs.aggregate_histogram('date-orbit')).keys();
-  print('Days:',days)
-  imgs = days.map(function(d){
+  var dayOrbits =  ee.Dictionary(imgs.aggregate_histogram('date-orbit')).keys();
+  print('Day-Orbits:',dayOrbits)
+  imgs = dayOrbits.map(function(d){
     
     var t = imgs.filter(ee.Filter.eq('date-orbit',d));
     var f = ee.Image(t.first());
