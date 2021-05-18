@@ -491,8 +491,9 @@ function dailyMosaics(imgs){
   var dayOrbits =  ee.Dictionary(imgs.aggregate_histogram('date-orbit')).keys();
   print('Day-Orbits:',dayOrbits);
   imgs = dayOrbits.map(function(d){
-    
-    var t = imgs.filter(ee.Filter.eq('date-orbit',d));
+    d = ee.Date(d);
+    var t = imgs.filter(ee.Filter.calendarRange(d,d.advance(1,'day')))
+    // var t = imgs.filter(ee.Filter.eq('date-orbit',d));
     var f = ee.Image(t.first());
     t = t.mosaic();
     t = t.copyProperties(f,['system:time_start']);
