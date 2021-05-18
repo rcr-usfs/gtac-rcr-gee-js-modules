@@ -484,7 +484,7 @@ function dailyMosaics(imgs){
   imgs = imgs.map(function(img){
     var d = ee.String(ee.Date(img.get('system:time_start')).format('YYYY-MM-dd'));
     var orbit = ee.String(img.get('SENSING_ORBIT_NUMBER'));
-    return img.set('date-orbit',d.cat(orbit));
+    return img.set('date-orbit',d.cat(ee.String('_')).cat(orbit));
   });
   
   //Find the unique days
