@@ -489,7 +489,7 @@ function dailyMosaics(imgs){
   
   //Find the unique days
   var dayOrbits =  ee.Dictionary(imgs.aggregate_histogram('date-orbit')).keys();
-  // print('Day-Orbits:',dayOrbits);
+  print('Day-Orbits:',dayOrbits);
   imgs = dayOrbits.map(function(d){
     
     var t = imgs.filter(ee.Filter.eq('date-orbit',d));
