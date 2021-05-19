@@ -2671,7 +2671,7 @@ function getSentinel2Wrapper(){
     'outputName':'Sentinel2-Composite',
     'exportPathRoot':'users/iwhousman/test',
     'crs':'EPSG:5070',
-    'transform':null,
+    'transform':[10,0,-2361915.0,0,-10,3177735.0],
     'scale':null,
     'resampleMethod':'aggregate',
     'toaOrSR':'TOA',
