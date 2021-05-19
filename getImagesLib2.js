@@ -2367,7 +2367,7 @@ function getLandsatWrapper(){
     'outputName':'Landsat-Composite',
     'exportPathRoot':'users/ianhousman/test',
     'crs':'EPSG:5070',
-    'transform':null,
+    'transform':[30,0,-2361915.0,0,-30,3177735.0],
     'scale':null,
     'resampleMethod':'near', 
     'harmonizeOLI': false,
