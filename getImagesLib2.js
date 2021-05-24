@@ -1427,7 +1427,7 @@ function compositeTimeSeries(){
   }
   var args = prepArgumentsObject(arguments,defaultArgs);
 
-  print(args);
+  print(args);;
   var dummyImage = ee.Image(args.ls.first());
   
   args.dateWrapping = wrapDates(args.startJulian,args.endJulian);
