@@ -492,7 +492,9 @@ function dailyMosaics(imgs){
   print('Day-Orbits:',dayOrbits);
   imgs = dayOrbits.map(function(d){
     var date = ee.Date(ee.String(d).split('_').get(0));
-    var t = imgs.filterDate(date,date.advance(1,'day'));
+    var orbit = ee.Number.parse(ee.String(d).split('_').get(1));
+    var t = imgs.filterDate(date,date.advance(1,'day'))
+            .filter(ee.Filter.eq('SENSING_ORBIT_NUMBER',orbit));
     var f = ee.Image(t.first());
     t = t.mosaic();
     t = t.set('system:time_start',date.millis());
@@ -1427,7 +1429,7 @@ function compositeTimeSeries(){
   }
   var args = prepArgumentsObject(arguments,defaultArgs);
 
-  print(args);;
+  print(args);
   var dummyImage = ee.Image(args.ls.first());
   
   args.dateWrapping = wrapDates(args.startJulian,args.endJulian);
