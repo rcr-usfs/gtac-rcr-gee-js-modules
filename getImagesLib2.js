@@ -482,9 +482,9 @@ function uniqueValues(collection,field){
 function dailyMosaics(imgs){
   //Simplify date to exclude time of day
   imgs = imgs.map(function(img){
-    var d = ee.String(ee.Date(img.get('system:time_start')).format('YYYY-MM-dd_'));
+    var d = ee.String(ee.Date(img.get('system:time_start')).format('YYYY-MM-dd'));
     var orbit = ee.Number(img.get('SENSING_ORBIT_NUMBER')).format();
-    return img.set('date-orbit',d.cat(orbit));
+    return img.set({'date-orbit':d.cat(ee.String('_')).cat(orbit),'date':d});
   });
   
   //Find the unique days
