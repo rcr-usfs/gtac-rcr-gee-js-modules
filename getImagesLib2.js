@@ -2919,9 +2919,6 @@ function coRegisterGroups(imgs,fieldName,fieldIsNumeric){
     
     return out;
 }
-exports.coRegisterCollection = coRegisterCollection;
-exports.coRegisterGroups = coRegisterGroups;
-
 ///////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //Hybrid get Landsat and Sentinel 2 wrapper function
