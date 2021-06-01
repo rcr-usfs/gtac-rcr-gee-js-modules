@@ -2878,6 +2878,51 @@ function getProcessedLandsatAndSentinel2Scenes(){
     print(merged.aggregate_histogram('sensor'))
     return merged
 }
+///////////////////////////////////////////////////////////////////////////////
+//Function to register an imageCollection to images within it
+//Always uses the first image as the reference image
+function coRegisterCollection(images,referenceBands){
+  if(referenceBands === undefined || referenceBands === null){referenceBands = ['nir']}
+  var referenceImageIndex = 0;
+  var referenceImage = ee.Image(images.toList(referenceImageIndex+1).get(referenceImageIndex)).select(referenceBands);
+
+  function registerImage(image){
+        //Determine the displacement by matching only the referenceBand bands.
+        var displacement_params = {
+            'referenceImage': referenceImage,
+            'maxOffset': 20.0,
+            'projection': null,
+            'patchWidth': 20.0,
+            'stiffness': 5
+            };
+        var displacement = image.select(referenceBands).displacement(displacement_params);
+        return image.displace(displacement);
+    }
+  var out = ee.ImageCollection(ee.ImageCollection(images.toList(10000,1)).map(registerImage));
+  out = ee.ImageCollection(images.limit(1).merge(out));
+    
+  return out;
+}
+///////////////////////////////////////////////////////////////////////////////
+//Function to find a subset of a collection
+//For each group (e.g. tile or orbit or path), all images within that group will be registered
+//As single collection is returned
+function coRegisterGroups(imgs,fieldName,fieldIsNumeric){
+  if(fieldName === undefined || fieldName === null){fieldName = 'SENSING_ORBIT_NUMBER'}
+  if(fieldIsNumeric === undefined || fieldIsNumeric === null){fieldIsNumeric = true}
+  var groups = ee.Dictionary(imgs.aggregate_histogram(fieldName)).keys();
+  if(fieldIsNumeric){
+    groups = groups.map(function(n){return ee.Number.parse(n)});
+  }    
+  var out =ee.ImageCollection(ee.FeatureCollection(groups.map(function(group){
+    return coRegisterCollection(imgs.filter(ee.Filter.eq(fieldName,group)))})).flatten());
+    
+    return out;
+}
+exports.coRegisterCollection = coRegisterCollection;
+exports.coRegisterGroups = coRegisterGroups;
+
+///////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //Hybrid get Landsat and Sentinel 2 wrapper function
 //Handles getting processed scenes and composites with Landsat and Sentinel 2
