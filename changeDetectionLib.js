@@ -2009,13 +2009,13 @@ function ccdcChangeDetection(ccdcImg,bandName){
   var changeProbKeys = ['changeProb'];
   var changeProbThresh = 1;
   //Pull out pieces from CCDC output
+  ccdc = ccdc.toBands()
   var magnitudes = ccdcImg.select(magKeys);
   var breaks = ccdcImg.select(tBreakKeys);
   
   // Map.addLayer(breaks.arrayLength(0),{min:1,max:10});
   var changeProbs = ccdcImg.select(changeProbKeys);
   print(changeProbs, "changeProbs")
-  changeProbs = changeProbs.toBands()
   var changeMask = changeProbs.gte(changeProbThresh);
   magnitudes = magnitudes.select(bandName + '.*');
 
