@@ -2009,7 +2009,6 @@ function ccdcChangeDetection(ccdcImg,bandName){
   var changeProbKeys = ['changeProb'];
   var changeProbThresh = 1;
   //Pull out pieces from CCDC output
-  ccdc = ccdc.toBands()
   var magnitudes = ccdcImg.select(magKeys);
   var breaks = ccdcImg.select(tBreakKeys);
   
