@@ -54,7 +54,7 @@ args.convertToDailyMosaics = true;
 
 // 8. Choose whether to include Landat 7
 // Generally only included when data are limited
-args.includeSLCOffL7 = true;
+args.includeSLCOffL7 = false;
 
 //9. Whether to defringe L5
 //Landsat 5 data has fringes on the edges that can introduce anomalies into 
