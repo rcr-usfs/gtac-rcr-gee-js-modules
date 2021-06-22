@@ -12,8 +12,8 @@ args.studyArea = getImagesLib.testAreas.CA;
 // constraints. This supports wrapping for tropics and southern hemisphere.
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-args.startJulian = 190;
-args.endJulian = 210; 
+args.startJulian = 152;
+args.endJulian = 273; 
 
 // 3. Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
