@@ -2977,6 +2977,8 @@ function getLandsatAndSentinel2HybridWrapper(){
         
   var args = prepArgumentsObject(arguments,defaultArgs);
   
+  if(args.toaOrSR === 'SR'){args.runChastainHarmonization = false}
+    
   var merged = getProcessedLandsatAndSentinel2Scenes(args);
   print('Merged',merged)
   args.ls = merged;
