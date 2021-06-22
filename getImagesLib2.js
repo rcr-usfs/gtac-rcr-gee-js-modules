@@ -2789,10 +2789,11 @@ function getProcessedLandsatAndSentinel2Scenes(){
         };
         
     var args = prepArgumentsObject(arguments,defaultArgs);
-  
+    
     args.toaOrSR =  args.toaOrSR.toUpperCase();
     
-    
+    if(args.toaOrSR === 'SR'){args.runChastainHarmonization = false}
+  
     print('initial args:',typeof(args),args)
     //Get Landsat
     args.preComputedCloudScoreOffset = args.preComputedLandsatCloudScoreOffset;
@@ -2826,7 +2827,7 @@ function getProcessedLandsatAndSentinel2Scenes(){
     ls = fillEmptyCollections(ls,dummyImage);
     s2s = fillEmptyCollections(s2s,dummyImage);
     
-    if(args.runChastainHarmonization){
+    if(args.runChastainHarmonization && args.toaOrSR === 'TOA'){
       
       //Seperate each sensor
       var tm = ls.filter(ee.Filter.inList('SENSOR_ID',['TM','ETM']));
@@ -2977,7 +2978,6 @@ function getLandsatAndSentinel2HybridWrapper(){
         
   var args = prepArgumentsObject(arguments,defaultArgs);
   
-  if(args.toaOrSR === 'SR'){args.runChastainHarmonization = false}
     
   var merged = getProcessedLandsatAndSentinel2Scenes(args);
   print('Merged',merged)
