@@ -23,7 +23,7 @@ args.studyArea = getImagesLib.testAreas.CA;
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
 args.startJulian = 274;
-args.endJulian = 275;
+args.endJulian = 273;
  
 
 // Specify start and end years for all analyses
@@ -77,7 +77,7 @@ args.exportBands = ['prcp.*','tmax.*','tmin.*'];
 args.crs = 'EPSG:5070';
 
 //Specify transform if scale is null and snapping to known grid is needed
-args.transform = [10000,0,-2361915.0,0,-10000,3177735.0];
+args.transform = [1000,0,-2361915.0,0,-1000,3177735.0];
 
 //Specify scale if transform is null
 args.scale = null;
