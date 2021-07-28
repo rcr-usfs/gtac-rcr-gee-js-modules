@@ -3482,6 +3482,7 @@ function synthImage(coeffs,dateImage,indexNames,harmonics,detrend){
 //Wrapper function to get climate data
 // Supports:
 // NASA/ORNL/DAYMET_V3
+// NASA/ORNL/DAYMET_V4
 // UCSB-CHG/CHIRPS/DAILY (precipitation only)
 //and possibly others
 function getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulian,endJulian,
