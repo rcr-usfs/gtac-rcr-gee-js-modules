@@ -2264,7 +2264,7 @@ function nDayComposites(images,startYear,endYear,startJulian,endJulian,composite
   var dummyImage = ee.Image(images.first());
 
   //convert to composites as defined above
-  function getYrImages(yr):
+  function getYrImages(yr){
     //take the year of the image
     var yr = ee.Number(yr).int16();
     //filter out images for the year
@@ -2273,7 +2273,7 @@ function nDayComposites(images,startYear,endYear,startJulian,endJulian,composite
     //use dummy image to fill in gaps for GEE processing
     yrImages = fillEmptyCollections(yrImages,dummyImage);
     return yrImages
-
+  }
   //Get images for a specified start day
   function getJdImages(yr,yrImages,start){
     yr = ee.Number(yr).int16();
@@ -2285,7 +2285,7 @@ function nDayComposites(images,startYear,endYear,startJulian,endJulian,composite
     var jdImages = fillEmptyCollections(jdImages,dummyImage);
     var composite = jdImages.median();
     return composite.set({'system:index':index,'system:time_start':date.millis()})
-
+  }
   //Set up wrappers
   function jdWrapper(yr,yrImages){
     return ee.FeatureCollection(ee.List.sequence(startJulian,endJulian,compositePeriod).map(function(start){return getJdImages(yr,yrImages,start)}))
@@ -2299,6 +2299,7 @@ function nDayComposites(images,startYear,endYear,startJulian,endJulian,composite
   composites = ee.ImageCollection(composites.flatten());
 
   return composites
+}
 //////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
