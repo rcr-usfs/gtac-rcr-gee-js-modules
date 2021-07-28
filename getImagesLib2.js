@@ -2257,43 +2257,44 @@ function getProcessedModis(args){
   modisImages = modisImages.map(function(img){return img.float()})
   return modisImages.set(args)
 //////////////////////////////////////////////////////////////////
-#Function to take images and create a median composite every n days
-def nDayComposites(images,startYear,endYear,startJulian,endJulian,compositePeriod):
+///Function to take images and create a median composite every n days
+function nDayComposites(images,startYear,endYear,startJulian,endJulian,compositePeriod){
   
-  #create dummy image for with no values
-  dummyImage = ee.Image(images.first())
+  //create dummy image for with no values
+  var dummyImage = ee.Image(images.first());
 
-  #convert to composites as defined above
-  def getYrImages(yr):
-    #take the year of the image
-    yr = ee.Number(yr).int16()
-    #filter out images for the year
-    yrImages = images.filter(ee.Filter.calendarRange(yr,yr,'year'))
+  //convert to composites as defined above
+  function getYrImages(yr):
+    //take the year of the image
+    var yr = ee.Number(yr).int16();
+    //filter out images for the year
+    var yrImages = images.filter(ee.Filter.calendarRange(yr,yr,'year'));
   
-    #use dummy image to fill in gaps for GEE processing
-    yrImages = fillEmptyCollections(yrImages,dummyImage)
+    //use dummy image to fill in gaps for GEE processing
+    yrImages = fillEmptyCollections(yrImages,dummyImage);
     return yrImages
 
-  #Get images for a specified start day
-  def getJdImages(yr,yrImages,start):
-    yr = ee.Number(yr).int16()
-    start = ee.Number(start).int16()
-    date = ee.Date.fromYMD(yr,1,1).advance(start.subtract(1),'day')
-    index = date.format('yyyy-MM-dd')
-    end = start.add(compositePeriod-1).int16()
-    jdImages = yrImages.filter(ee.Filter.calendarRange(start,end))
-    jdImages = fillEmptyCollections(jdImages,dummyImage)
-    composite = jdImages.median()
+  //Get images for a specified start day
+  function getJdImages(yr,yrImages,start){
+    yr = ee.Number(yr).int16();
+    start = ee.Number(start).int16();
+    var date = ee.Date.fromYMD(yr,1,1).advance(start.subtract(1),'day');
+    var index = date.format('yyyy-MM-dd');
+    var end = start.add(compositePeriod-1).int16();
+    var jdImages = yrImages.filter(ee.Filter.calendarRange(start,end));
+    var jdImages = fillEmptyCollections(jdImages,dummyImage);
+    var composite = jdImages.median();
     return composite.set({'system:index':index,'system:time_start':date.millis()})
 
-  #Set up wrappers
-  def jdWrapper(yr,yrImages):
-    return ee.FeatureCollection(ee.List.sequence(startJulian,endJulian,compositePeriod).map(lambda start: getJdImages(yr,yrImages,start)))
-  def yrWrapper(yr):
+  //Set up wrappers
+  function jdWrapper(yr,yrImages){
+    return ee.FeatureCollection(ee.List.sequence(startJulian,endJulian,compositePeriod).map(function(start){return getJdImages(yr,yrImages,start)}))
+  }
+  function yrWrapper(yr){
     yrImages = getYrImages(yr)
     return jdWrapper(yr,yrImages)
-
-  composites = ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(lambda yr:yrWrapper(yr)))
+  }
+  composites = ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(function(yr){return yrWrapper(yr)}))
   #return the composites as an image collection
   composites = ee.ImageCollection(composites.flatten());
 
