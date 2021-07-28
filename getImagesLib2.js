@@ -2295,7 +2295,7 @@ function nDayComposites(images,startYear,endYear,startJulian,endJulian,composite
     return jdWrapper(yr,yrImages)
   }
   composites = ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(function(yr){return yrWrapper(yr)}))
-  #return the composites as an image collection
+  //return the composites as an image collection
   composites = ee.ImageCollection(composites.flatten());
 
   return composites
