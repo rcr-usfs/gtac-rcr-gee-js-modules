@@ -2272,7 +2272,8 @@ function getProcessedModis(args){
   modisImages = modisImages.map(function(img){return img.float()})
   return modisImages.set(args)
 }
-var images = getProcessedModis(2019,2020,190,250);
+var images = getProcessedModis(2019,2020,1,365);
+print(images.size())
 Map.addLayer(images.median(),vizParamsFalse)
 //////////////////////////////////////////////////////////////////
 ///Function to take images and create a median composite every n days
