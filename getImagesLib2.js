@@ -3500,7 +3500,7 @@ function getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulia
   print('Julian days are:',startJulian,endJulian);
   //Get climate data
   var c = ee.ImageCollection(collectionName)
-          .filterBounds(studyArea.bounds(100,crs))
+          .filterBounds(studyArea)
           .filterDate(startDate,endDate)
           .filter(ee.Filter.calendarRange(startJulian,endJulian));
   
