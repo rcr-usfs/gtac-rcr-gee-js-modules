@@ -2154,7 +2154,7 @@ function getModisData(args){
       
       //If temp was pulled, join that in as well
       //Also select the bands in an L5-like order and give descriptive names
-      if(useTempInCloudMask === true){
+      if(args.useTempInCloudMask === true){
         a = joinCollections(a,a1000,false);
         t = joinCollections(t,t1000,false);
         
@@ -2177,9 +2177,9 @@ function getModisData(args){
       
       
     var dailyPiece;var tempPiece;var anglePiece;
-    if(daily){dailyPiece = 'Daily'}else{dailyPiece = 'Composite'}
-    if(useTempInCloudMask){tempPiece = 'temp'}else{tempPiece = 'noTemp'}
-    if(addLookAngleBands){anglePiece = 'Angle'}else{anglePiece = 'NoAngle'}
+    if(args.daily){dailyPiece = 'Daily'}else{dailyPiece = 'Composite'}
+    if(args.useTempInCloudMask){tempPiece = 'temp'}else{tempPiece = 'noTemp'}
+    if(args.addLookAngleBands){anglePiece = 'Angle'}else{anglePiece = 'NoAngle'}
     var multKey = tempPiece+anglePiece+dailyPiece;
     var mult = multModisDict[multKey];
     var multImage = mult[0];
@@ -2191,8 +2191,8 @@ function getModisData(args){
         .copyProperties(img);
       });
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
-    print('Setting resampling method',resampleMethod);
-    joined = ee.ImageCollection(joined).map(function(img){return img.resample(resampleMethod) });
+    print('Setting resampling method',args.resampleMethod);
+    joined = ee.ImageCollection(joined).map(function(img){return img.resample(args.resampleMethod) });
   }
   else if(args.resampleMethod === 'aggregate'){
     print('Setting to aggregate instead of resample ');
@@ -2213,8 +2213,8 @@ function getProcessedModis(args){
             'endJulian' : null,
             'zenithThresh' :90,
             'addLookAngleBands' : true,
-            'applyCloudScore' : false,
-            'applyTDOM' : false,
+            'applyCloudScore' : true,
+            'applyTDOM' : true,
             'useTempInCloudMask': true,
             'cloudScoreThresh' : 20,
             'performCloudScoreOffset' :true,
@@ -2272,7 +2272,8 @@ function getProcessedModis(args){
   modisImages = modisImages.map(function(img){return img.float()})
   return modisImages.set(args)
 }
-getProcessedModis(2019,2020,190,250)
+var images = getProcessedModis(2019,2020,190,250);
+Map.addLayer(images.median(),vizParamsFalse)
 //////////////////////////////////////////////////////////////////
 ///Function to take images and create a median composite every n days
 function nDayComposites(images,startYear,endYear,startJulian,endJulian,compositePeriod){
