@@ -2032,15 +2032,29 @@ function despikeCollection(c,absoluteSpike,bandNo){
 ///////////////////////////////////////////////////////////
 //Function to get MODIS data from various collections
 //Will pull from daily or 8-day composite collections based on the boolean variable "daily"
-function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zenithThresh,useTempInCloudMask,addLookAngleBands,resampleMethod){
-    if(addLookAngleBands === undefined || addLookAngleBands === null){addLookAngleBands = false}
-    if(resampleMethod === undefined || resampleMethod === null){resampleMethod = 'near'}
+function getModisData(args){
+  
+    var defaultArgs = {
+            'startYear': null,
+            'endYear': null,
+            'startJulian' : null,
+            'endJulian' : null,
+            'daily':true,
+            'maskWQA':false,
+            'zenithThresh' :90,
+            'useTempInCloudMask': true,
+            'addLookAngleBands' : false,
+            'resampleMethod' : 'bicubic'};
+    
+  
+    var args = prepArgumentsObject(arguments,defaultArgs);
+  
     
     var a250C;var t250C;var a500C;var t500C;var a1000C;var t1000C;
     var a250CV6;var t250CV6;var a500CV6;var t500CV6;var a1000CV6;var t1000CV6;
     var viewAngleBandNames;
       //Find which collections to pull from based on daily or 8-day
-      if(daily === false){
+      if(args.daily === false){
         a250C = modisCDict.eightDaySR250A;
         t250C = modisCDict.eightDaySR250T;
         a500C = modisCDict.eightDaySR500A;
@@ -2063,14 +2077,14 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
       
     //Pull images from each of the collections  
     var a250 = ee.ImageCollection(a250C)
-              .filter(ee.Filter.calendarRange(startYear,endYear,'year'))
-              .filter(ee.Filter.calendarRange(startJulian,endJulian))
+              .filter(ee.Filter.calendarRange(args.startYear,args.endYear,'year'))
+              .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .select(modis250SelectBands,modis250BandNames);
     
             
     var t250 = ee.ImageCollection(t250C)
-              .filter(ee.Filter.calendarRange(startYear,endYear,'year'))
-              .filter(ee.Filter.calendarRange(startJulian,endJulian))
+              .filter(ee.Filter.calendarRange(args.startYear,args.endYear,'year'))
+              .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .select(modis250SelectBands,modis250BandNames);
     
     // var af = ee.Image(a250.first());
@@ -2089,23 +2103,23 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
     // Map.addLayer(t250.select(modis250SelectBands,modis250BandNames),{},'t')
     function get500(c){
       var images = ee.ImageCollection(c)
-              .filter(ee.Filter.calendarRange(startYear,endYear,'year'))
-              .filter(ee.Filter.calendarRange(startJulian,endJulian));
+              .filter(ee.Filter.calendarRange(args.startYear,args.endYear,'year'))
+              .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian));
               
               //Mask pixels above a certain zenith
-              if(daily === true){
-                if(maskWQA === true){print('Masking with QA band:',c)}
+              if(args.daily === true){
+                if(args.maskWQA === true){print('Masking with QA band:',c)}
                 images = images
               .map(function(img){
-                img = img.mask(img.mask().and(img.select(['SolarZenith']).lt(zenithThresh*100)));
-                if(maskWQA === true){
+                img = img.mask(img.mask().and(img.select(['SolarZenith']).lt(args.zenithThresh*100)));
+                if(args.maskWQA === true){
                   
                   img = maskCloudsWQA (img);
                 }
                 return img;
               });
               }
-              if(addLookAngleBands){
+              if(args.addLookAngleBands){
                  images = images.select(ee.List(modis500SelectBands).cat(viewAngleBandNames),ee.List(modis500BandNames).cat(viewAngleBandNames));
               }else{
                 images = images.select(modis500SelectBands,modis500BandNames);
@@ -2118,15 +2132,15 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
     
 
     //If thermal collection is wanted, pull it as well
-    if(useTempInCloudMask === true){
+    if(args.useTempInCloudMask === true){
       var t1000 = ee.ImageCollection(t1000C)
-              .filter(ee.Filter.calendarRange(startYear,endYear,'year'))
-              .filter(ee.Filter.calendarRange(startJulian,endJulian))
+              .filter(ee.Filter.calendarRange(args.startYear,args.endYear,'year'))
+              .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .select([0,8,9],['temp','Emis_31','Emis_32']);
             
       var a1000 = ee.ImageCollection(a1000C)
-              .filter(ee.Filter.calendarRange(startYear,endYear,'year'))
-              .filter(ee.Filter.calendarRange(startJulian,endJulian))
+              .filter(ee.Filter.calendarRange(args.startYear,args.endYear,'year'))
+              .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .select([0,8,9],['temp','Emis_31','Emis_32']);    
     }
     
@@ -2176,15 +2190,15 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
         .copyProperties(img,['system:time_start','system:time_end','system:index'])
         .copyProperties(img);
       });
-  if(['bilinear','bicubic'].indexOf(resampleMethod) > -1){
+  if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resampling method',resampleMethod);
     joined = ee.ImageCollection(joined).map(function(img){return img.resample(resampleMethod) });
   }
-  else if(resampleMethod === 'aggregate'){
+  else if(args.resampleMethod === 'aggregate'){
     print('Setting to aggregate instead of resample ');
     joined = joined.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
   }
-  return joined;
+  return joined.set(args);
     
   }
 //////////////////////////////////////////////////////////////////
@@ -2221,6 +2235,7 @@ function getProcessedModis(args){
     
   
   var args = prepArgumentsObject(arguments,defaultArgs);
+  print(args)
   args.toaOrSR =  'SR';
   args.origin = 'MODIS';
   args.daily = true;
@@ -2257,6 +2272,7 @@ function getProcessedModis(args){
   modisImages = modisImages.map(function(img){return img.float()})
   return modisImages.set(args)
 }
+getProcessedModis(2019,2020,190,250)
 //////////////////////////////////////////////////////////////////
 ///Function to take images and create a median composite every n days
 function nDayComposites(images,startYear,endYear,startJulian,endJulian,compositePeriod){
