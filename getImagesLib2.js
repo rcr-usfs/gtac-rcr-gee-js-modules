@@ -3489,40 +3489,61 @@ function getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulia
   timebuffer,weights,compositingReducer,
   exportComposites,exportPathRoot,crs,transform,scale,exportBands){
     
-  // Prepare dates
-  //Wrap the dates if needed
-  var wrapOffset = 0;
-  if (startJulian > endJulian) {
-    wrapOffset = 365;
-  }
-  var startDate = ee.Date.fromYMD(startYear,1,1).advance(startJulian-1,'day');
-  var endDate = ee.Date.fromYMD(endYear,1,1).advance(endJulian-1+wrapOffset,'day');
-  print('Start and end dates:', startDate, endDate);
-  print('Julian days are:',startJulian,endJulian);
-  //Get climate data
-  var c = ee.ImageCollection(collectionName)
-          .filterBounds(studyArea)
-          .filterDate(startDate,endDate)
-          .filter(ee.Filter.calendarRange(startJulian,endJulian));
+   var defaultArgs = {
+    'collectionName':'NASA/ORNL/DAYMET_V4'
+    'studyArea':null,
+    'startYear':null,
+    'endYear':null,
+    'startJulian':null,
+    'endJulian':null,
+    'timebuffer':0,
+    'weights':[1],
+    'compositingReducer':ee.Reducer.mean(),
+    'exportComposites':false,
+    'exportPathRoot':'users/iwhousman/test/climate-test',
+    'crs':'EPSG:5070',
+    'transform':[30,0,-2361915.0,0,-30,3177735.0],
+    'scale':null,
+    'exportBands':null, 
+    };
+   
+  var args = prepArgumentsObject(arguments,defaultArgs);
+  print(args)
+    
+  // // Prepare dates
+  // //Wrap the dates if needed
+  // var wrapOffset = 0;
+  // if (startJulian > endJulian) {
+  //   wrapOffset = 365;
+  // }
+  // var startDate = ee.Date.fromYMD(startYear,1,1).advance(startJulian-1,'day');
+  // var endDate = ee.Date.fromYMD(endYear,1,1).advance(endJulian-1+wrapOffset,'day');
+  // print('Start and end dates:', startDate, endDate);
+  // print('Julian days are:',startJulian,endJulian);
+  // //Get climate data
+  // var c = ee.ImageCollection(collectionName)
+  //         .filterBounds(studyArea)
+  //         .filterDate(startDate,endDate)
+  //         .filter(ee.Filter.calendarRange(startJulian,endJulian));
   
-  c = c.map(function(img){return img.resample('bicubic')});
+  // c = c.map(function(img){return img.resample('bicubic')});
   
-  // Create composite time series
-  var ts = compositeTimeSeries(c,startYear,endYear,startJulian,endJulian,timebuffer,weights,null,compositingReducer);
+  // // Create composite time series
+  // var ts = compositeTimeSeries(c,startYear,endYear,startJulian,endJulian,timebuffer,weights,null,compositingReducer);
   
-  if(exportComposites){
-    //Set up export bands if not specified
-    if(exportBands === null || exportBands === undefined){
-      exportBands = ee.Image(ts.first()).bandNames();
-    }
-    print('Export bands are:',exportBands);
-    //Export collection
-    exportCollection(exportPathRoot,collectionName,studyArea, crs,transform,scale,
-      ts,startYear,endYear,startJulian,endJulian,compositingReducer,timebuffer,exportBands);
+  // if(exportComposites){
+  //   //Set up export bands if not specified
+  //   if(exportBands === null || exportBands === undefined){
+  //     exportBands = ee.Image(ts.first()).bandNames();
+  //   }
+  //   print('Export bands are:',exportBands);
+  //   //Export collection
+  //   exportCollection(exportPathRoot,collectionName,studyArea, crs,transform,scale,
+  //     ts,startYear,endYear,startJulian,endJulian,compositingReducer,timebuffer,exportBands);
      
-  }
+  // }
   
-  return ts;
+  // return ts;
   }
 //////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
