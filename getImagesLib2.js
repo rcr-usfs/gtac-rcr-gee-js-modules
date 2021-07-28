@@ -3688,6 +3688,7 @@ exports.despikeCollection = despikeCollection;
 exports.exportToAssetWrapper = exportToAssetWrapper;
 exports.exportToAssetWrapper2 = exportToAssetWrapper2;
 exports.exportToDriveWrapper = exportToDriveWrapper;
+exports.exportToCloudStorageWrapper = exportToCloudStorageWrapper;
 exports.exportCollection = exportCollection;
 exports.joinCollections = joinCollections;
 exports.smartJoin = smartJoin;
