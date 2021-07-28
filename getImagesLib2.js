@@ -2272,9 +2272,6 @@ function getProcessedModis(args){
   modisImages = modisImages.map(function(img){return img.float()})
   return modisImages.set(args)
 }
-var images = getProcessedModis(2019,2020,1,365);
-print(images.size())
-Map.addLayer(images.median(),vizParamsFalse)
 //////////////////////////////////////////////////////////////////
 ///Function to take images and create a median composite every n days
 function nDayComposites(images,startYear,endYear,startJulian,endJulian,compositePeriod){
@@ -2310,15 +2307,21 @@ function nDayComposites(images,startYear,endYear,startJulian,endJulian,composite
     return ee.FeatureCollection(ee.List.sequence(startJulian,endJulian,compositePeriod).map(function(start){return getJdImages(yr,yrImages,start)}))
   }
   function yrWrapper(yr){
-    yrImages = getYrImages(yr)
+    var yrImages = getYrImages(yr)
     return jdWrapper(yr,yrImages)
   }
-  composites = ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(function(yr){return yrWrapper(yr)}))
+  var composites = ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(function(yr){return yrWrapper(yr)}))
   //return the composites as an image collection
   composites = ee.ImageCollection(composites.flatten());
 
   return composites
 }
+
+var images = getProcessedModis(2020,2020,1,365);
+var comps = nDayComposites(images,2020,2020,1,365,32)
+print(images.size(),comps.size(),comps)
+Map.addLayer(images.median(),vizParamsFalse)
+Map.addLayer(comps.first(),vizParamsFalse)
 //////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
