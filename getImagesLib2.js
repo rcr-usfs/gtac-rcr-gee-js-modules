@@ -3510,23 +3510,23 @@ function getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulia
   var args = prepArgumentsObject(arguments,defaultArgs);
   print(args)
     
-  // // Prepare dates
-  // //Wrap the dates if needed
-  // var wrapOffset = 0;
-  // if (startJulian > endJulian) {
-  //   wrapOffset = 365;
-  // }
-  // var startDate = ee.Date.fromYMD(startYear,1,1).advance(startJulian-1,'day');
-  // var endDate = ee.Date.fromYMD(endYear,1,1).advance(endJulian-1+wrapOffset,'day');
-  // print('Start and end dates:', startDate, endDate);
-  // print('Julian days are:',startJulian,endJulian);
-  // //Get climate data
-  // var c = ee.ImageCollection(collectionName)
-  //         .filterBounds(studyArea)
-  //         .filterDate(startDate,endDate)
-  //         .filter(ee.Filter.calendarRange(startJulian,endJulian));
+  // Prepare dates
+  //Wrap the dates if needed
+  args.wrapOffset = 0;
+  if (args.startJulian > args.endJulian) {
+    args.wrapOffset = 365;
+  }
+  args.startDate = ee.Date.fromYMD(args.startYear,1,1).advance(args.startJulian-1,'day');
+  args.endDate = ee.Date.fromYMD(args.endYear,1,1).advance(args.endJulian-1+args.wrapOffset,'day');
+  print('Start and end dates:', args.startDate, args.endDate);
+  print('Julian days are:',args.startJulian,args.endJulian);
+  //Get climate data
+  var c = ee.ImageCollection(args.collectionName)
+          .filterBounds(args.studyArea)
+          .filterDate(args.startDate,args.endDate)
+          .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian));
   
-  // c = c.map(function(img){return img.resample('bicubic')});
+  c = c.map(function(img){return img.resample('bicubic')});
   
   // // Create composite time series
   // var ts = compositeTimeSeries(c,startYear,endYear,startJulian,endJulian,timebuffer,weights,null,compositingReducer);
