@@ -2228,7 +2228,7 @@ function getProcessedModis(args){
   
 
   // Get joined modis collection
-  modisImages = getModisData(args)
+  var modisImages = getModisData(args)
   
 
   if(args.addToMap){Map.addLayer(modisImages.median().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Raw Median')};
@@ -2256,6 +2256,7 @@ function getProcessedModis(args){
   modisImages = modisImages.map(simpleAddIndices)
   modisImages = modisImages.map(function(img){return img.float()})
   return modisImages.set(args)
+}
 //////////////////////////////////////////////////////////////////
 ///Function to take images and create a median composite every n days
 function nDayComposites(images,startYear,endYear,startJulian,endJulian,compositePeriod){
