@@ -3530,7 +3530,7 @@ function getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulia
   
   // Create composite time series
   var ts = compositeTimeSeries(c,args.startYear,args.endYear,args.startJulian,args.endJulian,args.timebuffer,args.weights,null,args.compositingReducer);
-  
+    
   if(args.exportComposites){
     //Set up export bands if not specified
     if(args.exportBands === null || args.exportBands === undefined){
@@ -3543,7 +3543,7 @@ function getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulia
      
   }
   
-  // return ts;
+  return ts;
   }
 //////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
