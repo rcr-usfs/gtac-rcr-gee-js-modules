@@ -2235,7 +2235,7 @@ collection,startYear,endYear,startJulian,endJulian,compositingReducer,timebuffer
     // print('Write down the Asset ID:', exportPath);
   
     exportToAssetWrapper(composite,exportName,exportPath,'mean',
-      studyArea.bounds(),null,crs,transform);
+      studyArea,null,crs,transform);
     });
 }
 /////////////////////////////////////////////////////////////
@@ -3500,7 +3500,7 @@ function getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulia
   print('Julian days are:',startJulian,endJulian);
   //Get climate data
   var c = ee.ImageCollection(collectionName)
-          .filterBounds(studyArea.bounds())
+          .filterBounds(studyArea.bounds(100,crs))
           .filterDate(startDate,endDate)
           .filter(ee.Filter.calendarRange(startJulian,endJulian));
   
