@@ -1,11 +1,3 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #98ff00 */ee.Geometry.Polygon(
-        [[[-118.63531656897908, 36.74257058586009],
-          [-117.82232828772908, 37.408727967272085],
-          [-118.17467006767367, 38.18264304528551],
-          [-119.39337320960408, 38.293547223630156],
-          [-119.54718180335408, 37.47850889576281]]]);
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 ///////////////////////////////////////////////////////////////////////////////
@@ -125,7 +117,6 @@ Map.addLayer(outline, {palette: '0000FF'}, "Study Area", false);
 
 // }
 
-// // confirmAll();
 
 // function confirmAll() {
 
@@ -136,3 +127,6 @@ Map.addLayer(outline, {palette: '0000FF'}, "Study Area", false);
 //         ok[i].click();
 
 // }
+
+// runTaskList();
+// confirmAll();
