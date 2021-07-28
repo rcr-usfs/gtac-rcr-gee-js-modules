@@ -21,8 +21,8 @@ args.endJulian = 250;
 // More than a 3 year span should be provided for time series methods to work 
 // well. If providing pre-computed stats for cloudScore and TDOM, this does not 
 // matter
-args.startYear = 2019;
-args.endYear = 2019;
+args.startYear = 2018;
+args.endYear = 2021;
 
 // Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
