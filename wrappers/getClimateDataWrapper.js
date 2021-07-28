@@ -10,12 +10,11 @@ var geometry = /* color: #98ff00 */ee.Geometry.Polygon(
 var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
+var args = {};
 
-// 1. Specify study area: Study area
-// Can specify a country, provide a fusion table  or asset table (must add 
-// .geometry() after it), or draw a polygon and make studyArea = drawnPolygon
-
-var studyArea = geometry;
+// Specify study area: Study area
+// Can be a featureCollection, feature, or geometry
+args.studyArea = getImagesLib.testAreas.CA;
 
 // 2. Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
@@ -25,9 +24,6 @@ var startJulian = 274;
 var endJulian = 273; 
 
 // 3. Specify start and end years for all analyses
-// More than a 3 year span should be provided for time series methods to work 
-// well. If using Fmask as the cloud/cloud shadow masking method, this does not 
-// matter
 var startYear = 1980;
 var endYear = 2017;
 
