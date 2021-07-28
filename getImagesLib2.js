@@ -2219,48 +2219,41 @@ function getProcessedModis(args){
             'scale' : 250,
             'transform' : null}
     
-   
-  var args = prepArgumentsObject(arguments,defaultArgs);
-  args.toaOrSR =  args.toaOrSR.toUpperCase();
-  args.origin = 'Landsat';
-            
-
-  args = formatArgs(locals())
-  if 'args' in args.keys():
-    del args['args']
   
-  #Get joined modis collection
-  modisImages = getModisData(startYear,endYear,startJulian,endJulian,
-    daily = True,
-    maskWQA = False,
-    zenithThresh = zenithThresh,
-    useTempInCloudMask = useTempInCloudMask,
-    addLookAngleBands = addLookAngleBands,
-    resampleMethod =  resampleMethod)
+  var args = prepArgumentsObject(arguments,defaultArgs);
+  args.toaOrSR =  'SR';
+  args.origin = 'MODIS';
+  args.daily = true;
+  args.maskWQA = false;
+  
 
-  if addToMap:
-    Map.addLayer(modisImages.median().reproject(crs,transform,scale),vizParamsFalse,'Raw Median')
+  // Get joined modis collection
+  modisImages = getModisData(args)
+  
+
+  if args.addToMap:
+    Map.addLayer(modisImages.median().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Raw Median')
 
 
-  if applyCloudScore:
+  if args.applyCloudScore:
     print('Applying cloudScore')
-    modisImages = applyCloudScoreAlgorithm(modisImages,modisCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset,preComputedCloudScoreOffset)
+    modisImages = applyCloudScoreAlgorithm(modisImages,modisCloudScore,args.cloudScoreThresh,args.cloudScorePctl,args.contractPixels,args.dilatePixels,args.performCloudScoreOffset,args.preComputedCloudScoreOffset)
 
-    if addToMap:
-      Map.addLayer(modisImages.median().reproject(crs,transform,scale),vizParamsFalse,'Cloud Masked Median',False)
-      Map.addLayer(modisImages.min().reproject(crs,transform,scale),vizParamsFalse,'Cloud Masked Min',False)
+    if args.addToMap:
+      Map.addLayer(modisImages.median().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Cloud Masked Median',false)
+      Map.addLayer(modisImages.min().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Cloud Masked Min',false)
 
-  if applyTDOM:
+  if args.applyTDOM:
     print('Applying TDOM') 
-    #Find and mask out dark outliers
-    modisImages = simpleTDOM2(modisImages,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels,shadowSumBands,preComputedTDOMIRMean,preComputedTDOMIRStdDev)
+    // Find and mask out dark outliers
+    modisImages = simpleTDOM2(modisImages,args.zScoreThresh,args.shadowSumThresh,args.contractPixels,args.dilatePixels,args.shadowSumBands,args.preComputedTDOMIRMean,args.preComputedTDOMIRStdDev)
 
-    if addToMap:
-      Map.addLayer(modisImages.median().reproject(crs,transform,scale),vizParamsFalse,'Cloud/Cloud Shadow Masked Median',False)
-      Map.addLayer(modisImages.min().reproject(crs,transform,scale),vizParamsFalse,'Cloud/Cloud Shadow Masked Min',False) 
+    if args.addToMap:
+      Map.addLayer(modisImages.median().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Cloud/Cloud Shadow Masked Median',false)
+      Map.addLayer(modisImages.min().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Cloud/Cloud Shadow Masked Min',false) 
 
   modisImages = modisImages.map(simpleAddIndices)
-  modisImages = modisImages.map(lambda img: img.float())
+  modisImages = modisImages.map(function(img){return img.float()})
   return modisImages.set(args)
 //////////////////////////////////////////////////////////////////
 #Function to take images and create a median composite every n days
