@@ -2231,27 +2231,28 @@ function getProcessedModis(args){
   modisImages = getModisData(args)
   
 
-  if args.addToMap:
-    Map.addLayer(modisImages.median().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Raw Median')
+  if(args.addToMap){Map.addLayer(modisImages.median().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Raw Median')};
 
 
-  if args.applyCloudScore:
+  if(args.applyCloudScore){
     print('Applying cloudScore')
     modisImages = applyCloudScoreAlgorithm(modisImages,modisCloudScore,args.cloudScoreThresh,args.cloudScorePctl,args.contractPixels,args.dilatePixels,args.performCloudScoreOffset,args.preComputedCloudScoreOffset)
-
-    if args.addToMap:
+  
+    if(args.addToMap){
       Map.addLayer(modisImages.median().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Cloud Masked Median',false)
       Map.addLayer(modisImages.min().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Cloud Masked Min',false)
-
-  if args.applyTDOM:
+    }
+  }
+  if(args.applyTDOM){
     print('Applying TDOM') 
     // Find and mask out dark outliers
     modisImages = simpleTDOM2(modisImages,args.zScoreThresh,args.shadowSumThresh,args.contractPixels,args.dilatePixels,args.shadowSumBands,args.preComputedTDOMIRMean,args.preComputedTDOMIRStdDev)
 
-    if args.addToMap:
+    if(args.addToMap){
       Map.addLayer(modisImages.median().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Cloud/Cloud Shadow Masked Median',false)
       Map.addLayer(modisImages.min().reproject(args.crs,args.transform,args.scale),vizParamsFalse,'Cloud/Cloud Shadow Masked Min',false) 
-
+    }
+  }
   modisImages = modisImages.map(simpleAddIndices)
   modisImages = modisImages.map(function(img){return img.float()})
   return modisImages.set(args)
