@@ -14,8 +14,8 @@ args.studyArea = getImagesLib.testAreas.CA;
 // to June 1 of that year.Otherwise, all system:time_starts will default to June 1 of the given year
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-args.startJulian = 190;
-args.endJulian = 250; 
+args.startJulian = 152;
+args.endJulian = 273; 
 
 // Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
