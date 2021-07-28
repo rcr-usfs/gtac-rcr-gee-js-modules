@@ -218,3 +218,35 @@ Map.addLayer(outline, {palette: '0000FF'}, "Study Area", false);
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 Map.setOptions('HYBRID')
+////////////////////////////////////////////////////////////////////////////////
+//Code for starting all tasks once this script has run
+//Press f12, then paste functions into console
+//Then paste function calls into console
+// function runTaskList() {
+
+
+//     //1. task local type-EXPORT_FEATURES awaiting-user-config
+
+//     //2. task local type-EXPORT_IMAGE awaiting-user-config
+
+//     var tasklist = document.getElementsByClassName('awaiting-user-config');
+
+//     for (var i = 0; i < tasklist.length; i++)
+
+//         tasklist[i].children[2].click();
+
+// }
+
+
+// function confirmAll() {
+
+//     var ok = document.getElementsByClassName('goog-buttonset-default goog-buttonset-action');
+
+//     for (var i = 0; i < ok.length; i++)
+
+//         ok[i].click();
+
+// }
+
+// runTaskList();
+// confirmAll();
