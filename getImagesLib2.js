@@ -2190,7 +2190,7 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
 //////////////////////////////////////////////////////////////////
 //Function to get cloud, cloud shadow busted modis images
 //Takes care of matching different modis collections as well
-function getProcessedModis(
+function getProcessedModis(args){
 
   var defaultArgs = {
             'startYear': null,
@@ -2203,22 +2203,22 @@ function getProcessedModis(
             'applyTDOM' : false,
             'useTempInCloudMask': true,
             'cloudScoreThresh' : 20,
-            'performCloudScoreOffset' = True,
-            cloudScorePctl = 10,
-            zScoreThresh = -1,
-            shadowSumThresh = 0.35,
-            contractPixels = 0,
-            dilatePixels = 2.5,
-            shadowSumBands = ['nir','swir2'],
-            resampleMethod = 'bicubic',
-            preComputedCloudScoreOffset = None,
-            preComputedTDOMIRMean = None,
-            preComputedTDOMIRStdDev = None,
-            addToMap = False,
-            crs = 'EPSG:4326',
-            scale = 250,
-            transform = None):
-    };
+            'performCloudScoreOffset' :true,
+            'cloudScorePctl' : 10,
+            'zScoreThresh' : -1,
+            'shadowSumThresh' : 0.35,
+            'contractPixels' : 0,
+            'dilatePixels' : 2.5,
+            'shadowSumBands' : ['nir','swir2'],
+            'resampleMethod' : 'bicubic',
+            'preComputedCloudScoreOffset' : null,
+            'preComputedTDOMIRMean' : null,
+            'preComputedTDOMIRStdDev' : null,
+            'addToMap' : false,
+            'crs' : 'EPSG:4326',
+            'scale' : 250,
+            'transform' : null}
+    
    
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
