@@ -1391,9 +1391,26 @@ function exportToDriveWrapper(imageForExport,outputName,driveFolderName,roi,scal
     var x = e;
   }
   //Ensure bounds are in web mercator
-  var outRegion = roi.bounds().transform('EPSG:4326', 100);//.getInfo()['coordinates'][0];
+  var outRegion = roi.bounds(100,crs);
   print('Exporting:',outputName);
   Export.image.toDrive(imageForExport, outputName, driveFolderName, outputName, null, outRegion, scale, crs, transform, 1e13);
+}
+function exportToCloudStorageWrapper(imageForExport,outputName,bucketName,roi,scale,crs,transform,outputNoData){
+  if(outputNoData === null || outputNoData === undefined){outputNoData = -32768}
+  //Make sure image is clipped to roi in case it's a multi-part polygon
+  imageForExport = imageForExport.clip(roi).unmask(outputNoData,false);
+
+  outputName = outputName.replace("/\s+/g",'-');//Get rid of any spaces
+  try{
+    roi = roi.geometry();
+  }
+  catch(e){
+    var x = e;
+  }
+  //Ensure bounds are in web mercator
+  var outRegion = roi.bounds(100,crs);
+  print('Exporting:',outputName);
+  Export.image.toCloudStorage(imageForExport, outputName, bucketName, outputName, null, outRegion, scale, crs, transform, 1e13);
 }
 // exportToDriveWrapper(ee.Image(1),'jsTest1','jsTest',geometry,30,'EPSG:5070')
 //////////////////////////////////////////////////
