@@ -16,41 +16,45 @@ var args = {};
 // Can be a featureCollection, feature, or geometry
 args.studyArea = getImagesLib.testAreas.CA;
 
-// 2. Update the startJulian and endJulian variables to indicate your seasonal 
+// Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
+// If using wrapping and the majority of the days occur in the second year, the system:time_start will default 
+// to June 1 of that year.Otherwise, all system:time_starts will default to June 1 of the given year
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-var startJulian = 274;
-var endJulian = 273; 
+args.startJulian = 274;
+args.endJulian = 273;
+ 
 
-// 3. Specify start and end years for all analyses
-var startYear = 1980;
-var endYear = 2017;
+// Specify start and end years for all analyses
+args.startYear = 2019;
+args.endYear = 2019;
 
-// 4. Specify an annual buffer to include imagery from the same season 
+// Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
-// in a 3 year moving window
-var timebuffer = 0;
+// in a 3 year moving window. If you want single-year composites, set to 0
+args.timebuffer =0;
 
-// 5. Specify the weights to be used for the moving window created by timeBuffer
-//For example- if timeBuffer is 1, that is a 3 year moving window
-//If the center year is 2000, then the years are 1999,2000, and 2001
-//In order to overweight the center year, you could specify the weights as
-//[1,5,1] which would duplicate the center year 5 times and increase its weight for
-//the compositing method
-var weights = [1];
+// Specify the weights to be used for the moving window created by timeBuffer
+// For example- if timeBuffer is 1, that is a 3 year moving window
+// If the center year is 2000, then the years are 1999,2000, and 2001
+// In order to overweight the center year, you could specify the weights as
+// [1,5,1] which would duplicate the center year 5 times and increase its weight for
+// the compositing method. If timeBuffer = 0, set to [1]
+args.weights = [1];
 
 
 
-// 6. Choose reducer to use for summarizing
-var compositingReducer = ee.Reducer.mean();
+// Choose reducer to use for summarizing each year
+// Common options are ee.Reducer.mean() and ee.Reducer.median()
+args.compositingReducer = ee.Reducer.mean();
 
-// 7. Choose collection to use
-// Specify TOA or SR
+// Choose collection to use
 // Supports:
 // NASA/ORNL/DAYMET_V3
+// NASA/ORNL/DAYMET_V4
 // UCSB-CHG/CHIRPS/DAILY (precipitation only)
-var collectionName = 'NASA/ORNL/DAYMET_V3';
+var collectionName = 'NASA/ORNL/DAYMET_V4';
 
 
 
