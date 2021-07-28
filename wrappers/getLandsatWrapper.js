@@ -49,7 +49,7 @@ args.toaOrSR = 'SR';
 
 // Choose whether to include Landat 7
 // Generally only included when data are limited
-args.includeSLCOffL7 = true;
+args.includeSLCOffL7 = false;
 
 // Whether to defringe L4 and L5
 // Landsat 4 and 5 data have fringes on the edges that can introduce anomalies into 
