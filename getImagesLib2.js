@@ -3528,20 +3528,20 @@ function getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulia
   
   c = c.map(function(img){return img.resample('bicubic')});
   
-  // // Create composite time series
-  // var ts = compositeTimeSeries(c,startYear,endYear,startJulian,endJulian,timebuffer,weights,null,compositingReducer);
+  // Create composite time series
+  var ts = compositeTimeSeries(c,args.startYear,args.endYear,args.startJulian,args.endJulian,args.timebuffer,args.weights,null,args.compositingReducer);
   
-  // if(exportComposites){
-  //   //Set up export bands if not specified
-  //   if(exportBands === null || exportBands === undefined){
-  //     exportBands = ee.Image(ts.first()).bandNames();
-  //   }
-  //   print('Export bands are:',exportBands);
-  //   //Export collection
-  //   exportCollection(exportPathRoot,collectionName,studyArea, crs,transform,scale,
-  //     ts,startYear,endYear,startJulian,endJulian,compositingReducer,timebuffer,exportBands);
+  if(args.exportComposites){
+    //Set up export bands if not specified
+    if(args.exportBands === null || args.exportBands === undefined){
+      args.exportBands = ee.Image(ts.first()).bandNames();
+    }
+    print('Export bands are:',args.exportBands);
+    //Export collection
+    exportCollection(args.exportPathRoot,args.collectionName,args.studyArea, args.crs,args.transform,args.scale,
+      ts,args.startYear,args.endYear,args.startJulian,args.endJulian,args.compositingReducer,args.timebuffer,args.exportBands);
      
-  // }
+  }
   
   // return ts;
   }
