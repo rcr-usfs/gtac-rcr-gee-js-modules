@@ -54,33 +54,33 @@ args.compositingReducer = ee.Reducer.mean();
 // NASA/ORNL/DAYMET_V3
 // NASA/ORNL/DAYMET_V4
 // UCSB-CHG/CHIRPS/DAILY (precipitation only)
-var collectionName = 'NASA/ORNL/DAYMET_V4';
+args.collectionName = 'NASA/ORNL/DAYMET_V4';
 
 
 
-//8. Export params
-//Whether to export composites
-var exportComposites = true;
+//Export params
+//Whether to export climate composites
+args.exportComposites = true;
 
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
-var exportPathRoot = 'users/ianhousman/test/changeCollection';
+args.exportPathRoot = 'users/ianhousman/test/changeCollection';
 
 //Specify which bands to export
 //If not sure or want all bands, just set to null
-var exportBands = ['prcp.*','tmax.*','tmin.*'];
+args.exportBands = ['prcp.*','tmax.*','tmin.*'];
 
 //CRS- must be provided.  
 //Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
 //WGS84 UTM N hemisphere is EPSG:326+ zone number (zone 12 N would be EPSG:32612) and S hemisphere is EPSG:327+ zone number
-var crs = 'EPSG:5070';
+args.crs = 'EPSG:5070';
 
 //Specify transform if scale is null and snapping to known grid is needed
-var transform = [1000,0,-2361915.0,0,-1000,3177735.0];
+args.transform = [1000,0,-2361915.0,0,-1000,3177735.0];
 
 //Specify scale if transform is null
-var scale = null;
+args.scale = null;
 ///////////////////////////////////////////////////////////////////////
 // End user parameters
 ///////////////////////////////////////////////////////////////////////
