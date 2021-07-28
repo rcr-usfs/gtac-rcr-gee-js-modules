@@ -7,7 +7,7 @@ var geometry = /* color: #98ff00 */ee.Geometry.Polygon(
           [-119.54718180335408, 37.47850889576281]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 //Module imports
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 var args = {};
@@ -27,7 +27,7 @@ args.endJulian = 273;
  
 
 // Specify start and end years for all analyses
-args.startYear = 2019;
+args.startYear = 2017;
 args.endYear = 2019;
 
 // Specify an annual buffer to include imagery from the same season 
@@ -65,7 +65,7 @@ args.exportComposites = true;
 
 //Provide location composites will be exported to
 //This should be an asset folder, or more ideally, an asset imageCollection
-args.exportPathRoot = 'users/ianhousman/test/changeCollection';
+args.exportPathRoot = 'users/iwhousman/test/climate-test';
 
 //Specify which bands to export
 //If not sure or want all bands, just set to null
@@ -89,18 +89,16 @@ args.scale = null;
 //Start function calls
 ////////////////////////////////////////////////////////////////////////////////
 //Call on master wrapper function to get Landat scenes and composites
-var climateSummaries = getImageLib.getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulian,endJulian,
-  timebuffer,weights,compositingReducer,
-  exportComposites,exportPathRoot,crs,transform,scale,exportBands);
+var climateSummaries = getImagesLib.getClimateWrapper(args);
 print(climateSummaries);
-// Map.addLayer(climateSummaries.select(['prcp.*']))
+Map.addLayer(climateSummaries.select(['prcp.*']))
 ////////////////////////////////////////////////////////////////////////////////
 // Load the study region, with a blue outline.
 // Create an empty image into which to paint the features, cast to byte.
 // Paint all the polygon edges with the same number and width, display.
 var empty = ee.Image().byte();
 var outline = empty.paint({
-  featureCollection: studyArea,
+  featureCollection: args.studyArea,
   color: 1,
   width: 3
 });
