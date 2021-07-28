@@ -3490,7 +3490,7 @@ function getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulia
   exportComposites,exportPathRoot,crs,transform,scale,exportBands){
     
    var defaultArgs = {
-    'collectionName':'NASA/ORNL/DAYMET_V4'
+    'collectionName':'NASA/ORNL/DAYMET_V4',
     'studyArea':null,
     'startYear':null,
     'endYear':null,
