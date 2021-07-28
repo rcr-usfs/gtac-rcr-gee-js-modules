@@ -2217,7 +2217,7 @@ function getProcessedModis(args){
             'applyTDOM' : true,
             'useTempInCloudMask': true,
             'cloudScoreThresh' : 20,
-            'performCloudScoreOffset' :true,
+            'performCloudScoreOffset' :false,
             'cloudScorePctl' : 10,
             'zScoreThresh' : -1,
             'shadowSumThresh' : 0.35,
