@@ -2187,6 +2187,124 @@ function getModisData(startYear,endYear,startJulian,endJulian,daily,maskWQA,zeni
   return joined;
     
   }
+//////////////////////////////////////////////////////////////////
+//Function to get cloud, cloud shadow busted modis images
+//Takes care of matching different modis collections as well
+function getProcessedModis(
+
+  var defaultArgs = {
+            'startYear': null,
+            'endYear': null,
+            'startJulian' : null,
+            'endJulian' : null,
+            'zenithThresh' :90,
+            'addLookAngleBands' : true,
+            'applyCloudScore' : false,
+            'applyTDOM' : false,
+            'useTempInCloudMask': true,
+            'cloudScoreThresh' : 20,
+            'performCloudScoreOffset' = True,
+            cloudScorePctl = 10,
+            zScoreThresh = -1,
+            shadowSumThresh = 0.35,
+            contractPixels = 0,
+            dilatePixels = 2.5,
+            shadowSumBands = ['nir','swir2'],
+            resampleMethod = 'bicubic',
+            preComputedCloudScoreOffset = None,
+            preComputedTDOMIRMean = None,
+            preComputedTDOMIRStdDev = None,
+            addToMap = False,
+            crs = 'EPSG:4326',
+            scale = 250,
+            transform = None):
+    };
+   
+  var args = prepArgumentsObject(arguments,defaultArgs);
+  args.toaOrSR =  args.toaOrSR.toUpperCase();
+  args.origin = 'Landsat';
+            
+
+  args = formatArgs(locals())
+  if 'args' in args.keys():
+    del args['args']
+  
+  #Get joined modis collection
+  modisImages = getModisData(startYear,endYear,startJulian,endJulian,
+    daily = True,
+    maskWQA = False,
+    zenithThresh = zenithThresh,
+    useTempInCloudMask = useTempInCloudMask,
+    addLookAngleBands = addLookAngleBands,
+    resampleMethod =  resampleMethod)
+
+  if addToMap:
+    Map.addLayer(modisImages.median().reproject(crs,transform,scale),vizParamsFalse,'Raw Median')
+
+
+  if applyCloudScore:
+    print('Applying cloudScore')
+    modisImages = applyCloudScoreAlgorithm(modisImages,modisCloudScore,cloudScoreThresh,cloudScorePctl,contractPixels,dilatePixels,performCloudScoreOffset,preComputedCloudScoreOffset)
+
+    if addToMap:
+      Map.addLayer(modisImages.median().reproject(crs,transform,scale),vizParamsFalse,'Cloud Masked Median',False)
+      Map.addLayer(modisImages.min().reproject(crs,transform,scale),vizParamsFalse,'Cloud Masked Min',False)
+
+  if applyTDOM:
+    print('Applying TDOM') 
+    #Find and mask out dark outliers
+    modisImages = simpleTDOM2(modisImages,zScoreThresh,shadowSumThresh,contractPixels,dilatePixels,shadowSumBands,preComputedTDOMIRMean,preComputedTDOMIRStdDev)
+
+    if addToMap:
+      Map.addLayer(modisImages.median().reproject(crs,transform,scale),vizParamsFalse,'Cloud/Cloud Shadow Masked Median',False)
+      Map.addLayer(modisImages.min().reproject(crs,transform,scale),vizParamsFalse,'Cloud/Cloud Shadow Masked Min',False) 
+
+  modisImages = modisImages.map(simpleAddIndices)
+  modisImages = modisImages.map(lambda img: img.float())
+  return modisImages.set(args)
+//////////////////////////////////////////////////////////////////
+#Function to take images and create a median composite every n days
+def nDayComposites(images,startYear,endYear,startJulian,endJulian,compositePeriod):
+  
+  #create dummy image for with no values
+  dummyImage = ee.Image(images.first())
+
+  #convert to composites as defined above
+  def getYrImages(yr):
+    #take the year of the image
+    yr = ee.Number(yr).int16()
+    #filter out images for the year
+    yrImages = images.filter(ee.Filter.calendarRange(yr,yr,'year'))
+  
+    #use dummy image to fill in gaps for GEE processing
+    yrImages = fillEmptyCollections(yrImages,dummyImage)
+    return yrImages
+
+  #Get images for a specified start day
+  def getJdImages(yr,yrImages,start):
+    yr = ee.Number(yr).int16()
+    start = ee.Number(start).int16()
+    date = ee.Date.fromYMD(yr,1,1).advance(start.subtract(1),'day')
+    index = date.format('yyyy-MM-dd')
+    end = start.add(compositePeriod-1).int16()
+    jdImages = yrImages.filter(ee.Filter.calendarRange(start,end))
+    jdImages = fillEmptyCollections(jdImages,dummyImage)
+    composite = jdImages.median()
+    return composite.set({'system:index':index,'system:time_start':date.millis()})
+
+  #Set up wrappers
+  def jdWrapper(yr,yrImages):
+    return ee.FeatureCollection(ee.List.sequence(startJulian,endJulian,compositePeriod).map(lambda start: getJdImages(yr,yrImages,start)))
+  def yrWrapper(yr):
+    yrImages = getYrImages(yr)
+    return jdWrapper(yr,yrImages)
+
+  composites = ee.FeatureCollection(ee.List.sequence(startYear,endYear).map(lambda yr:yrWrapper(yr)))
+  #return the composites as an image collection
+  composites = ee.ImageCollection(composites.flatten());
+
+  return composites
+//////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 function exportCollection(exportPathRoot,outputName,studyArea, crs,transform,scale,
@@ -2218,7 +2336,7 @@ collection,startYear,endYear,startJulian,endJulian,compositingReducer,timebuffer
     
     // Display the Landsat composite
     // Map.addLayer(composite.reproject(crs,transform,scale), vizParamsTrue, year.toString() + ' True Color ' , false);
-    // Map.addLa  yer(composite.reproject(crs,transform,scale), vizParamsFalse, year.toString() + ' False Color ', false);
+    // Map.addLayer(composite.reproject(crs,transform,scale), vizParamsFalse, year.toString() + ' False Color ', false);
     // Add metadata, cast to integer, and export composite
     composite = composite.set({
       'system:time_start': ee.Date.fromYMD(year+yearWithMajority,6,1).millis(),
