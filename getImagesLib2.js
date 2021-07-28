@@ -2228,7 +2228,7 @@ function getProcessedModis(args){
             'preComputedCloudScoreOffset' : null,
             'preComputedTDOMIRMean' : null,
             'preComputedTDOMIRStdDev' : null,
-            'addToMap' : false,
+            'addToMap' : true,
             'crs' : 'EPSG:4326',
             'scale' : 250,
             'transform' : null}
@@ -2316,12 +2316,6 @@ function nDayComposites(images,startYear,endYear,startJulian,endJulian,composite
 
   return composites
 }
-
-var images = getProcessedModis(2020,2020,1,365);
-var comps = nDayComposites(images,2020,2020,1,365,32)
-print(images.size(),comps.size(),comps)
-Map.addLayer(images.median(),vizParamsFalse)
-Map.addLayer(comps.first(),vizParamsFalse)
 //////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
