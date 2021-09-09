@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -10,7 +11,20 @@ var geometry =
         [[[-118.93183248812555, 36.94269993936479],
           [-118.93183248812555, 36.74928026456],
           [-118.63520162875055, 36.74928026456],
-          [-118.63520162875055, 36.94269993936479]]], null, false);
+          [-118.63520162875055, 36.94269993936479]]], null, false),
+    geometry2 = 
+    /* color: #d63000 */
+    /* shown: false */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-65.7772077174009, 18.28849882300539],
+          [-65.7772077174009, 18.268449832558666],
+          [-65.75145851085793, 18.268449832558666],
+          [-65.75145851085793, 18.28849882300539]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
@@ -21,7 +35,7 @@ var args = {};
 
 // Specify study area: Study area
 // Can be a featureCollection, feature, or geometry
-args.studyArea = geometry;//getImagesLib.testAreas.CA;
+args.studyArea = geometry2;//getImagesLib.testAreas.CA;
 
 // Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
@@ -29,15 +43,15 @@ args.studyArea = geometry;//getImagesLib.testAreas.CA;
 // to June 1 of that year.Otherwise, all system:time_starts will default to June 1 of the given year
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-args.startJulian = 1;
-args.endJulian = 365; 
+args.startJulian = 152;
+args.endJulian = 151; 
 
 // Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
 // well. If providing pre-computed stats for cloudScore and TDOM, this does not 
 // matter
-args.startYear = 1990;
-args.endYear = 2020;
+args.startYear = 2013;
+args.endYear = 2016;
 
 // Choose whether to include Landat 7
 // Generally only included when data are limited
@@ -47,6 +61,8 @@ args.includeSLCOffL7 = true;
 //harmonization method
 //All harmonization models apply a rather small correction and are likely not needed
 args.runChastainHarmonization = false;
+
+args.performCloudScoreOffset = false
 
 //If available, bring in preComputed cloudScore offsets and TDOM stats
 //Set to null if computing on-the-fly is wanted
@@ -59,7 +75,7 @@ args.preComputedSentinel2CloudScoreOffset = preComputedCloudScoreOffset.select([
 
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
-var preComputedTDOMStats = ee.ImageCollection('projects/USFS/TCC/TDOM_stats').mosaic().divide(10000);
+var preComputedTDOMStats = ee.ImageCollection('projects/lcms-292214/assets/R8/PR_USVI/Composites/TDOM_stats').mosaic().divide(10000);
 args.preComputedLandsatTDOMIRMean = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
 args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
 
@@ -69,7 +85,7 @@ args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_
 
 //List of acceptable sensors
 //Options include: 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'
-args.sensorList = [ 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'];
+args.sensorList = [ 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8'];
 
 //Which bands/indices to export
 //These will not always be used to find breaks - that is specified below in the ccdcParams
