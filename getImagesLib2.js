@@ -759,7 +759,7 @@ function getLandsat(){
     print('Joining TOA with SR QA bands');
     print(ls.size(),lsTOAFMASK.size())
     ls = joinCollections(ls.select([0,1,2,3,4,5,6]),lsTOAFMASK,false,'system:index');
-    print(ls)
+    print("ls images:", ls)
   }
   
   
