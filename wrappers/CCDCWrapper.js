@@ -24,7 +24,19 @@ var geometry =
         [[[-65.7772077174009, 18.28849882300539],
           [-65.7772077174009, 18.268449832558666],
           [-65.75145851085793, 18.268449832558666],
-          [-65.75145851085793, 18.28849882300539]]], null, false);
+          [-65.75145851085793, 18.28849882300539]]], null, false),
+    geometry3 = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-65.91098835643271, 18.305236266480062],
+          [-65.91098835643271, 18.22796902391246],
+          [-65.82086613353232, 18.22796902391246],
+          [-65.82086613353232, 18.305236266480062]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 ///Module imports
 var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
@@ -35,7 +47,7 @@ var args = {};
 
 // Specify study area: Study area
 // Can be a featureCollection, feature, or geometry
-args.studyArea = geometry2;//getImagesLib.testAreas.CA;
+args.studyArea = geometry3;//getImagesLib.testAreas.CA;
 
 // Update the startJulian and endJulian variables to indicate your seasonal 
 // constraints. This supports wrapping for tropics and southern hemisphere.
@@ -76,11 +88,12 @@ args.preComputedSentinel2CloudScoreOffset = preComputedCloudScoreOffset.select([
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
 var preComputedTDOMStats = ee.ImageCollection('projects/lcms-292214/assets/R8/PR_USVI/Composites/TDOM_stats').mosaic().divide(10000);
-args.preComputedLandsatTDOMIRMean = preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']);
-args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev']);
+print("TDOM Stats:", preComputedTDOMStats)
+args.preComputedLandsatTDOMIRMean = preComputedTDOMStats.select(['.*_Landsat_nir_mean','.*_Landsat_swir1_mean']);
+args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.select(['.*_Landsat_nir_stdDev','.*_Landsat_swir1_stdDev']);
 
-args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']);
-args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev']);
+args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.select(['.*_Sentinel2_nir_mean','.*_Sentinel2_swir1_mean']);
+args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['.*_Sentinel2_nir_stdDev','.*_Sentinel2_swir1_stdDev']);
 
 
 //List of acceptable sensors
