@@ -2034,13 +2034,13 @@ function getTimeImageCollectionFromComposites(startJulian, endJulian, compositeC
   var yearImages = compositeCollection.map(function(dateImg){
     // Get Unmasked values
     var newDateImg = ee.Image(dateImg.select('year').add(dateImg.select('julianDay').divide(365))).copyProperties(dateImg, ['system:time_start']);
-    var compositeMask = ee.Image(newDateImg).mask();
     
     // Create values for masked pixels
     var imgYear = dateImg.date().get('year');
     var medianValues = ee.Image.constant(imgYear).float().add(ee.Image(medianFraction)).rename('median_values');
     
-    // Fill masked Values
+    // Fill masked Values with median fraction
+    var compositeMask = ee.Image(newDateImg).mask();
     var out = ee.Image(newDateImg).addBands(medianValues.updateMask(compositeMask.not())).reduce(ee.Reducer.max())
       .rename('year')
       .copyProperties(dateImg, ['system:time_start']);
