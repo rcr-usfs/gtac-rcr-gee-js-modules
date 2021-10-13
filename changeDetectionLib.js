@@ -1890,8 +1890,21 @@ function getCCDCSegCoeffs(timeImg,ccdcImg,fillGaps){
 // yearStartMonth and yearStartDay are the date that you want the CCDC "year" to start at. This is mostly important for Annualized CCDC.
 // For LCMS, this is Sept. 1. So any change that occurs before Sept 1 in that year will be counted in that year, and Sept. 1 and after
 // will be counted in the following year.
-function annualizeCCDC(ccdcImg, startYear, endYear, startJulian, endJulian, yearStartMonth, yearStartDay, tEndExtrapolationPeriod){
-  var timeImgs = getTimeImageCollection(startYear, endYear, startJulian ,endJulian, 1, yearStartMonth, yearStartDay);
+// 10/21 LSC modified to allow for using pixel-wise composite dates instead of one date for each year.
+// To do this, set annualizeWithCompositeDates == true and provide a composite image collection with a 'year' and 'julianDay' band.
+function annualizeCCDC(ccdcImg, startYear, endYear, startJulian, endJulian, tEndExtrapolationPeriod, 
+  yearStartMonth, yearStartDay, annualizeWithCompositeDates, compositeCollection){
+    
+  if(annualizeWithCompositeDates === undefined || annualizeWithCompositeDates === null){
+    annualizeWithCompositeDates = false;
+  }
+  
+  var timeImgs;
+  if (annualizeWithCompositeDates === true){
+    timeImgs = getTimeImageCollectionFromComposites(startJulian, endJulian, compositeCollection)
+  }else{
+    timeImgs = getTimeImageCollection(startYear, endYear, startJulian ,endJulian, 1, yearStartMonth, yearStartDay);
+  }
   
   // If selected, add a constant amount of time to last end segment to make sure the last year is annualized correctly.
   // tEndExtrapolationPeriod should be a fraction of a year.
@@ -1918,10 +1931,10 @@ function getFitSlopeCCDC(annualSegCoeffs, startYear, endYear){
     var leftYear = ee.Number(rightYear).subtract(1);
     var rightFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(rightYear, rightYear, 'year')).first());
     var leftFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(leftYear, leftYear, 'year')).first());
-    var slopeNames = rightFitted.select(['.*_fitted']).bandNames().map(function(name){
-      return ee.String(ee.String(name).split('_fitted').get(0)).cat(ee.String('_fitSlope'))
+    var slopeNames = rightFitted.select(['.*_predicted']).bandNames().map(function(name){
+      return ee.String(ee.String(name).split('_predicted').get(0)).cat(ee.String('_fitSlope'))
     });
-    var slope = rightFitted.select(['.*_fitted']).subtract(leftFitted.select(['.*_fitted']))
+    var slope = rightFitted.select(['.*_predicted']).subtract(leftFitted.select(['.*_predicted']))
                   .rename(slopeNames);
     return rightFitted.addBands(slope);
   }))
