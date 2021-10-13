@@ -2186,5 +2186,6 @@ exports.getFitSlopeCCDC = getFitSlopeCCDC;
 exports.simpleCCDCPredictionAnnualized = simpleCCDCPredictionAnnualized;
 exports.predictCCDC = predictCCDC;
 exports.getTimeImageCollection = getTimeImageCollection;
+exports.getTimeImageCollectionFromComposites = getTimeImageCollectionFromComposites;
 exports.ccdcChangeDetection = ccdcChangeDetection;
 
