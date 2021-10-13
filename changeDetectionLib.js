@@ -1947,6 +1947,8 @@ function getFitSlopeCCDC(annualSegCoeffs, startYear, endYear){
   return diff;
 }
 
+// This function is ALMOST the same as simpleCCDCPrediction(), except that you don't use the harmonic coefficients, just the slope and intercept.
+// This is necessary if using a pixel-wise composite date method instead of one consistent date for annualization.
 function simpleCCDCPredictionAnnualized(img,timeBandName,whichBands){
   
   //Pull out the time band in the yyyy.ff format
@@ -1957,7 +1959,7 @@ function simpleCCDCPredictionAnnualized(img,timeBandName,whichBands){
   var slopes = img.select(['.*_SLP']).multiply(tBand);
   
   //Set up final output band names
-  var outBns = whichBands.map(function(bn){return ee.String(bn).cat('_CCDC_fitted')});
+  var outBns = whichBands.map(function(bn){return ee.String(bn).cat('_predicted')});
   
   //Iterate across each band and predict value
   var predicted = ee.ImageCollection(whichBands.map(function(bn){
@@ -2011,6 +2013,41 @@ function getTimeImageCollection(startYear,endYear,startJulian,endJulian,step, ye
   }));
   return yearImages.filter(ee.Filter.calendarRange(startYear,endYear,'year'))
                       .filter(ee.Filter.calendarRange(startJulian,endJulian));
+}
+
+// This creates an image collection in the same format as getTimeImageCollection(), but gets the pixel-wise dates from a composite collection
+// Composite collection should be an imported and prepped image collection with 'julianDay' and 'year' bands
+function getTimeImageCollectionFromComposites(startJulian, endJulian, compositeCollection){
+    // Account for date wrapping. If julian day is less than startJulian, add one year.
+  // For PRUSVI CCDC, Year 2020 is day 152 2020 to day 151 2021
+  // For CONUS CCDC, Year 2020 is day 1 2020 to day 365 2020, so it will never be less.
+  var medianFraction = compositeCollection.select('julianDay').map(function(jDay){
+    var fraction = jDay.divide(365);
+    var nextYearMask = jDay.lte(ee.Image.constant(startJulian));
+    var thisYearMask = nextYearMask.not();
+    var nextYearFraction = fraction.updateMask(nextYearMask).add(1);
+    var thisYearFraction = fraction.updateMask(thisYearMask);
+    fraction = nextYearFraction.addBands(thisYearFraction).reduce(ee.Reducer.max());
+    return fraction
+  }).reduce(ee.Reducer.median());
+
+  var yearImages = compositeCollection.map(function(dateImg){
+    // Get Unmasked values
+    var newDateImg = ee.Image(dateImg.select('year').add(dateImg.select('julianDay').divide(365))).copyProperties(dateImg, ['system:time_start']);
+    var compositeMask = ee.Image(newDateImg).mask();
+    
+    // Create values for masked pixels
+    var imgYear = dateImg.date().get('year');
+    var medianValues = ee.Image.constant(imgYear).float().add(ee.Image(medianFraction)).rename('median_values');
+    
+    // Fill masked Values
+    var out = ee.Image(newDateImg).addBands(medianValues.updateMask(compositeMask.not())).reduce(ee.Reducer.max())
+      .rename('year')
+      .copyProperties(dateImg, ['system:time_start']);
+
+    return out;
+  })
+  return yearImages;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 //Function for getting change years and magnitudes for a specified band from CCDC outputs
