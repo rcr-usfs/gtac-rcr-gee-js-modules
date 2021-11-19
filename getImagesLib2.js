@@ -541,7 +541,7 @@ function getS2(){
    
   //Get some s2 data
   var s2s = ee.ImageCollection(s2CollectionDict[args.toaOrSR])
-                    .filterDate(args.startDate,args.endDate)
+                    .filterDate(args.startDate,args.endDate.advance(1,'day'))
                     .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
                     .filterBounds(args.studyArea)
                     .map(function(img){
@@ -557,7 +557,7 @@ function getS2(){
   if(args.addCloudProbability){ 
     print('Joining pre-computed cloud probabilities from: COPERNICUS/S2_CLOUD_PROBABILITY');
     var cloudProbabilities = ee.ImageCollection("COPERNICUS/S2_CLOUD_PROBABILITY")
-                    .filterDate(args.startDate,args.endDate)
+                    .filterDate(args.startDate,args.endDate.advance(1,'day'))
                     .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
                     .filterBounds(args.studyArea)
                     .select(['probability'],['cloud_probability']);
@@ -658,7 +658,7 @@ function getLandsat(){
   
   // Get Landsat data
   var l4s = ee.ImageCollection(collectionDict['L4'+ args.toaOrSR])
-    .filterDate(args.startDate,args.endDate)
+    .filterDate(args.startDate,args.endDate.advance(1,'day'))
     .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
     .filterBounds(args.studyArea)
     .filter(ee.Filter.lte('WRS_ROW',120))
@@ -667,7 +667,7 @@ function getLandsat(){
   
   // Get Landsat data
   var l5s = ee.ImageCollection(collectionDict['L5'+ args.toaOrSR])
-    .filterDate(args.startDate,args.endDate)
+    .filterDate(args.startDate,args.endDate.advance(1,'day'))
     .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
     .filterBounds(args.studyArea)
     .filter(ee.Filter.lte('WRS_ROW',120))
@@ -679,7 +679,7 @@ function getLandsat(){
     l5s = l5s.map(defringeLandsat);
   }
   var l8s = ee.ImageCollection(collectionDict['L8'+ args.toaOrSR])
-    .filterDate(args.startDate,args.endDate)
+    .filterDate(args.startDate,args.endDate.advance(1,'day'))
     .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
     .filterBounds(args.studyArea)
     .filter(ee.Filter.lte('WRS_ROW',120))
@@ -689,7 +689,7 @@ function getLandsat(){
   if (args.includeSLCOffL7) {
     print('Including All Landsat 7');
     l7s = ee.ImageCollection(collectionDict['L7'+args.toaOrSR])
-      .filterDate(args.startDate,args.endDate)
+      .filterDate(args.startDate,args.endDate.advance(1,'day'))
       .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
       .filterBounds(args.studyArea)
       .filter(ee.Filter.lte('WRS_ROW',120))
@@ -697,8 +697,8 @@ function getLandsat(){
   } else {
     print('Only including SLC On Landsat 7');
     l7s = ee.ImageCollection(collectionDict['L7'+args.toaOrSR])
-      .filterDate(ee.Date.fromYMD(1998,1,1),ee.Date.fromYMD(2003,5,31))
-      .filterDate(args.startDate,args.endDate)
+      .filterDate(ee.Date.fromYMD(1998,1,1),ee.Date.fromYMD(2003,5,31).advance(1,'day'))
+      .filterDate(args.startDate,args.endDate.advance(1,'day'))
       .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
       .filterBounds(args.studyArea)
       .filter(ee.Filter.lte('WRS_ROW',120))
@@ -713,20 +713,20 @@ function getLandsat(){
   if(args.toaOrSR.toLowerCase() === 'toa' && args.addPixelQA === true){
     print('Acquiring SR qa bands for applying Fmask to TOA data');
     var l4sTOAFMASK =  ee.ImageCollection(collectionDict['L4SR'])
-              .filterDate(args.startDate,args.endDate)
+              .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
               .select(sensorBandDict['L4SRFMASK'],sensorBandNameDict['SRFMASK']);
               
     var l5sTOAFMASK =  ee.ImageCollection(collectionDict['L5SR'])
-              .filterDate(args.startDate,args.endDate)
+              .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
               .select(sensorBandDict['L5SRFMASK'],sensorBandNameDict['SRFMASK']);
     var l8sTOAFMASK =  ee.ImageCollection(collectionDict['L8SR'])
-              .filterDate(args.startDate,args.endDate)
+              .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
@@ -736,7 +736,7 @@ function getLandsat(){
     if(args.includeSLCOffL7){ 
       print('Including All Landsat 7 for TOA QA');
       var l7sTOAFMASK =  ee.ImageCollection(collectionDict['L7SR'])
-              .filterDate(args.startDate,args.endDate)
+              .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
@@ -746,8 +746,8 @@ function getLandsat(){
     }else{
       print('Only including SLC On Landsat 7 for TOA QA');
       var l7sTOAFMASK =  ee.ImageCollection(collectionDict['L7SR'])
-              .filterDate(ee.Date.fromYMD(1998,1,1),ee.Date.fromYMD(2003,5,31))
-              .filterDate(args.startDate,args.endDate)
+              .filterDate(ee.Date.fromYMD(1998,1,1),ee.Date.fromYMD(2003,5,31).advance(1,'day'))
+              .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
@@ -1484,7 +1484,7 @@ function compositeTimeSeries(){
       var endDateT = ee.Date.fromYMD(yr,1,1).advance(args.endJulian-1+args.wrapOffset,'day');
       
       // Filter images for given date range
-      var lsT = args.ls.filterDate(startDateT,endDateT);
+      var lsT = args.ls.filterDate(startDateT,endDateT.advance(1,'day'));
       lsT = fillEmptyCollections(lsT,dummyImage);
       return lsT;
     });
@@ -3653,7 +3653,7 @@ function getClimateWrapper(collectionName,studyArea,startYear,endYear,startJulia
   //Get climate data
   var c = ee.ImageCollection(args.collectionName)
           .filterBounds(args.studyArea)
-          .filterDate(args.startDate,args.endDate)
+          .filterDate(args.startDate,args.endDate.advance(1,'day'))
           .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian));
   
   c = c.map(function(img){return img.resample('bicubic')});
