@@ -3700,6 +3700,32 @@ var customQualityMosaic = function(inCollection,qualityBand,percentile){
 
 };
 ////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+//On-the-fly basic water masking method
+//This method is used to provide a time-sensitive water mask
+//This method tends to work well if there is no wet snow present
+//Wet snow over flat areas can result in false positives
+function simpleWaterMask(img,contractPixels,slope_thresh,elevationImagePath,elevationFocalMeanRadius){
+  if(contractPixels === null || contractPixels === undefined){contractPixels = 1.5};
+  if(slope_thresh === null || slope_thresh === undefined){slope_thresh = 10};
+  if(elevationImagePath === null || elevationImagePath === undefined){elevationImagePath = "USGS/NED"};
+  if(elevationFocalMeanRadius === null || elevationFocalMeanRadius === undefined){elevationFocalMeanRadius = 5.5};
+  if(contractPixels === null || contractPixels === undefined){contractPixels = 1.5};
+  
+  
+  img = addTCAngles(img);
+  var ned = ee.Image(elevationImagePath).resample('bicubic')
+  var slope = ee.Terrain.slope(ned.focal_mean(5.5))
+  var flat = slope.lte(slope_thresh)
+  
+  var waterMask = img.select(['tcAngleBW']).gte(-0.05)\
+    .And(img.select(['tcAngleBG']).lte(0.05))\
+    .And(img.select(['brightness']).lt(0.3))\
+    .And(flat).focal_min(contractPixels)
+  
+  return waterMask
+}
+////////////////////////////////////////////////////////////
 //Jeff Ho Method for algal bloom detection
 //https://www.nature.com/articles/s41586-019-1648-7
 
