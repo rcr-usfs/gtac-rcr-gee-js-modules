@@ -3893,6 +3893,8 @@ exports.customQualityMosaic  = customQualityMosaic;
 exports.compositeDates = compositeDates;
 exports.defringeLandsat = defringeLandsat;
 
+exports.simpleWaterMask = simpleWaterMask;
+
 exports.testAreas = {};
 exports.testAreas.CO = 
     /* color: #d63000 */
