@@ -3705,6 +3705,7 @@ var customQualityMosaic = function(inCollection,qualityBand,percentile){
 //This method is used to provide a time-sensitive water mask
 //This method tends to work well if there is no wet snow present
 //Wet snow over flat areas can result in false positives
+//Designed to work with TOA data. SR data will result in false negatives
 function simpleWaterMask(img,contractPixels,slope_thresh,elevationImagePath,elevationFocalMeanRadius){
   if(contractPixels === null || contractPixels === undefined){contractPixels = 0};
   if(slope_thresh === null || slope_thresh === undefined){slope_thresh = 10};
