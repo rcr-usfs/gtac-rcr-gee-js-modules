@@ -3711,13 +3711,13 @@ function simpleWaterMask(img,contractPixels,slope_thresh,elevationImagePath,elev
   if(elevationFocalMeanRadius === null || elevationFocalMeanRadius === undefined){elevationFocalMeanRadius = 5.5};
   if(contractPixels === null || contractPixels === undefined){contractPixels = 0};
   
+  img = addTCAngles(img);
   
   //Find flat areas
   var ned = ee.Image(elevationImagePath).resample('bicubic');
   var slope = ee.Terrain.slope(ned.focal_mean(elevationFocalMeanRadius));
   var flat = slope.lte(slope_thresh);
   
-  img = addTCAngles(img);
   var waterMask = img.select(['tcAngleBW']).gte(-0.05)
     .and(img.select(['tcAngleBG']).lte(0.05))
     .and(img.select(['brightness']).lt(0.3))
