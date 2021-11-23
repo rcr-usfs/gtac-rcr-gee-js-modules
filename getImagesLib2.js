@@ -3719,9 +3719,9 @@ function simpleWaterMask(img,contractPixels,slope_thresh,elevationImagePath,elev
   var flat = slope.lte(slope_thresh)
   
   var waterMask = img.select(['tcAngleBW']).gte(-0.05)
-    .And(img.select(['tcAngleBG']).lte(0.05))
-    .And(img.select(['brightness']).lt(0.3))
-    .And(flat).focal_min(contractPixels)
+    .and(img.select(['tcAngleBG']).lte(0.05))
+    .and(img.select(['brightness']).lt(0.3))
+    .and(flat).focal_min(contractPixels)
   
   return waterMask
 }
