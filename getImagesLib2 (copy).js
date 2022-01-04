@@ -805,6 +805,19 @@ function getLandsat(){
   return ls.set(args);
 }
 var getImageCollection = getLandsat;
+['SR','TOA'].map(function(toaOrSR){
+  ['C1','C2'].map(function(whichC){
+    var startDate = ee.Date.fromYMD(2019,7,1);
+    var endDate =  ee.Date.fromYMD(2019,10,1);
+    getLandsat( ee.Geometry.Polygon(
+        [[[-108.28630509064759, 38.085343638120925],
+          [-108.28630509064759, 37.18051220092945],
+          [-106.74821915314759, 37.18051220092945],
+          [-106.74821915314759, 38.085343638120925]]], null, false),startDate,endDate,1,365)
+  
+ 
+  })
+})
 ////////////////////////////////////////////////////////////////////////////////
 // Helper function to apply an expression and linearly rescale the output.
 // Used in the landsatCloudScore function below.
