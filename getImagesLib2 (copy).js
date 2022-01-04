@@ -3072,33 +3072,6 @@ function getProcessedLandsatAndSentinel2Scenes(){
     print(merged.aggregate_histogram('sensor'))
     return merged
 }
-['SR','TOA'].map(function(toaOrSR){
-  ['C1','C2'].map(function(whichC){
-    
-    var c = getProcessedLandsatAndSentinel2Scenes( {
-    'studyArea': ee.Geometry.Polygon(
-        [[[-108.28630509064759, 38.085343638120925],
-          [-108.28630509064759, 37.18051220092945],
-          [-106.74821915314759, 37.18051220092945],
-          [-106.74821915314759, 38.085343638120925]]], null, false),
-    'startYear':2019,
-    'endYear':2019,
-    'startJulian':190,
-    'endJulian':250,
-    'toaOrSR':toaOrSR,
-    'includeSLCOffL7':false,
-    'defringeL5':false,
-    'addPixelQA':true,
-    'resampleMethod':'near',
-    'landsatCollectionVersion' : whichC
-    })
-      
-      
-     
-    print(c.size())
-    Map.addLayer(c.first(),vizParamsTrue,toaOrSR+' '+whichC,true);
-  })
-})
 ///////////////////////////////////////////////////////////////////////////////
 //Function to register an imageCollection to images within it
 //Always uses the first image as the reference image
