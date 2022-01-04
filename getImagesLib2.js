@@ -1,3 +1,4 @@
+print('hello');
 ////////////////////////////////////////////////////////////////////////////////
 //Module for getting Landsat, Sentinel 2 and MODIS images/composites
 // Define visualization parameters
@@ -313,32 +314,35 @@ function fillEmptyCollections(inCollection,dummyImage){
 
 //////////////////////////////////////////////////////////////////////////
 //Add sensor band function
-var sensorDict = ee.Dictionary({'LANDSAT_4':4,
-                  'LANDSAT_5':5,
-                  'LANDSAT_7':7,
-                  'LANDSAT_8':8,
-                  'LANDSAT_9':9,
-                  'Sentinel-2A':21,
-                  'Sentinel-2B':22,
-                  'Sentinel-2C':23
+// Add band tracking which satellite the pixel came from
+function addSensorBand(img, whichProgram, toaOrSR){
+  var sensorDict = ee.Dictionary({'LANDSAT_4': 4,
+              'LANDSAT_5': 5,
+              'LANDSAT_7': 7,
+              'LANDSAT_8': 8,
+              'Sentinel-2A': 21,
+              'Sentinel-2B': 22,
+              'Sentinel-2C': 23,
+              });
+  var sensorPropDict = ee.Dictionary({'C1_landsat':
+                        {'TOA':'SPACECRAFT_ID',
+                          'SR':'SATELLITE'
+                        },
+                    'C2_landsat':
+                        {'TOA':'SPACECRAFT_ID',
+                          'SR':'SPACECRAFT_ID'
+                        },
+                  'sentinel2':
+                        {'TOA':'SPACECRAFT_NAME',
+                         'SR':'SPACECRAFT_NAME'
+                        }
                   });
-var sensorPropDict = ee.Dictionary({'landsat':
-                                          {'TOA':'SPACECRAFT_ID',
-                                            'SR':'SATELLITE'
-                                          },
-                                    'sentinel2':
-                                          {'TOA':'SPACECRAFT_NAME',
-                                           'SR':'SPACECRAFT_NAME'
-                                          }
-                                    });
-
-function addSensorBand(img,whichProgram,toaOrSR){
-  toaOrSR = toaOrSR.toUpperCase(); 
+  toaOrSR = toaOrSR.toUpperCase();
   var sensorProp = ee.Dictionary(sensorPropDict.get(whichProgram)).get(toaOrSR);
   var sensorName = img.get(sensorProp);
-  return img.addBands(ee.Image.constant(sensorDict.get(sensorName)).rename(['sensor']).byte()).set('sensor',sensorName);
+  img = img.addBands(ee.Image.constant(sensorDict.get(sensorName)).rename(['sensor']).byte()).set('sensor',sensorName);
+  return img;
 }
-
 /////////////////////////////////////////////////////////////////
 //Adds the float year with julian proportion to image
 function addDateBand(img,maskTime){
@@ -594,8 +598,77 @@ function getS2(){
   
   return s2s.set(args);
 }
+
 //////////////////////////////////////////////////////////////////
-// Function for acquiring Landsat TOA image collection
+// Set up dictionaries to manage various Landsat collections, rescale factors, band names, etc
+var landsat_C2_L2_rescale_dict = {
+  'C1':{'refl_mult':0.0001,'refl_add':0,'temp_mult':0.1,'temp_add':0},
+  'C2':{'refl_mult':0.0000275,'refl_add':-0.2,'temp_mult':0.00341802,'temp_add':149.0},
+  };
+// Set up bands and corresponding band names
+var landsatSensorBandDict = {
+  'C1_L4_TOA':['B1','B2','B3','B4','B5','B6','B7','BQA'],
+  'C2_L4_TOA':['B1','B2','B3','B4','B5','B6','B7','QA_PIXEL'],
+  'C1_L5_TOA':['B1','B2','B3','B4','B5','B6','B7','BQA'],
+  'C2_L5_TOA':['B1','B2','B3','B4','B5','B6','B7','QA_PIXEL'],
+  'C1_L7_TOA':['B1','B2','B3','B4','B5','B6_VCID_1','B7','BQA'],
+  'C2_L7_TOA':['B1','B2','B3','B4','B5','B6_VCID_1','B7','QA_PIXEL'],
+  'C1_L8_TOA':['B2','B3','B4','B5','B6','B10','B7','BQA'],
+  'C2_L8_TOA':['B2','B3','B4','B5','B6','B10','B7','QA_PIXEL'],
+  'C1_L4_SR':['B1','B2','B3','B4','B5','B6','B7','pixel_qa'],
+  'C2_L4_SR':['SR_B1','SR_B2','SR_B3','SR_B4','SR_B5','ST_B6','SR_B7','QA_PIXEL'],
+  'C1_L5_SR':['B1','B2','B3','B4','B5','B6','B7','pixel_qa'],
+  'C2_L5_SR':['SR_B1','SR_B2','SR_B3','SR_B4','SR_B5','ST_B6','SR_B7','QA_PIXEL'],
+  'C1_L7_SR':['B1','B2','B3','B4','B5','B6','B7','pixel_qa'],
+  'C2_L7_SR':['SR_B1','SR_B2','SR_B3','SR_B4','SR_B5','ST_B6','SR_B7','QA_PIXEL'],
+  'C1_L8_SR':['B2','B3','B4','B5','B6','B10','B7','pixel_qa'],
+  'C2_L8_SR':['SR_B2','SR_B3','SR_B4','SR_B5','SR_B6','ST_B10','SR_B7','QA_PIXEL'],
+};
+
+// Provide common band names
+var landsatSensorBandNameDict = {
+  'C1_TOA': ['blue','green','red','nir','swir1','temp','swir2','BQA'],
+  'C1_SR': ['blue','green','red','nir','swir1','temp', 'swir2','pixel_qa'],
+  'C1_SRFMASK': ['pixel_qa'],
+  'C2_TOA': ['blue','green','red','nir','swir1','temp','swir2','QA_PIXEL'],
+  'C2_SR': ['blue','green','red','nir','swir1','temp', 'swir2','QA_PIXEL']
+  };
+
+// Set up collections
+var landsatCollectionDict = {
+  'C1_L8_TOA': 'LANDSAT/LC08/C01/T1',
+  'C1_L7_TOA': 'LANDSAT/LE07/C01/T1',
+  'C1_L5_TOA': 'LANDSAT/LT05/C01/T1',
+  'C1_L4_TOA': 'LANDSAT/LT04/C01/T1',
+  'C1_L8_SR': 'LANDSAT/LC08/C01/T1_SR',
+  'C1_L7_SR': 'LANDSAT/LE07/C01/T1_SR',
+  'C1_L5_SR': 'LANDSAT/LT05/C01/T1_SR',
+  'C1_L4_SR': 'LANDSAT/LT04/C01/T1_SR',
+  'C2_L8_TOA': 'LANDSAT/LC08/C02/T1',
+  'C2_L7_TOA': 'LANDSAT/LE07/C02/T1',
+  'C2_L5_TOA': 'LANDSAT/LT05/C02/T1',
+  'C2_L4_TOA': 'LANDSAT/LT04/C02/T1',
+  'C2_L8_SR': 'LANDSAT/LC08/C02/T1_L2',
+  'C2_L7_SR': 'LANDSAT/LE07/C02/T1_L2',
+  'C2_L5_SR': 'LANDSAT/LT05/C02/T1_L2',
+  'C2_L4_SR': 'LANDSAT/LT04/C02/T1_L2'
+  };
+
+// Name of cFmask qa bits band for Collections 1 and 2
+var landsatFmaskBandNameDict = {'C1':'pixel_qa','C2':'QA_PIXEL'};
+//////////////////////////////////////////////////////////////////
+// Method for rescaling reflectance and surface temperature data to 0-1 and Kelvin respectively
+// This was adapted from the method provided by Google for rescaling Collection 2:
+// https://code.earthengine.google.com/?scriptPath=Examples%3ADatasets%2FLANDSAT_LC08_C02_T1_L2
+function applyScaleFactors(image,landsatCollectionVersion){
+  var factor_dict = landsat_C2_L2_rescale_dict[landsatCollectionVersion];
+  var opticalBands = image.select('blue','green','red','nir','swir1','swir2').multiply(factor_dict['refl_mult']).add(factor_dict['refl_add']).float();
+  var thermalBands = image.select('temp').multiply(factor_dict['temp_mult']).add(factor_dict['temp_add']).float();
+  return image.addBands(opticalBands, null, true)
+              .addBands(thermalBands, null, true);
+}
+//////////////////////////////////////////////////////////////////
+// Function for acquiring Landsat image collections
 //See default arguments below
 //Required arguments: studyArea,startDate,endDate,startJulian,endJulian
 //Can be called on with parameters as an object or ordered set of parameters 
@@ -611,147 +684,100 @@ function getLandsat(){
     'includeSLCOffL7':false,
     'defringeL5':false,
     'addPixelQA':false,
-    'resampleMethod':'near'
+    'resampleMethod':'near',
+    'landsatCollectionVersion' : 'C1'
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   
-  // Set up bands and corresponding band names
-  var sensorBandDict = {
-    'L8TOA': ee.List([1,2,3,4,5,9,6,'BQA']),
-    'L7TOA': ee.List([0,1,2,3,4,5,7,'BQA']),
-    'L5TOA': ee.List([0,1,2,3,4,5,6,'BQA']),
-    'L4TOA': ee.List([0,1,2,3,4,5,6,'BQA']),
-    'L8SR': ee.List([1,2,3,4,5,7,6,'pixel_qa']),
-    'L7SR': ee.List([0,1,2,3,4,5,6,'pixel_qa']),
-    'L5SR': ee.List([0,1,2,3,4,5,6,'pixel_qa']),
-    'L4SR': ee.List([0,1,2,3,4,5,6,'pixel_qa']),
-    'L8SRFMASK': ee.List(['pixel_qa']),
-    'L7SRFMASK': ee.List(['pixel_qa']),
-    'L5SRFMASK': ee.List(['pixel_qa']),
-    'L4SRFMASK': ee.List(['pixel_qa']),
-  };
   
-  var sensorBandNameDict = {
-    'TOA': ee.List(['blue','green','red','nir','swir1','temp','swir2','BQA']),
-    'SR': ee.List(['blue','green','red','nir','swir1','temp', 'swir2','pixel_qa']),
-    'SRFMASK': ee.List(['pixel_qa'])
-  };
-  
-  // Set up collections
-  var collectionDict = {
-    'L8TOA': 'LANDSAT/LC08/C01/T1_TOA',
-    'L7TOA': 'LANDSAT/LE07/C01/T1_TOA',
-    'L5TOA': 'LANDSAT/LT05/C01/T1_TOA',
-    'L4TOA': 'LANDSAT/LT04/C01/T1_TOA',
-    'L8SR': 'LANDSAT/LC08/C01/T1_SR',
-    'L7SR': 'LANDSAT/LE07/C01/T1_SR',
-    'L5SR': 'LANDSAT/LT05/C01/T1_SR',
-    'L4SR': 'LANDSAT/LT04/C01/T1_SR'
-  };
-  
-  var multImageDict = {
-    'TOA': ee.Image([1,1,1,1,1,1,1,1]),
-    'SR': ee.Image([0.0001,0.0001,0.0001,0.0001,0.0001,0.1,0.0001,1])
-  };
-  
-  // Get Landsat data
-  var l4s = ee.ImageCollection(collectionDict['L4'+ args.toaOrSR])
-    .filterDate(args.startDate,args.endDate.advance(1,'day'))
-    .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
-    .filterBounds(args.studyArea)
-    .filter(ee.Filter.lte('WRS_ROW',120))
-    .select(sensorBandDict['L4'+ args.toaOrSR],sensorBandNameDict[args.toaOrSR]);
+  function getLandsatCollection(landsatCollectionVersion,whichC,toaOrSR){
+    var c = ee.ImageCollection(landsatCollectionDict[landsatCollectionVersion+'_'+whichC+'_'+toaOrSR])
+        .filterDate(args.startDate,args.endDate.advance(1,'day'))
+        .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
+        .filterBounds(args.studyArea)
+        .filter(ee.Filter.lte('WRS_ROW',120));
+    if(args.toaOrSR.toLowerCase() === 'toa'){
+      c = c.map(ee.Algorithms.Landsat.TOA);
+    }
+    c = c.select(landsatSensorBandDict[landsatCollectionVersion+'_'+whichC+'_'+toaOrSR],
+                  landsatSensorBandNameDict[landsatCollectionVersion+'_'+toaOrSR]);
     
-  
-  // Get Landsat data
-  var l5s = ee.ImageCollection(collectionDict['L5'+ args.toaOrSR])
-    .filterDate(args.startDate,args.endDate.advance(1,'day'))
-    .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
-    .filterBounds(args.studyArea)
-    .filter(ee.Filter.lte('WRS_ROW',120))
-    .select(sensorBandDict['L5'+ args.toaOrSR],sensorBandNameDict[args.toaOrSR]);
+    if(args.toaOrSR.toLowerCase() === 'sr'){
+      c = c.map(function(image){return applyScaleFactors(image,landsatCollectionVersion)});
+    }
+    return c;
+  }
+  function getLandsatCollections(toaOrSR,landsatCollectionVersion){
+    // Get Landsat data
+    var l4s = getLandsatCollection(landsatCollectionVersion,'L4',toaOrSR);
+    var l5s = getLandsatCollection(landsatCollectionVersion,'L5',toaOrSR)
+      ;
+    if(args.defringeL5){
+      print('Defringing L4 and L5');
+      l4s = l4s.map(defringeLandsat);
+      l5s = l5s.map(defringeLandsat);
+    };
+    var l8s = getLandsatCollection(landsatCollectionVersion,'L8',toaOrSR)
     
-  if(args.defringeL5){
-    print('Defringing L5');
-    l4s = l4s.map(defringeLandsat);
-    l5s = l5s.map(defringeLandsat);
+    var ls; var l7s;
+    if(args.includeSLCOffL7){
+      print('Including All Landsat 7');
+      l7s =getLandsatCollection(landsatCollectionVersion,'L7',toaOrSR)
+    }else{
+      print('Only including SLC On Landsat 7');
+      l7s = getLandsatCollection(landsatCollectionVersion,'L7',toaOrSR)
+          .filterDate(ee.Date.fromYMD(1998,1,1),ee.Date.fromYMD(2003,5,31).advance(1,'day'));
+    };
+    // Merge collections
+    ls = ee.ImageCollection(l4s.merge(l5s).merge(l7s).merge(l8s));
+    return ls;
   }
-  var l8s = ee.ImageCollection(collectionDict['L8'+ args.toaOrSR])
-    .filterDate(args.startDate,args.endDate.advance(1,'day'))
-    .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
-    .filterBounds(args.studyArea)
-    .filter(ee.Filter.lte('WRS_ROW',120))
-    .select(sensorBandDict['L8'+ args.toaOrSR],sensorBandNameDict[args.toaOrSR]);
-  
-  var ls; var l7s;
-  if (args.includeSLCOffL7) {
-    print('Including All Landsat 7');
-    l7s = ee.ImageCollection(collectionDict['L7'+args.toaOrSR])
-      .filterDate(args.startDate,args.endDate.advance(1,'day'))
-      .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
-      .filterBounds(args.studyArea)
-      .filter(ee.Filter.lte('WRS_ROW',120))
-      .select(sensorBandDict['L7'+ args.toaOrSR],sensorBandNameDict[ args.toaOrSR]);
-  } else {
-    print('Only including SLC On Landsat 7');
-    l7s = ee.ImageCollection(collectionDict['L7'+args.toaOrSR])
-      .filterDate(ee.Date.fromYMD(1998,1,1),ee.Date.fromYMD(2003,5,31).advance(1,'day'))
-      .filterDate(args.startDate,args.endDate.advance(1,'day'))
-      .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
-      .filterBounds(args.studyArea)
-      .filter(ee.Filter.lte('WRS_ROW',120))
-      .select(sensorBandDict['L7'+ args.toaOrSR],sensorBandNameDict[args.toaOrSR]);
-  }
-  
-  // Merge collections
-  ls = ee.ImageCollection(l4s.merge(l5s).merge(l7s).merge(l8s));
-  
+  var ls = getLandsatCollections(args.toaOrSR,args.landsatCollectionVersion);
   
   //If TOA and Fmask need to merge Fmask qa bits with toa- this gets the qa band from the sr collections
-  if(args.toaOrSR.toLowerCase() === 'toa' && args.addPixelQA === true){
+  if(args.toaOrSR.toLowerCase() === 'toa' && args.addPixelQA === true && args.landsatCollectionVersion.toLowerCase() == 'c1'){
     print('Acquiring SR qa bands for applying Fmask to TOA data');
-    var l4sTOAFMASK =  ee.ImageCollection(collectionDict['L4SR'])
+    var l4sTOAFMASK =  ee.ImageCollection(landsatCollectionDict['C1_L4_SR'])
               .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
-              .select(sensorBandDict['L4SRFMASK'],sensorBandNameDict['SRFMASK']);
+              .select(landsatSensorBandNameDict['C1_SRFMASK']);
               
-    var l5sTOAFMASK =  ee.ImageCollection(collectionDict['L5SR'])
+    var l5sTOAFMASK =  ee.ImageCollection(landsatCollectionDict['C1_L5_SR'])
               .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
-              .select(sensorBandDict['L5SRFMASK'],sensorBandNameDict['SRFMASK']);
-    var l8sTOAFMASK =  ee.ImageCollection(collectionDict['L8SR'])
+              .select(landsatSensorBandNameDict['C1_SRFMASK']);
+    var l8sTOAFMASK =  ee.ImageCollection(landsatCollectionDict['C1_L8_SR'])
               .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
-              .select(sensorBandDict['L8SRFMASK'],sensorBandNameDict['SRFMASK']);
+              .select(landsatSensorBandNameDict['C1_SRFMASK']);
     
     var lsTOAFMASK;
     if(args.includeSLCOffL7){ 
       print('Including All Landsat 7 for TOA QA');
-      var l7sTOAFMASK =  ee.ImageCollection(collectionDict['L7SR'])
+      var l7sTOAFMASK =  ee.ImageCollection(landsatCollectionDict['C1_L7_SR'])
               .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
-              .select(sensorBandDict['L7SRFMASK'],sensorBandNameDict['SRFMASK']);
-    
+              .select(landsatSensorBandNameDict['C1_SRFMASK']);
     
     }else{
       print('Only including SLC On Landsat 7 for TOA QA');
-      var l7sTOAFMASK =  ee.ImageCollection(collectionDict['L7SR'])
+      var l7sTOAFMASK =  ee.ImageCollection(landsatCollectionDict['C1_L7_SR'])
               .filterDate(ee.Date.fromYMD(1998,1,1),ee.Date.fromYMD(2003,5,31).advance(1,'day'))
               .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
-              .select(sensorBandDict['L7SRFMASK'],sensorBandNameDict['SRFMASK']);
+              .select(landsatSensorBandNameDict['C1_SRFMASK']);
     }
     
     lsTOAFMASK = ee.ImageCollection(l4sTOAFMASK.merge(l5sTOAFMASK).merge(l7sTOAFMASK).merge(l8sTOAFMASK));
@@ -766,8 +792,8 @@ function getLandsat(){
   // Make sure all bands have data
   ls = ls.map(function(img){
     img = img.updateMask(img.mask().reduce(ee.Reducer.min()));
-    return img.multiply(multImageDict[args.toaOrSR]).float()
-      .copyProperties(img,['system:time_start','system:footprint']).copyProperties(img);
+    return img//.multiply(multImageDict[args.toaOrSR]).float()
+      //.copyProperties(img,['system:time_start','system:footprint']).copyProperties(img);
   });
   
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
@@ -783,6 +809,7 @@ function getLandsat(){
   return ls.set(args);
 }
 var getImageCollection = getLandsat;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Helper function to apply an expression and linearly rescale the output.
 // Used in the landsatCloudScore function below.
@@ -979,30 +1006,48 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Functions for applying fmask to SR data
-var fmaskBitDict = {'cloud' : 32, 'shadow': 8,'snow':16};
+var fmaskBitDict = {'C1':{
+                    'cloud' : 5, 
+                    'shadow': 3,
+                    'snow':4
+                    },
+                'C2':{
+                    'cloud' : 3, 
+                    'shadow': 4,
+                    'snow':5
+                  }
+                };
 
-// LSC updated 4/15/19 to add medium and high confidence cloud masks
+// LSC updated 4/16/19 to add medium and high confidence cloud masks
 // Supported fmaskClass options: 'cloud', 'shadow', 'snow', 'high_confidence_cloud', 'med_confidence_cloud'
-function cFmask(img,fmaskClass){
-  var m;
-  var qa = img.select('pixel_qa').int16();
-  if (fmaskClass == 'high_confidence_cloud'){
-    m = qa.bitwiseAnd(1 << 6).neq(0).and(qa.bitwiseAnd(1 << 7).neq(0));
-  }else if (fmaskClass == 'med_confidence_cloud'){
-    m = qa.bitwiseAnd(1 << 7).neq(0);
+function cFmask(img,fmaskClass,bitMaskBandName){
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
+  qa = img.select('pixel_qa').int16();
+  if(fmaskClass == 'high_confidence_cloud'){
+     m = qa.bitwiseAnd(1 << 6).neq(0).And(qa.bitwiseAnd(1 << 7).neq(0));
+  }else if(fmaskClass == 'med_confidence_cloud'){
+     m = qa.bitwiseAnd(1 << 7).neq(0);
   }else{
     m = qa.bitwiseAnd(fmaskBitDict[fmaskClass]).neq(0);
-  }
+  };
+  return img.updateMask(m.not());
+}
+// Method for applying a single bit bit mask
+function applyBitMask(img,bit,bitMaskBandName){
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
+  var m = img.select([bitMaskBandName]).uint16();
+  m = m.bitwiseAnd(1<<bit).neq(0);
   return img.updateMask(m.not());
 }
 
-function cFmaskCloud(img){
-  return cFmask(img,'cloud');
+function cFmaskCloud(img,landsatCollectionVersion,bitMaskBandName){
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
+  return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['cloud'],bitMaskBandName);
 }
-function cFmaskCloudShadow(img){
-  return cFmask(img,'shadow');
+function cFmaskCloudShadow(img,landsatCollectionVersion,bitMaskBandName){
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
+  return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['shadow'],bitMaskBandName);
 }
-
 ////////////////////////////////////////////////////////////////////////////////
 // Function for finding dark outliers in time series.
 // Original concept written by Carson Stam and adapted by Ian Housman.
@@ -2522,7 +2567,8 @@ function getLandsatWrapper(){
     'harmonizeOLI': false,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
-    'preComputedTDOMIRStdDev':null
+    'preComputedTDOMIRStdDev':null,
+    'landsatCollectionVersion':'C2'
     };
    
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2620,7 +2666,8 @@ function getProcessedLandsatScenes(){
     'harmonizeOLI':false,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
-    'preComputedTDOMIRStdDev':null
+    'preComputedTDOMIRStdDev':null,
+    'landsatCollectionVersion':'C2'
     };
   
     var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2639,7 +2686,7 @@ function getProcessedLandsatScenes(){
 
   
   args.addPixelQA;
-  if(args.toaOrSR === 'TOA' && (args.applyFmaskCloudMask === true ||  args.applyFmaskCloudShadowMask === true || args.applyFmaskSnowMask === true)){
+  if(args.toaOrSR.toLowerCase() === 'toa' && args.landsatCollectionVersion.toLowerCase() == 'c1'&& (args.applyFmaskCloudMask === true ||  args.applyFmaskCloudShadowMask === true || args.applyFmaskSnowMask === true)){
       args.addPixelQA = true;
       // applyFmaskCloudMask = false;
   
@@ -2649,7 +2696,7 @@ function getProcessedLandsatScenes(){
     }else{args.addPixelQA = false;}
   // Get Landsat image collection
   var ls = getLandsat(args);
- 
+  
   // //Apply Roy 2016 harmonization if specified
   // if(harmonizeOLI){
   //   print('Apply Roy 2016 harmonization to OLI');
@@ -2668,7 +2715,7 @@ function getProcessedLandsatScenes(){
   
   if(args.applyFmaskCloudMask){
     print('Applying Fmask cloud mask');
-    ls = ls.map(function(img){return cFmask(img,'cloud')});
+    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[args.landsatCollectionVersion]['cloud'],landsatFmaskBandNameDict[args.landsatCollectionVersion])});
   }
   
   if(args.applyTDOM){
@@ -2679,11 +2726,11 @@ function getProcessedLandsatScenes(){
   }
   if(args.applyFmaskCloudShadowMask){
     print('Applying Fmask shadow mask');
-    ls = ls.map(function(img){return cFmask(img,'shadow')});
+    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[args.landsatCollectionVersion]['shadow'],landsatFmaskBandNameDict[args.landsatCollectionVersion])});
   }
   if(args.applyFmaskSnowMask){
     print('Applying Fmask snow mask');
-    ls = ls.map(function(img){return cFmask(img,'snow')});
+    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[args.landsatCollectionVersion]['snow'],landsatFmaskBandNameDict[args.landsatCollectionVersion])});
   }
   
   // Add common indices- can use addIndices for comprehensive indices 
@@ -2693,11 +2740,10 @@ function getProcessedLandsatScenes(){
           .map(simpleAddTCAngles);  
   
   //Add sensor band
-  ls = ls.map(function(img){return addSensorBand(img,'landsat',args.toaOrSR)});
-
+  ls = ls.map(function(img){return addSensorBand(img,args.landsatCollectionVersion+'_landsat',args.toaOrSR)});
+  
   return ls.set(args);
 }
-
 ///////////////////////////////////////////////////////////////////
 //Wrapper function for getting Sentinel2 imagery
 function getProcessedSentinel2Scenes(){
@@ -2932,7 +2978,8 @@ function getProcessedLandsatAndSentinel2Scenes(){
           'preComputedSentinel2CloudScoreOffset':null,
           'preComputedSentinel2TDOMIRMean':null,
           'preComputedSentinel2TDOMIRStdDev':null,
-          'cloudProbThresh': 40
+          'cloudProbThresh': 40,
+          'landsatCollectionVersion' : 'C2'
         };
         
     var args = prepArgumentsObject(arguments,defaultArgs);
