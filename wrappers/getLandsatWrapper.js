@@ -47,6 +47,12 @@ args.compositingMethod = 'medoid';
 // Choose Top of Atmospheric (TOA) or Surface Reflectance (SR) 
 args.toaOrSR = 'SR';
 
+// Choose which Landsat USGS Collection version to use
+// Choices are 'C1' for Collection 1 and 'C2' for Collection 2
+// Only choose 'C1' if working with other Collection 1 data and using
+// data from before 1/1/2022. Otherwise, choose 'C2'
+// See: https://www.usgs.gov/landsat-missions/landsat-collection-2 for more information
+args.landsatCollectionVersion = 'C2';
 // Choose whether to include Landat 7
 // Generally only included when data are limited
 args.includeSLCOffL7 = false;
