@@ -763,7 +763,7 @@ function getLandsat(){
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
-              .select(sensorBandDict['L7SRFMASK'],sensorBandNameDict['SRFMASK']);
+              .select(landsatSensorBandNameDict['C1_SRFMASK']);
     
     
     }else{
