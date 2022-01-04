@@ -47,6 +47,13 @@ args.compositingMethod = 'medoid';
 //Best to use TOA if using S2 and Landsat together
 args.toaOrSR = 'TOA';
 
+// Choose which Landsat USGS Collection version to use
+// Choices are 'C1' for Collection 1 and 'C2' for Collection 2
+// Only choose 'C1' if working with other Collection 1 data and using
+// data from before 1/1/2022. Otherwise, choose 'C2'
+// See: https://www.usgs.gov/landsat-missions/landsat-collection-2 for more information
+args.landsatCollectionVersion = 'C2';
+
 //Whether to convert S2 images from the military grid reference system(MGRS) tiles to daily mosaics to avoid arbitrary
 //MGRS tile artifacts or not. In most cases, it is best to set this to true.
 args.convertToDailyMosaics = true;
