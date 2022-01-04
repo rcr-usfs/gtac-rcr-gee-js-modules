@@ -2710,7 +2710,7 @@ function getProcessedLandsatScenes(){
   
   if(args.applyFmaskCloudMask){
     print('Applying Fmask cloud mask');
-    ls = ls.map(function(img){return cFmask(img,'cloud')});
+    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['cloud'],landsatFmaskBandNameDict[landsatCollectionVersion])});
   }
   
   if(args.applyTDOM){
@@ -2721,11 +2721,11 @@ function getProcessedLandsatScenes(){
   }
   if(args.applyFmaskCloudShadowMask){
     print('Applying Fmask shadow mask');
-    ls = ls.map(function(img){return cFmask(img,'shadow')});
+    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['shadow'],landsatFmaskBandNameDict[landsatCollectionVersion])});
   }
   if(args.applyFmaskSnowMask){
     print('Applying Fmask snow mask');
-    ls = ls.map(function(img){return cFmask(img,'snow')});
+    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['snow'],landsatFmaskBandNameDict[landsatCollectionVersion])});
   }
   
   // Add common indices- can use addIndices for comprehensive indices 
