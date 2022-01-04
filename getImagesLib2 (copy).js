@@ -1002,29 +1002,45 @@ function applyCloudScoreAlgorithm(collection,cloudScoreFunction,cloudScoreThresh
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Functions for applying fmask to SR data
-var fmaskBitDict = {'cloud' : 32, 'shadow': 8,'snow':16};
+var fmaskBitDict = {'C1':{
+                    'cloud' : 5, 
+                    'shadow': 3,
+                    'snow':4
+                    },
+                'C2':{
+                    'cloud' : 3, 
+                    'shadow': 4,
+                    'snow':5
+                  }
+                };
 
-// LSC updated 4/15/19 to add medium and high confidence cloud masks
+// LSC updated 4/16/19 to add medium and high confidence cloud masks
 // Supported fmaskClass options: 'cloud', 'shadow', 'snow', 'high_confidence_cloud', 'med_confidence_cloud'
-function cFmask(img,fmaskClass){
-  var m;
-  var qa = img.select('pixel_qa').int16();
-  if (fmaskClass == 'high_confidence_cloud'){
-    m = qa.bitwiseAnd(1 << 6).neq(0).and(qa.bitwiseAnd(1 << 7).neq(0));
-  }else if (fmaskClass == 'med_confidence_cloud'){
-    m = qa.bitwiseAnd(1 << 7).neq(0);
+function cFmask(img,fmaskClass,bitMaskBandName){
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
+  qa = img.select('pixel_qa').int16();
+  if(fmaskClass == 'high_confidence_cloud'){
+     m = qa.bitwiseAnd(1 << 6).neq(0).And(qa.bitwiseAnd(1 << 7).neq(0));
+  }else if(fmaskClass == 'med_confidence_cloud'){
+     m = qa.bitwiseAnd(1 << 7).neq(0);
   }else{
     m = qa.bitwiseAnd(fmaskBitDict[fmaskClass]).neq(0);
-  }
+  };
+  return img.updateMask(m.not());
+}
+// Method for applying a single bit bit mask
+function applyBitMask(img,bit,bitMaskBandName){
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
+  var m = img.select([bitMaskBandName]).uint16();
+  m = m.bitwiseAnd(1<<bit).neq(0);
   return img.updateMask(m.not());
 }
 
-function cFmaskCloud(img){
-  return cFmask(img,'cloud');
-}
-function cFmaskCloudShadow(img){
-  return cFmask(img,'shadow');
-}
+def cFmaskCloud(img,landsatCollectionVersion,bitMaskBandName = 'QA_PIXEL'):
+  return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['cloud'],bitMaskBandName)
+
+def cFmaskCloudShadow(img,landsatCollectionVersion,bitMaskBandName = 'QA_PIXEL'):
+  return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['shadow'],bitMaskBandName)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Function for finding dark outliers in time series.
