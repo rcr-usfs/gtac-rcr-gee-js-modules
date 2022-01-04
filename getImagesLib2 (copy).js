@@ -336,9 +336,9 @@ function addSensorBand(img, whichProgram, toaOrSR){
                          'SR':'SPACECRAFT_NAME'
                         }
                   });
-  toaOrSR = toaOrSR.upper();
-  sensorProp = ee.Dictionary(sensorPropDict.get(whichProgram)).get(toaOrSR);
-  sensorName = img.get(sensorProp);
+  toaOrSR = toaOrSR.toUpperCase();
+  var sensorProp = ee.Dictionary(sensorPropDict.get(whichProgram)).get(toaOrSR);
+  var sensorName = img.get(sensorProp);
   img = img.addBands(ee.Image.constant(sensorDict.get(sensorName)).rename(['sensor']).byte()).set('sensor',sensorName);
   return img;
 }
@@ -2738,7 +2738,7 @@ function getProcessedLandsatScenes(){
           .map(simpleAddTCAngles);  
   
   //Add sensor band
-  ls = ls.map(function(img){return addSensorBand(img,'landsat',args.toaOrSR)});
+  ls = ls.map(function(img){return addSensorBand(img,args.landsatCollectionVersion+'_landsat',args.toaOrSR)});
   Map.addLayer(ls.median(),vizParamsTrue,args.toaOrSR+' '+args.landsatCollectionVersion,true);
   return ls.set(args);
 }
