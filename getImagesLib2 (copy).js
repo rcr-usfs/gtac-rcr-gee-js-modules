@@ -313,32 +313,35 @@ function fillEmptyCollections(inCollection,dummyImage){
 
 //////////////////////////////////////////////////////////////////////////
 //Add sensor band function
-var sensorDict = ee.Dictionary({'LANDSAT_4':4,
-                  'LANDSAT_5':5,
-                  'LANDSAT_7':7,
-                  'LANDSAT_8':8,
-                  'LANDSAT_9':9,
-                  'Sentinel-2A':21,
-                  'Sentinel-2B':22,
-                  'Sentinel-2C':23
+// Add band tracking which satellite the pixel came from
+function addSensorBand(img, whichProgram, toaOrSR){
+  var sensorDict = ee.Dictionary({'LANDSAT_4': 4,
+              'LANDSAT_5': 5,
+              'LANDSAT_7': 7,
+              'LANDSAT_8': 8,
+              'Sentinel-2A': 21,
+              'Sentinel-2B': 22,
+              'Sentinel-2C': 23,
+              });
+  var sensorPropDict = ee.Dictionary({'C1_landsat':
+                        {'TOA':'SPACECRAFT_ID',
+                          'SR':'SATELLITE'
+                        },
+                    'C2_landsat':
+                        {'TOA':'SPACECRAFT_ID',
+                          'SR':'SPACECRAFT_ID'
+                        },
+                  'sentinel2':
+                        {'TOA':'SPACECRAFT_NAME',
+                         'SR':'SPACECRAFT_NAME'
+                        }
                   });
-var sensorPropDict = ee.Dictionary({'landsat':
-                                          {'TOA':'SPACECRAFT_ID',
-                                            'SR':'SATELLITE'
-                                          },
-                                    'sentinel2':
-                                          {'TOA':'SPACECRAFT_NAME',
-                                           'SR':'SPACECRAFT_NAME'
-                                          }
-                                    });
-
-function addSensorBand(img,whichProgram,toaOrSR){
-  toaOrSR = toaOrSR.toUpperCase(); 
-  var sensorProp = ee.Dictionary(sensorPropDict.get(whichProgram)).get(toaOrSR);
-  var sensorName = img.get(sensorProp);
-  return img.addBands(ee.Image.constant(sensorDict.get(sensorName)).rename(['sensor']).byte()).set('sensor',sensorName);
+  toaOrSR = toaOrSR.upper();
+  sensorProp = ee.Dictionary(sensorPropDict.get(whichProgram)).get(toaOrSR);
+  sensorName = img.get(sensorProp);
+  img = img.addBands(ee.Image.constant(sensorDict.get(sensorName)).rename(['sensor']).byte()).set('sensor',sensorName);
+  return img;
 }
-
 /////////////////////////////////////////////////////////////////
 //Adds the float year with julian proportion to image
 function addDateBand(img,maskTime){
@@ -2691,7 +2694,7 @@ function getProcessedLandsatScenes(){
     }else{args.addPixelQA = false;}
   // Get Landsat image collection
   var ls = getLandsat(args);
- 
+  
   // //Apply Roy 2016 harmonization if specified
   // if(harmonizeOLI){
   //   print('Apply Roy 2016 harmonization to OLI');
@@ -2710,7 +2713,7 @@ function getProcessedLandsatScenes(){
   
   if(args.applyFmaskCloudMask){
     print('Applying Fmask cloud mask');
-    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['cloud'],landsatFmaskBandNameDict[landsatCollectionVersion])});
+    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[args.landsatCollectionVersion]['cloud'],landsatFmaskBandNameDict[args.landsatCollectionVersion])});
   }
   
   if(args.applyTDOM){
@@ -2721,11 +2724,11 @@ function getProcessedLandsatScenes(){
   }
   if(args.applyFmaskCloudShadowMask){
     print('Applying Fmask shadow mask');
-    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['shadow'],landsatFmaskBandNameDict[landsatCollectionVersion])});
+    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[args.landsatCollectionVersion]['shadow'],landsatFmaskBandNameDict[args.landsatCollectionVersion])});
   }
   if(args.applyFmaskSnowMask){
     print('Applying Fmask snow mask');
-    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['snow'],landsatFmaskBandNameDict[landsatCollectionVersion])});
+    ls = ls.map(function(img){return applyBitMask(img,fmaskBitDict[args.landsatCollectionVersion]['snow'],landsatFmaskBandNameDict[args.landsatCollectionVersion])});
   }
   
   // Add common indices- can use addIndices for comprehensive indices 
@@ -2736,7 +2739,7 @@ function getProcessedLandsatScenes(){
   
   //Add sensor band
   ls = ls.map(function(img){return addSensorBand(img,'landsat',args.toaOrSR)});
-
+  Map.addLayer(ls.median(),vizParamsTrue,args.toaOrSR+' '+args.landsatCollectionVersion,true);
   return ls.set(args);
 }
 ['SR','TOA'].map(function(toaOrSR){
@@ -2762,8 +2765,8 @@ function getProcessedLandsatScenes(){
       
       
      
-  
-    Map.addLayer(c.first(),vizParamsTrue,toaOrSR+' '+whichC,false);
+    print(c.size())
+    // Map.addLayer(c.median(),vizParamsTrue,toaOrSR+' '+whichC,true);
   })
 })
 ///////////////////////////////////////////////////////////////////
