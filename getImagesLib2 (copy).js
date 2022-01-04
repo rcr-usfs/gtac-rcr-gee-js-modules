@@ -657,9 +657,9 @@ var landsatFmaskBandNameDict = {'C1':'pixel_qa','C2':'QA_PIXEL'};
 // This was adapted from the method provided by Google for rescaling Collection 2:
 // https://code.earthengine.google.com/?scriptPath=Examples%3ADatasets%2FLANDSAT_LC08_C02_T1_L2
 function applyScaleFactors(image,landsatCollectionVersion){
-  factor_dict = landsat_C2_L2_rescale_dict[landsatCollectionVersion];
-  opticalBands = image.select('blue','green','red','nir','swir1','swir2').multiply(factor_dict['refl_mult']).add(factor_dict['refl_add']).float();
-  thermalBands = image.select('temp').multiply(factor_dict['temp_mult']).add(factor_dict['temp_add']).float();
+  var factor_dict = landsat_C2_L2_rescale_dict[landsatCollectionVersion];
+  var opticalBands = image.select('blue','green','red','nir','swir1','swir2').multiply(factor_dict['refl_mult']).add(factor_dict['refl_add']).float();
+  var thermalBands = image.select('temp').multiply(factor_dict['temp_mult']).add(factor_dict['temp_add']).float();
   return image.addBands(opticalBands, null, true)
               .addBands(thermalBands, null, true);
 }
@@ -689,7 +689,7 @@ function getLandsat(){
   
   
   function getLandsatCollection(landsatCollectionVersion,whichC,toaOrSR){
-    c = ee.ImageCollection(landsatCollectionDict[landsatCollectionVersion+'_'+whichC+'_'+toaOrSR])
+    var c = ee.ImageCollection(landsatCollectionDict[landsatCollectionVersion+'_'+whichC+'_'+toaOrSR])
         .filterDate(args.startDate,args.endDate.advance(1,'day'))
         .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
         .filterBounds(args.studyArea)
@@ -707,18 +707,18 @@ function getLandsat(){
   }
   function getLandsatCollections(toaOrSR,landsatCollectionVersion){
     // Get Landsat data
-    l4s = getLandsatCollection(landsatCollectionVersion,'L4',toaOrSR);
-    l5s = getLandsatCollection(landsatCollectionVersion,'L5',toaOrSR)
+    var l4s = getLandsatCollection(landsatCollectionVersion,'L4',toaOrSR);
+    var l5s = getLandsatCollection(landsatCollectionVersion,'L5',toaOrSR)
       ;
-    if(defringeL5){
+    if(args.defringeL5){
       print('Defringing L4 and L5');
       l4s = l4s.map(defringeLandsat);
       l5s = l5s.map(defringeLandsat);
     };
-    l8s = getLandsatCollection(landsatCollectionVersion,'L8',toaOrSR)
+    var l8s = getLandsatCollection(landsatCollectionVersion,'L8',toaOrSR)
     
     var ls; var l7s;
-    if(includeSLCOffL7){
+    if(args.includeSLCOffL7){
       print('Including All Landsat 7');
       l7s =getLandsatCollection(landsatCollectionVersion,'L7',toaOrSR)
     }else{
@@ -730,7 +730,7 @@ function getLandsat(){
     ls = ee.ImageCollection(l4s.merge(l5s).merge(l7s).merge(l8s));
     return ls;
   }
-  ls = getLandsatCollections(args.toaOrSR,args.landsatCollectionVersion);
+  var ls = getLandsatCollections(args.toaOrSR,args.landsatCollectionVersion);
   
   //If TOA and Fmask need to merge Fmask qa bits with toa- this gets the qa band from the sr collections
   if(args.toaOrSR.toLowerCase() === 'toa' && args.addPixelQA === true && args.landsatCollectionVersion.toLowerCase() == 'c1'){
@@ -788,8 +788,8 @@ function getLandsat(){
   // Make sure all bands have data
   ls = ls.map(function(img){
     img = img.updateMask(img.mask().reduce(ee.Reducer.min()));
-    return img.multiply(multImageDict[args.toaOrSR]).float()
-      .copyProperties(img,['system:time_start','system:footprint']).copyProperties(img);
+    return img//.multiply(multImageDict[args.toaOrSR]).float()
+      //.copyProperties(img,['system:time_start','system:footprint']).copyProperties(img);
   });
   
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
@@ -805,19 +805,7 @@ function getLandsat(){
   return ls.set(args);
 }
 var getImageCollection = getLandsat;
-['SR','TOA'].map(function(toaOrSR){
-  ['C1','C2'].map(function(whichC){
-    var startDate = ee.Date.fromYMD(2019,7,1);
-    var endDate =  ee.Date.fromYMD(2019,10,1);
-    getLandsat( ee.Geometry.Polygon(
-        [[[-108.28630509064759, 38.085343638120925],
-          [-108.28630509064759, 37.18051220092945],
-          [-106.74821915314759, 37.18051220092945],
-          [-106.74821915314759, 38.085343638120925]]], null, false),startDate,endDate,1,365)
-  
- 
-  })
-})
+
 ////////////////////////////////////////////////////////////////////////////////
 // Helper function to apply an expression and linearly rescale the output.
 // Used in the landsatCloudScore function below.
@@ -2655,7 +2643,8 @@ function getProcessedLandsatScenes(){
     'harmonizeOLI':false,
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
-    'preComputedTDOMIRStdDev':null
+    'preComputedTDOMIRStdDev':null,
+    'landsatCollectionVersion':'C2'
     };
   
     var args = prepArgumentsObject(arguments,defaultArgs);
@@ -2732,7 +2721,34 @@ function getProcessedLandsatScenes(){
 
   return ls.set(args);
 }
-
+['SR','TOA'].map(function(toaOrSR){
+  ['C1','C2'].map(function(whichC){
+    var startDate = ee.Date.fromYMD(2019,7,1);
+    var endDate =  ee.Date.fromYMD(2019,10,1);
+    var c = getLandsat( {
+    'studyArea': ee.Geometry.Polygon(
+        [[[-108.28630509064759, 38.085343638120925],
+          [-108.28630509064759, 37.18051220092945],
+          [-106.74821915314759, 37.18051220092945],
+          [-106.74821915314759, 38.085343638120925]]], null, false),
+    'startDate':startDate,
+    'endDate':endDate,
+    'startJulian':1,
+    'endJulian':365,
+    'toaOrSR':toaOrSR,
+    'includeSLCOffL7':false,
+    'defringeL5':false,
+    'addPixelQA':true,
+    'resampleMethod':'near',
+    'landsatCollectionVersion' : whichC
+    })
+      
+      
+     
+  
+    Map.addLayer(c.first(),vizParamsTrue,toaOrSR+' '+whichC,false);
+  })
+})
 ///////////////////////////////////////////////////////////////////
 //Wrapper function for getting Sentinel2 imagery
 function getProcessedSentinel2Scenes(){
