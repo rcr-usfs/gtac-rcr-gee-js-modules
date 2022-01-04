@@ -2739,7 +2739,7 @@ function getProcessedLandsatScenes(){
   
   //Add sensor band
   ls = ls.map(function(img){return addSensorBand(img,args.landsatCollectionVersion+'_landsat',args.toaOrSR)});
-  Map.addLayer(ls.median(),vizParamsTrue,args.toaOrSR+' '+args.landsatCollectionVersion,true);
+  
   return ls.set(args);
 }
 ['SR','TOA'].map(function(toaOrSR){
@@ -2766,7 +2766,7 @@ function getProcessedLandsatScenes(){
       
      
     print(c.size())
-    // Map.addLayer(c.median(),vizParamsTrue,toaOrSR+' '+whichC,true);
+    Map.addLayer(c.first(),vizParamsTrue,toaOrSR+' '+whichC,true);
   })
 })
 ///////////////////////////////////////////////////////////////////
