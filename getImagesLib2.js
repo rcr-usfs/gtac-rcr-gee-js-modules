@@ -1,4 +1,3 @@
-print('hello');
 ////////////////////////////////////////////////////////////////////////////////
 //Module for getting Landsat, Sentinel 2 and MODIS images/composites
 // Define visualization parameters
