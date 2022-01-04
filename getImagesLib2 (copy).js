@@ -2742,33 +2742,6 @@ function getProcessedLandsatScenes(){
   
   return ls.set(args);
 }
-['SR','TOA'].map(function(toaOrSR){
-  ['C1','C2'].map(function(whichC){
-    
-    var c = getProcessedLandsatScenes( {
-    'studyArea': ee.Geometry.Polygon(
-        [[[-108.28630509064759, 38.085343638120925],
-          [-108.28630509064759, 37.18051220092945],
-          [-106.74821915314759, 37.18051220092945],
-          [-106.74821915314759, 38.085343638120925]]], null, false),
-    'startYear':2019,
-    'endYear':2019,
-    'startJulian':190,
-    'endJulian':250,
-    'toaOrSR':toaOrSR,
-    'includeSLCOffL7':false,
-    'defringeL5':false,
-    'addPixelQA':true,
-    'resampleMethod':'near',
-    'landsatCollectionVersion' : whichC
-    })
-      
-      
-     
-    print(c.size())
-    Map.addLayer(c.first(),vizParamsTrue,toaOrSR+' '+whichC,true);
-  })
-})
 ///////////////////////////////////////////////////////////////////
 //Wrapper function for getting Sentinel2 imagery
 function getProcessedSentinel2Scenes(){
@@ -3003,7 +2976,8 @@ function getProcessedLandsatAndSentinel2Scenes(){
           'preComputedSentinel2CloudScoreOffset':null,
           'preComputedSentinel2TDOMIRMean':null,
           'preComputedSentinel2TDOMIRStdDev':null,
-          'cloudProbThresh': 40
+          'cloudProbThresh': 40,
+          'landsatCollectionVersion' : 'C2'
         };
         
     var args = prepArgumentsObject(arguments,defaultArgs);
