@@ -740,25 +740,25 @@ function getLandsat(){
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
-              .select(sensorBandDict['L4SRFMASK'],sensorBandNameDict['SRFMASK']);
+              .select(landsatSensorBandNameDict['C1_SRFMASK']);
               
     var l5sTOAFMASK =  ee.ImageCollection(landsatCollectionDict['C1_L5_SR'])
               .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
-              .select(sensorBandDict['L5SRFMASK'],sensorBandNameDict['SRFMASK']);
+              .select(landsatSensorBandNameDict['C1_SRFMASK']);
     var l8sTOAFMASK =  ee.ImageCollection(landsatCollectionDict['C1_L8_SR'])
               .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
               .filter(ee.Filter.lte('WRS_ROW',120))
-              .select(sensorBandDict['L8SRFMASK'],sensorBandNameDict['SRFMASK']);
+              .select(landsatSensorBandNameDict['C1_SRFMASK']);
     
     var lsTOAFMASK;
     if(args.includeSLCOffL7){ 
       print('Including All Landsat 7 for TOA QA');
-      var l7sTOAFMASK =  ee.ImageCollection(collectionDict['L7SR'])
+      var l7sTOAFMASK =  ee.ImageCollection(landsatCollectionDict['C1_L7_SR'])
               .filterDate(args.startDate,args.endDate.advance(1,'day'))
               .filter(ee.Filter.calendarRange(args.startJulian,args.endJulian))
               .filterBounds(args.studyArea)
