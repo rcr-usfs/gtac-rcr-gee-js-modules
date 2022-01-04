@@ -1036,12 +1036,14 @@ function applyBitMask(img,bit,bitMaskBandName){
   return img.updateMask(m.not());
 }
 
-def cFmaskCloud(img,landsatCollectionVersion,bitMaskBandName = 'QA_PIXEL'):
+function cFmaskCloud(img,landsatCollectionVersion,bitMaskBandName){
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
   return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['cloud'],bitMaskBandName)
-
-def cFmaskCloudShadow(img,landsatCollectionVersion,bitMaskBandName = 'QA_PIXEL'):
+}
+function cFmaskCloudShadow(img,landsatCollectionVersion,bitMaskBandName){
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
   return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['shadow'],bitMaskBandName)
-
+}
 ////////////////////////////////////////////////////////////////////////////////
 // Function for finding dark outliers in time series.
 // Original concept written by Carson Stam and adapted by Ian Housman.
