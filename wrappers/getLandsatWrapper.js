@@ -53,6 +53,7 @@ args.toaOrSR = 'SR';
 // data from before 1/1/2022. Otherwise, choose 'C2'
 // See: https://www.usgs.gov/landsat-missions/landsat-collection-2 for more information
 args.landsatCollectionVersion = 'C2';
+
 // Choose whether to include Landat 7
 // Generally only included when data are limited
 args.includeSLCOffL7 = false;
