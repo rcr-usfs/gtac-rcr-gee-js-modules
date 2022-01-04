@@ -1038,11 +1038,11 @@ function applyBitMask(img,bit,bitMaskBandName){
 
 function cFmaskCloud(img,landsatCollectionVersion,bitMaskBandName){
   if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
-  return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['cloud'],bitMaskBandName)
+  return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['cloud'],bitMaskBandName);
 }
 function cFmaskCloudShadow(img,landsatCollectionVersion,bitMaskBandName){
   if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
-  return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['shadow'],bitMaskBandName)
+  return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['shadow'],bitMaskBandName);
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Function for finding dark outliers in time series.
