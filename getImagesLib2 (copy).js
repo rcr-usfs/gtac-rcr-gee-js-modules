@@ -765,7 +765,6 @@ function getLandsat(){
               .filter(ee.Filter.lte('WRS_ROW',120))
               .select(landsatSensorBandNameDict['C1_SRFMASK']);
     
-    
     }else{
       print('Only including SLC On Landsat 7 for TOA QA');
       var l7sTOAFMASK =  ee.ImageCollection(collectionDict['L7SR'])
