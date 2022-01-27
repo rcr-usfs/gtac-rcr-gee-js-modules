@@ -1023,9 +1023,9 @@ function cFmask(img,fmaskClass,bitMaskBandName){
   if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'}
      var qa = img.select('pixel_qa').int16();
   if(fmaskClass == 'high_confidence_cloud'){
-     var m = qa.bitwiseAnd(1 << 6).neq(0).And(qa.bitwiseAnd(1 << 7).neq(0));
+     var m = qa.bitwiseAnd(ee.Image(1 << 6)).neq(0).And(qa.bitwiseAnd(1 << 7).neq(0));
   }else if(fmaskClass == 'med_confidence_cloud'){
-     var m = qa.bitwiseAnd(1 << 7).neq(0);
+     var m = qa.bitwiseAnd(ee.Image(1 << 7)).neq(0);
   }else{
     var m = qa.bitwiseAnd(fmaskBitDict[fmaskClass]).neq(0);
   }
@@ -1035,7 +1035,7 @@ function cFmask(img,fmaskClass,bitMaskBandName){
 function applyBitMask(img,bit,bitMaskBandName){
   if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'}
   var m = img.select([bitMaskBandName]).uint16()
-  m = m.bitwiseAnd(1<<bit).neq(0);
+  m = m.bitwiseAnd(ee.Image(1<<bit)).neq(0);
   return img.updateMask(m.not());
 }
 
