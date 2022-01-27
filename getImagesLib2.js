@@ -1021,13 +1021,13 @@ var fmaskBitDict = {'C1':{
 // Supported fmaskClass options: 'cloud', 'shadow', 'snow', 'high_confidence_cloud', 'med_confidence_cloud'
 function cFmask(img,fmaskClass,bitMaskBandName){
   if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'}
-    qa = img.select('pixel_qa').int16();
+     var qa = img.select('pixel_qa').int16();
   if(fmaskClass == 'high_confidence_cloud'){
-     m = qa.bitwiseAnd(1 << 6).neq(0).And(qa.bitwiseAnd(1 << 7).neq(0));
+     var m = qa.bitwiseAnd(1 << 6).neq(0).And(qa.bitwiseAnd(1 << 7).neq(0));
   }else if(fmaskClass == 'med_confidence_cloud'){
-     m = qa.bitwiseAnd(1 << 7).neq(0);
+     var m = qa.bitwiseAnd(1 << 7).neq(0);
   }else{
-    m = qa.bitwiseAnd(fmaskBitDict[fmaskClass]).neq(0);
+    var m = qa.bitwiseAnd(fmaskBitDict[fmaskClass]).neq(0);
   }
   return img.updateMask(m.not());
 }
