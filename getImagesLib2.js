@@ -1020,7 +1020,7 @@ var fmaskBitDict = {'C1':{
 // LSC updated 4/16/19 to add medium and high confidence cloud masks
 // Supported fmaskClass options: 'cloud', 'shadow', 'snow', 'high_confidence_cloud', 'med_confidence_cloud'
 function cFmask(img,fmaskClass,bitMaskBandName){
-  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'}
     qa = img.select('pixel_qa').int16();
   if(fmaskClass == 'high_confidence_cloud'){
      m = qa.bitwiseAnd(1 << 6).neq(0).And(qa.bitwiseAnd(1 << 7).neq(0));
