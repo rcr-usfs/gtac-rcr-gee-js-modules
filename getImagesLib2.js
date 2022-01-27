@@ -1028,23 +1028,23 @@ function cFmask(img,fmaskClass,bitMaskBandName){
      m = qa.bitwiseAnd(1 << 7).neq(0);
   }else{
     m = qa.bitwiseAnd(fmaskBitDict[fmaskClass]).neq(0);
-  };
+  }
   return img.updateMask(m.not());
 }
 // Method for applying a single bit bit mask
 function applyBitMask(img,bit,bitMaskBandName){
-  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
-  var m = img.select([bitMaskBandName]).uint16();
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'}
+  var m = img.select([bitMaskBandName]).uint16()
   m = m.bitwiseAnd(1<<bit).neq(0);
   return img.updateMask(m.not());
 }
 
 function cFmaskCloud(img,landsatCollectionVersion,bitMaskBandName){
-  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'}
   return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['cloud'],bitMaskBandName);
 }
 function cFmaskCloudShadow(img,landsatCollectionVersion,bitMaskBandName){
-  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'};
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'}
   return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['shadow'],bitMaskBandName);
 }
 ////////////////////////////////////////////////////////////////////////////////
