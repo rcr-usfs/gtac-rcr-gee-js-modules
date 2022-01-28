@@ -1017,6 +1017,11 @@ var fmaskBitDict = {'C1':{
                   }
                 };
 
+function cFmaskCloud(img,landsatCollectionVersion,bitMaskBandName){
+  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'}
+  return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['cloud'],bitMaskBandName);
+}
+
 // LSC updated 4/16/19 to add medium and high confidence cloud masks
 // Supported fmaskClass options: 'cloud', 'shadow', 'snow', 'high_confidence_cloud', 'med_confidence_cloud'
 function cFmask(img,fmaskClass,bitMaskBandName){
@@ -1039,10 +1044,7 @@ function applyBitMask(img,bit,bitMaskBandName){
   return img.updateMask(m.not());
 }
 
-function cFmaskCloud(img,landsatCollectionVersion,bitMaskBandName){
-  if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'}
-  return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['cloud'],bitMaskBandName);
-}
+
 function cFmaskCloudShadow(img,landsatCollectionVersion,bitMaskBandName){
   if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'}
   return applyBitMask(img,fmaskBitDict[landsatCollectionVersion]['shadow'],bitMaskBandName);
