@@ -2093,16 +2093,15 @@ function ccdcChangeDetection(ccdcImg,bandName){
   highestMagGainYear = highestMagGainYear.updateMask(highestMagGainMag.gt(0).and(highestMagGainMask));
   highestMagGainMag = highestMagGainMag.updateMask(highestMagGainMag.gt(0).and(highestMagGainMask));
   
-  var mostRecentLossYear = breaksSortedByYear.arraySlice(0,0,1).arrayFlatten([['loss_year']]);
-  var mostRecentLossMag = magnitudesSortedByYear.arraySlice(0,0,1).arrayFlatten([['loss_mag']]);
-  var mostRecentLossMask = changeMaskSortedByYear.arraySlice(0,0,1).arrayFlatten([['loss_mask']]);
-  
+  var mostRecentLossYear = breaksSortedByYear.arrayMask(magnitudesSortedByYear.lt(0)).arrayPad([1]).arraySlice(0,-1,null).arrayFlatten([['loss_year']]);
+  var mostRecentLossMag = magnitudesSortedByYear.arrayMask(magnitudesSortedByYear.lt(0)).arrayPad([1]).arraySlice(0,-1,null).arrayFlatten([['loss_mag']]);
+  var mostRecentLossMask = changeMaskSortedByYear.arrayMask(magnitudesSortedByYear.lt(0)).arrayPad([1]).arraySlice(0,-1,null).arrayFlatten([['loss_mask']]);
   mostRecentLossYear = mostRecentLossYear.updateMask(mostRecentLossMag.lt(0).and(mostRecentLossMask));
   mostRecentLossMag = mostRecentLossMag.updateMask(mostRecentLossMag.lt(0).and(mostRecentLossMask));
-  
-  var mostRecentGainYear = breaksSortedByYear.arraySlice(0,-1,null).arrayFlatten([['gain_year']]);
-  var mostRecentGainMag = magnitudesSortedByYear.arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
-  var mostRecentGainMask = changeMaskSortedByYear.arraySlice(0,-1,null).arrayFlatten([['gain_mask']]);
+ 
+  var mostRecentGainYear = breaksSortedByYear.arrayMask(magnitudesSortedByYear.gt(0)).arrayPad([1]).arraySlice(0,-1,null).arrayFlatten([['gain_year']]);
+  var mostRecentGainMag = magnitudesSortedByYear.arrayMask(magnitudesSortedByYear.gt(0)).arrayPad([1]).arraySlice(0,-1,null).arrayFlatten([['gain_mag']]);
+  var mostRecentGainMask = changeMaskSortedByYear.arrayMask(magnitudesSortedByYear.gt(0)).arrayPad([1]).arraySlice(0,-1,null).arrayFlatten([['gain_mask']]);
   
   mostRecentGainYear = mostRecentGainYear.updateMask(mostRecentGainMag.gt(0).and(mostRecentGainMask));
   mostRecentGainMag = mostRecentGainMag.updateMask(mostRecentGainMag.gt(0).and(mostRecentGainMask));
