@@ -1034,7 +1034,7 @@ function cFmask(img,fmaskClass,bitMaskBandName){
 // Method for applying a single bit bit mask
 function applyBitMask(img,bit,bitMaskBandName){
   if(bitMaskBandName === undefined || bitMaskBandName === null){bitMaskBandName = 'QA_PIXEL'}
-  var m = img.select([bitMaskBandName]).uint16()
+  var m = img.select([bitMaskBandName]).uint16();
   m = m.bitwiseAnd(ee.Image(1<<bit)).neq(0);
   return img.updateMask(m.not());
 }
