@@ -3166,7 +3166,9 @@ function getLandsatAndSentinel2HybridWrapper(){
           'preComputedLandsatTDOMIRStdDev':null,
           'preComputedSentinel2CloudScoreOffset':null,
           'preComputedSentinel2TDOMIRMean':null,
-          'preComputedSentinel2TDOMIRStdDev':null
+          'preComputedSentinel2TDOMIRStdDev':null,
+          'cloudProbThresh': 40,
+          'landsatCollectionVersion':'C2'
         }
         
   var args = prepArgumentsObject(arguments,defaultArgs);
