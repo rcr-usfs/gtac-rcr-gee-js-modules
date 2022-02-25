@@ -790,7 +790,7 @@ function getLandsat(){
   
   // Make sure all bands have data
   ls = ls.map(function(img){
-    img = img.updateMask(img.mask().reduce(ee.Reducer.min()));
+    img = img.updateMask(img.select(['blue','green','red','nir','swir1','swir2']).mask().reduce(ee.Reducer.min()));
     return img//.multiply(multImageDict[args.toaOrSR]).float()
       //.copyProperties(img,['system:time_start','system:footprint']).copyProperties(img);
   });
