@@ -530,7 +530,7 @@ function getS2(){
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   
 
-  var s2CollectionDict = {'TOA':'COPERNICUS/S2','SR':'COPERNICUS/S2_SR'};
+  var s2CollectionDict = {'TOA':'COPERNICUS/S2_HARMONIZED','SR':'COPERNICUS/S2_SR/HARMONIZED'};
   
   var sensorBandDict = {
       'SR': ['B1','B2','B3','B4','B5','B6','B7','B8','B8A', 'B9', 'B11','B12'],
