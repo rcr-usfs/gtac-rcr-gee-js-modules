@@ -103,8 +103,8 @@ var scale = null;
 ////////////////////////////////////////////////////////////////////////////////////////////
 //Get images
 var allImages = getImagesLib.getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian);
-var images = allImages[0];
-var composites = allImages[1];
+var images = allImages.processedScenes;
+var composites = allImages.processedComposites;
 
 
 
