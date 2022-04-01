@@ -1379,33 +1379,23 @@ function addZenithAzimuth(img,toaOrSR,zenithDict,azimuthDict){
 // Function for computing the mean squared difference medoid from an image 
 // collection
 function medoidMosaicMSD(inCollection,medoidIncludeBands) {
-  // Find band names in first image
-  var f = ee.Image(inCollection.first());
-  var bandNames = f.bandNames();
-  
   if (medoidIncludeBands === undefined || medoidIncludeBands === null) {
-    medoidIncludeBands = bandNames;
+    medoidIncludeBands = ee.Image(inCollection.first()).bandNames();
   }
   // Find the median
   var median = inCollection.select(medoidIncludeBands).median();
   
   // Find the squared difference from the median for each image
   var medoid = inCollection.map(function(img){
-    var diff = ee.Image(img).select(medoidIncludeBands).subtract(median)
-      .pow(ee.Image.constant(2));
+    var diff = ee.Image(img).select(medoidIncludeBands).subtract(median).pow(2);
     img = addYearBand(img);
     img = addJulianDayBand(img);
-    return diff.reduce('sum').addBands(img);
+    return diff.reduce('sum').multiply(-1).addBands(img);
   });
-  // When exported as CSV, this provides a weighted list of the scenes being included in the composite
-  // Map.addLayer(medoid,{},'Medoid Image Collection Scenes') 
   
-  bandNames = bandNames.cat(['year','julianDay']);
-  var bandNumbers = ee.List.sequence(1, bandNames.length());
   // Minimize the distance across all bands
-  medoid = ee.ImageCollection(medoid)
-    .reduce(ee.Reducer.min(bandNames.length().add(1)))
-    .select(bandNumbers,bandNames);
+  medoid = medoid.qualityMosaic('sum');
+  medoid = medoid.select(medoid.bandNames().remove('sum'));
   
   return medoid;
 }
