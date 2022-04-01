@@ -55,25 +55,25 @@ bandNames.map(function(bandName){
   var fit = ltt.select(['fit.*']).multiply(getImagesLib.changeDirDict[bandName]/10000);
   ltt = ltt.addBands(fit,null,true);
   var lossGainDict = changeDetectionLib.convertToLossGain(ltt, 
-                                                      format = 'vertStack',
-                                                      lossMagThresh = -0.15,
-                                                      lossSlopeThresh = -0.1,
-                                                      gainMagThresh = 0.1,
-                                                      gainSlopeThresh = 0.1,
-                                                      slowLossDurationThresh = 3,
-                                                      chooseWhichLoss = 'largest', 
-                                                      chooseWhichGain = 'largest', 
-                                                      howManyToPull = 1);
-
+                                                      'vertStack',
+                                                       -0.15,
+                                                       -0.1,
+                                                       0.1,
+                                                       0.1,
+                                                       3,
+                                                       'largest', 
+                                                       'largest', 
+                                                       1);
+                                                       
   var lossStack = lossGainDict.lossStack;
   var gainStack = lossGainDict.gainStack;
 
   // Set up viz params
-  vizParamsLossYear = {'min':startYear,'max':endYear,'palette':changeDetectionLib.lossYearPalette};
-  vizParamsLossMag = {'min':-0.8 ,'max':-0.15,'palette':changeDetectionLib.lossMagPalette};
+  var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':changeDetectionLib.lossYearPalette};
+  var vizParamsLossMag = {'min':-0.8 ,'max':-0.15,'palette':changeDetectionLib.lossMagPalette};
   
-  vizParamsGainYear = {'min':startYear,'max':endYear,'palette':changeDetectionLib.gainYearPalette};
-  vizParamsGainMag = {'min':0.1,'max':0.8,'palette':changeDetectionLib.gainMagPalette};
+  var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':changeDetectionLib.gainYearPalette};
+  var vizParamsGainMag = {'min':0.1,'max':0.8,'palette':changeDetectionLib.gainMagPalette};
   
   vizParamsDuration = {'min':1,'max':5,'palette':changeDetectionLib.changeDurationPalette};
 
