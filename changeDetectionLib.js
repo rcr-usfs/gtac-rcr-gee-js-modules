@@ -905,6 +905,28 @@ function simpleLTFit(ltStack,startYear,endYear,indexName){
   return out;
 }
 
+// Wrapper function to iterate across multiple LT band/index values
+function batchSimpleLTFit(ltStacks,startYear,endYear,indexNames,bandPropertyName){
+  // Get band/index names if not provided
+  if(indexNames === null || indexNames === undefined){
+    indexNames = ltStacks.aggregate_histogram(bandPropertyName).keys().getInfo();
+  }
+  if(bandPropertyName === null || bandPropertyName === undefined){
+    bandPropertyName = 'band';
+  }
+  // Iterate across each band/index and get the fitted, mag, slope, etc
+  var lt_fit;
+  indexNames.map(function(bn){
+    var ltt = ltStacks.filter(ee.Filter.eq('band',bn)).mosaic();
+
+    if(lt_fit === undefined){
+      lt_fit = simpleLTFit(ltt,startYear,endYear, bn);
+    }else{
+      lt_fit = getImagesLib.joinCollections(lt_fit, simpleLTFit(ltt,startYear,endYear,bn), false);
+    }
+  });
+  return lt_fit;
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Function to convert from raw Landtrendr Output OR Landtrendr/VerdetVertStack output to Loss & Gain Space
 // format = 'rawLandtrendr' (Landtrendr only) or 'vertStack' (Verdet or Landtrendr)
