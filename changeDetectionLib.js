@@ -2166,6 +2166,7 @@ exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
 exports.convertToLossGain = convertToLossGain;
 exports.simpleLTFit = simpleLTFit;
+exports.batchSimpleLTFit = batchSimpleLTFit;
 exports.prepTimeSeriesForLandTrendr = prepTimeSeriesForLandTrendr;
 exports.LANDTRENDRVertStack =  LANDTRENDRVertStack;
 exports.applyDistDir_vertStack = applyDistDir_vertStack;
