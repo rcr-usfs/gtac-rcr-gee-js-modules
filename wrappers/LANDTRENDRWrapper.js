@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = 
     /* color: #d63000 */
+    /* shown: false */
     /* displayProperties: [
       {
         "type": "rectangle"
@@ -26,11 +27,11 @@ print(changeDetectionLib)
 //Parameters
 
 //Study area
-var studyArea = geometry;
+var studyArea = getImagesLib.testAreas['CA'];
 
 //Date parameters
 var startYear = 1984;
-var endYear = 2019;
+var endYear = 2021;
 var startJulian = 190;
 var endJulian = 250;
 
