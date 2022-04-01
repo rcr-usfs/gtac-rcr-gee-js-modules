@@ -46,6 +46,51 @@ print('Available bands/indices:',lt.aggregate_histogram(bandPropertyName).keys()
 // Convert stacked outputs into collection of fitted, magnitude, slope, duration, etc values for each year
 var lt_fit = changeDetectionLib.batchSimpleLTFit(lt,startYear,endYear,bandNames,bandPropertyName);
 
+
+
+// Iterate across each band to look for areas of change
+bandNames.map(function(bandName){
+  // Convert LandTrendr stack to Loss & Gain space
+  var ltt = lt.filter(ee.Filter.eq(bandPropertyName,bandName)).mosaic();
+  var fit = ltt.select(['fit.*']).multiply(getImagesLib.changeDirDict[bandName]/10000);
+  ltt = ltt.addBands(fit,null,true);
+  var lossGainDict = changeDetectionLib.convertToLossGain(ltt, 
+                                                      format = 'vertStack',
+                                                      lossMagThresh = -0.15,
+                                                      lossSlopeThresh = -0.1,
+                                                      gainMagThresh = 0.1,
+                                                      gainSlopeThresh = 0.1,
+                                                      slowLossDurationThresh = 3,
+                                                      chooseWhichLoss = 'largest', 
+                                                      chooseWhichGain = 'largest', 
+                                                      howManyToPull = 1);
+
+  var lossStack = lossGainDict.lossStack;
+  var gainStack = lossGainDict.gainStack;
+
+  // Set up viz params
+  vizParamsLossYear = {'min':startYear,'max':endYear,'palette':changeDetectionLib.lossYearPalette};
+  vizParamsLossMag = {'min':-0.8 ,'max':-0.15,'palette':changeDetectionLib.lossMagPalette};
+  
+  vizParamsGainYear = {'min':startYear,'max':endYear,'palette':changeDetectionLib.gainYearPalette};
+  vizParamsGainMag = {'min':0.1,'max':0.8,'palette':changeDetectionLib.gainMagPalette};
+  
+  vizParamsDuration = {'min':1,'max':5,'palette':changeDetectionLib.changeDurationPalette};
+
+  // Select off the first change detected and visualize outputs
+  var lossStackI = lossStack.select(['.*_1']);
+  var gainStackI = gainStack.select(['.*_1']);
+ 
+  Map.addLayer(lossStackI.select(['loss_yr.*']),vizParamsLossYear,bandName +' Loss Year',true);
+  Map.addLayer(lossStackI.select(['loss_mag.*']),vizParamsLossMag,bandName +' Loss Magnitude',false);
+  Map.addLayer(lossStackI.select(['loss_dur.*']),vizParamsDuration,bandName +' Loss Duration',false);
+  
+  Map.addLayer(gainStackI.select(['gain_yr.*']),vizParamsGainYear,bandName +' Gain Year',false);
+  Map.addLayer(gainStackI.select(['gain_mag.*']),vizParamsGainMag,bandName +' Gain Magnitude',false);
+  Map.addLayer(gainStackI.select(['gain_dur.*']),vizParamsDuration,bandName +' Gain Duration',false);
+
+});
+  
 // Vizualize image collection for charting (opacity set to 0 so it will chart but not be visible)
-Map.addLayer(lt_fit,{'opacity':0},'LT Fit TS')
+Map.addLayer(lt_fit,{},'LT Fit TS');
 Map.setOptions('HYBRID');
