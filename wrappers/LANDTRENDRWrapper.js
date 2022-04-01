@@ -19,7 +19,7 @@ var geometry =
 
 
 ///Module imports
-var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
 var changeDetectionLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
 changeDetectionLib.getExistingChangeData();
 print(changeDetectionLib)
@@ -27,13 +27,13 @@ print(changeDetectionLib)
 //Parameters
 
 //Study area
-var studyArea = getImagesLib.testAreas['CA'];
+var studyArea = getImagesLib.testAreas.CA;
 
 //Date parameters
 var startYear = 1984;
 var endYear = 2021;
-var startJulian = 190;
-var endJulian = 250;
+var startJulian = 152;
+var endJulian = 273;
 
 //Choose band or index
 //NBR, NDMI, and NDVI tend to work best
