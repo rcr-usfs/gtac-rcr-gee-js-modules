@@ -1,5 +1,5 @@
 //Module imports
-var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
+var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 var lossYearPalette =  'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02';
 var lossMagPalette = 'D00,F5DEB3';
