@@ -12,8 +12,8 @@ var geometry =
 //Wrapper for running harmonic regression across a moving window of years
 
 //Module imports
-var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
+var dLib = require('users/aaronkamoske/GTAC-Modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:

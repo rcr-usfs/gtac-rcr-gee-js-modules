@@ -1,5 +1,5 @@
 //Module imports
-var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
+var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 // Define user parameters:
 var args = {};

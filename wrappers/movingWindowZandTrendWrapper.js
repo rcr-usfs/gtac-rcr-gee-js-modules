@@ -16,8 +16,8 @@ var geometry =
 //Wrapper for running z-score and linear trend across a moving window of years
 
 //Module imports
-var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
-var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
+var dLib = require('users/aaronkamoske/GTAC-Modules:changeDetectionLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 dLib.getExistingChangeData();

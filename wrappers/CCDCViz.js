@@ -1,5 +1,5 @@
 ///Module imports
-// var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+// var dLib = require('users/aaronkamoske/GTAC-Modules:changeDetectionLib.js');
 /////////////////////////////////////////////////////////////////////////////
 //-------------------- BEGIN CCDC Helper Functions -------------------//
 /////////////////////////////////////////////////////////////////////////////

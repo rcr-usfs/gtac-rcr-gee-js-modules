@@ -1,5 +1,5 @@
 //  get the classification library
-var classificationLib = require('users/USFS_GTAC/modules:classificationLib.js');
+var classificationLib = require('users/aaronkamoske/GTAC-Modules:classificationLib.js');
 
 // define a study area
 sa = DEFINE;

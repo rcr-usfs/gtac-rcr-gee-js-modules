@@ -1,1 +1,1 @@
-alert('Deprecation Warning!\ngetImagesLib2.js is now getImagesLib.js\nUpdate to require("users/aaronkamoske/GTAC-Modules:getImagesLib.js")')
+alert('Deprecation Warning!\ngetImagesLib2.js is now getImagesLib.js\ne.g. require("users/aaronkamoske/GTAC-Modules:getImagesLib.js")')

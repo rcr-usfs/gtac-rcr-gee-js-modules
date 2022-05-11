@@ -26,7 +26,7 @@ var ak =
           [-71.07119273559601, 41.32019390047518],
           [-71.07119273559601, 42.64313607458788]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var getImagesLib = require('users/USFS_GTAC/modules:getImagesLib2.js');
+var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
 var hiFormViz = {min: 0.05, max: 0.15, gamma: 1.2,bands:'red,green,blue'};
 //////////////////////////////////////////////////////////////
 //User parameters

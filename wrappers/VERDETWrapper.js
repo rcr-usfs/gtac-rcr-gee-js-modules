@@ -18,8 +18,8 @@ var geometry =
 
 
 ///Module imports
-var getImageLib = require('users/USFS_GTAC/modules:getImagesLib.js');
-var dLib = require('users/USFS_GTAC/modules:changeDetectionLib.js');
+var getImageLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
+var dLib = require('users/aaronkamoske/GTAC-Modules:changeDetectionLib.js');
 dLib.getExistingChangeData();
 print(dLib)
 ////////////////////////////////////////////////////////////////////////////////////////////
