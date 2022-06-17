@@ -622,6 +622,7 @@ var landsatSensorBandDict = {
   'C2_L7_TOA':['B1','B2','B3','B4','B5','B6_VCID_1','B7','QA_PIXEL'],
   'C1_L8_TOA':['B2','B3','B4','B5','B6','B10','B7','BQA'],
   'C2_L8_TOA':['B2','B3','B4','B5','B6','B10','B7','QA_PIXEL'],
+  'C2_L9_TOA':['B2','B3','B4','B5','B6','B10','B7','QA_PIXEL'],
   'C1_L4_SR':['B1','B2','B3','B4','B5','B6','B7','pixel_qa'],
   'C2_L4_SR':['SR_B1','SR_B2','SR_B3','SR_B4','SR_B5','ST_B6','SR_B7','QA_PIXEL'],
   'C1_L5_SR':['B1','B2','B3','B4','B5','B6','B7','pixel_qa'],
@@ -630,6 +631,7 @@ var landsatSensorBandDict = {
   'C2_L7_SR':['SR_B1','SR_B2','SR_B3','SR_B4','SR_B5','ST_B6','SR_B7','QA_PIXEL'],
   'C1_L8_SR':['B2','B3','B4','B5','B6','B10','B7','pixel_qa'],
   'C2_L8_SR':['SR_B2','SR_B3','SR_B4','SR_B5','SR_B6','ST_B10','SR_B7','QA_PIXEL'],
+  'C2_L9_SR':['SR_B2','SR_B3','SR_B4','SR_B5','SR_B6','ST_B10','SR_B7','QA_PIXEL']
 };
 
 // Provide common band names
