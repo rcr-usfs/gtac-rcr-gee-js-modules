@@ -743,6 +743,13 @@ function getLandsat(){
     };
     // Merge collections
     ls = ee.ImageCollection(l4s.merge(l5s).merge(l7s).merge(l8s));
+    
+    // Bring in Landsat 9 if using Collection 2
+    if(args.landsatCollectionVersion.toLowerCase() === 'c2'){
+      var l9s = getLandsatCollection(landsatCollectionVersion,'L9',toaOrSR);
+      ls = ee.ImageCollection(ls.merge(l9s));
+    }
+      
     return ls;
   }
   var ls = getLandsatCollections(args.toaOrSR,args.landsatCollectionVersion);
