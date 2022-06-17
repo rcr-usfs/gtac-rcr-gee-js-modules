@@ -327,6 +327,7 @@ function addSensorBand(img, whichProgram, toaOrSR){
               'LANDSAT_5': 5,
               'LANDSAT_7': 7,
               'LANDSAT_8': 8,
+              'LANDSAT_9': 9,
               'Sentinel-2A': 21,
               'Sentinel-2B': 22,
               'Sentinel-2C': 23,
