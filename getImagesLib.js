@@ -43,7 +43,7 @@ var changeDirDict = {
 "ND_red_swir2":-1,"ND_nir_red":-1,"ND_nir_swir1":-1,"ND_nir_swir2":-1,"ND_swir1_swir2":-1,
 "R_swir1_nir":1,"R_red_swir1":-1,"EVI":-1,"SAVI":-1,"IBI":1,
 "tcAngleBG":-1,"tcAngleGW":-1,"tcAngleBW":-1,"tcDistBG":1,"tcDistGW":1,"tcDistBW":1,
-'NIRv':-1
+'NIRv':-1,'NDCI':-1,'NDGI':-1,
 };
 
 //Precomputed cloudscore offsets and TDOM stats
