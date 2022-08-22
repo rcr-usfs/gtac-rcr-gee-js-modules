@@ -2892,7 +2892,7 @@ function getSentinel2Wrapper(){
   args.origin = 'Sentinel2';
   
   var s2s = getProcessedSentinel2Scenes(args);
-
+  print('S2 scenes:',s2s)
   // // Add zenith and azimuth
   // if (correctIllumination){
   //   s2s = s2s.map(function(img){
