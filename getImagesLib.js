@@ -2825,6 +2825,7 @@ function getProcessedSentinel2Scenes(){
     s2s = s2s.map(function(img){return projectShadowsWrapper(img,cloudScoreThresh,shadowSumThresh,contractPixels,dilatePixels,cloudHeights)});
     // Map.addLayer(s2s.mosaic(),{min:0.05,max:0.4,bands:'swir1,nir,red'},'shadow shift shadow masked');
   }
+  print('here',s2s)
   if(args.applyTDOM){
     print('Applying TDOM');
     args.collection = s2s;
@@ -2840,7 +2841,7 @@ function getProcessedSentinel2Scenes(){
   
   //Add sensor band
   s2s = s2s.map(function(img){return addSensorBand(img,'sentinel2',args.toaOrSR)});
-  print('here',s2s)
+  
   return s2s.set(args);
 }
 
