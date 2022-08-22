@@ -2840,7 +2840,7 @@ function getProcessedSentinel2Scenes(){
   
   //Add sensor band
   s2s = s2s.map(function(img){return addSensorBand(img,'sentinel2',args.toaOrSR)});
-  
+  print('here',s2s)
   return s2s.set(args);
 }
 
@@ -2892,7 +2892,7 @@ function getSentinel2Wrapper(){
   args.origin = 'Sentinel2';
   
   var s2s = getProcessedSentinel2Scenes(args);
-  print('S2 scenes:',s2s)
+  
   // // Add zenith and azimuth
   // if (correctIllumination){
   //   s2s = s2s.map(function(img){
