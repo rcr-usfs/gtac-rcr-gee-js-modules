@@ -498,7 +498,7 @@ function dailyMosaics(imgs){
     var orbit = ee.Number(img.get('SENSING_ORBIT_NUMBER')).format();
     return img.set({'date-orbit':d.cat(ee.String('_')).cat(orbit),'date':d});
   });
-  
+  print('Day images before mosaicking:',imgs)
   //Find the unique days
   var dayOrbits =  ee.Dictionary(imgs.aggregate_histogram('date-orbit')).keys();
   print('Day-Orbits:',dayOrbits);
