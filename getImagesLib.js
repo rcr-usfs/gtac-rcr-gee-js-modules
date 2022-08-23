@@ -502,9 +502,11 @@ function dailyMosaics(imgs){
   //Find the unique days
   var dayOrbits =  ee.Dictionary(imgs.aggregate_histogram('date-orbit')).keys();
   print('Day-Orbits:',dayOrbits);
-  imgs = dayOrbits.map(function(d){
+  
+  function getMosaic(d){
     var date = ee.Date(ee.String(d).split('_').get(0));
     var orbit = ee.Number.parse(ee.String(d).split('_').get(1));
+    print(d,date,orbit)
     var t = imgs.filterDate(date,date.advance(1,'day'))
             .filter(ee.Filter.eq('SENSING_ORBIT_NUMBER',orbit));
     var f = ee.Image(t.first());
@@ -512,7 +514,9 @@ function dailyMosaics(imgs){
     t = t.set('system:time_start',date.millis());
     t = t.copyProperties(f);
     return t;
-    });
+    }
+  getMosaic(dayOrbits.get(0))
+  imgs = dayOrbits.map(getMosaic);
     imgs = ee.ImageCollection.fromImages(imgs);
     print('N s2 mosaics:',imgs.size());
     return imgs;
