@@ -513,8 +513,9 @@ function dailyMosaics(imgs){
     var f = ee.Image(t.first());
     t = ee.Image(t.mosaic());
     t = t.set('system:time_start',date.millis());
+    print(d,date,orbit,t,f)
     t = t.copyProperties(f);
-    print(d,date,orbit,t)
+    
     return t;
     }
   getMosaic(dayOrbits.get(0))
