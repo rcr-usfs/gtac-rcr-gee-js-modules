@@ -495,7 +495,7 @@ function dailyMosaics(imgs){
   //Simplify date to exclude time of day
   imgs = imgs.map(function(img){
     var d = ee.String(img.date().format('YYYY-MM-dd'));
-    var orbit = ee.Number(img.get('SENSING_ORBIT_NUMBER')).format();
+    var orbit = ee.Number(img.get('SENSING_ORBIT_NUMBER')).int16().format();
     return img.set({'date-orbit':d.cat(ee.String('_')).cat(orbit),'date':d});
   });
   print('Day images before mosaicking:',imgs)
