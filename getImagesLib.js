@@ -514,7 +514,7 @@ function dailyMosaics(imgs){
     t = t.mean();
     t = t.set('system:time_start',date.millis());
     print(d,date,orbit,t,f)
-    t = t.copyProperties(f);
+    // t = t.copyProperties(f);
     
     return t;
     }
