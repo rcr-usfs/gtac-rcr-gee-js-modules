@@ -511,7 +511,7 @@ function dailyMosaics(imgs){
             .filter(ee.Filter.eq('SENSING_ORBIT_NUMBER',orbit));
     
     var f = ee.Image(t.first());
-    t = ee.Image(t.mosaic());
+    t = t.mosaic();
     t = t.set('system:time_start',date.millis());
     print(d,date,orbit,t,f)
     t = t.copyProperties(f);
