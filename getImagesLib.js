@@ -507,22 +507,20 @@ function dailyMosaics(imgs){
     var date = ee.Date(ee.String(d).split('_').get(0));
     var orbit = ee.Number.parse(ee.String(d).split('_').get(1));
     
-    var t = imgs
-            // .filterDate(date,date.advance(1,'day'))
-            // .filter(ee.Filter.eq('SENSING_ORBIT_NUMBER',orbit));
+    var t = imgs.filterDate(date,date.advance(1,'day'))
+            .filter(ee.Filter.eq('SENSING_ORBIT_NUMBER',orbit));
     
     var f = ee.Image(t.first());
     t = t.mosaic();
     t = t.set('system:time_start',date.millis());
-    // print(d,date,orbit,t,f)
     t = t.copyProperties(f);
-    
+    print(d,date,orbit,t)
     return t;
     }
-  // getMosaic(dayOrbits.get(0))
+  getMosaic(dayOrbits.get(0))
   imgs = dayOrbits.map(getMosaic);
     imgs = ee.ImageCollection.fromImages(imgs);
-    // print('N s2 mosaics:',imgs.size());
+    print('N s2 mosaics:',imgs.size());
     return imgs;
 }
 //////////////////////////////////////////////////////
@@ -567,9 +565,9 @@ function getS2(){
                     .map(function(img){
                       
                       var t = img.select(sensorBandDict[args.toaOrSR]).divide(10000);//Rescale to 0-1
-                      t = t.addBands(img.select(['QA60']));
-                      var out = t.copyProperties(img).copyProperties(img,['system:time_start','system:footprint']);
-                    return out;
+                      // t = t.addBands(img.select(['QA60']));
+                      // var out = t.copyProperties(img).copyProperties(img,['system:time_start','system:footprint']);
+                    return img.addBands(t,null,true);
                       })
                       .select(['QA60'].concat(sensorBandDict[args.toaOrSR]),['QA60'].concat(sensorBandNameDict[args.toaOrSR]));
                       // .map(function(img){return img.resample('bicubic') }) ;
