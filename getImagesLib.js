@@ -517,7 +517,7 @@ function dailyMosaics(imgs){
     // print(d,date,orbit,t)
     return t;
     }
-  getMosaic(dayOrbits.get(0))
+  // getMosaic(dayOrbits.get(0))
   imgs = dayOrbits.map(getMosaic);
     imgs = ee.ImageCollection.fromImages(imgs);
     print('N s2 mosaics:',imgs.size());
