@@ -1931,7 +1931,7 @@ function joinCollections(c1,c2, maskAnyNullValues,property,propertySecondary){
   };
 
   var join = ee.Join.inner();
-  var filter = ee.Filter.equals(property, null, property);
+  var filter = ee.Filter.equals(property, null, propertySecondary);
   var joined = ee.ImageCollection(join.apply(c1, c2, filter));
 
   joined = ee.ImageCollection(joined.map(MergeBands));
