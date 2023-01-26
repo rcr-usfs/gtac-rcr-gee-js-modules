@@ -1919,8 +1919,8 @@ var multModisDict = {
                       ['blue','green','red','nir','swir1','swir2','SolarZenith', 'ViewZenith', 'RelativeAzimuth']],
   };
 /////////////////////////////////////////////////
-//Helper function to join two collections- Source: code.earthengine.google.com
-function joinCollections(c1,c2, maskAnyNullValues,property){
+//Helper function to join two collections. Adapted from: code.earthengine.google.com
+function joinCollections(c1,c2, maskAnyNullValues,property,propertySecondary){
   if(maskAnyNullValues === undefined || maskAnyNullValues === null){maskAnyNullValues = true}
   if(property === undefined || property === null){property = 'system:time_start'}
   var MergeBands = function(element) {
