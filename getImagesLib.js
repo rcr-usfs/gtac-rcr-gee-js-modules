@@ -1923,6 +1923,7 @@ var multModisDict = {
 function joinCollections(c1,c2, maskAnyNullValues,property,propertySecondary){
   if(maskAnyNullValues === undefined || maskAnyNullValues === null){maskAnyNullValues = true}
   if(property === undefined || property === null){property = 'system:time_start'}
+  if(propertySecondary === undefined || propertySecondary === null){propertySecondary=property}
   var MergeBands = function(element) {
     // A function to merge the bands together.
     // After a join, results are in 'primary' and 'secondary' properties.
