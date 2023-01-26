@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = /* color: #d63000 */ee.Geometry.Point([-118.88176375603759, 36.65252175077467]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+
 //Module imports
 var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,8 +26,8 @@ args.endJulian = 250;
 // well. If using Fmask as the cloud/cloud shadow masking method, or providing
 // pre-computed stats for cloudScore and TDOM, this does not 
 // matter
-args.startYear = 2016;
-args.endYear = 2020;
+args.startYear = 2018;
+args.endYear = 2022;
 
 // Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
