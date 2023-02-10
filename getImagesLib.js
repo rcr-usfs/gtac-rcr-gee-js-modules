@@ -3962,7 +3962,7 @@ exports.compositeDates = compositeDates;
 exports.defringeLandsat = defringeLandsat;
 
 exports.simpleWaterMask = simpleWaterMask;
-
+exports.common_projections = common_projections;
 exports.testAreas = {};
 exports.testAreas.CO = 
     /* color: #d63000 */
