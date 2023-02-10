@@ -30,7 +30,8 @@ common_projections['NLCD_CONUS'] = {'crs':'PROJCS["Albers_Conical_Equal_Area",GE
 common_projections['NLCD_AK'] = {'crs':'PROJCS["Albers_Conical_Equal_Area",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9108"]],AUTHORITY["EPSG","4326"]],PROJECTION["Albers_Conic_Equal_Area"],PARAMETER["standard_parallel_1",55],PARAMETER["standard_parallel_2",65],PARAMETER["latitude_of_center",50],PARAMETER["longitude_of_center",-154],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["meters",1]]',
                                   'transform':[30,0,-48915.0,0,-30,1319415.0]};
 
-
+common_projections['NLCD_HI'] = {'crs':'PROJCS["Albers_Conical_Equal_Area",GEOGCS["WGS 84",DATUM["WGS_1984", SPHEROID["WGS 84", 6378137.0, 298.257223563, AUTHORITY["EPSG","7030"]], AUTHORITY["EPSG","6326"]], PRIMEM["Greenwich", 0.0], UNIT["degree", 0.017453292519943295], AXIS["Longitude", EAST], AXIS["Latitude", NORTH], AUTHORITY["EPSG","4326"]], PROJECTION["Albers_Conic_Equal_Area"], PARAMETER["central_meridian", -157.0],PARAMETER["latitude_of_origin", 3.0],PARAMETER["standard_parallel_1", 8.0],PARAMETER["false_easting", 0.0],PARAMETER["false_northing", 0.0],PARAMETER["standard_parallel_2", 18.0],UNIT["m", 1.0],AXIS["x", EAST],AXIS["y", NORTH]]',
+                                  'transform':[30,0,-342585,0,-30,2127135]};
 
 //Direction of  a decrease in photosynthetic vegetation- add any that are missing
 var changeDirDict = {
