@@ -591,7 +591,7 @@ function getS2(){
     
   }
   
-  // Reseting the resample method after all masking
+  
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
     s2s = s2s.map(function(img){return img.resample(args.resampleMethod)});
@@ -2864,7 +2864,7 @@ function getProcessedSentinel2Scenes(){
           .map(getTasseledCap)
           .map(simpleAddTCAngles);  
   
-  
+  // Reseting the resample method after all masking
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
     s2s = s2s.map(function(img){return img.resample(args.resampleMethod)});
