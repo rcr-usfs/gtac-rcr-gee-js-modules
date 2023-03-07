@@ -124,6 +124,9 @@ function prepArgumentsObject(args,defaultArgs){
   return outArgs;
 }
 //////////////////////////////////////////////////
+// Function to copy an object so values are not updated in both objects
+function copyObj(obj){return JSON.parse(JSON.stringify(obj))}
+//////////////////////////////////////////////////
 //Function to set null value for export or conversion to arrays
 //See default args below
 //Must provide image and noDataValue - there are no defaults
@@ -2714,8 +2717,7 @@ function getProcessedLandsatScenes(){
     
   // Get Landsat image collection
   // Force resample to near so masking is not messed up
-  var argsForcedResampleToNear = function(){return args};
-  argsForcedResampleToNear = argsForcedResampleToNear();
+  var argsForcedResampleToNear = copyObj(args);
   argsForcedResampleToNear.resampleMethod = 'near';
   print('Args to get Landsat:',argsForcedResampleToNear)
   var ls = getLandsat(argsForcedResampleToNear);
