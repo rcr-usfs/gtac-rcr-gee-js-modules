@@ -2711,7 +2711,9 @@ function getProcessedLandsatScenes(){
   
       // applyFmaskSnowMask = false;
     }else{args.addPixelQA = false;}
+    
   // Get Landsat image collection
+  // Force resample to near so masking is not messed up
   var argsForcedResampleToNear = function(){return args};
   argsForcedResampleToNear.resampleMethod = 'near'
   var ls = getLandsat(argsForcedResampleToNear);
