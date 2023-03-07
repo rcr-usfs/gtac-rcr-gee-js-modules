@@ -125,7 +125,9 @@ function prepArgumentsObject(args,defaultArgs){
 }
 //////////////////////////////////////////////////
 // Function to copy an object so values are not updated in both objects
-function copyObj(obj){return JSON.parse(JSON.stringify(obj))}
+function copyObj(obj){
+  var out = {};Object.keys(obj).map(function(k){out[k]=obj[k]});
+  return out}
 //////////////////////////////////////////////////
 //Function to set null value for export or conversion to arrays
 //See default args below
@@ -2831,7 +2833,7 @@ function getProcessedSentinel2Scenes(){
   // Force resample to near so masking is not messed up
   var argsForcedResampleToNear = copyObj(args);
   argsForcedResampleToNear.resampleMethod = 'near';
-  var s2s = getS2(argsForcedResampleToNear)
+  var s2s = getS2(argsForcedResampleToNear);
   // Map.addLayer(s2s.median().reproject('EPSG:32612',null,30),{min:0.05,max:0.4,bands:'swir1,nir,red'});
   
   if(args.applyQABand){
