@@ -2829,8 +2829,8 @@ function getProcessedSentinel2Scenes(){
   
   // Get Sentinel2 image collection
   // Force resample to near so masking is not messed up
-  var argsForcedResampleToNear = function(){return args};
-  argsForcedResampleToNear.resampleMethod = 'near'
+  var argsForcedResampleToNear = copyObj(args);
+  argsForcedResampleToNear.resampleMethod = 'near';
   var s2s = getS2(argsForcedResampleToNear)
   // Map.addLayer(s2s.median().reproject('EPSG:32612',null,30),{min:0.05,max:0.4,bands:'swir1,nir,red'});
   
