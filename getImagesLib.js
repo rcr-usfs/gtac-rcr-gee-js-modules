@@ -2716,7 +2716,7 @@ function getProcessedLandsatScenes(){
   // Force resample to near so masking is not messed up
   var argsForcedResampleToNear = function(){return args};
   argsForcedResampleToNear.resampleMethod = 'near';
-  print(argsForcedResampleToNear)
+  print('Args to get Landsat:',argsForcedResampleToNear)
   var ls = getLandsat(argsForcedResampleToNear);
   
   // //Apply Roy 2016 harmonization if specified
