@@ -2712,6 +2712,8 @@ function getProcessedLandsatScenes(){
       // applyFmaskSnowMask = false;
     }else{args.addPixelQA = false;}
   // Get Landsat image collection
+  var argsForcedResampleToNear = function(){return args};
+  argsForcedResampleToNear.resampleMethod = 'near'
   var ls = getLandsat(args);
   
   // //Apply Roy 2016 harmonization if specified
