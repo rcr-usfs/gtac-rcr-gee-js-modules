@@ -2715,6 +2715,7 @@ function getProcessedLandsatScenes(){
   // Get Landsat image collection
   // Force resample to near so masking is not messed up
   var argsForcedResampleToNear = function(){return args};
+  argsForcedResampleToNear = argsForcedResampleToNear();
   argsForcedResampleToNear.resampleMethod = 'near';
   print('Args to get Landsat:',argsForcedResampleToNear)
   var ls = getLandsat(argsForcedResampleToNear);
