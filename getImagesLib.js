@@ -973,7 +973,7 @@ function landsatCloudScore(img) {
     rescale(img, 'img.nir + img.swir1 + img.swir2', [0.3, 0.8]));
 
   // Clouds are reasonably cool in temperature.
-  var tempUnmasked = img.select(['temp']).unmask(301)
+  var tempUnmasked = img.select(['temp']).unmask(301);
   score = score.min(rescale(tempUnmasked,'img', [300, 290]));
 
   // However, clouds are not snow.
