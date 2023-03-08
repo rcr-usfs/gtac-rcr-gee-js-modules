@@ -3898,6 +3898,7 @@ exports.collectionToImage = collectionToImage;
 exports.getImageCollection = getImageCollection;
 exports.getLandsat = getLandsat;
 exports.getS2 = getS2;
+exports.getSentinel2 = getSentinel2;
 exports.vizParamsFalse = vizParamsFalse;
 exports.vizParamsTrue = vizParamsTrue;
 exports.vizParamsFalse10k = vizParamsFalse10k;
