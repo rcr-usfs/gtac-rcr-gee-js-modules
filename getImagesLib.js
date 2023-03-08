@@ -2853,16 +2853,6 @@ function getProcessedSentinel2Scenes(){
           .map(getTasseledCap)
           .map(simpleAddTCAngles);  
   
-  // Reseting the resample method after all masking
-  if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
-    print('Setting resample method to ',args.resampleMethod);
-    s2s = s2s.map(function(img){return img.resample(args.resampleMethod)});
-  }
-  else if(args.resampleMethod === 'aggregate'){
-    print('Setting to aggregate instead of resample ');
-    s2s = s2s.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
-  }
-  
   //Add sensor band
   s2s = s2s.map(function(img){return addSensorBand(img,'sentinel2',args.toaOrSR)});
   
