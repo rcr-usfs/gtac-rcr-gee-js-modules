@@ -561,7 +561,8 @@ function getS2(){
       'TOA': ['cb', 'blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'waterVapor', 'cirrus','swir1', 'swir2']
     };
     
-   
+  // Specify S2 continuous bands if resampling is set to something other than near
+  var s2_continuous_bands = sensorBandNameDict[args.toaOrSR];
   //Get some s2 data
   var s2s = ee.ImageCollection(s2CollectionDict[args.toaOrSR])
                     .filterDate(args.startDate,args.endDate.advance(1,'day'))
