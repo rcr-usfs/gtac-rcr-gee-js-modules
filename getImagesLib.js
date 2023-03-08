@@ -833,9 +833,7 @@ function getLandsat(){
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
     ls = ls.map(function(img){return img.addBands(img.select(landsat_continuous_bands).resample(args.resampleMethod),null,true)});
-  }
-  
-  else if(args.resampleMethod === 'aggregate'){
+  }else if(args.resampleMethod === 'aggregate'){
     print('Setting to aggregate instead of resample ');
     ls = ls.map(function(img){return img.addBands(img.select(landsat_continuous_bands).reduceResolution(ee.Reducer.mean(), true, 64),null,true)});
   }
