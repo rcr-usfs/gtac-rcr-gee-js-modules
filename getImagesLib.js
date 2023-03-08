@@ -3911,6 +3911,7 @@ exports.sentinel2SnowMask = sentinel2SnowMask;
 exports.projectShadowsWrapper = projectShadowsWrapper;
 exports.applyCloudScoreAlgorithm = applyCloudScoreAlgorithm;
 exports.cFmask = cFmask;
+exports.applyBitMask = applyBitMask;
 exports.simpleTDOM2 = simpleTDOM2;
 exports.medoidMosaicMSD = medoidMosaicMSD;
 exports.addIndices = addIndices;
