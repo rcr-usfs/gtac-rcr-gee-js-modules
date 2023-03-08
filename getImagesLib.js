@@ -832,12 +832,12 @@ function getLandsat(){
   
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
-    ls = ls.map(function(img){return img.resample(args.resampleMethod)});
+    ls = ls.map(function(img){return img.addBands(img.select(landsat_continuous_bands).resample(args.resampleMethod),null,True)});
   }
   
   else if(args.resampleMethod === 'aggregate'){
     print('Setting to aggregate instead of resample ');
-    ls = ls.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
+    ls = ls.map(function(img){return img.select(landsat_continuous_bands).reduceResolution(ee.Reducer.mean(), true, 64)});
   }
   
   return ls.set(args);
