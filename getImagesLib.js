@@ -600,11 +600,11 @@ function getS2(){
   
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
-    s2s = s2s.map(function(img){return img.resample(args.resampleMethod)});
+    s2s = s2s.map(function(img){return img.addBands(img.select(s2_continuous_bands).resample(args.resampleMethod),null,true)});
   }
   else if(args.resampleMethod === 'aggregate'){
     print('Setting to aggregate instead of resample ');
-    s2s = s2s.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
+    s2s = s2s.map(function(img){return img.addBands(img.select(s2_continuous_bands).reduceResolution(ee.Reducer.mean(), true, 64),null,true)});
   }
   
   //Convert to daily mosaics to avoid redundant observations in MGRS overlap areas and edge artifacts for shadow masking
