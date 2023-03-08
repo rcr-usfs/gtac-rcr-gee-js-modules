@@ -973,6 +973,8 @@ function landsatCloudScore(img) {
     rescale(img, 'img.nir + img.swir1 + img.swir2', [0.3, 0.8]));
 
   // Clouds are reasonably cool in temperature.
+  // Unmask temperature to a cold cold temp so it doesn't exclude the pixels entirely
+  // This is an issue largely with SR data where a suspected cloud temperature value is masked out
   var tempUnmasked = img.select(['temp']).unmask(270);
   score = score.min(rescale(tempUnmasked,'img', [300, 290]));
 
