@@ -837,7 +837,7 @@ function getLandsat(){
   
   else if(args.resampleMethod === 'aggregate'){
     print('Setting to aggregate instead of resample ');
-    ls = ls.map(function(img){return img.select(landsat_continuous_bands).reduceResolution(ee.Reducer.mean(), true, 64)});
+    ls = ls.map(function(img){return img.addBands(img.select(landsat_continuous_bands).reduceResolution(ee.Reducer.mean(), true, 64),null,True)});
   }
   
   return ls.set(args);
