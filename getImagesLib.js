@@ -2765,16 +2765,6 @@ function getProcessedLandsatScenes(){
   //Add sensor band
   ls = ls.map(function(img){return addSensorBand(img,args.landsatCollectionVersion+'_landsat',args.toaOrSR)});
   
-  // Set resample method at end
-  if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
-    print('Setting resample method to ',args.resampleMethod);
-    ls = ls.map(function(img){return img.resample(args.resampleMethod)});
-  }
-  
-  else if(args.resampleMethod === 'aggregate'){
-    print('Setting to aggregate instead of resample ');
-    ls = ls.map(function(img){return img.reduceResolution(ee.Reducer.mean(), true, 64)});
-  }
   
   return ls.set(args);
 }
