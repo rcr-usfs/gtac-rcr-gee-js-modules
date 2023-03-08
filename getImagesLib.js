@@ -627,6 +627,7 @@ var landsat_C2_L2_rescale_dict = {
 
 // Specify Landsat continuous bands if resampling is set to something other than near
 var landsat_continuous_bands = ['blue','green','red','nir','swir1','temp', 'swir2'];
+
 // Set up bands and corresponding band names
 var landsatSensorBandDict = {
   'C1_L4_TOA':['B1','B2','B3','B4','B5','B6','B7','BQA'],
