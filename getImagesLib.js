@@ -617,7 +617,7 @@ function getS2(){
   
   return s2s.set(args);
 }
-
+var getSentinel2 = getS2;
 //////////////////////////////////////////////////////////////////
 // Set up dictionaries to manage various Landsat collections, rescale factors, band names, etc
 var landsat_C2_L2_rescale_dict = {
