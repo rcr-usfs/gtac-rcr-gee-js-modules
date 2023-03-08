@@ -2718,10 +2718,7 @@ function getProcessedLandsatScenes(){
     }else{args.addPixelQA = false;}
     
   // Get Landsat image collection
-  // Force resample to near so masking is not messed up
-  var argsForcedResampleToNear = copyObj(args);
-  argsForcedResampleToNear.resampleMethod = 'near';
-  var ls = getLandsat(argsForcedResampleToNear);
+  var ls = getLandsat(args);
   
   // //Apply Roy 2016 harmonization if specified
   // if(harmonizeOLI){
