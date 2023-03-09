@@ -976,7 +976,7 @@ function landsatCloudScore(img) {
   // Unmask temperature to a cold cold temp so it doesn't exclude the pixels entirely
   // This is an issue largely with SR data where a suspected cloud temperature value is masked out
   var tempUnmasked = img.select(['temp']).unmask(270);
-  score = score.min(rescale(tempUnmasked,'img', [300, 290]));
+  // score = score.min(rescale(tempUnmasked,'img', [300, 290]));
 
   // However, clouds are not snow.
   var ndsi = img.normalizedDifference(['green', 'swir1']);
