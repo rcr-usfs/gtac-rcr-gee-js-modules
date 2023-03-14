@@ -961,13 +961,14 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs){
 
 // Wrapper function to iterate across multiple LT band/index values
 function batchSimpleLTFit(ltStacks,startYear,endYear,indexNames,bandPropertyName,arrayMode,maxSegs){
+  if(bandPropertyName === null || bandPropertyName === undefined){
+    bandPropertyName = 'band';
+  }
   // Get band/index names if not provided
   if(indexNames === null || indexNames === undefined){
     indexNames = ltStacks.aggregate_histogram(bandPropertyName).keys().getInfo();
   }
-  if(bandPropertyName === null || bandPropertyName === undefined){
-    bandPropertyName = 'band';
-  }
+  
   // Iterate across each band/index and get the fitted, mag, slope, etc
   var lt_fit;
   indexNames.map(function(bn){
