@@ -834,13 +834,32 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
 //Simplified method to convert LANDTRENDR stack to annual collection of
 //Duration, fitted, magnitude, slope, and diff
 //Improved handling of start year delay found in older method
-function simpleLTFit(ltStack,startYear,endYear,indexName){
+function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs){
   if(indexName === undefined || indexName === null){indexName = ''};
+  if(arrayMode === undefined || arrayMode === null){arrayMode = false};
+  if(maxSegs === undefined || maxSegs === null){maxSegs = 6};
   
-  //Separate years and fitted values of vertices
-  var yrs = ltStack.select('yrs_.*').selfMask();
-  var fit = ltStack.select('fit_.*').updateMask(yrs.mask());
-  
+  // Separate years and fitted values of vertices
+  if(arrayMode){
+    var zeros =ee.Image(ee.Array([0]).repeat(0,maxSegs+2));
+    var yrBns = [];
+    var fitBns = [];
+    var emptyArray = [];                              
+    var iString;                           
+    for(var i=1;i<=maxSegs+1;i++){     
+      iString = i.toString();                         
+      yrBns.push("yrs_"+iString);    
+      fitBns.push('fit_'+iString);
+                           
+   }
+    var yrs = ltStack.arraySlice(0,0,1).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([yrBns]).selfMask()
+    var fit = ltStack.arraySlice(0,1,2).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([fitBns]).updateMask(yrs.mask())
+    
+  }else{
+    //Separate years and fitted values of vertices
+    var yrs = ltStack.select('yrs_.*').selfMask();
+    var fit = ltStack.select('fit_.*').updateMask(yrs.mask());
+  }
   //Find the first and last vertex years
   var isStartYear = yrs.reduce(ee.Reducer.firstNonNull());
   var isEndYear = yrs.reduce(ee.Reducer.lastNonNull());
