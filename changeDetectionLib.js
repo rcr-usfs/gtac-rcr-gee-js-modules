@@ -2222,6 +2222,7 @@ exports.simpleLTFit = simpleLTFit;
 exports.batchSimpleLTFit = batchSimpleLTFit;
 exports.prepTimeSeriesForLandTrendr = prepTimeSeriesForLandTrendr;
 exports.LANDTRENDRVertStack =  LANDTRENDRVertStack;
+exports.rawLTToVertices = rawLTToVertices;
 exports.applyDistDir_vertStack = applyDistDir_vertStack;
 exports.LT_VT_vertStack_multBands = LT_VT_vertStack_multBands;
 exports.fitStackToCollection = fitStackToCollection;
