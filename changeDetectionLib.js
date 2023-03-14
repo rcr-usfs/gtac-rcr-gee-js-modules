@@ -183,7 +183,42 @@ function getLTStack(LTresult,maxVertices,bandNames) {
   return ltVertStack.updateMask(ltVertStack.neq(-32768));                               // return the stack
 };
 
-
+//////////////////////////////////////////////////////////////////////////////////////////
+// Function to remove non vertex info from raw image array format from LandTrendr.
+// E.g. if an output is [1985,1990,2020],[500,450,320],[500,510,320],[1,0,1], the output will be [1985,2020],[500,320]
+// This is the equivalent to the vert stack functions by keeps outputs in image array format
+function rawLTToVertices(rawLT,indexName,multBy){
+  if(multBy === undefined || multBy === null){
+    multBy = 10000;
+  }
+  // Try to find the disturbance direction
+  var distDir;
+  if(indexName !== undefined && indexName !== null){
+    try{
+      distDir = getImagesLib.changeDirDict[indexName];
+    }catch(err){
+      distDir = -1;
+    }
+  }
+  
+  // Select off the parts of the landTrendr output
+  var ltArray = rawLT.select(['LandTrendr']);
+  var rmse = rawLT.select(['rmse']).multiply(multBy);
+  
+  // Slice off the vertices and mask the output with them
+  var vertices = ltArray.arraySlice(0,3,4);
+  ltArray = ltArray.arrayMask(vertices);
+  
+  // Get rid of the vertex and raw array entries
+  ltArray = ltArray.arrayMask(ee.Image(ee.Array([[1],[0],[1],[0]])));
+  var l = ltArray.arrayLength(1);
+  
+  // Multiply array and flip it back around if needed (since LandTrendr needs reduction in veg to go up)
+  var multImg = ee.Image(ee.Array([[1],[distDir*multBy]])).arrayRepeat(1,l);
+  ltArray = ltArray.multiply(multImg);
+  
+  return ltArray.addBands(rmse);
+}
 
 
 //########################################################################################################
@@ -534,7 +569,6 @@ function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThre
   
   return [rawLt,outStack];
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
