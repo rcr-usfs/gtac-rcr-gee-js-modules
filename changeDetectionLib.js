@@ -868,10 +868,6 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
 //Simplified method to convert LANDTRENDR stack to annual collection of
 //Duration, fitted, magnitude, slope, and diff
 //Improved handling of start year delay found in older method
-//////////////////////////////////////////////////////////////////////////
-//Simplified method to convert LANDTRENDR stack to annual collection of
-//Duration, fitted, magnitude, slope, and diff
-//Improved handling of start year delay found in older method
 function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs){
   if(indexName === undefined || indexName === null){indexName = ''};
   if(arrayMode === undefined || arrayMode === null){arrayMode = false};
