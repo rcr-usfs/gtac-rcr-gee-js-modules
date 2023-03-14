@@ -872,7 +872,7 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs){
   if(indexName === undefined || indexName === null){indexName = ''};
   if(arrayMode === undefined || arrayMode === null){arrayMode = false};
   if(maxSegs === undefined || maxSegs === null){maxSegs = 6};
-  print(maxSegs)
+ 
   // Separate years and fitted values of vertices
   if(arrayMode){
     var zeros =ee.Image(ee.Array([0]).repeat(0,maxSegs+1));
