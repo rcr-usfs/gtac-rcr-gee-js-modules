@@ -925,7 +925,7 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs){
 }
 
 // Wrapper function to iterate across multiple LT band/index values
-function batchSimpleLTFit(ltStacks,startYear,endYear,indexNames,bandPropertyName){
+function batchSimpleLTFit(ltStacks,startYear,endYear,indexNames,bandPropertyName,arrayMode,maxSegs){
   // Get band/index names if not provided
   if(indexNames === null || indexNames === undefined){
     indexNames = ltStacks.aggregate_histogram(bandPropertyName).keys().getInfo();
@@ -939,9 +939,9 @@ function batchSimpleLTFit(ltStacks,startYear,endYear,indexNames,bandPropertyName
     var ltt = ltStacks.filter(ee.Filter.eq('band',bn)).mosaic();
 
     if(lt_fit === undefined){
-      lt_fit = simpleLTFit(ltt,startYear,endYear, bn);
+      lt_fit = simpleLTFit(ltt,startYear,endYear, bn,arrayMode,maxSegs);
     }else{
-      lt_fit = getImagesLib.joinCollections(lt_fit, simpleLTFit(ltt,startYear,endYear,bn), false);
+      lt_fit = getImagesLib.joinCollections(lt_fit, simpleLTFit(ltt,startYear,endYear,bn,arrayMode,maxSegs), false);
     }
   });
   return lt_fit;
