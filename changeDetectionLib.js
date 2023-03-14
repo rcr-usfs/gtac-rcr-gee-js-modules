@@ -968,7 +968,7 @@ function batchSimpleLTFit(ltStacks,startYear,endYear,indexNames,bandPropertyName
   if(indexNames === null || indexNames === undefined){
     indexNames = ltStacks.aggregate_histogram(bandPropertyName).keys().getInfo();
   }
-  print(indexNames)
+
   // Iterate across each band/index and get the fitted, mag, slope, etc
   var lt_fit;
   indexNames.map(function(bn){
