@@ -972,7 +972,7 @@ function batchSimpleLTFit(ltStacks,startYear,endYear,indexNames,bandPropertyName
   // Iterate across each band/index and get the fitted, mag, slope, etc
   var lt_fit;
   indexNames.map(function(bn){
-    var ltt = ltStacks.filter(ee.Filter.eq('band',bn)).mosaic();
+    var ltt = ltStacks.filter(ee.Filter.eq('band',bn)).max();
 
     if(lt_fit === undefined){
       lt_fit = simpleLTFit(ltt,startYear,endYear, bn,arrayMode,maxSegs);
