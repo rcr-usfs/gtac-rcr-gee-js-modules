@@ -199,7 +199,7 @@ function rawLTToVertices(rawLT,indexName,multBy){
     }catch(err){
       distDir = -1;
     }
-  }
+  }else{distDir=-1};
   
   // Select off the parts of the landTrendr output
   var ltArray = rawLT.select(['LandTrendr']);
