@@ -187,9 +187,12 @@ function getLTStack(LTresult,maxVertices,bandNames) {
 // Function to remove non vertex info from raw image array format from LandTrendr.
 // E.g. if an output is [1985,1990,2020],[500,450,320],[500,510,320],[1,0,1], the output will be [1985,2020],[500,320]
 // This is the equivalent to the vert stack functions by keeps outputs in image array format
-function rawLTToVertices(rawLT,indexName,multBy){
+function rawLTToVertices(rawLT,indexName,multBy,vertexNoData){
   if(multBy === undefined || multBy === null){
     multBy = 10000;
+  }
+  if(vertexNoData === undefined || vertexNoData === null){
+    vertexNoData = -32768;
   }
   // Try to find the disturbance direction
   var distDir;
