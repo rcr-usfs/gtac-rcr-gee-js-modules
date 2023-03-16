@@ -216,11 +216,13 @@ function rawLTToVertices(rawLT,indexName,multBy,vertexNoData){
   ltArray = ltArray.arrayMask(ee.Image(ee.Array([[1],[0],[1],[0]])));
   var l = ltArray.arrayLength(1);
   
+  var minObservationsNeededMask = ltArray.arraySlice(0,1,2).arraySlice(1,0,1).neq(vertexNoData).arrayProject([0]).arrayFlatten([['test']]);
+  
   // Multiply array and flip it back around if needed (since LandTrendr needs reduction in veg to go up)
   var multImg = ee.Image(ee.Array([[1],[distDir*multBy]])).arrayRepeat(1,l);
   ltArray = ltArray.multiply(multImg);
   
-  return ltArray.addBands(rmse);
+  return ltArray.addBands(rmse).updateMask(minObservationsNeededMask);
 }
 
 
