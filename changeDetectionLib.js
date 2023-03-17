@@ -880,7 +880,7 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs){
  
   // Separate years and fitted values of vertices
   if(arrayMode){
-    var zeros =ee.Image(ee.Array([0]).repeat(0,maxSegs+2));
+    var zeros =ee.Image(ee.Array([0]).repeat(0,maxSegs+1));
     var yrBns = [];
     var fitBns = [];
     var emptyArray = [];                              
