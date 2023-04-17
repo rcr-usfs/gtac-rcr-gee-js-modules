@@ -605,10 +605,10 @@ function RefinedLee(img){
     .gt(sample_mean.select(4).subtract(sample_mean.select(8))).multiply(4));
     
   // The next 4 are the not() of the previous 4
-  var directions = directions.addBands(directions.select(0).Not().multiply(5));
-  directions = directions.addBands(directions.select(1).Not().multiply(6));
-  directions = directions.addBands(directions.select(2).Not().multiply(7));
-  directions = directions.addBands(directions.select(3).Not().multiply(8));
+  var directions = directions.addBands(directions.select(0).not().multiply(5));
+  directions = directions.addBands(directions.select(1).not().multiply(6));
+  directions = directions.addBands(directions.select(2).not().multiply(7));
+  directions = directions.addBands(directions.select(3).not().multiply(8));
 
   // Mask all values that are not 1-8
   directions = directions.updateMask(gradmask);
