@@ -669,7 +669,7 @@ function getS1(studyArea,startYear,endYear,startJulian,endJulian,polarization,pa
   if(polarization===undefined || polarization === null){polarization = 'VV'}
   if(pass_direction===undefined || pass_direction === null){pass_direction = 'ASCENDING'}
 
-  collection= ee.ImageCollection('COPERNICUS/S1_GRD')
+  var collection= ee.ImageCollection('COPERNICUS/S1_GRD')
   .filter(ee.Filter.calendarRange(startYear,endYear,'year'))
   .filter(ee.Filter.calendarRange(startJulian,endJulian))
   .filter(ee.Filter.eq('instrumentMode','IW'))
@@ -677,7 +677,7 @@ function getS1(studyArea,startYear,endYear,startJulian,endJulian,polarization,pa
   .filter(ee.Filter.eq('orbitProperties_pass',pass_direction))
   .filter(ee.Filter.eq('resolution_meters',10))
   .filterBounds(studyArea)
-  .select([polarization])
+  .select([polarization]);
 
   return collection
 }
