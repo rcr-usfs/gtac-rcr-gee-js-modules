@@ -662,7 +662,7 @@ function RefinedLee(img){
 
   var result = dir_mean.add(b.multiply(img.subtract(dir_mean)));
   return(result.arrayFlatten([['sum']]));
-
+}
 //////////////////////////////////////////////////////
 // Load and filter Sentinel-1 GRD data by predefined parameters 
 function getS1(studyArea,startYear,endYear,startJulian,endJulian,polarization,pass_direction){
