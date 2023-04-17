@@ -679,7 +679,7 @@ function getS1(studyArea,startYear,endYear,startJulian,endJulian,polarization,pa
   .filterBounds(studyArea)
   .select([polarization]);
 
-  return collection
+  return collection;
 }
 //////////////////////////////////////////////////////
 //Function for acquiring Sentinel2 imagery
