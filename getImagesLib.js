@@ -555,7 +555,7 @@ function toNatural(img){
   return ee.Image(10.0).pow(img.select(0).divide(10.0));
 }
 function toDB(img){
-  return ee.Image(img).log10().multiply(10.0)
+  return ee.Image(img).log10().multiply(10.0);
 }
 
 // The RL speckle filter from https://code.earthengine.google.com/2ef38463ebaf5ae133a478f173fd0ab5 by Guido Lemoine
