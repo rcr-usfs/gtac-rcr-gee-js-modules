@@ -1,5 +1,16 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = /* color: #d63000 */ee.Geometry.MultiPoint(),
+var geometry = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-108.2078125, 39.95076370350941],
+          [-108.2078125, 39.40962921639621],
+          [-106.62578125, 39.40962921639621],
+          [-106.62578125, 39.95076370350941]]], null, false),
     geometry2 = 
     /* color: #98ff00 */
     /* displayProperties: [
@@ -4115,7 +4126,7 @@ exports.listToString = listToString;
 exports.harmonizationRoy = harmonizationRoy;
 exports.harmonizationChastain = harmonizationChastain;
 exports.fillEmptyCollections = fillEmptyCollections;
-
+exports.nDayComposites = nDayComposites;
 exports.getHarmonicCoefficientsAndFit = getHarmonicCoefficientsAndFit;
 exports.getPhaseAmplitudePeak = getPhaseAmplitudePeak;
 exports.getAreaUnderCurve = getAreaUnderCurve;
