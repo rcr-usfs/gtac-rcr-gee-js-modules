@@ -80,7 +80,7 @@ var changeDirDict = {
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
 var preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore').mosaic();
-var preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').filter(ee.Filter.eq('endYear',2019)).mosaic().divide(10000);
+var preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').filter(ee.Filter.eq('endYear',2020)).mosaic().divide(10000);
 exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
 exports.preComputedTDOMStats = preComputedTDOMStats;
 
