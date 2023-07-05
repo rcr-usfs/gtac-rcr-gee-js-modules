@@ -76,25 +76,31 @@ var changeDirDict = {
 //Precomputed cloudscore offsets and TDOM stats
 //These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
 //and are appropriate to use for any time period within the growing season
-// These have been calculated separately for AK and HI 
+// These have been calculated separately for AK and HI, so we mosaic them all together
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
 var preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore').mosaic();
+var preComputedCloudScoreOffsetAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/cloudScore_stats').mosaic();
+var preComputedCloudScoreOffsetHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/cloudScore').mosaic();
+
+// mosaic all together
+var preComputedCloudScoreOffset = ee.ImageCollection.fromImages([preComputedCloudScoreOffset, 
+                                                                 preComputedCloudScoreOffsetAK,
+                                                                 preComputedCloudScoreOffsetHI]).mosaic();
 
 var preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').filter(ee.Filter.eq('endYear',2019)).mosaic().divide(10000);
 var preComputedTDOMStatsAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/TDOM_stats').filter(ee.Filter.eq('sensor','Sentinel2')).mosaic().divide(10000);
 var preComputedTDOMStatsHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/TDOM').filter(ee.Filter.eq('sensor','Sentinel2')).mosaic().divide(10000);
 
+// mosaic all together
 var preComputedTDOMStats = ee.ImageCollection.fromImages([preComputedTDOMStats, 
                                               preComputedTDOMStatsAK,
-                                              preComputedTDOMStatsHI]).mosaic()
+                                              preComputedTDOMStatsHI]).mosaic();
 
 
 exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
 exports.preComputedTDOMStats = preComputedTDOMStats;
-exports.preComputedTDOMStatsAK = preComputedTDOMStatsAK;
-exports.preComputedTDOMStatsHI = preComputedTDOMStatsHI;
 
 exports.getPrecomputedCloudScoreOffsets = function(cloudScorePctl){
   return {'landsat': preComputedCloudScoreOffset.select(['Landsat_CloudScore_p'+cloudScorePctl.toString()]),
