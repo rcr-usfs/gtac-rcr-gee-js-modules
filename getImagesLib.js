@@ -81,14 +81,21 @@ var changeDirDict = {
 //By default, TDOM uses the nir and swir1 bands
 var preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore').mosaic();
 var preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').filter(ee.Filter.eq('endYear',2019)).mosaic().divide(10000);
+var preComputedTDOMStatsAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/TDOM_stats').filter(ee.Filter.eq('sensor','Sentinel2')).mosaic(); //.divide(10000);
+var preComputedTDOMStatsHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/TDOM_stats').filter(ee.Filter.eq('sensor','Sentinel2')).mosaic(); //.divide(10000);
+
+
 exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
 exports.preComputedTDOMStats = preComputedTDOMStats;
+exports.preComputedTDOMStatsAK = preComputedTDOMStatsAK;
+exports.preComputedTDOMStatsHI = preComputedTDOMStatsHI;
 
 exports.getPrecomputedCloudScoreOffsets = function(cloudScorePctl){
   return {'landsat': preComputedCloudScoreOffset.select(['Landsat_CloudScore_p'+cloudScorePctl.toString()]),
           'sentinel2':preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p'+cloudScorePctl.toString()])
           };
 };
+
 exports.getPrecomputedTDOMStats = function(cloudScorePctl){
   return {'landsat': {
                       'mean':preComputedTDOMStats.select(['Landsat_nir_mean','Landsat_swir1_mean']),
@@ -101,6 +108,32 @@ exports.getPrecomputedTDOMStats = function(cloudScorePctl){
           };
 };
 
+exports.getPrecomputedTDOMStatsAK = function(cloudScorePctl){
+  
+  return {'landsat': {
+                      'mean':preComputedTDOMStatsAK.select(['Landsat_nir_mean','Landsat_swir1_mean']),
+                      'stdDev':preComputedTDOMStatsAK.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev'])
+                      },
+          'sentinel2': {
+                      'mean':preComputedTDOMStatsAK.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']),
+                      'stdDev':preComputedTDOMStatsAK.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev'])
+                      }
+          };
+};
+
+exports.getPrecomputedTDOMStatsHI = function(cloudScorePctl){
+  
+  return {// TDOM stats not calculated for landsat for HI
+          //'landsat': {
+          //            'mean':preComputedTDOMStatsHI.select(['Landsat_nir_mean','Landsat_swir1_mean']),
+          //           'stdDev':preComputedTDOMStatsHI.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev'])
+          //            },
+          'sentinel2': {
+                      'mean':preComputedTDOMStatsHI.select(['Sentinel2_nir_mean','Sentinel2_swir1_mean']),
+                      'stdDev':preComputedTDOMStatsHI.select(['Sentinel2_nir_stdDev','Sentinel2_swir1_stdDev'])
+                      }
+          };
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
