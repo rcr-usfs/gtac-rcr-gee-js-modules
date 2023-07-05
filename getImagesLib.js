@@ -76,13 +76,14 @@ var changeDirDict = {
 //Precomputed cloudscore offsets and TDOM stats
 //These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
 //and are appropriate to use for any time period within the growing season
+// These have been calculated separately for AK and HI 
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
 var preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore').mosaic();
 var preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').filter(ee.Filter.eq('endYear',2019)).mosaic().divide(10000);
 var preComputedTDOMStatsAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/TDOM_stats').filter(ee.Filter.eq('sensor','Sentinel2')).mosaic(); //.divide(10000);
-var preComputedTDOMStatsHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/TDOM_stats').filter(ee.Filter.eq('sensor','Sentinel2')).mosaic(); //.divide(10000);
+var preComputedTDOMStatsHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/TDOM').filter(ee.Filter.eq('sensor','Sentinel2')).mosaic(); //.divide(10000);
 
 
 exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
