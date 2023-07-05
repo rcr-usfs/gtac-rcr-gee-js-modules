@@ -86,6 +86,10 @@ var preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/C
 var preComputedTDOMStatsAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/TDOM_stats').filter(ee.Filter.eq('sensor','Sentinel2')).mosaic().divide(10000);
 var preComputedTDOMStatsHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/TDOM').filter(ee.Filter.eq('sensor','Sentinel2')).mosaic().divide(10000);
 
+var preComputedTDOMStats = ee.ImageCollection.fromImages([preComputedTDOMStats, 
+                                              preComputedTDOMStatsAK,
+                                              preComputedTDOMStatsHI]).mosaic()
+
 
 exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
 exports.preComputedTDOMStats = preComputedTDOMStats;
