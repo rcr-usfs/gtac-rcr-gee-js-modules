@@ -81,22 +81,22 @@ var changeDirDict = {
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
 var preComputedCloudScoreOffset = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore').mosaic();
-var preComputedCloudScoreOffsetAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/cloudScore_stats').mosaic();
-var preComputedCloudScoreOffsetHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/cloudScore').mosaic();
+//var preComputedCloudScoreOffsetAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/cloudScore_stats').mosaic();
+//var preComputedCloudScoreOffsetHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/cloudScore').mosaic();
 
 // mosaic all together
-var preComputedCloudScoreOffset = ee.ImageCollection.fromImages([preComputedCloudScoreOffset, 
-                                                                 preComputedCloudScoreOffsetAK,
-                                                                 preComputedCloudScoreOffsetHI]).mosaic();
+//var preComputedCloudScoreOffset = ee.ImageCollection.fromImages([preComputedCloudScoreOffset, 
+//                                                                 preComputedCloudScoreOffsetAK,
+//                                                                 preComputedCloudScoreOffsetHI]).mosaic();
 
 var preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').mosaic().divide(10000);
-var preComputedTDOMStatsAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/TDOM_stats').mosaic().divide(10000);
-var preComputedTDOMStatsHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/TDOM').mosaic().divide(10000);
+//var preComputedTDOMStatsAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/TDOM_stats').mosaic().divide(10000);
+//var preComputedTDOMStatsHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/TDOM').mosaic().divide(10000);
 
 // mosaic all together
-var preComputedTDOMStats = ee.ImageCollection.fromImages([preComputedTDOMStats, 
-                                              preComputedTDOMStatsAK,
-                                              preComputedTDOMStatsHI]).mosaic();
+//var preComputedTDOMStats = ee.ImageCollection.fromImages([preComputedTDOMStats, 
+//                                              preComputedTDOMStatsAK,
+//                                              preComputedTDOMStatsHI]).mosaic();
 
 
 exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
