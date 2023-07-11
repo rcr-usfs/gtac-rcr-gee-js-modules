@@ -2997,7 +2997,7 @@ function getProcessedSentinel2Scenes(){
     'applyShadowShift':false,
     'applyTDOM':true,
     'cloudScoreThresh':20,
-    'performCloudScoreOffset':true,
+    'performCloudScoreOffset':false,
     'cloudScorePctl':10,
     'cloudHeights':ee.List.sequence(500,10000,500),
     'zScoreThresh': -1,
