@@ -94,12 +94,13 @@ var preComputedTDOMStatsAK = ee.ImageCollection('projects/lcms-tcc-shared/assets
 var preComputedTDOMStatsHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/TDOM').filter(ee.Filter.eq('sensor', 'Sentinel2')).mosaic().divide(10000);
 
 // mosaic all together
-var preComputedTDOMStats = ee.ImageCollection.fromImages([preComputedTDOMStats, 
+var preComputedTDOMStats_all = ee.ImageCollection.fromImages([preComputedTDOMStats, 
                                               preComputedTDOMStatsAK,
                                               preComputedTDOMStatsHI]).mosaic();
 
 exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
-exports.preComputedTDOMStats = preComputedTDOMStats;
+exports.preComputedTDOMStats = preComputedTDOMStats_all;
+
 
 exports.getPrecomputedCloudScoreOffsets = function(cloudScorePctl){
   return {'landsat': preComputedCloudScoreOffset.select(['Landsat_CloudScore_p'+cloudScorePctl.toString()]),
