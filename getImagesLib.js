@@ -89,17 +89,17 @@ var preComputedCloudScoreOffset = ee.ImageCollection.fromImages([preComputedClou
                                                                 preComputedCloudScoreOffsetAK,
                                                                 preComputedCloudScoreOffsetHI]).mosaic();
 
-var preComputedTDOMStats = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').mosaic().divide(10000);
+var preComputedTDOMStatsCONUS = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM').mosaic().divide(10000);
 var preComputedTDOMStatsAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/TDOM_stats').filter(ee.Filter.eq('sensor', 'Sentinel2')).mosaic().divide(10000);
 var preComputedTDOMStatsHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/TDOM').filter(ee.Filter.eq('sensor', 'Sentinel2')).mosaic().divide(10000);
 
 // mosaic all together
-var preComputedTDOMStats_all = ee.ImageCollection.fromImages([preComputedTDOMStats, 
+var preComputedTDOMStats = ee.ImageCollection.fromImages([preComputedTDOMStatsCONUS, 
                                               preComputedTDOMStatsAK,
                                               preComputedTDOMStatsHI]).mosaic();
 
 exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
-exports.preComputedTDOMStats = preComputedTDOMStats_all;
+exports.preComputedTDOMStats = preComputedTDOMStatsCONUS;
 
 
 exports.getPrecomputedCloudScoreOffsets = function(cloudScorePctl){
