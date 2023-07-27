@@ -96,7 +96,7 @@ var preComputedTDOMStatsHI = ee.ImageCollection('projects/lcms-tcc-shared/assets
 // mosaic all together
 var preComputedTDOMStats = ee.ImageCollection.fromImages([preComputedTDOMStatsCONUS, 
                                               preComputedTDOMStatsAK,
-                                              preComputedTDOMStatsHI]).mosaic();
+                                              preComputedTDOMStatsHI]);
 
 exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
 exports.preComputedTDOMStats = preComputedTDOMStats;
