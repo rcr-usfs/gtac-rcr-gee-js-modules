@@ -99,7 +99,7 @@ var preComputedTDOMStats = ee.ImageCollection.fromImages([preComputedTDOMStatsCO
                                               preComputedTDOMStatsHI]).mosaic();
 
 exports.preComputedCloudScoreOffset = preComputedCloudScoreOffset;
-exports.preComputedTDOMStats = preComputedTDOMStatsCONUS;
+exports.preComputedTDOMStats = preComputedTDOMStats;
 
 
 exports.getPrecomputedCloudScoreOffsets = function(cloudScorePctl){
