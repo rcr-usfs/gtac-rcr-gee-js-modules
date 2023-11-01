@@ -114,6 +114,13 @@ args.applyCloudScorePlusSentinel2 = false;
 //(generally somewhere around 40-60 works well)
 args.cloudProbThresh = 40;
 
+// If applyCloudScorePlus = True, choose a threshold
+// Adjustable threshold for converting CS+ QA to a binary mask.
+// Higher thresholds will mask out more clouds (e.g. partial occlusions like thin clouds, haze &
+// cirrus shadows). Lower thresholds will mask out fewer clouds.
+args.cloudScorePlusThresh = 0.6;
+
+
 //Fmask switches- only for Landsat
 //Generally we do use these
 args.applyFmaskCloudMask = true;
