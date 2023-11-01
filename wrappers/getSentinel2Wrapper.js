@@ -18,16 +18,16 @@ args.studyArea = getImagesLib.testAreas.CA;
 // to June 1 of that year.Otherwise, all system:time_starts will default to June 1 of the given year
 // startJulian: Starting Julian date 
 // endJulian: Ending Julian date
-args.startJulian = 190;
-args.endJulian = 250; 
+args.startJulian = 152;
+args.endJulian = 273; 
 
 // Specify start and end years for all analyses
 // More than a 3 year span should be provided for time series methods to work 
 // well. If using Fmask as the cloud/cloud shadow masking method, or providing
 // pre-computed stats for cloudScore and TDOM, this does not 
 // matter
-args.startYear = 2018;
-args.endYear = 2022;
+args.startYear = 2020;
+args.endYear = 2023;
 
 // Specify an annual buffer to include imagery from the same season 
 // timeframe from the prior and following year. timeBuffer = 1 will result 
@@ -86,6 +86,12 @@ args.applyTDOM = true;
 // clouds for Sentinel 2
 // This method works really well and should be used instead of cloudScore (applyCloudScore)
 args.applyCloudProbability = true;
+
+// Whether to use the pre-computed cloudScore+ to mask
+// clouds and cloud shadows for Sentinel 2
+// This method works really well and should be used instead of all other methods once it finishes
+// running for the S2 archive (~ spring 2024????)
+args.applyCloudScorePlus = false;
 
 //If cloudProbability is chosen, choose a threshold 
 //(generally somewhere around 40-60 works well)
