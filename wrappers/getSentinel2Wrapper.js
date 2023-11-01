@@ -97,6 +97,12 @@ args.applyCloudScorePlus = false;
 //(generally somewhere around 40-60 works well)
 args.cloudProbThresh = 40;
 
+// If applyCloudScorePlus = True, choose a threshold
+// Adjustable threshold for converting CS+ QA to a binary mask.
+// Higher thresholds will mask out more clouds (e.g. partial occlusions like thin clouds, haze &
+// cirrus shadows). Lower thresholds will mask out fewer clouds.
+args.cloudScorePlusThresh = 0.6;
+
 // If applyCloudScore is set to true
 // cloudScoreThresh: lower number masks more clouds.  Between 10 and 30 generally 
 // works best
