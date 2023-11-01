@@ -3447,6 +3447,7 @@ function getLandsatAndSentinel2HybridWrapper(){
   var args = prepArgumentsObject(arguments,defaultArgs);
   
   args.applyCloudScorePlus=args.applyCloudScorePlusSentinel2;
+  
   var merged = getProcessedLandsatAndSentinel2Scenes(args);
   print('Merged',merged)
   args.ls = merged;
