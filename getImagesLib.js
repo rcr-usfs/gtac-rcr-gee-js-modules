@@ -3075,7 +3075,7 @@ function getProcessedSentinel2Scenes(){
   
   if(args.applyCloudScorePlus){
     print('Applying cloudScore+')
-    s2s = s2s.map(function(img){return img.updateMask(img.select(['cloudScorePlus']).gte(cloudScorePlusThresh))})
+    s2s = s2s.map(function(img){return img.updateMask(img.select(['cloudScorePlus']).gte(args.cloudScorePlusThresh))})
   }
   if(args.applyShadowShift){
     print('Applying shadow shift');
