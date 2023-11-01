@@ -752,7 +752,8 @@ function getS2(){
     'resampleMethod':'aggregate',
     'toaOrSR':'TOA',
     'convertToDailyMosaics':true,
-    'addCloudProbability':true //LSC
+    'addCloudProbability':true, //LSC
+    'addCloudScorePlus' : false
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
@@ -806,6 +807,24 @@ function getS2(){
     
   }
   
+  if(args.addCloudScorePlus){
+    print('Joining pre-computed cloudScore+ from: GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED');
+    var cloudScorePlus = ee.ImageCollection("GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED")
+                    .filterDate(args.startDate, args.endDate.advance(1,'day'))
+                    .filter(ee.Filter.calendarRange(args.startJulian, args.endJulian))
+                    .filterBounds(args.studyArea)
+                    .select(['cs'],['cloudScorePlus']);
+
+    var cloudScorePlusIds = ee.List(ee.Dictionary(cloudScorePlus.aggregate_histogram('system:index')).keys());
+
+    var s2sIds = ee.List(ee.Dictionary(s2s.aggregate_histogram('system:index')).keys());
+    var missing = s2sIds.removeAll(cloudScorePlus);
+    print('Missing cloud probability ids:', missing);
+    print('N s2 images before joining with cloudScore+:', s2s.size());
+    s2s = joinCollections(s2s, cloudScorePlus, false,'system:index');
+   
+    print('N s2 images after joining with cloud prob:', s2s.size());
+  }
   
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
     print('Setting resample method to ',args.resampleMethod);
