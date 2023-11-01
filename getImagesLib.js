@@ -3247,7 +3247,9 @@ function getProcessedLandsatAndSentinel2Scenes(){
           'preComputedSentinel2TDOMIRMean':null,
           'preComputedSentinel2TDOMIRStdDev':null,
           'cloudProbThresh': 40,
-          'landsatCollectionVersion' : 'C2'
+          'landsatCollectionVersion' : 'C2',
+          'applyCloudScorePlus' : false,
+          'cloudScorePlusThresh' : 0.6
         };
         
     var args = prepArgumentsObject(arguments,defaultArgs);
