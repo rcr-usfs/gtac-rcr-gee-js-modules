@@ -818,7 +818,7 @@ function getS2(){
     var cloudScorePlusIds = ee.List(ee.Dictionary(cloudScorePlus.aggregate_histogram('system:index')).keys());
 
     var s2sIds = ee.List(ee.Dictionary(s2s.aggregate_histogram('system:index')).keys());
-    var missing = s2sIds.removeAll(cloudScorePlus);
+    var missing = s2sIds.removeAll(cloudScorePlusIds);
     print('Missing cloud probability ids:', missing);
     print('N s2 images before joining with cloudScore+:', s2s.size());
     s2s = joinCollections(s2s, cloudScorePlus, false,'system:index');
