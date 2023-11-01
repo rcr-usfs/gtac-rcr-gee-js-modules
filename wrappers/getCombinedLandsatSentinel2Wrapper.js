@@ -103,6 +103,13 @@ args.cloudHeights = ee.List.sequence(500,10000,500);
 //This method works really well
 args.applyCloudProbability = true;
 
+// Whether to use the pre-computed cloudScore+ to mask
+// clouds and cloud shadows for Sentinel 2
+// This method works really well and should be used instead of all other methods once it finishes
+//running for the S2 archive (~ early 2024????)
+args.applyCloudScorePlusSentinel2 = false;
+
+
 //If cloudProbability is chosen, choose a threshold 
 //(generally somewhere around 40-60 works well)
 args.cloudProbThresh = 40;
