@@ -823,7 +823,7 @@ function getS2(){
     print('N s2 images before joining with cloudScore+:', s2s.size());
     s2s = joinCollections(s2s, cloudScorePlus, false,'system:index');
    
-    print('N s2 images after joining with cloud prob:', s2s.size());
+    print('N s2 images after joining with cloudScore+:', s2s.size());
   }
   
   if(['bilinear','bicubic'].indexOf(args.resampleMethod) > -1){
