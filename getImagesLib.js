@@ -3141,7 +3141,9 @@ function getSentinel2Wrapper(){
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
     'preComputedTDOMIRStdDev':null,
-    'cloudProbThresh': 40
+    'cloudProbThresh': 40,
+    'applyCloudScorePlus' : false,
+    'cloudScorePlusThresh' : 0.6
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
