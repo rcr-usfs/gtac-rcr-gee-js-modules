@@ -3072,6 +3072,11 @@ function getProcessedSentinel2Scenes(){
     print('Applying cloud probability');
     s2s = s2s.map(function(img){return img.updateMask(img.select(['cloud_probability']).lte(args.cloudProbThresh))})
   }
+  
+  if(args.applyCloudScorePlus){
+    print('Applying cloudScore+')
+    s2s = s2s.map(function(img){return img.updateMask(img.select(['cloudScorePlus']).gte(cloudScorePlusThresh))})
+  }
   if(args.applyShadowShift){
     print('Applying shadow shift');
     s2s = s2s.map(function(img){return projectShadowsWrapper(img,cloudScoreThresh,shadowSumThresh,contractPixels,dilatePixels,cloudHeights)});
