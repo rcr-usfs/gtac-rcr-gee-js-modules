@@ -3030,13 +3030,16 @@ function getProcessedSentinel2Scenes(){
     'preComputedCloudScoreOffset':null,
     'preComputedTDOMIRMean':null,
     'preComputedTDOMIRStdDev':null,
-    'cloudProbThresh': 40
+    'cloudProbThresh': 40,
+    'applyCloudScorePlus': false,
+    'cloudScorePlusThresh' : 0.6
     };
   
   var args = prepArgumentsObject(arguments,defaultArgs);
   args.toaOrSR =  args.toaOrSR.toUpperCase();
   args.origin = 'Sentinel2';
   args.addCloudProbability = args.applyCloudProbability; //LSC
+  args.addCloudScorePlus = args.applyCloudScorePlus;
   print(args)
   
   // Prepare dates
