@@ -3439,12 +3439,14 @@ function getLandsatAndSentinel2HybridWrapper(){
           'preComputedSentinel2TDOMIRMean':null,
           'preComputedSentinel2TDOMIRStdDev':null,
           'cloudProbThresh': 40,
-          'landsatCollectionVersion':'C2'
+          'landsatCollectionVersion':'C2',
+          'applyCloudScorePlusSentinel2' : false,
+          'cloudScorePlusThresh' : 0.6
         }
         
   var args = prepArgumentsObject(arguments,defaultArgs);
   
-    
+  args.applyCloudScorePlus=args.applyCloudScorePlusSentinel2;
   var merged = getProcessedLandsatAndSentinel2Scenes(args);
   print('Merged',merged)
   args.ls = merged;
