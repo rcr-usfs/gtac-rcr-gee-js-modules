@@ -866,7 +866,12 @@ function annualizeCCDC(
   //   nYears = dates.size().getInfo()
   //   interpolated = linearInterp(dates, 365*nYears, -32768)
   //   return interpolated
-  function getTimeImageCollectionFromComposites(compositeCollection, startYear = null, endYear = null, interpolate = true, useNewInterpMethod = false) {
+  function getTimeImageCollectionFromComposites(compositeCollection, startYear, endYear, interpolate, useNewInterpMethod) {
+    startYear = startYear || null;
+    endYear = endYear || null;
+    interpolate = interpolate || true;
+    useNewInterpMethod = useNewInterpMethod || false;
+    
     compositeCollection = compositeCollection.sort('system:time_start');
     if (startYear == null) {
       startYear = compositeCollection.first().date().get('year');
