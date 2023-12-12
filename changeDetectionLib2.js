@@ -736,8 +736,9 @@ function annualizeCCDC(
     yearStartMonth = yearStartMonth || 9;
     yearStartDay = yearStartDay || 1;
     annualizeWithCompositeDates = annualizeWithCompositeDates || false;
-    compositeCollection = null,
-    interpolateCompositeDates = true
+    compositeCollection = compositeCollection || null;
+    interpolateCompositeDates = interpolateCompositeDates || true;
+    
     // Create image collection of images with the proper time stamp as well as a 'year' band with the year fraction.
     var timeImgs;
     if (annualizeWithCompositeDates && compositeCollection != null) {
