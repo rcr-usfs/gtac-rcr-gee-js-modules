@@ -223,7 +223,9 @@ function simpleRawLTToVertices(rawLT) {
   // Simplified method to convert LANDTRENDR stack to an annual collection of
 // Duration, fitted, magnitude, slope, and diff
 // Improved handling of start year delay found in the older method
-function simpleLTFit(ltStack, startYear, endYear, indexName = 'bn', arrayMode = false, maxSegs = 6, multBy = 1) {
+function simpleLTFit(ltStack, startYear, endYear, indexName, arrayMode, maxSegs = 6, multBy = 1) {
+  indexName = indexName || 'bn';
+  arrayMode = arrayMode || true;
     indexName = ee.String(indexName);
   
     // Set up output band names
