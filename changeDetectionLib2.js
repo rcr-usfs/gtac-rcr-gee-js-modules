@@ -461,7 +461,10 @@ function convertToLossGain(
     return img.addBands(time);
   }
   
-  function linearInterp(imgcol, frame = 32, nodata = 0) {
+  function linearInterp(imgcol, frame, nodata) {
+    frame = frame || 32;
+    nodata = nodata || 0;
+    
     var bns = ee.Image(imgcol.first()).bandNames();
   
     imgcol = imgcol.map(addMillisecondsTimeBand);
