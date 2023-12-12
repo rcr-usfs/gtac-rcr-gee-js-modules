@@ -983,4 +983,6 @@ function ccdcChangeDetection(ccdcImg, bandName) {
       }
     };
   }
+/////////////////////////////////////////////
+exports.batchSimpleLTFit = batchSimpleLTFit;
   
