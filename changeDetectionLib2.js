@@ -328,16 +328,26 @@ function simpleLTFit(ltStack, startYear, endYear, indexName, arrayMode, maxSegs,
 // Have to apply LandTrendr changeDirection (loss in veg/moisture goes up) to both Verdet and Landtrendr before applying convertToLossGain()
 function convertToLossGain(
     ltStack,
-    format = 'rawLandtrendr',
-    lossMagThresh = -0.15,
-    lossSlopeThresh = -0.1,
-    gainMagThresh = 0.1,
-    gainSlopeThresh = 0.1,
-    slowLossDurationThresh = 3,
-    chooseWhichLoss = 'largest',
-    chooseWhichGain = 'largest',
-    howManyToPull = 2
+    format,
+    lossMagThresh,
+    lossSlopeThresh,
+    gainMagThresh,
+    gainSlopeThresh,
+    slowLossDurationThresh,
+    chooseWhichLoss,
+    chooseWhichGain,
+    howManyToPull
   ) {
+    format = format || 'rawLandTrendr';
+    lossMagThresh = lossMagThresh || -0.15;
+    lossSlopeThresh = lossSlopeThresh || -0.1;
+    gainMagThresh = gainMagThresh || 0.1;
+    gainSlopeThresh = gainSlopeThresh || 0.1;
+    slowLossDurationThresh = slowLossDurationThresh || 3;
+    chooseWhichLoss = chooseWhichLoss || 'largest';
+    chooseWhichGain = chooseWhichGain || 'largest';
+    howManyToPull = howManyToPull || 2;
+    
     if (format == 'rawLandTrendr') {
       ltStack = simpleRawLTToVertices(ltStack);
     }
