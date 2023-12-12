@@ -175,10 +175,18 @@ function simpleRawLTToVertices(rawLT) {
   
   // Function for running LT, thresholding the segments for both loss and gain, sort them, and convert them to an image stack
   // July 2019 LSC: replaced some parts of the workflow with functions in changeDetectionLib
-  function simpleLANDTRENDR(ts, startYear, endYear, indexName = 'NBR', run_params = null, lossMagThresh = -0.15, lossSlopeThresh = -0.1, gainMagThresh = 0.1, gainSlopeThresh = 0.1, slowLossDurationThresh = 3, chooseWhichLoss = 'largest', chooseWhichGain = 'largest', addToMap = true, howManyToPull = 2, multBy = 10000) {
-    if (run_params === null) {
-      run_params = default_lt_run_params;
-    }
+  function simpleLANDTRENDR(ts, startYear, endYear, indexName, run_params, lossMagThresh, lossSlopeThresh, 
+            gainMagThresh, gainSlopeThresh, slowLossDurationThresh = 3, 
+            chooseWhichLoss = 'largest', chooseWhichGain = 'largest', addToMap = true, howManyToPull = 2, multBy = 10000) {
+    indexName = indexName || 'NBR';
+    run_params = run_params || default_lt_run_params;
+    lossMagThresh = lossMagThresh || -0.15;
+    lossSlopeThresh = lossSlopeThresh || -0.1;
+    gainMagThresh = gainMagThresh || 0.1;
+    gainSlopeThresh = gainSlopeThresh || 0.1;
+    
+    
+    
     ts = ts.select(indexName);
     var lt = runLANDTRENDR(ts, indexName, run_params);
   
