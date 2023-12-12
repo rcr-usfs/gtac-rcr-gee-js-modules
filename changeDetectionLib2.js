@@ -727,11 +727,11 @@ function annualizeCCDC(
     startJulian,
     endJulian,
     tEndExtrapolationPeriod,
-    yearStartMonth = 9,
-    yearStartDay = 1,
-    annualizeWithCompositeDates = false,
-    compositeCollection = null,
-    interpolateCompositeDates = true
+    yearStartMonth,
+    yearStartDay,
+    annualizeWithCompositeDates,
+    compositeCollection,
+    interpolateCompositeDates
   ) {
     yearStartMonth = yearStartMonth || 9;
     yearStartDay = yearStartDay || 1;
