@@ -567,7 +567,7 @@ function convertToLossGain(
   }
   
   // Wrapper function to handle date interpolation for
-  function new_interp_date_collection(dateCollection, max_window = 20, dummyImage = null, extrapolate = true) {
+  function new_interp_date_collection(dateCollection, max_window, dummyImage, extrapolate) {
     max_window = max_window || 20;
     dummyImage = dummyImage || null;
     extrapolate = extrapolate || true;
