@@ -77,7 +77,8 @@ function simpleRawLTToVertices(rawLT) {
   }
   
   // Function to simplify LandTrendr output for exporting
-  function LTExportPrep(rawLT, multBy = 10000) {
+  function LTExportPrep(rawLT, multBy) {
+    multBy = multBy || 10000;
     rawLT = simpleRawLTToVertices(rawLT);
     rawLT = multLT(rawLT, multBy);
     return rawLT;
@@ -85,7 +86,7 @@ function simpleRawLTToVertices(rawLT) {
   
   // New function 11/23 to simplify running of LandTrendr
   // and prepping outputs for export
-  function runLANDTRENDR(ts, bandName, run_params = null) {
+  function runLANDTRENDR(ts, bandName, run_params) {
     // Get single band time series and set its direction so that a loss in veg/moisture is going up
     ts = ts.select([bandName]);
     try {
@@ -98,9 +99,8 @@ function simpleRawLTToVertices(rawLT) {
     });
   
     // Set up run params
-    if (run_params === null) {
-      run_params = default_lt_run_params;
-    }
+    run_params = run_params || default_lt_run_params;
+    
     run_params['timeSeries'] = ts;
   
     // Run LANDTRENDR
@@ -113,7 +113,9 @@ function simpleRawLTToVertices(rawLT) {
   }
   
   // Pulled from simpleLANDTRENDR below to take the lossGain dictionary and prep it for export
-  function LTLossGainExportPrep(lossGainDict, indexName = 'Bn', multBy = 10000) {
+  function LTLossGainExportPrep(lossGainDict, indexName, multBy) {
+    indexName = indexName || 'Bn';
+    multBy = multBy || 10000;
     var lossStack = lossGainDict['lossStack'];
     var gainStack = lossGainDict['gainStack'];
   
