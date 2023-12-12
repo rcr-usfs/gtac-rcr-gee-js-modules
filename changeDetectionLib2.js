@@ -138,7 +138,12 @@ function simpleRawLTToVertices(rawLT) {
   }
   
   // Pulled from simpleLANDTRENDR below to take prepped (must run LTLossGainExportPrep first) lossGain stack and view it
-  function addLossGainToMap(lossGainStack, startYear, endYear, lossMagMin = -8000, lossMagMax = -2000, gainMagMin = 1000, gainMagMax = 8000) {
+  function addLossGainToMap(lossGainStack, startYear, endYear, lossMagMin, lossMagMax, gainMagMin, gainMagMax) {
+    lossMagMin = lossMagMin || -8000;
+    lossMagMax = lossMagMax || -2000;
+    gainMagMin = gainMagMin || 1000;
+    gainMagMax = gainMagMax || 8000;
+    
     var bns = lossGainStack.bandNames().getInfo();
     var indexName = bns[0].split('_')[0];
     var howManyToPull = Array.from(new Set(bns.map(function (bn) {
