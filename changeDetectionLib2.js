@@ -517,12 +517,13 @@ function convertToLossGain(
   // Will return a linearly interpolated date value where they were missing
   // Where there are only values on one side, it will cast out the mean date of year offset
   // for all years prior to or after actual data being available
-  function new_interp_date(dateYr, dateCollection, max_window = 10, dummyImage = null, extrapolate = true) {
+  function new_interp_date(dateYr, dateCollection, max_window, dummyImage, extrapolate) {
+    max_window = max_window || 10;
+    dummyImage = dummyImage || dateCollection.first();
+    extrapolate = extrapolate || true;
+    
     var year = dateYr.date().get('year');
   
-    if (dummyImage === null) {
-      dummyImage = dateCollection.first();
-    }
   
     var window_years = ee.List.sequence(1, max_window);
   
