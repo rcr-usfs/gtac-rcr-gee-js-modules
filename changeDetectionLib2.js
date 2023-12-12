@@ -224,10 +224,11 @@ function simpleRawLTToVertices(rawLT) {
 // Duration, fitted, magnitude, slope, and diff
 // Improved handling of start year delay found in the older method
 function simpleLTFit(ltStack, startYear, endYear, indexName, arrayMode, maxSegs, multBy) {
-  indexName = indexName || 'bn';
-  arrayMode = arrayMode || true;
-  maxSegs = maxSegs || 6;
-  multBy = multBy || 1;
+    indexName = indexName || 'bn';
+    arrayMode = arrayMode || true;
+    maxSegs = maxSegs || 6;
+    multBy = multBy || 1;
+    
     indexName = ee.String(indexName);
   
     // Set up output band names
