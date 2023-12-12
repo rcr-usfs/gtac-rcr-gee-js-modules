@@ -986,4 +986,5 @@ function ccdcChangeDetection(ccdcImg, bandName) {
 /////////////////////////////////////////////
 exports.batchSimpleLTFit = batchSimpleLTFit;
 exports.convertToLossGain = convertToLossGain;
+exports.simpleLandT
   
