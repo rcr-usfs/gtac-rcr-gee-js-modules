@@ -24,6 +24,11 @@ var lossMagPalette = 'D00,F5DEB3'.split(',');
 var gainYearPalette = 'c5ee93,00a398'.split(',');
 var gainMagPalette = 'F5DEB3,006400'.split(',');
 var changeDurationPalette = 'BD1600,E2F400,0C2780'.split(',');
+exports.lossYearPalette = lossYearPalette;
+exports.lossMagPalette = lossMagPalette;
+exports.gainYearPalette = gainYearPalette;
+exports.gainMagPalette = gainMagPalette;
+exports.changeDurationPalette = changeDurationPalette;
 
 // Helper to multiply image
 function multBands(img, distDir, by) {
@@ -984,7 +989,26 @@ function ccdcChangeDetection(ccdcImg, bandName) {
     };
   }
 /////////////////////////////////////////////
+exports.simpleRawLTToVertices = simpleRawLTToVertices;
+exports.multLT = multLT;
+exports.LTExportPrep = LTExportPrep;
+exports.runLANDTRENDR = runLANDTRENDR;
+exports.LTLossGainExportPrep = LTLossGainExportPrep;
+exports.addLossGainToMap = addLossGainToMap;
+exports.simpleLANDTRENDR = simpleLANDTRENDR;
+exports.simpleLTFit = simpleLTFit;
 exports.batchSimpleLTFit = batchSimpleLTFit;
 exports.convertToLossGain = convertToLossGain;
-exports.simpleLandT
-  
+exports.linearInterp = linearInterp;
+exports.applyLinearInterp = applyLinearInterp;
+exports.simpleCCDCPrediction = simpleCCDCPrediction;
+exports.simpleCCDCPredictionWrapper = simpleCCDCPredictionWrapper;
+exports.getCCDCSegCoeffs = getCCDCSegCoeffs;
+exports.annualizeCCDC = annualizeCCDC;
+exports.getFitSlopeCCDC = getFitSlopeCCDC;
+exports.yearlySlope = yearlySlope;
+exports.simpleCCDCPredictionAnnualized = simpleCCDCPredictionAnnualized;
+exports.predictCCDC = predictCCDC;
+exports.getTimeImageCollection = getTimeImageCollection;
+exports.getTimeImageCollectionFromComposites = getTimeImageCollectionFromComposites;
+exports.ccdcChangeDetection = ccdcChangeDetection;
