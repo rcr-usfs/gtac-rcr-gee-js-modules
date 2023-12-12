@@ -839,12 +839,13 @@ function annualizeCCDC(
   // Function for getting a set of time images
   // This is generally used for methods such as CCDC
   // yearStartMonth and yearStartDay are the date that you want the CCDC "year" to start at. This is mostly important for Annualized CCDC.
-  function getTimeImageCollection(startYear, endYear, startJulian, endJulian, step = 0.1, yearStartMonth = 1, yearStartDay = 1) {
-    startJulian = 1;
-    endJulian = 365;
-    step = 0.1;
-    yearStartMonth = 1;
-    yearStartDay = 1
+  function getTimeImageCollection(startYear, endYear, startJulian, endJulian, step, yearStartMonth, yearStartDay) {
+    startJulian = startJulian || 1;
+    endJulian = endJulian || 365;
+    step = step || 0.1;
+    yearStartMonth = yearStartMonth || 1;
+    yearStartDay = yearStartDay || 1;
+    
     function getYrImage(n) {
       n = ee.Number(n);
       var img = ee.Image(n).float().rename(['year']);
