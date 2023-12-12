@@ -298,12 +298,14 @@ function simpleLTFit(ltStack, startYear, endYear, indexName, arrayMode, maxSegs,
   }
   
   // Wrapper function to iterate across multiple LT band/index values
-  function batchSimpleLTFit(ltStacks, startYear, endYear, indexNames = null, bandPropertyName = 'band', arrayMode = false, maxSegs = 6, multBy = 1) {
+  function batchSimpleLTFit(ltStacks, startYear, endYear, indexNames, bandPropertyName, arrayMode, maxSegs, multBy) {
     // Get band/index names if not provided
-    if (indexNames === null) {
-      indexNames = ltStacks.aggregate_histogram(bandPropertyName).keys().getInfo();
-    }
-  
+    indexNames = indexNames || ltStacks.aggregate_histogram(bandPropertyName).keys().getInfo();
+    bandPropertyName = bandPropertyName || 'band';
+    arrayMode = arrayMode || true;
+    maxSegs = maxSegs || 6;
+    multBy = multBy || 1;
+    
     // Iterate across each band/index and get the fitted, mag, slope, etc
     var lt_fit = null;
     indexNames.forEach(function (bn) {
