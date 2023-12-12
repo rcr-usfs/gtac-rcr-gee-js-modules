@@ -445,7 +445,8 @@ function convertToLossGain(
   // --------------------------------------------------------------------------
   // Adapted from: https://code.earthengine.google.com/?accept_repo=users/kongdd/public
   // To work with multi-band images
-  function replace_mask(img, newimg, nodata = 0) {
+  function replace_mask(img, newimg, nodata) {
+    nodata = nodata || 0;
     var mask = img.mask();
   
     img = img.unmask(nodata);
