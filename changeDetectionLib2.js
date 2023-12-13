@@ -1043,7 +1043,7 @@ var bandPropertyName = 'band';
 // Specify which bands to run across
 // Set to null to run all available bands
 // Available bands include: ['NBR', 'NDMI', 'NDSI', 'NDVI', 'blue', 'brightness', 'green', 'greenness', 'nir', 'red', 'swir1', 'swir2', 'tcAngleBG', 'wetness']
-var bandNames =['NBR'];
+// var bandNames =['NBR'];
 // ####################################################################################################
 // Bring in LCMS LandTrendr outputs (see other examples that include LCMS final data)
 var lt = ee.ImageCollection('projects/lcms-tcc-shared/assets/CONUS/Base-Learners/LandTrendr-Collection');
@@ -1052,6 +1052,6 @@ var maxSegs = lt.first().get('maxSegments').getInfo();
 print('Available bands/indices:',lt.aggregate_histogram(bandPropertyName).keys().getInfo());
 Map.addLayer(lt.filter(ee.Filter.eq('band','NBR')).mosaic())
 // Convert stacked outputs into collection of fitted, magnitude, slope, duration, etc values for each year
-var lt_fit = batchSimpleLTFit(lt,startYear,endYear,bandNames,bandPropertyName,true,maxSegs);
+var lt_fit = batchSimpleLTFit(lt,startYear,endYear,null,bandPropertyName,true,maxSegs);
 
 
