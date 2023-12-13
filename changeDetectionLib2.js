@@ -225,106 +225,124 @@ function simpleRawLTToVertices(rawLT) {
     return [multLT(lt, multBy).int16(), lossGainStack];
   }
   
-  // Simplified method to convert LANDTRENDR stack to an annual collection of
-// Duration, fitted, magnitude, slope, and diff
-// Improved handling of start year delay found in the older method
-function simpleLTFit(ltStack, startYear, endYear, indexName, arrayMode, maxSegs, multBy) {
-    indexName = indexName || 'bn';
-    arrayMode = arrayMode || true;
-    maxSegs = maxSegs || 6;
-    multBy = multBy || 1;
+ //////////////////////////////////////////////////////////////////////////
+//Simplified method to convert LANDTRENDR stack to annual collection of
+//Duration, fitted, magnitude, slope, and diff
+//Improved handling of start year delay found in older method
+function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs){
+  if(indexName === undefined || indexName === null){indexName = ''};
+  if(arrayMode === undefined || arrayMode === null){arrayMode = false};
+  if(maxSegs === undefined || maxSegs === null){maxSegs = 6};
+ 
+  // Separate years and fitted values of vertices
+  if(arrayMode){
+    var zeros =ee.Image(ee.Array([0]).repeat(0,maxSegs+1));
+    var yrBns = [];
+    var fitBns = [];
+    var emptyArray = [];                              
+    var iString;                           
+    for(var i=1;i<=maxSegs+1;i++){     
+      iString = i.toString();                         
+      yrBns.push('yrs_'+iString);    
+      fitBns.push('fit_'+iString);
+                           
+   }
+  
+    var yrs = ltStack.arraySlice(0,0,1).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([yrBns]).selfMask()
+    var fit = ltStack.arraySlice(0,1,2).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([fitBns]).updateMask(yrs.mask())
     
-    indexName = ee.String(indexName);
+  }else{
+    //Separate years and fitted values of vertices
+    var yrs = ltStack.select('yrs_.*').selfMask();
+    var fit = ltStack.select('fit_.*').updateMask(yrs.mask());
+  }
+  //Find the first and last vertex years
+  var isStartYear = yrs.reduce(ee.Reducer.firstNonNull());
+  var isEndYear = yrs.reduce(ee.Reducer.lastNonNull());
   
-    // Set up output band names
-    var outBns = [indexName.cat('_LT_dur'), indexName.cat('_LT_fitted'), indexName.cat('_LT_mag'), indexName.cat('_LT_slope'), indexName.cat('_LT_diff')];
+  var blankMask = yrs.gte(100000);
+  // Map.addLayer(isStartYear,{},'isStartYear');
+  // Map.addLayer(isEndYear,{},'isEndYear')
+  // Map.addLayer(yrs.reduce(ee.Reducer.firstNonNull()).eq(1986),{},'not start year');
+  // Map.addLayer(yrs,{},'yrs');
+  // Map.addLayer(fit,{},'fit')
   
-    // Separate years and fitted values of vertices
-    var yrs, fit;
-    if (arrayMode) {
-      ltStack = ltStack.select([0]);
-      var zeros = ee.Image(ee.Array([0]).repeat(0, maxSegs + 2));
-      var yrBns = ee.List.sequence(1, maxSegs + 1).map(function (i) { return 'yrs_' + i; });
-      var fitBns = ee.List.sequence(1, maxSegs + 1).map(function (i) { return 'fit_' + i; });
-      yrs = ltStack.arraySlice(0, 0, 1).arrayProject([1]).arrayCat(zeros, 0).arraySlice(0, 0, maxSegs + 1).arrayFlatten([yrBns]).selfMask();
-      fit = ltStack.arraySlice(0, 1, 2).arrayProject([1]).arrayCat(zeros, 0).arraySlice(0, 0, maxSegs + 1).arrayFlatten([fitBns]).updateMask(yrs.mask());
-    } else {
-      yrs = ltStack.select('yrs_.*').selfMask();
-      fit = ltStack.select('fit_.*').updateMask(yrs.mask());
+  //Iterate across each year to find the values for that year
+  var out = ee.ImageCollection(ee.List.sequence(startYear,endYear).map(function(yr){
+    yr = ee.Number(yr);
+    
+    //Find the segment the year belongs to
+    //Handle whether the year is the same as the first vertex year
+    var startYrMask =  blankMask;
+    startYrMask = startYrMask.where(isStartYear.eq(yr),yrs.lte(yr));
+    startYrMask = startYrMask.where(isStartYear.lt(yr),yrs.lt(yr));
+    
+    //Handle whether the year is the same as the last vertex year
+    var endYrMask =  blankMask;
+    endYrMask = endYrMask.where(isStartYear.eq(yr),yrs.gt(yr));
+    endYrMask = endYrMask.where(isStartYear.lt(yr),yrs.gte(yr));
+    
+    // var startYrMask =yrs.lt(yr);
+    // var endYrMask = yrs.gte(yr)
+    //Get fitted values for the vertices segment the year is within
+    var fitStart = fit.updateMask(startYrMask).reduce(ee.Reducer.lastNonNull());
+    var fitEnd = fit.updateMask(endYrMask).reduce(ee.Reducer.firstNonNull());
+    
+    //Get start and end year for the vertices segment the year is within
+    var yearStart = yrs.updateMask(startYrMask).reduce(ee.Reducer.lastNonNull());
+    var yearEnd = yrs.updateMask(endYrMask).reduce(ee.Reducer.firstNonNull());
+    
+    //Get the difference and duration of the segment
+    var segDiff = fitEnd.subtract(fitStart);
+    var segDur = yearEnd.subtract(yearStart);
+    
+    //Get the varius annual derivatives
+    var tDiff = ee.Image(yr).subtract(yearStart);
+    var segSlope = segDiff.divide(segDur);
+    var fitDiff = segSlope.multiply(tDiff);
+    var fitted = fitStart.add(fitDiff);
+    // Map.addLayer(startYrMask,{},'start'+yr.getInfo().toString(),false)
+    // Map.addLayer(endYrMask,{},'end'+yr.getInfo().toString(),false)
+    // Map.addLayer(fitStart,{},'fitStart'+yr.getInfo().toString(),false)
+    // Map.addLayer(fitEnd,{},'fitEnd'+yr.getInfo().toString(),false)
+    // Map.addLayer(yearStart,{},'yearStart'+yr.getInfo().toString(),false)
+    // Map.addLayer(yearEnd,{},'yearEnd'+yr.getInfo().toString(),false)
+    // Map.addLayer(segDur,{},'segDur'+yr.getInfo().toString(),false)
+    
+    return segDur 
+    .addBands(fitted)
+    .addBands(segDiff)
+    .addBands(segSlope)
+    .addBands(fitDiff)
+    .rename([indexName +'_LT_dur',indexName +'_LT_fitted',indexName +'_LT_mag',indexName +'_LT_slope',indexName +'_LT_diff'])
+    .set('system:time_start',ee.Date.fromYMD(yr,6,1).millis());
+  }));
+  return out;
+}
+
+// Wrapper function to iterate across multiple LT band/index values
+function batchSimpleLTFit(ltStacks,startYear,endYear,indexNames,bandPropertyName,arrayMode,maxSegs,multBy){
+  bandPropertyName = bandPropertyName || 'band';
+  multBy = multBy || 1;
+  maxSegs = maxSegs || 6;
+  arrayMode = arrayMode || true;
+  // Get band/index names if not provided
+  indexNames = indexNames || ltStacks.aggregate_histogram(bandPropertyName).keys().getInfo();
+  
+
+  // Iterate across each band/index and get the fitted, mag, slope, etc
+  var lt_fit;
+  indexNames.map(function(bn){
+    var ltt = ltStacks.filter(ee.Filter.eq('band',bn)).max();
+
+    if(lt_fit === undefined){
+      lt_fit = simpleLTFit(ltt,startYear,endYear, bn,arrayMode,maxSegs);
+    }else{
+      lt_fit = getImagesLib.joinCollections(lt_fit, simpleLTFit(ltt,startYear,endYear,bn,arrayMode,maxSegs), false);
     }
-  
-    fit = fit.multiply(multBy);
-    // Find the first and last vertex years
-    var isStartYear = yrs.reduce(ee.Reducer.firstNonNull());
-    var isEndYear = yrs.reduce(ee.Reducer.lastNonNull());
-    var blankMask = yrs.gte(100000);
-  
-    // Iterate across each year to find the values for that year
-    var out = ee.ImageCollection(ee.List.sequence(startYear, endYear).map(function (yr) {
-      yr = ee.Number(yr);
-  
-      // Find the segment the year belongs to
-      // Handle whether the year is the same as the first vertex year
-      var startYrMask = blankMask;
-      startYrMask = startYrMask.where(isStartYear.eq(yr), yrs.lte(yr));
-      startYrMask = startYrMask.where(isStartYear.lt(yr), yrs.lt(yr));
-  
-      // Handle whether the year is the same as the last vertex year
-      var endYrMask = blankMask;
-      endYrMask = endYrMask.where(isStartYear.eq(yr), yrs.gt(yr));
-      endYrMask = endYrMask.where(isStartYear.lt(yr), yrs.gte(yr));
-  
-      // Get fitted values for the vertices segment the year is within
-      var fitStart = fit.updateMask(startYrMask).reduce(ee.Reducer.lastNonNull());
-      var fitEnd = fit.updateMask(endYrMask).reduce(ee.Reducer.firstNonNull());
-  
-      // Get start and end year for the vertices segment the year is within
-      var yearStart = yrs.updateMask(startYrMask).reduce(ee.Reducer.lastNonNull());
-      var yearEnd = yrs.updateMask(endYrMask).reduce(ee.Reducer.firstNonNull());
-  
-      // Get the difference and duration of the segment
-      var segDiff = fitEnd.subtract(fitStart);
-      var segDur = yearEnd.subtract(yearStart);
-  
-      // Get various annual derivatives
-      var tDiff = yr.subtract(yearStart);
-      var segSlope = segDiff.divide(segDur);
-      var fitDiff = segSlope.multiply(tDiff);
-      var fitted = fitStart.add(fitDiff);
-  
-      var formatted = ee.Image.cat([segDur, fitted, segDiff, segSlope, fitDiff])
-        .rename(outBns)
-        .set('system:time_start', ee.Date.fromYMD(yr, 6, 1).millis());
-  
-      return formatted;
-    }));
-  
-    return out;
-  }
-  
-  // Wrapper function to iterate across multiple LT band/index values
-  function batchSimpleLTFit(ltStacks, startYear, endYear, indexNames, bandPropertyName, arrayMode, maxSegs, multBy) {
-    // Get band/index names if not provided
-    indexNames = indexNames || ltStacks.aggregate_histogram(bandPropertyName).keys().getInfo();
-    bandPropertyName = bandPropertyName || 'band';
-    arrayMode = arrayMode || true;
-    maxSegs = maxSegs || 6;
-    multBy = multBy || 1;
-    
-    // Iterate across each band/index and get the fitted, mag, slope, etc
-    var lt_fit = null;
-    indexNames.forEach(function (bn) {
-      var ltt = ltStacks.filter(ee.Filter.eq('band', bn)).max();
-  
-      if (lt_fit === null) {
-        lt_fit = simpleLTFit(ltt, startYear, endYear, bn, arrayMode, maxSegs, multBy);
-      } else {
-        lt_fit = joinCollections(lt_fit, simpleLTFit(ltt, startYear, endYear, bn, arrayMode, maxSegs, multBy), false);
-      }
-    });
-  
-    return lt_fit;
-  }
+  });
+  return lt_fit;
+}
   
 // Function to convert from raw Landtrendr Output OR Landtrendr/VerdetVertStack output to Loss & Gain Space
 // format = 'rawLandtrendr' (Landtrendr only) or 'vertStack' (Verdet or Landtrendr)
@@ -1012,3 +1030,28 @@ exports.predictCCDC = predictCCDC;
 exports.getTimeImageCollection = getTimeImageCollection;
 exports.getTimeImageCollectionFromComposites = getTimeImageCollectionFromComposites;
 exports.ccdcChangeDetection = ccdcChangeDetection;
+
+
+// Specify which years to look at 
+// Available years are 1984-2021
+var startYear = 1984;
+var endYear = 2021;
+
+// Which property stores which band/index LandTrendr was run across
+var bandPropertyName = 'band';
+
+// Specify which bands to run across
+// Set to null to run all available bands
+// Available bands include: ['NBR', 'NDMI', 'NDSI', 'NDVI', 'blue', 'brightness', 'green', 'greenness', 'nir', 'red', 'swir1', 'swir2', 'tcAngleBG', 'wetness']
+var bandNames =['NBR'];
+// ####################################################################################################
+// Bring in LCMS LandTrendr outputs (see other examples that include LCMS final data)
+var lt = ee.ImageCollection('projects/lcms-tcc-shared/assets/CONUS/Base-Learners/LandTrendr-Collection');
+var maxSegs = lt.first().get('maxSegments').getInfo();
+
+print('Available bands/indices:',lt.aggregate_histogram(bandPropertyName).keys().getInfo());
+Map.addLayer(lt.filter(ee.Filter.eq('band','NBR')).mosaic())
+// Convert stacked outputs into collection of fitted, magnitude, slope, duration, etc values for each year
+var lt_fit = batchSimpleLTFit(lt,startYear,endYear,bandNames,bandPropertyName,true,maxSegs);
+
+
