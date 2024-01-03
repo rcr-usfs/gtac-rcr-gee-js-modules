@@ -620,13 +620,13 @@ function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin,lossMagMax,
   });
 
   // Set up viz params
-  vizParamsLossYear = {'min':startYear,'max':endYear,'palette':lossYearPalette};
-  vizParamsLossMag = {'min':lossMagMin ,'max':lossMagMax,'palette':lossMagPalette};
+  var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':lossYearPalette};
+  var vizParamsLossMag = {'min':lossMagMin ,'max':lossMagMax,'palette':lossMagPalette};
 
-  vizParamsGainYear = {'min':startYear,'max':endYear,'palette':gainYearPalette};
-  vizParamsGainMag = {'min':gainMagMin,'max':gainMagMax,'palette':gainMagPalette};
+  var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':gainYearPalette};
+  var vizParamsGainMag = {'min':gainMagMin,'max':gainMagMax,'palette':gainMagPalette};
 
-  vizParamsDuration = {'min':1,'max':5,'palette':changeDurationPalette};
+  var vizParamsDuration = {'min':1,'max':5,'palette':changeDurationPalette};
 
   for(var i = 1;i<= howManyToPull;i++){
     
