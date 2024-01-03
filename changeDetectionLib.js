@@ -1003,7 +1003,7 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs,multB
     var fitBns = [];
     var emptyArray = [];                              
     var iString;                           
-    for(var i=1;i<=maxSegs+2;i++){     
+    for(var i=1;i<=maxSegs+1;i++){     
       iString = i.toString();                         
       yrBns.push('yrs_'+iString);    
       fitBns.push('fit_'+iString);
