@@ -55,9 +55,9 @@ print(lt_props);
 // Convert stacked outputs into collection of fitted, magnitude, slope, duration, etc values for each year
 // Divide by 10000 (0.0001) so values are back to original values (0-1 or -1-1)
 var lt_fit = cdl.batchSimpleLTFit(lt,startYear,endYear,bandNames,bandPropertyName,arrayMode,lt_props['maxSegments'],0.0001);
-
+// print(lt_fit.first().getInfo())
 // Vizualize image collection for charting (opacity set to 0 so it will chart but not be visible)
-Map.addLayer(lt_fit.select(['NBR_LT_fitted']),{'opacity':0},'LT Fit TS');
+Map.addLayer(lt_fit.select(['NBR_LT_fitted']),{},'LT Fit TS',false);
 
 // Visualize single year fitted landTrendr composite
 // Set to only run if no bandNames are specified
@@ -71,7 +71,7 @@ if(bandNames === null || bandNames === undefined){
             .filter(ee.Filter.calendarRange(endYear-1,endYear-1,'year')).first();
 
   // Visualize as you would a composite
-  Map.addLayer(lt_synth,gil.vizParamsFalse,'Synthetic Composite');
+  Map.addLayer(lt_synth,getImagesLib.vizParamsFalse,'Synthetic Composite');
 
 }
 // Iterate across each band to look for areas of change
@@ -89,7 +89,7 @@ bandNames.map(function(bandName){
   var chooseWhichLoss = 'largest';
   var chooseWhichGain = 'largest' ;
   var howManyToPull = 1;
-  lossGainDict = cdl.convertToLossGain(ltt, 
+  var lossGainDict = cdl.convertToLossGain(ltt, 
                                       'arrayLandTrendr',
                                       lossMagThresh,
                                       lossSlopeThresh,
@@ -99,9 +99,8 @@ bandNames.map(function(bandName){
                                       chooseWhichLoss, 
                                       chooseWhichGain, 
                                       howManyToPull);
-  lossGainStack = cdl.LTLossGainExportPrep(lossGainDict,indexName = bandName,multBy = 1);
+  var lossGainStack = cdl.LTLossGainExportPrep(lossGainDict,bandName, 1);
   cdl.addLossGainToMap(lossGainStack,startYear,endYear,lossMagThresh-0.7,lossMagThresh,gainMagThresh,gainMagThresh+0.7);
 });
-// Vizualize image collection for charting (opacity set to 0 so it will chart but not be visible)
-Map.addLayer(lt_fit,{},'LT Fit TS');
+
 Map.setOptions('HYBRID');
