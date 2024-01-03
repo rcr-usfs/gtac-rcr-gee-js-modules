@@ -16,6 +16,7 @@
 // Script to help with basic change detection
 // Intended to work within the geeViz package
 //Module imports
+var exports = {};
 var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
 var lossYearPalette =  'ffffe5,fff7bc,fee391,fec44f,fe9929,ec7014,cc4c02';
