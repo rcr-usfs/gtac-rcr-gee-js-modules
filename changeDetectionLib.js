@@ -103,7 +103,7 @@ function getExistingChangeData(changeThresh,showLayers){
     changeThresh = 50;
   }
   var startYear = 1985;
-  var endYear = 2016;
+  var endYear = 2022;
   
   
   
