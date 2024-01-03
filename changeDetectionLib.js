@@ -671,6 +671,7 @@ chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,multBy){
   }catch(err){
     distDir = -1;
   }
+  print(distDir)
   ltTS = simpleLTFit(lt,startYear,endYear,indexName,true,run_params['maxSegments']);
   joinedTS = getImagesLib.joinCollections(ts,ltTS.select(['.*_LT_fitted']));
 
