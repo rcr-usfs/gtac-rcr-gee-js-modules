@@ -589,16 +589,16 @@ function LTLossGainExportPrep(lossGainDict,indexName,multBy){
   if(Math.abs(multBy) === 10000){lossContinuous = lossContinuous.int16()}
   lossStack = lossThematic.addBands(lossContinuous);
 
-  gainThematic = gainStack.select(['.*_yr_.*']).int16().addBands(gainStack.select(['.*_dur_.*']).byte());
-  gainContinuous = gainStack.select(['.*_mag_.*','.*_slope_.*']).multiply(multBy);
+  var gainThematic = gainStack.select(['.*_yr_.*']).int16().addBands(gainStack.select(['.*_dur_.*']).byte());
+  var gainContinuous = gainStack.select(['.*_mag_.*','.*_slope_.*']).multiply(multBy);
   if(Math.abs(multBy) === 10000){gainContinuous = gainContinuous.int16()}
 
   gainStack = gainThematic.addBands(gainContinuous);
-  outStack = lossStack.addBands(gainStack);
+  var outStack = lossStack.addBands(gainStack);
   
   // Add indexName to bandnames
-  bns = outStack.bandNames();
-  outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
+  var bns = outStack.bandNames();
+  var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
   return outStack.rename(outBns);
 }
 /////////////////////////////////////////////////////
