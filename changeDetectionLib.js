@@ -2441,32 +2441,32 @@ if(bandNames === null || bandNames === undefined){
 }
 // Iterate across each band to look for areas of change
 if(bandNames === null || bandNames === undefined){bandNames=['NBR']}
-bandNames.map(function(bandName){
-  // Do basic change detection with raw LT output
-  var ltt = lt.filter(ee.Filter.eq(bandPropertyName,bandName)).mosaic();
-  ltt = multLT(ltt,getImagesLib.changeDirDict[bandName]*0.0001);
+// bandNames.map(function(bandName){
+//   // Do basic change detection with raw LT output
+//   var ltt = lt.filter(ee.Filter.eq(bandPropertyName,bandName)).mosaic();
+//   ltt = multLT(ltt,getImagesLib.changeDirDict[bandName]*0.0001);
  
-  var lossMagThresh = -0.15;
-  var lossSlopeThresh = -0.1;
-  var gainMagThresh = 0.1;
-  var gainSlopeThresh = 0.1;
-  var slowLossDurationThresh = 3;
-  var chooseWhichLoss = 'largest';
-  var chooseWhichGain = 'largest' ;
-  var howManyToPull = 1;
-  var lossGainDict = convertToLossGain(ltt, 
-                                      'arrayLandTrendr',
-                                      lossMagThresh,
-                                      lossSlopeThresh,
-                                      gainMagThresh,
-                                      gainSlopeThresh,
-                                      slowLossDurationThresh,
-                                      chooseWhichLoss, 
-                                      chooseWhichGain, 
-                                      howManyToPull);
-  var lossGainStack = LTLossGainExportPrep(lossGainDict,bandName, 1);
-  addLossGainToMap(lossGainStack,startYear,endYear,lossMagThresh-0.7,lossMagThresh,gainMagThresh,gainMagThresh+0.7);
-});
+//   var lossMagThresh = -0.15;
+//   var lossSlopeThresh = -0.1;
+//   var gainMagThresh = 0.1;
+//   var gainSlopeThresh = 0.1;
+//   var slowLossDurationThresh = 3;
+//   var chooseWhichLoss = 'largest';
+//   var chooseWhichGain = 'largest' ;
+//   var howManyToPull = 1;
+//   var lossGainDict = convertToLossGain(ltt, 
+//                                       'arrayLandTrendr',
+//                                       lossMagThresh,
+//                                       lossSlopeThresh,
+//                                       gainMagThresh,
+//                                       gainSlopeThresh,
+//                                       slowLossDurationThresh,
+//                                       chooseWhichLoss, 
+//                                       chooseWhichGain, 
+//                                       howManyToPull);
+//   var lossGainStack = LTLossGainExportPrep(lossGainDict,bandName, 1);
+//   addLossGainToMap(lossGainStack,startYear,endYear,lossMagThresh-0.7,lossMagThresh,gainMagThresh,gainMagThresh+0.7);
+// });
 // Vizualize image collection for charting (opacity set to 0 so it will chart but not be visible)
 Map.addLayer(lt_fit,{},'LT Fit TS');
 Map.setOptions('HYBRID');
