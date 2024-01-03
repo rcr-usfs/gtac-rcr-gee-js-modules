@@ -38,6 +38,7 @@ var geometry =
           [-65.82086613353232, 18.22796902391246],
           [-65.82086613353232, 18.305236266480062]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+
 ///Module imports
 var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
 
@@ -81,13 +82,13 @@ args.performCloudScoreOffset = false
 //These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
 //and are appropriate to use for any time period within the growing season
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
-var preComputedCloudScoreOffset = ee.ImageCollection('projects/USFS/TCC/cloudScore_stats').mosaic();
+var preComputedCloudScoreOffset = getImagesLib.preComputedCloudScoreOffset;
 args.preComputedLandsatCloudScoreOffset = preComputedCloudScoreOffset.select(['Landsat_CloudScore_p10']);
 args.preComputedSentinel2CloudScoreOffset = preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p10']);
 
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
-var preComputedTDOMStats = ee.ImageCollection('projects/lcms-292214/assets/R8/PR_USVI/Composites/TDOM_stats').mosaic().divide(10000);
+var preComputedTDOMStats = getImagesLib.preComputedCloudScoreOffset;
 print("TDOM Stats:", preComputedTDOMStats)
 args.preComputedLandsatTDOMIRMean = preComputedTDOMStats.select(['.*_Landsat_nir_mean','.*_Landsat_swir1_mean']);
 args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.select(['.*_Landsat_nir_stdDev','.*_Landsat_swir1_stdDev']);
