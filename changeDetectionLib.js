@@ -2454,7 +2454,7 @@ bandNames.map(function(bandName){
   var chooseWhichLoss = 'largest';
   var chooseWhichGain = 'largest' ;
   var howManyToPull = 1;
-  lossGainDict = convertToLossGain(ltt, 
+  var lossGainDict = convertToLossGain(ltt, 
                                       'arrayLandTrendr',
                                       lossMagThresh,
                                       lossSlopeThresh,
@@ -2464,7 +2464,7 @@ bandNames.map(function(bandName){
                                       chooseWhichLoss, 
                                       chooseWhichGain, 
                                       howManyToPull);
-  lossGainStack = LTLossGainExportPrep(lossGainDict,indexName = bandName,multBy = 1);
+  var lossGainStack = LTLossGainExportPrep(lossGainDict,bandName, 1);
   addLossGainToMap(lossGainStack,startYear,endYear,lossMagThresh-0.7,lossMagThresh,gainMagThresh,gainMagThresh+0.7);
 });
 // Vizualize image collection for charting (opacity set to 0 so it will chart but not be visible)
