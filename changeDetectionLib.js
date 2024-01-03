@@ -648,8 +648,14 @@ function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin,lossMagMax,
 function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,multBy){
   indexName = indexName || 'NBR';
   run_params = run_params || default_lt_run_params;
-  lossMagThresh = lossMagThresh || -0.15;lossSlopeThresh = lossSlopeThresh || -0.1;gainMagThresh = gainMagThresh || 0.1;
-  gainSlopeThresh = gainSlopeThresh || 0.1;slowLossDurationThresh = slowLossDurationThresh || 3;chooseWhichLoss = chooseWhichLoss || 'largest';chooseWhichGain = chooseWhichGain || 'largest';addToMap = addToMap || true;
+  lossMagThresh = lossMagThresh || -0.15;
+  lossSlopeThresh = lossSlopeThresh || -0.1;
+  gainMagThresh = gainMagThresh || 0.1;
+  gainSlopeThresh = gainSlopeThresh || 0.1;
+  slowLossDurationThresh = slowLossDurationThresh || 3;
+  chooseWhichLoss = chooseWhichLoss || 'largest';
+  chooseWhichGain = chooseWhichGain || 'largest';
+  addToMap = addToMap || true;
   howManyToPull = howManyToPull || 2;
   multBy= multBy || 10000;
   
