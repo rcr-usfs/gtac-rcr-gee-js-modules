@@ -2481,26 +2481,56 @@ var composites = allImages.processedComposites;
 var ltOut = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,
                                                 gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,
                                                 chooseWhichGain,addToMap,howManyToPull,10000);
-var ltOutStack = ltOut[1];
+var exportLTLossGain = true;
 
-//Export  stack
-var exportName = outputName + '_Stack_'+indexName;
-var exportPath = exportPathRoot + '/'+ exportName;
+if(exportLTLossGain){
+  var lossGainStack = ltOutputs[1]
+  // Export  stack
+  var exportName = outputName + '_LT_LossGain_Stack_'+indexName+'_'+startYear.toString()+'_'+endYear.toString()
+                  +'_'+startJulian.toString()+'_'+endJulian.toString()
+  var exportPath = exportPathRoot + '/'+ exportName
 
-//Set up proper resampling for each band
-//Be sure to change if the band names for the exported image change
-var pyrObj = {'_yr_':'mode','_dur_':'mode','_mag_':'mean','_slope_':'mean'};
-var possible = ['loss','gain'];
-var outObj = {};
-possible.map(function(p){
-  Object.keys(pyrObj).map(function(key){
-    ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
-      var kt = indexName + '_LT_'+p + key+i.toString();
-      outObj[kt]= pyrObj[key];
+  var lossGainStack = lossGainStack.set({'startYear':startYear,
+                                        'endYear':endYear,
+                                        'startJulian':startJulian,
+                                        'endJulian':endJulian,
+                                        'band':indexName})
+  lossGainStack =lossGainStack.set(run_params)
+  
+  //Set up proper resampling for each band
+  //Be sure to change if the band names for the exported image change
+  var pyrObj = {'_yr_':'mode','_dur_':'mode','_mag_':'mean','_slope_':'mean'};
+  var possible = ['loss','gain'];
+  var outObj = {};
+  possible.map(function(p){
+    Object.keys(pyrObj).map(function(key){
+      ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
+        var kt = indexName + '_LT_'+p + key+i.toString();
+        outObj[kt]= pyrObj[key];
+      });
     });
   });
-});
+  # print(outObj)
+  # Export output
+  gil.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform)
 
-//Export output
-getImagesLib.exportToAssetWrapper2(ltOutStack,exportName,exportPath,outObj,studyArea,scale,crs,transform);
+
+# Export raw LandTrendr array image
+if exportLTVertexArray:
+  rawLTForExport = ltOutputs[0]
+  # Map.addLayer(rawLTForExport,{},'Raw LT For Export {}'.format(indexName),False)
+  
+  rawLTForExport = rawLTForExport.set({'startYear':startYear,
+                                        'endYear':endYear,
+                                        'startJulian':startJulian,
+                                        'endJulian':endJulian,
+                                        'band':indexName})
+  rawLTForExport =rawLTForExport.set(run_params)
+  exportName = '{}_LT_Raw_{}_{}_{}_{}_{}'.format(outputName,indexName,startYear,endYear,startJulian,endJulian)
+  exportPath = exportPathRoot + '/'+ exportName
+  gil.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
+  # Reverse for modeling
+  # decompressedC = cdl.simpleLTFit(rawLTForExport,startYear,endYear,indexName,True,run_params['maxSegments'])
+  # Map.addLayer(decompressedC,{},'Decompressed LT Output {}'.format(indexName),False)
+
 Map.setOptions('HYBRID');
