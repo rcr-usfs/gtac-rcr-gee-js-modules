@@ -1009,17 +1009,17 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs,multB
       fitBns.push('fit_'+iString);
                            
    }
-    print(yrBns,fitBns)
+    print(yrBns,fitBns,maxSegs)
     var yrs = ltStack.arraySlice(0,0,1).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([yrBns]).selfMask()
     var fit = ltStack.arraySlice(0,1,2).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([fitBns]).updateMask(yrs.mask())
-    
+    Map.addLayer(yrs,{},indexName+' yrs')
   }else{
     //Separate years and fitted values of vertices
     var yrs = ltStack.select('yrs_.*').selfMask();
     var fit = ltStack.select('fit_.*').updateMask(yrs.mask());
   }
   fit = fit.multiply(multBy);
-  Map.addLayer(fit,{},indexName)
+  // Map.addLayer(fit,{},indexName)
   //Find the first and last vertex years
   var isStartYear = yrs.reduce(ee.Reducer.firstNonNull());
   var isEndYear = yrs.reduce(ee.Reducer.lastNonNull());
