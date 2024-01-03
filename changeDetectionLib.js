@@ -2342,6 +2342,7 @@ exports.getRawAndFittedLT = getRawAndFittedLT;
 exports.getLTStack = getLTStack;
 exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
+exports.multLT = multLT;
 exports.convertToLossGain = convertToLossGain;
 exports.simpleLTFit = simpleLTFit;
 exports.batchSimpleLTFit = batchSimpleLTFit;
