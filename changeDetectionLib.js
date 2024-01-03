@@ -580,12 +580,12 @@ function LTLossGainExportPrep(lossGainDict,indexName,multBy){
   indexName = indexName || 'Bn';
   multBy = multBy || 10000;
 
-  lossStack = lossGainDict['lossStack'];
-  gainStack = lossGainDict['gainStack'];
+  var lossStack = lossGainDict['lossStack'];
+  var gainStack = lossGainDict['gainStack'];
 
   // Convert to byte to save space
-  lossThematic = lossStack.select(['.*_yr_.*']).int16().addBands(lossStack.select(['.*_dur_.*']).byte());
-  lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']).multiply(multBy);
+  var lossThematic = lossStack.select(['.*_yr_.*']).int16().addBands(lossStack.select(['.*_dur_.*']).byte());
+  var lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']).multiply(multBy);
   if(Math.abs(multBy) === 10000){lossContinuous = lossContinuous.int16()}
   lossStack = lossThematic.addBands(lossContinuous);
 
