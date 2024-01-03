@@ -2530,9 +2530,9 @@ if(exportLTVertexArray){
   exportName = outputName+'_LT_Raw_'+indexName+'_'+startYear.toString()+'_'+endYear.toString()
                   +'_'+startJulian.toString()+'_'+endJulian.toString()
   exportPath = exportPathRoot + '/'+ exportName
-  gil.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
-  # Reverse for modeling
-  # decompressedC = cdl.simpleLTFit(rawLTForExport,startYear,endYear,indexName,True,run_params['maxSegments'])
-  # Map.addLayer(decompressedC,{},'Decompressed LT Output {}'.format(indexName),False)
+  getImagesLib.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
+  // Reverse for modeling
+  // decompressedC = cdl.simpleLTFit(rawLTForExport,startYear,endYear,indexName,True,run_params['maxSegments'])
+  // Map.addLayer(decompressedC,{},'Decompressed LT Output {}'.format(indexName),False)
 
 Map.setOptions('HYBRID');
