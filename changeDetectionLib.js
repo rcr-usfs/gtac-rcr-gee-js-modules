@@ -687,7 +687,7 @@ chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,multBy){
 
   // Add the change outputs to the map if specified to do so
   if(addToMap){
-    Map.addLayer(joinedTS,{'opacity':0},'Raw and Fitted Time Series',true);
+    Map.addLayer(joinedTS,{},'Raw and Fitted Time Series',true);
     addLossGainToMap(lossGainStack,startYear,endYear,(lossMagThresh-0.7)*multBy,
     lossMagThresh*multBy,gainMagThresh*multBy,(gainMagThresh+0.7)*multBy);
   
