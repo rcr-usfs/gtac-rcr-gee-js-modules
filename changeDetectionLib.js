@@ -663,7 +663,6 @@ chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,multBy){
   addToMap = addToMap || true;
   howManyToPull = howManyToPull || 2;
   multBy= multBy || 10000;
-  print('addtomap',addToMap);
   ts = ts.select(indexName);
   var lt = runLANDTRENDR(ts,indexName,run_params);
   var distDir;
@@ -1124,7 +1123,7 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
   if(chooseWhichLoss === undefined || chooseWhichLoss === null){chooseWhichLoss ='largest'}
   if(chooseWhichGain === undefined || chooseWhichGain === null){chooseWhichGain ='largest'}
   if(howManyToPull === undefined || howManyToPull === null){howManyToPull =2}
-  if(format === undefined || format === null){format = 'raw'}
+  if(format === undefined || format === null){format = 'rawLandTrendr'}
   
   if(format === 'rawLandTrendr'){
     ltStack = simpleRawLTToVertices(ltStack);
