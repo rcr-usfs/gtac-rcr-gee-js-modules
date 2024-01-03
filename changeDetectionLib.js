@@ -609,7 +609,7 @@ function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin,lossMagMax,
   lossMagMax = lossMagMax || -2000;
   gainMagMin = gainMagMin || 1000;
   gainMagMax = gainMagMax || 8000;
-
+  print('here')
   var bns = lossGainStack.bandNames().getInfo();
   var indexName = bns[0].split('_')[0];
   var howManyToPull = [];
