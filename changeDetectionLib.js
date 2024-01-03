@@ -628,9 +628,9 @@ function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin,lossMagMax,
   var vizParamsGainMag = {'min':gainMagMin,'max':gainMagMax,'palette':gainMagPalette};
 
   var vizParamsDuration = {'min':1,'max':5,'palette':changeDurationPalette};
-
+  print('here',howManyToPull)
   for(var i = 1;i<= howManyToPull;i++){
-    print('here')
+    
     var lossStackI = lossGainStack.select(['.*_loss_.*_'+i.toString()]);
     var gainStackI = lossGainStack.select(['.*_gain_.*_'+i.toString()]);
     var showLossYear = false;
@@ -2482,7 +2482,9 @@ var composites = allImages.processedComposites;
 
 
 //Run LT and get output stack
-var ltOutputs = simpleLANDTRENDR(composites,startYear,endYear,indexName,run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,10000);
+var ltOutputs = simpleLANDTRENDR(composites,startYear,endYear,indexName,run_params,
+                lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,
+                chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,10000);
 
 if(exportLTLossGain){
   var lossGainStack = ltOutputs[1]
