@@ -609,7 +609,7 @@ function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin,lossMagMax,
   lossMagMax = lossMagMax || -2000;
   gainMagMin = gainMagMin || 1000;
   gainMagMax = gainMagMax || 8000;
-  print('here')
+  
   var bns = lossGainStack.bandNames().getInfo();
   var indexName = bns[0].split('_')[0];
   var howManyToPull = [];
@@ -630,7 +630,7 @@ function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin,lossMagMax,
   var vizParamsDuration = {'min':1,'max':5,'palette':changeDurationPalette};
 
   for(var i = 1;i<= howManyToPull;i++){
-    
+    print('here')
     var lossStackI = lossGainStack.select(['.*_loss_.*_'+i.toString()]);
     var gainStackI = lossGainStack.select(['.*_gain_.*_'+i.toString()]);
     var showLossYear = false;
