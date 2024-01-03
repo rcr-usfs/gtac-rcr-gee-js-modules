@@ -90,15 +90,15 @@ bandNames.map(function(bandName){
   var chooseWhichGain = 'largest' ;
   var howManyToPull = 1;
   lossGainDict = cdl.convertToLossGain(ltt, 
-                                      format = 'arrayLandTrendr',
-                                      lossMagThresh = lossMagThresh,
-                                      lossSlopeThresh = lossSlopeThresh,
-                                      gainMagThresh = gainMagThresh,
-                                      gainSlopeThresh = gainSlopeThresh,
-                                      slowLossDurationThresh = slowLossDurationThresh,
-                                      chooseWhichLoss = chooseWhichLoss, 
-                                      chooseWhichGain = chooseWhichGain, 
-                                      howManyToPull = howManyToPull);
+                                      'arrayLandTrendr',
+                                      lossMagThresh,
+                                      lossSlopeThresh,
+                                      gainMagThresh,
+                                      gainSlopeThresh,
+                                      slowLossDurationThresh,
+                                      chooseWhichLoss, 
+                                      chooseWhichGain, 
+                                      howManyToPull);
   lossGainStack = cdl.LTLossGainExportPrep(lossGainDict,indexName = bandName,multBy = 1);
   cdl.addLossGainToMap(lossGainStack,startYear,endYear,lossMagThresh-0.7,lossMagThresh,gainMagThresh,gainMagThresh+0.7);
 });
