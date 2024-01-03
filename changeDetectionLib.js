@@ -2510,27 +2510,27 @@ if(exportLTLossGain){
       });
     });
   });
-  # print(outObj)
-  # Export output
-  gil.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform)
+  print(outObj)
+  // Export output
+  getImagesLib.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform)
 
 
-# Export raw LandTrendr array image
-if exportLTVertexArray:
-  rawLTForExport = ltOutputs[0]
-  # Map.addLayer(rawLTForExport,{},'Raw LT For Export {}'.format(indexName),False)
+// # Export raw LandTrendr array image
+// if exportLTVertexArray:
+//   rawLTForExport = ltOutputs[0]
+//   # Map.addLayer(rawLTForExport,{},'Raw LT For Export {}'.format(indexName),False)
   
-  rawLTForExport = rawLTForExport.set({'startYear':startYear,
-                                        'endYear':endYear,
-                                        'startJulian':startJulian,
-                                        'endJulian':endJulian,
-                                        'band':indexName})
-  rawLTForExport =rawLTForExport.set(run_params)
-  exportName = '{}_LT_Raw_{}_{}_{}_{}_{}'.format(outputName,indexName,startYear,endYear,startJulian,endJulian)
-  exportPath = exportPathRoot + '/'+ exportName
-  gil.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
-  # Reverse for modeling
-  # decompressedC = cdl.simpleLTFit(rawLTForExport,startYear,endYear,indexName,True,run_params['maxSegments'])
-  # Map.addLayer(decompressedC,{},'Decompressed LT Output {}'.format(indexName),False)
+//   rawLTForExport = rawLTForExport.set({'startYear':startYear,
+//                                         'endYear':endYear,
+//                                         'startJulian':startJulian,
+//                                         'endJulian':endJulian,
+//                                         'band':indexName})
+//   rawLTForExport =rawLTForExport.set(run_params)
+//   exportName = '{}_LT_Raw_{}_{}_{}_{}_{}'.format(outputName,indexName,startYear,endYear,startJulian,endJulian)
+//   exportPath = exportPathRoot + '/'+ exportName
+//   gil.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
+//   # Reverse for modeling
+//   # decompressedC = cdl.simpleLTFit(rawLTForExport,startYear,endYear,indexName,True,run_params['maxSegments'])
+//   # Map.addLayer(decompressedC,{},'Decompressed LT Output {}'.format(indexName),False)
 
 Map.setOptions('HYBRID');
