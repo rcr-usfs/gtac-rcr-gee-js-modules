@@ -554,6 +554,7 @@ function LTExportPrep(rawLT,multBy){
 function runLANDTRENDR(ts,bandName,run_params){
   // Get single band time series and set its direction so that a loss in veg/moisture is going up
   ts = ts.select([bandName]);
+  var distDir;
   try{
     distDir = getImagesLib.changeDirDict[bandName];
   }catch(err){
@@ -567,7 +568,7 @@ function runLANDTRENDR(ts,bandName,run_params){
   run_params['timeSeries'] = ts;
 
   // Run LANDTRENDR
-  rawLT = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
+  var rawLT = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
   
   // Get vertex-only fitted values and multiply the fitted values
   return  LTExportPrep(rawLT,distDir)
