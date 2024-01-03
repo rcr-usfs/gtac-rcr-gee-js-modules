@@ -61,7 +61,7 @@ Map.addLayer(lt_fit.select(['NBR_LT_fitted']),{'opacity':0},'LT Fit TS');
 
 // Visualize single year fitted landTrendr composite
 // Set to only run if no bandNames are specified
-if(bandNames == null || bandNames == undefined){
+if(bandNames === null || bandNames === undefined){
   // Get fitted bandnames
   var fitted_bns = lt_fit.select(['.*_fitted']).first().bandNames();
   var out_bns = fitted_bns.map(function(bn){return ee.String(bn).split('_').get(0)});
