@@ -1,31 +1,25 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #d63000 */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[-108.2078125, 39.95076370350941],
-          [-108.2078125, 39.40962921639621],
-          [-106.62578125, 39.40962921639621],
-          [-106.62578125, 39.95076370350941]]], null, false),
-    geometry2 = 
-    /* color: #98ff00 */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[-162.51322843770723, 26.449474853267848],
-          [-162.51322843770723, 18.16521561821099],
-          [-153.72416593770723, 18.16521561821099],
-          [-153.72416593770723, 26.449474853267848]]], null, false);
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
+/*
+  Copyright 2024 Ian Housman, Leah Campbell, Josh Heyer
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+     http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  Script to help with change detection
+  This is a close mirror of the Python script: 
+  https://github.com/gee-community/geeViz/blob/master/getImagesLib.py
+*/
 ////////////////////////////////////////////////////////////////////////////////
 //Module for getting Landsat, Sentinel 2 and MODIS images/composites
+var exports={};
 // Define visualization parameters
 var vizParamsFalse = {
   'min': 0.1, 
