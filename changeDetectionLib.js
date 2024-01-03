@@ -628,7 +628,6 @@ function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin,lossMagMax,
   var vizParamsGainMag = {'min':gainMagMin,'max':gainMagMax,'palette':gainMagPalette};
 
   var vizParamsDuration = {'min':1,'max':5,'palette':changeDurationPalette};
-  print('here',howManyToPull)
   howManyToPull.map(function(i){
     
     var lossStackI = lossGainStack.select(['.*_loss_.*_'+i.toString()]);
