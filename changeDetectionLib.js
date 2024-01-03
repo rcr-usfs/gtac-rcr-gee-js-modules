@@ -2482,9 +2482,7 @@ var composites = allImages.processedComposites;
 
 
 //Run LT and get output stack
-var ltOutputs = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,
-                                                gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,
-                                                chooseWhichGain,addToMap,howManyToPull,10000);
+var ltOutputs = simpleLANDTRENDR(composites,startYear,endYear,indexName,run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,10000);
 
 if(exportLTLossGain){
   var lossGainStack = ltOutputs[1]
