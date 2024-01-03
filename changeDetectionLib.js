@@ -2513,7 +2513,7 @@ if(exportLTLossGain){
       });
     });
   });
-  print(outObj)
+  // print(outObj)
   // Export output
   getImagesLib.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform)
 }
