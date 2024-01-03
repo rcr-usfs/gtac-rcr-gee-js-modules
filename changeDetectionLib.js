@@ -2393,18 +2393,6 @@ exports.getTimeImageCollectionFromComposites = getTimeImageCollectionFromComposi
 exports.ccdcChangeDetection = ccdcChangeDetection;
 
 
-
-//Wrapper for LANDTRENDR across an annual time series
-//Returns a thresholded LANDTRENDR output
-//The user can specify how to sort the LT segments and how many to export
-
-
-///Module imports
-var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
-var changeDetectionLib = require('users/aaronkamoske/GTAC-Modules:changeDetectionLib.js');
-changeDetectionLib.getExistingChangeData();
-print(changeDetectionLib)
-////////////////////////////////////////////////////////////////////////////////////////////
 //Parameters
 
 //Study area
