@@ -2406,7 +2406,7 @@ var bandPropertyName = 'band';
 // Specify which bands to run across
 // Set to None to run all available bands
 // Available bands include: ['NBR', 'NDMI', 'NDSI', 'NDVI', 'blue', 'brightness', 'green', 'greenness', 'nir', 'red', 'swir1', 'swir2', 'tcAngleBG', 'wetness']
-var bandNames =['NBR'];//null;
+var bandNames =null;
 
 // Specify if output is an array image or not
 var arrayMode = true;
@@ -2423,7 +2423,7 @@ print(lt_props);
 var lt_fit = batchSimpleLTFit(lt,startYear,endYear,bandNames,bandPropertyName,arrayMode,lt_props['maxSegments'],0.0001);
 // print(lt_fit.first().getInfo())
 // Vizualize image collection for charting (opacity set to 0 so it will chart but not be visible)
-Map.addLayer(lt_fit.select(['NBR_LT_fitted']),{'opacity':0},'LT Fit TS');
+Map.addLayer(lt_fit.select(['NBR_LT_fitted']),{},'LT Fit TS');
 
 // Visualize single year fitted landTrendr composite
 // Set to only run if no bandNames are specified
@@ -2442,32 +2442,31 @@ if(bandNames === null || bandNames === undefined){
 }
 // Iterate across each band to look for areas of change
 if(bandNames === null || bandNames === undefined){bandNames=['NBR']}
-// bandNames.map(function(bandName){
-//   // Do basic change detection with raw LT output
-//   var ltt = lt.filter(ee.Filter.eq(bandPropertyName,bandName)).mosaic();
-//   ltt = multLT(ltt,getImagesLib.changeDirDict[bandName]*0.0001);
+bandNames.map(function(bandName){
+  // Do basic change detection with raw LT output
+  var ltt = lt.filter(ee.Filter.eq(bandPropertyName,bandName)).mosaic();
+  ltt = multLT(ltt,getImagesLib.changeDirDict[bandName]*0.0001);
  
-//   var lossMagThresh = -0.15;
-//   var lossSlopeThresh = -0.1;
-//   var gainMagThresh = 0.1;
-//   var gainSlopeThresh = 0.1;
-//   var slowLossDurationThresh = 3;
-//   var chooseWhichLoss = 'largest';
-//   var chooseWhichGain = 'largest' ;
-//   var howManyToPull = 1;
-//   var lossGainDict = convertToLossGain(ltt, 
-//                                       'arrayLandTrendr',
-//                                       lossMagThresh,
-//                                       lossSlopeThresh,
-//                                       gainMagThresh,
-//                                       gainSlopeThresh,
-//                                       slowLossDurationThresh,
-//                                       chooseWhichLoss, 
-//                                       chooseWhichGain, 
-//                                       howManyToPull);
-//   var lossGainStack = LTLossGainExportPrep(lossGainDict,bandName, 1);
-//   addLossGainToMap(lossGainStack,startYear,endYear,lossMagThresh-0.7,lossMagThresh,gainMagThresh,gainMagThresh+0.7);
-// });
-// Vizualize image collection for charting (opacity set to 0 so it will chart but not be visible)
-Map.addLayer(lt_fit,{},'LT Fit TS');
+  var lossMagThresh = -0.15;
+  var lossSlopeThresh = -0.1;
+  var gainMagThresh = 0.1;
+  var gainSlopeThresh = 0.1;
+  var slowLossDurationThresh = 3;
+  var chooseWhichLoss = 'largest';
+  var chooseWhichGain = 'largest' ;
+  var howManyToPull = 1;
+  var lossGainDict = convertToLossGain(ltt, 
+                                      'arrayLandTrendr',
+                                      lossMagThresh,
+                                      lossSlopeThresh,
+                                      gainMagThresh,
+                                      gainSlopeThresh,
+                                      slowLossDurationThresh,
+                                      chooseWhichLoss, 
+                                      chooseWhichGain, 
+                                      howManyToPull);
+  var lossGainStack = LTLossGainExportPrep(lossGainDict,bandName, 1);
+  addLossGainToMap(lossGainStack,startYear,endYear,lossMagThresh-0.7,lossMagThresh,gainMagThresh,gainMagThresh+0.7);
+});
+
 Map.setOptions('HYBRID');
