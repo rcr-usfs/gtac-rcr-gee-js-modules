@@ -1124,26 +1124,22 @@ function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gain
   if(howManyToPull === undefined || howManyToPull === null){howManyToPull =2}
   if(format === undefined || format === null){format = 'raw'}
   
-  if (format == 'rawLandTrendr'){
-    print('Converting LandTrendr from raw output to Gain & Loss')
-    //Pop off vertices
-    var vertices = ltStack.arraySlice(0,3,4);
-    
-    //Mask out any non-vertex values
-    ltStack = ltStack.arrayMask(vertices);
-    ltStack = ltStack.arraySlice(0,0,3);
-    
-    //Get the pair-wise difference and slopes of the years
+  if(format === 'rawLandTrendr'){
+    ltStack = simpleRawLTToVertices(ltStack);
+  }
+  if(format == 'rawLandTrendr' || format == 'arrayLandTrendr'){
+    ltStack = ltStack.select([0]);
+    print('Converting LandTrendr from array output to Gain & Loss');
+    // Get the pair-wise difference and slopes of the years
     var left = ltStack.arraySlice(1,0,-1);
     var right = ltStack.arraySlice(1,1,null);
     var diff  = left.subtract(right);
-    var slopes = diff.arraySlice(0,2,3).divide(diff.arraySlice(0,0,1)).multiply(-1);  
+    var slopes = diff.arraySlice(0,1,2).divide(diff.arraySlice(0,0,1)).multiply(-1);
     var duration = diff.arraySlice(0,0,1).multiply(-1);
-    var fittedMag = diff.arraySlice(0,2,3);
-    //Set up array for sorting
+    var fittedMag = diff.arraySlice(0,1,2);
+    // Set up array for sorting
     var forSorting = right.arraySlice(0,0,1).arrayCat(duration,0).arrayCat(fittedMag,0).arrayCat(slopes,0);
-    
-  }else if(format == 'vertStack'){
+   }else if(format == 'vertStack'){
     print('Converting LandTrendr OR Verdet from vertStack format to Gain & Loss');
     
     var baseMask = ltStack.select([0]).mask(); //Will fail on completely masked pixels. Have to work around and then remask later.
