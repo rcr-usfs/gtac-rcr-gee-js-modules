@@ -13,6 +13,7 @@ var geometry =
           [-113.12191484910119, 48.206337851124374],
           [-113.12191484910119, 48.87913410589321]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+
 //Wrapper for LANDTRENDR across an annual time series
 //Returns a thresholded LANDTRENDR output
 //The user can specify how to sort the LT segments and how many to export
@@ -31,7 +32,7 @@ var studyArea = getImagesLib.testAreas.CA;
 
 //Date parameters
 var startYear = 1984;
-var endYear = 2021;
+var endYear = 2023;
 var startJulian = 152;
 var endJulian = 273;
 
@@ -70,7 +71,7 @@ var run_params = {
   maxSegments:            6,
   spikeThreshold:         0.9,
   vertexCountOvershoot:   3,
-  preventOneYearRecovery: true,
+  preventOneYearRecovery: false,
   recoveryThreshold:      0.25,
   pvalThreshold:          0.05,
   bestModelProportion:    0.75,
@@ -87,7 +88,7 @@ var outputName = 'LT_Test';
 
 //Provide location LT stack will be exported to
 //This should be an asset folder or an asset imageCollection
-var exportPathRoot = 'users/ianhousman/test/changeCollection';
+var exportPathRoot = 'users/someUser/test/changeCollection';
 
 //CRS- must be provided.  
 //Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
