@@ -1019,6 +1019,7 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs,multB
     var fit = ltStack.select('fit_.*').updateMask(yrs.mask());
   }
   fit = fit.multiply(multBy);
+  Map.addLayer(fit,{},indexName)
   //Find the first and last vertex years
   var isStartYear = yrs.reduce(ee.Reducer.firstNonNull());
   var isEndYear = yrs.reduce(ee.Reducer.lastNonNull());
@@ -1096,8 +1097,8 @@ function batchSimpleLTFit(ltStacks,startYear,endYear,indexNames,bandPropertyName
   // Iterate across each band/index and get the fitted, mag, slope, etc
   var lt_fit;
   indexNames.map(function(bn){
-    var ltt = ltStacks.filter(ee.Filter.eq('band',bn)).max();
-
+    var ltt = ltStacks.filter(ee.Filter.eq(bandPropertyName,bn)).max();
+ 
     if(lt_fit === undefined){
       lt_fit = simpleLTFit(ltt,startYear,endYear, bn,arrayMode,maxSegs,multBy);
     }else{
