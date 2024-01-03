@@ -75,27 +75,37 @@ args.includeSLCOffL7 = true;
 //All harmonization models apply a rather small correction and are likely not needed
 args.runChastainHarmonization = false;
 
-args.performCloudScoreOffset = false
 
+//Whether to find if an area typically has a high cloudScore
+//If an area is always cloudy, this will result in cloud masking omission
+//For bright areas that may always have a high cloudScore
+//but not actually be cloudy, this will result in a reduction of commission errors
+//This procedure needs at least 5 years of data to work well
+args.performCloudScoreOffset = true;
+
+// If performCloudScoreOffset = true:
+//Percentile of cloud score to pull from time series to represent a minimum for 
+// the cloud score over time for a given pixel. Reduces comission errors over 
+// cool bright surfaces. Generally between 5 and 10 works well. 0 generally is a
+// bit noisy but may be necessary in persistently cloudy areas
+args.cloudScorePctl = 10;
 //If available, bring in preComputed cloudScore offsets and TDOM stats
 //Set to null if computing on-the-fly is wanted
 //These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
 //and are appropriate to use for any time period within the growing season
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
-var preComputedCloudScoreOffset = getImagesLib.preComputedCloudScoreOffset;
-args.preComputedLandsatCloudScoreOffset = preComputedCloudScoreOffset.select(['Landsat_CloudScore_p10']);
-args.preComputedSentinel2CloudScoreOffset = preComputedCloudScoreOffset.select(['Sentinel2_CloudScore_p10']);
+var preComputedCloudScoreOffset = getImagesLib.getPrecomputedCloudScoreOffsets(args.cloudScorePctl);
+args.preComputedLandsatCloudScoreOffset = preComputedCloudScoreOffset.landsat;
+args.preComputedSentinel2CloudScoreOffset = preComputedCloudScoreOffset.sentinel2;
 
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
-var preComputedTDOMStats = getImagesLib.preComputedCloudScoreOffset;
-print("TDOM Stats:", preComputedTDOMStats);
-args.preComputedLandsatTDOMIRMean = preComputedTDOMStats.select(['.*_Landsat_nir_mean','.*_Landsat_swir1_mean']);
-args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.select(['.*_Landsat_nir_stdDev','.*_Landsat_swir1_stdDev']);
+var preComputedTDOMStats = getImagesLib.getPrecomputedTDOMStats();
+args.preComputedLandsatTDOMIRMean = preComputedTDOMStats.landsat.mean;
+args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.landsat.stdDev;
 
-args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.select(['.*_Sentinel2_nir_mean','.*_Sentinel2_swir1_mean']);
-args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.select(['.*_Sentinel2_nir_stdDev','.*_Sentinel2_swir1_stdDev']);
-
+args.preComputedSentinel2TDOMIRMean = preComputedTDOMStats.sentinel2.mean;
+args.preComputedSentinel2TDOMIRStdDev = preComputedTDOMStats.sentinel2.stdDev;
 
 //List of acceptable sensors
 //Options include: 'LANDSAT_4', 'LANDSAT_5', 'LANDSAT_7','LANDSAT_8','Sentinel-2A', 'Sentinel-2B'
