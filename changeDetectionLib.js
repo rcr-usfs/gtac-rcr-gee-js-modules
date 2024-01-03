@@ -2515,19 +2515,20 @@ if(exportLTLossGain){
   // Export output
   getImagesLib.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform)
 }
-
+var exportLTVertexArray = true;
 // Export raw LandTrendr array image
-if exportLTVertexArray:
-  rawLTForExport = ltOutputs[0]
-  # Map.addLayer(rawLTForExport,{},'Raw LT For Export {}'.format(indexName),False)
+if(exportLTVertexArray){
+  var rawLTForExport = ltOutputs[0]
+  // Map.addLayer(rawLTForExport,{},'Raw LT For Export {}'.format(indexName),False)
   
   rawLTForExport = rawLTForExport.set({'startYear':startYear,
                                         'endYear':endYear,
                                         'startJulian':startJulian,
                                         'endJulian':endJulian,
-                                        'band':indexName})
-  rawLTForExport =rawLTForExport.set(run_params)
-  exportName = '{}_LT_Raw_{}_{}_{}_{}_{}'.format(outputName,indexName,startYear,endYear,startJulian,endJulian)
+                                        'band':indexName});
+  rawLTForExport =rawLTForExport.set(run_params);
+  exportName = outputName+'_LT_Raw_'+indexName+'_'+startYear.toString()+'_'+endYear.toString()
+                  +'_'+startJulian.toString()+'_'+endJulian.toString()
   exportPath = exportPathRoot + '/'+ exportName
   gil.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
   # Reverse for modeling
