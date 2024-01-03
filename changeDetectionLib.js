@@ -993,7 +993,7 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
 //Improved handling of start year delay found in older method
 function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs,multBy){
   if(indexName === undefined || indexName === null){indexName = ''};
-  if(arrayMode === undefined || arrayMode === null){arrayMode = false};
+  if(arrayMode === undefined || arrayMode === null){arrayMode = true};
   if(maxSegs === undefined || maxSegs === null){maxSegs = 6};
   multBy = multBy || 1;
   // Separate years and fitted values of vertices
