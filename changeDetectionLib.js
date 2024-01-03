@@ -991,11 +991,11 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT){
 //Simplified method to convert LANDTRENDR stack to annual collection of
 //Duration, fitted, magnitude, slope, and diff
 //Improved handling of start year delay found in older method
-function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs){
+function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs,multBy){
   if(indexName === undefined || indexName === null){indexName = ''};
   if(arrayMode === undefined || arrayMode === null){arrayMode = false};
   if(maxSegs === undefined || maxSegs === null){maxSegs = 6};
- 
+  multBy = multBy || 1;
   // Separate years and fitted values of vertices
   if(arrayMode){
     var zeros =ee.Image(ee.Array([0]).repeat(0,maxSegs+1));
@@ -2423,7 +2423,7 @@ print(lt_props);
 // Convert stacked outputs into collection of fitted, magnitude, slope, duration, etc values for each year
 // Divide by 10000 (0.0001) so values are back to original values (0-1 or -1-1)
 var lt_fit = batchSimpleLTFit(lt,startYear,endYear,bandNames,bandPropertyName,arrayMode,lt_props['maxSegments'],0.0001);
-print(lt_fit.first().getInfo())
+// print(lt_fit.first().getInfo())
 // Vizualize image collection for charting (opacity set to 0 so it will chart but not be visible)
 Map.addLayer(lt_fit.select(['NBR_LT_fitted']),{'opacity':0},'LT Fit TS');
 
