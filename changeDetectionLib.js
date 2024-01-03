@@ -1,5 +1,5 @@
 /*
-   Copyright 2023 Ian Housman, Leah Campbell, Josh Heyer
+   Copyright 2024 Ian Housman, Leah Campbell, Josh Heyer
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -13,8 +13,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-// Script to help with basic change detection
-// Intended to work within the geeViz package
+// Script to help with change detection
+// This is a close mirror of the Python script: 
+// https://github.com/gee-community/geeViz/blob/master/changeDetectionLib.py
 //Module imports
 var exports = {};
 var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
