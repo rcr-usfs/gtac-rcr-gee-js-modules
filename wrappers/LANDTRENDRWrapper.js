@@ -28,7 +28,7 @@ cdl.getExistingChangeData();
 //Parameters
 
 //Study area
-var studyArea = getImagesLib.testAreas.CA;
+var studyArea = gil.testAreas.CA;
 
 //Date parameters
 var startYear = 1984;
