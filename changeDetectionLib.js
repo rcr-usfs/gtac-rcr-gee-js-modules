@@ -2342,6 +2342,7 @@ exports.getLTvertStack = getLTvertStack;
 exports.simpleLANDTRENDR = simpleLANDTRENDR;
 exports.multLT = multLT;
 exports.convertToLossGain = convertToLossGain;
+exports.LTLossGainExportPrep = LTLossGainExportPrep;
 exports.simpleLTFit = simpleLTFit;
 exports.batchSimpleLTFit = batchSimpleLTFit;
 exports.prepTimeSeriesForLandTrendr = prepTimeSeriesForLandTrendr;
