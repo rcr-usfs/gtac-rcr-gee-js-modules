@@ -998,6 +998,7 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs,multB
   multBy = multBy || 1;
   // Separate years and fitted values of vertices
   if(arrayMode){
+    ltStack = ltStack.select([0]);
     var zeros =ee.Image(ee.Array([0]).repeat(0,maxSegs+2));
     var yrBns = [];
     var fitBns = [];
@@ -1009,11 +1010,10 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs,multB
       fitBns.push('fit_'+iString);
                            
    }
-    print(yrBns,fitBns,maxSegs)
-    var yrs = ltStack.arraySlice(0,0,1).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([yrBns]).selfMask()
-    var fit = ltStack.arraySlice(0,1,2).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([fitBns]).updateMask(yrs.mask())
-    Map.addLayer(yrs,{},indexName+' yrs')
-  }else{
+    var yrs = ltStack.arraySlice(0,0,1).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([yrBns]).selfMask();
+    var fit = ltStack.arraySlice(0,1,2).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([fitBns]).updateMask(yrs.mask());
+  }
+  else{
     //Separate years and fitted values of vertices
     var yrs = ltStack.select('yrs_.*').selfMask();
     var fit = ltStack.select('fit_.*').updateMask(yrs.mask());
@@ -2406,7 +2406,7 @@ var bandPropertyName = 'band';
 // Specify which bands to run across
 // Set to None to run all available bands
 // Available bands include: ['NBR', 'NDMI', 'NDSI', 'NDVI', 'blue', 'brightness', 'green', 'greenness', 'nir', 'red', 'swir1', 'swir2', 'tcAngleBG', 'wetness']
-var bandNames =null;
+var bandNames =['NBR'];//null;
 
 // Specify if output is an array image or not
 var arrayMode = true;
