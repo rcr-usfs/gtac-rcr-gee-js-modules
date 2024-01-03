@@ -22,8 +22,8 @@ var geometry =
 // # Also charts the LT output time series
 
 ///Module imports
-var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
-var changeDetectionLib = require('users/aaronkamoske/GTAC-Modules:changeDetectionLib.js');
+var gil = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
+var cdl = require('users/aaronkamoske/GTAC-Modules:changeDetectionLib.js');
 //####################################################################################################
 // Define user parameters:
 // ####################################################################################################
@@ -49,7 +49,7 @@ var arrayMode = true;
 var lt = ee.ImageCollection('projects/lcms-tcc-shared/assets/CONUS/Base-Learners/LandTrendr-Collection');
 print('Available bands/indices: ',lt.aggregate_histogram(bandPropertyName).keys().getInfo());
 
-lt_props = lt.first().toDictionary().getInfo();
+var lt_props = lt.first().toDictionary().getInfo();
 print(lt_props);
 
 // Convert stacked outputs into collection of fitted, magnitude, slope, duration, etc values for each year
