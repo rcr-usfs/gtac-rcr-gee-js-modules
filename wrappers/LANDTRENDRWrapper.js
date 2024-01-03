@@ -120,19 +120,19 @@ var ltOutputs = cdl.simpleLANDTRENDR(composites,startYear,endYear,indexName,run_
                 chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,10000);
 
 if(exportLTLossGain){
-  var lossGainStack = ltOutputs[1]
+  var lossGainStack = ltOutputs[1];
   // Export  stack
   var exportName = outputName + '_LT_LossGain_Stack_'+indexName+'_'+startYear.toString()+'_'+endYear.toString()
                   +'_'+startJulian.toString()+'_'+endJulian.toString();
                   
-  var exportPath = exportPathRoot + '/'+ exportName
+  var exportPath = exportPathRoot + '/'+ exportName;
 
   var lossGainStack = lossGainStack.set({'startYear':startYear,
                                         'endYear':endYear,
                                         'startJulian':startJulian,
                                         'endJulian':endJulian,
-                                        'band':indexName})
-  lossGainStack =lossGainStack.set(run_params)
+                                        'band':indexName});
+  lossGainStack =lossGainStack.set(run_params);
   
   //Set up proper resampling for each band
   //Be sure to change if the band names for the exported image change
