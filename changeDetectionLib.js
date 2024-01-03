@@ -665,26 +665,25 @@ chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,multBy){
   multBy= multBy || 10000;
   
   ts = ts.select(indexName);
-  lt = runLANDTRENDR(ts,indexName,run_params);
-
+  var lt = runLANDTRENDR(ts,indexName,run_params);
+  var distDir;
   try{
     distDir = getImagesLib.changeDirDict[indexName];
   }catch(err){
     distDir = -1;
   }
-  print(distDir)
-  ltTS = simpleLTFit(lt,startYear,endYear,indexName,true,run_params['maxSegments']);
-  joinedTS = getImagesLib.joinCollections(ts,ltTS.select(['.*_LT_fitted']));
+  var ltTS = simpleLTFit(lt,startYear,endYear,indexName,true,run_params['maxSegments']);
+  var joinedTS = getImagesLib.joinCollections(ts,ltTS.select(['.*_LT_fitted']));
 
   // Flip the output back around if needed to do change detection
-  ltRawPositiveForChange = multLT(lt,distDir);
+  var ltRawPositiveForChange = multLT(lt,distDir);
 
   // Take the LT output and detect change
-  lossGainDict = convertToLossGain(ltRawPositiveForChange, 'arrayLandTrendr',lossMagThresh,lossSlopeThresh,
+  var lossGainDict = convertToLossGain(ltRawPositiveForChange, 'arrayLandTrendr',lossMagThresh,lossSlopeThresh,
                                                   gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,
                                                   chooseWhichGain,howManyToPull);
   // Prep loss gain dictionary into multi-band image ready for exporting
-  lossGainStack = LTLossGainExportPrep(lossGainDict,indexName,multBy);
+  var lossGainStack = LTLossGainExportPrep(lossGainDict,indexName,multBy);
 
   // Add the change outputs to the map if specified to do so
   if(addToMap){
