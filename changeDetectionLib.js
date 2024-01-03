@@ -1,3 +1,20 @@
+/*
+   Copyright 2023 Ian Housman, Leah Campbell, Josh Heyer
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+// Script to help with basic change detection
+// Intended to work within the geeViz package
 //Module imports
 var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
 ///////////////////////////////////////////////////////////////////////////////
@@ -480,7 +497,142 @@ function getRawAndFittedLT(rawTs,lt,startYear,endYear,indexName,distDir){
   
 
 }
-//////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+var default_lt_run_params = {'maxSegments':6,
+      'spikeThreshold':         0.9,
+      'vertexCountOvershoot':   3,
+      'preventOneYearRecovery': true,
+      'recoveryThreshold':      0.25,
+      'pvalThreshold':          0.05,
+      'bestModelProportion':    0.75,
+      'minObservationsNeeded':  6
+    };
+/////////////////////////////////////////////////////
+// 2023 rework to run LT in its most simple form 
+// Gets rid of handling :
+//   Insufficient obs counts, no data handling, 
+//   Exporting of band stack format (assumes image array format for output)
+
+// Function to mask out the non vertex and original values
+// Simplified version of rawLTToVertices
+function simpleRawLTToVertices(rawLT){
+  // Pull off rmse
+  var rmse = rawLT.select(['rmse']);
+  // Mask out non vertex values to use less storage space
+  var ltArray = rawLT.select(['LandTrendr'])
+  var vertices = ltArray.arraySlice(0,3,4)
+  ltArray = ltArray.arrayMask(vertices)
+
+  // Mask out all but the year and vertex fited values (get rid of the raw and vertex rows)
+  return ltArray.arrayMask(ee.Image(ee.Array([[1],[0],[1],[0]]))).addBands(rmse)
+}
+/////////////////////////////////////////////////////
+// Function to multiply the LandTrendr RMSE and vertex array
+// Assumes LTMaskNonVertices has already been run
+function multLT(rawLT,multBy){
+  // Pull off rmse
+  var rmse = rawLT.select(['rmse']).multiply(multBy).abs();
+  // Ensure only the LandTrendr array output
+  var ltArray = rawLT.select(['LandTrendr']);
+  // Form an image to multiply by
+  var l = ltArray.arrayLength(1);
+  var multImg = ee.Image(ee.Array([[1],[multBy]])).arrayRepeat(1,l);
+  return ltArray.multiply(multImg).addBands(rmse);
+}
+/////////////////////////////////////////////////////
+// Function to simplify LandTrendr output for exporting
+function LTExportPrep(rawLT,multBy){
+  multBy = multBy || 10000
+  rawLT = simpleRawLTToVertices(rawLT)
+  rawLT = multLT(rawLT,multBy)
+  return rawLT
+}
+/////////////////////////////////////////////////////
+// New function 11/23 to simplify running of LandTrendr
+// and prepping outputs for export
+function runLANDTRENDR(ts,bandName,run_params){
+  // Get single band time series and set its direction so that a loss in veg/moisture is going up
+  ts = ts.select([bandName]);
+  try{
+    distDir = getImagesLib.changeDirDict[bandName];
+  }catch(err){
+    distDir = -1;
+  }
+
+  ts = ts.map(function(img){return multBands(img, 1, distDir)})
+  
+  // Set up run params
+  run_params = run_params || default_lt_run_params;
+  run_params['timeSeries'] = ts;
+
+  // Run LANDTRENDR
+  rawLT = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
+  
+  // Get vertex-only fitted values and multiply the fitted values
+  return  LTExportPrep(rawLT,distDir)
+    .set('band',bandName)
+    .set('run_params',run_params)
+/////////////////////////////////////////////////////
+// Pulled from simpleLANDTRENDR below to take the lossGain dictionary and prep it for export
+function LTLossGainExportPrep(lossGainDict,indexName,multBy){
+  indexName = indexName || 'Bn';
+  multBy = multBy || 10000;
+
+  lossStack = lossGainDict['lossStack'];
+  gainStack = lossGainDict['gainStack'];
+
+  // Convert to byte to save space
+  lossThematic = lossStack.select(['.*_yr_.*']).int16().addBands(lossStack.select(['.*_dur_.*']).byte())
+  lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']).multiply(multBy)
+  if(Math.abs(multBy) === 10000){lossContinuous = lossContinuous.int16()}
+  lossStack = lossThematic.addBands(lossContinuous)
+
+  gainThematic = gainStack.select(['.*_yr_.*']).int16().addBands(gainStack.select(['.*_dur_.*']).byte())
+  gainContinuous = gainStack.select(['.*_mag_.*','.*_slope_.*']).multiply(multBy)
+  if(Math.abs(multBy) === 10000){gainContinuous = gainContinuous.int16()}
+
+  gainStack = gainThematic.addBands(gainContinuous)
+  outStack = lossStack.addBands(gainStack)
+  
+  // Add indexName to bandnames
+  bns = outStack.bandNames();
+  outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)})
+  return outStack.rename(outBns)
+}
+/////////////////////////////////////////////////////
+// Pulled from simpleLANDTRENDR below to take prepped (must run LTLossGainExportPrep first) lossGain stack and view it
+function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin = -8000,lossMagMax=-2000,gainMagMin=1000,gainMagMax = 8000){
+  var bns = lossGainStack.bandNames().getInfo();
+  indexName = bns[0].split('_')[0]
+  howManyToPull = list(set([int(bn.split('_')[-1]) for bn in bns]))
+
+  // Set up viz params
+  vizParamsLossYear = {'min':startYear,'max':endYear,'palette':lossYearPalette};
+  vizParamsLossMag = {'min':lossMagMin ,'max':lossMagMax,'palette':lossMagPalette};
+
+  vizParamsGainYear = {'min':startYear,'max':endYear,'palette':gainYearPalette};
+  vizParamsGainMag = {'min':gainMagMin,'max':gainMagMax,'palette':gainMagPalette};
+
+  vizParamsDuration = {'min':1,'max':5,'palette':changeDurationPalette};
+
+  for(var i = 1;i<= howManyToPull;i++){
+    
+    lossStackI = lossGainStack.select(['.*_loss_.*_'+str(i)])
+    gainStackI = lossGainStack.select(['.*_gain_.*_'+str(i)])
+    # print(lossStackI.select(['loss_yr.*']).getInfo())
+    showLossYear = False
+    if(i == 1){ showLossYear = true
+    Map.addLayer(lossStackI.select(['.*_loss_yr.*']),vizParamsLossYear,str(i)+' '+indexName +' Loss Year',showLossYear);
+    Map.addLayer(lossStackI.select(['.*_loss_mag.*']),vizParamsLossMag,str(i)+' '+indexName +' Loss Magnitude',false);
+    Map.addLayer(lossStackI.select(['.*_loss_dur.*']),vizParamsDuration,str(i)+' '+indexName +' Loss Duration',false);
+    
+    Map.addLayer(gainStackI.select(['.*_gain_yr.*']),vizParamsGainYear,str(i)+' '+indexName +' Gain Year',false);
+    Map.addLayer(gainStackI.select(['.*_gain_mag.*']),vizParamsGainMag,str(i)+' '+indexName +' Gain Magnitude',false);
+    Map.addLayer(gainStackI.select(['.*_gain_dur.*']),vizParamsDuration,str(i)+' '+indexName +' Gain Duration',false);
+  }
+}
+/////////////////////////////////////////////////////
+/////////////////////////////
 //Function for running LT, thresholding the segments for both loss and gain, sort them, and convert them to an image stack
 // July 2019 LSC: replaced some parts of workflow with functions in changeDetectionLib
 function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull){
