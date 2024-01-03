@@ -108,14 +108,14 @@ var scale = null;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //Get images
-var allImages = getImagesLib.getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian);
+var allImages = gil.getLandsatWrapper(studyArea,startYear,endYear,startJulian,endJulian);
 var images = allImages.processedScenes;
 var composites = allImages.processedComposites;
 
 
 
 //Run LT and get output stack
-var ltOutputs = simpleLANDTRENDR(composites,startYear,endYear,indexName,run_params,
+var ltOutputs = cdl.simpleLANDTRENDR(composites,startYear,endYear,indexName,run_params,
                 lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,
                 chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,10000);
 
@@ -149,7 +149,7 @@ if(exportLTLossGain){
   });
   // print(outObj)
   // Export output
-  getImagesLib.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform)
+  gil.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform)
 }
 
 // Export raw LandTrendr array image
@@ -166,9 +166,9 @@ if(exportLTVertexArray){
   exportName = outputName+'_LT_Raw_'+indexName+'_'+startYear.toString()+'_'+endYear.toString()
                   +'_'+startJulian.toString()+'_'+endJulian.toString()
   exportPath = exportPathRoot + '/'+ exportName
-  getImagesLib.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
+  gil.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
   // Reverse for modeling
-  var decompressedC = simpleLTFit(rawLTForExport,startYear,endYear,indexName,true,run_params['maxSegments'])
+  var decompressedC = cdl.simpleLTFit(rawLTForExport,startYear,endYear,indexName,true,run_params['maxSegments'])
   Map.addLayer(decompressedC,{},'Decompressed LT Output '+indexName,false)
 }
 Map.setOptions('HYBRID');
