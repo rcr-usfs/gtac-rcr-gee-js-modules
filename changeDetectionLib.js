@@ -629,7 +629,7 @@ function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin,lossMagMax,
 
   var vizParamsDuration = {'min':1,'max':5,'palette':changeDurationPalette};
   print('here',howManyToPull)
-  for(var i = 1;i<= howManyToPull;i++){
+  howManyToPull.map(function(i){
     
     var lossStackI = lossGainStack.select(['.*_loss_.*_'+i.toString()]);
     var gainStackI = lossGainStack.select(['.*_gain_.*_'+i.toString()]);
@@ -642,7 +642,7 @@ function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin,lossMagMax,
     Map.addLayer(gainStackI.select(['.*_gain_yr.*']),vizParamsGainYear,i.toString()+' '+indexName +' Gain Year',false);
     Map.addLayer(gainStackI.select(['.*_gain_mag.*']),vizParamsGainMag,i.toString()+' '+indexName +' Gain Magnitude',false);
     Map.addLayer(gainStackI.select(['.*_gain_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Gain Duration',false);
-  }
+  })
 }
 /////////////////////////////////////////////////////
 /////////////////////////////
