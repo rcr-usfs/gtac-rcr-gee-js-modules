@@ -2495,7 +2495,7 @@ if(exportLTLossGain){
                   
   var exportPath = exportPathRoot + '/'+ exportName
 
-// var lossGainStack = lossGainStack.set({'startYear':startYear,
+  var lossGainStack = lossGainStack.set({'startYear':startYear,
                                         'endYear':endYear,
                                         'startJulian':startJulian,
                                         'endJulian':endJulian,
@@ -2522,8 +2522,8 @@ if(exportLTLossGain){
 
 // Export raw LandTrendr array image
 if(exportLTVertexArray){
-  var rawLTForExport = ltOutputs[0]
-  // Map.addLayer(rawLTForExport,{},'Raw LT For Export {}'.format(indexName),False)
+  var rawLTForExport = ltOutputs[0];
+  Map.addLayer(rawLTForExport,{},'Raw LT For Export '+indexName,false)
   
   rawLTForExport = rawLTForExport.set({'startYear':startYear,
                                         'endYear':endYear,
@@ -2536,7 +2536,7 @@ if(exportLTVertexArray){
   exportPath = exportPathRoot + '/'+ exportName
   getImagesLib.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
   // Reverse for modeling
-  // decompressedC = cdl.simpleLTFit(rawLTForExport,startYear,endYear,indexName,True,run_params['maxSegments'])
-  // Map.addLayer(decompressedC,{},'Decompressed LT Output {}'.format(indexName),False)
-
+  decompressedC = simpleLTFit(rawLTForExport,startYear,endYear,indexName,true,run_params['maxSegments'])
+  Map.addLayer(decompressedC,{},'Decompressed LT Output '+indexName,false)
+}
 Map.setOptions('HYBRID');
