@@ -89,6 +89,7 @@ args.performCloudScoreOffset = true;
 // cool bright surfaces. Generally between 5 and 10 works well. 0 generally is a
 // bit noisy but may be necessary in persistently cloudy areas
 args.cloudScorePctl = 10;
+
 //If available, bring in preComputed cloudScore offsets and TDOM stats
 //Set to null if computing on-the-fly is wanted
 //These have been pre-computed for all CONUS for Landsat and Setinel 2 (separately)
