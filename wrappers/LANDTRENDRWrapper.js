@@ -20,11 +20,11 @@ var geometry =
 
 
 ///Module imports
-var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
-var changeDetectionLib = require('users/aaronkamoske/GTAC-Modules:changeDetectionLib.js');
-changeDetectionLib.getExistingChangeData();
-print(changeDetectionLib)
+var gil = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
+var cdl = require('users/aaronkamoske/GTAC-Modules:changeDetectionLib.js');
+cdl.getExistingChangeData();
 ////////////////////////////////////////////////////////////////////////////////////////////
+
 //Parameters
 
 //Study area
@@ -81,7 +81,12 @@ var run_params = {
 //Whether to add outputs to map
 var addToMap = true;
 
-var exportLTStack = false;
+// Export params
+// Whether to export LANDTRENDR change detection (loss and gain) outputs
+var exportLTLossGain = true;
+
+// Whether to export LandTrendr vertex array raw output
+var exportLTVertexArray = true;
 
 //Set up Names for the export
 var outputName = 'LT_Test';
@@ -110,29 +115,60 @@ var composites = allImages.processedComposites;
 
 
 //Run LT and get output stack
-var ltOut = changeDetectionLib.simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,
-                                                gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,
-                                                chooseWhichGain,addToMap,howManyToPull);
-var ltOutStack = ltOut[1];
+var ltOutputs = simpleLANDTRENDR(composites,startYear,endYear,indexName,run_params,
+                lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,
+                chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,10000);
 
-//Export  stack
-var exportName = outputName + '_Stack_'+indexName;
-var exportPath = exportPathRoot + '/'+ exportName;
+if(exportLTLossGain){
+  var lossGainStack = ltOutputs[1]
+  // Export  stack
+  var exportName = outputName + '_LT_LossGain_Stack_'+indexName+'_'+startYear.toString()+'_'+endYear.toString()
+                  +'_'+startJulian.toString()+'_'+endJulian.toString();
+                  
+  var exportPath = exportPathRoot + '/'+ exportName
 
-//Set up proper resampling for each band
-//Be sure to change if the band names for the exported image change
-var pyrObj = {'_yr_':'mode','_dur_':'mode','_mag_':'mean','_slope_':'mean'};
-var possible = ['loss','gain'];
-var outObj = {};
-possible.map(function(p){
-  Object.keys(pyrObj).map(function(key){
-    ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
-      var kt = indexName + '_LT_'+p + key+i.toString();
-      outObj[kt]= pyrObj[key];
+  var lossGainStack = lossGainStack.set({'startYear':startYear,
+                                        'endYear':endYear,
+                                        'startJulian':startJulian,
+                                        'endJulian':endJulian,
+                                        'band':indexName})
+  lossGainStack =lossGainStack.set(run_params)
+  
+  //Set up proper resampling for each band
+  //Be sure to change if the band names for the exported image change
+  var pyrObj = {'_yr_':'mode','_dur_':'mode','_mag_':'mean','_slope_':'mean'};
+  var possible = ['loss','gain'];
+  var outObj = {};
+  possible.map(function(p){
+    Object.keys(pyrObj).map(function(key){
+      ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
+        var kt = indexName + '_LT_'+p + key+i.toString();
+        outObj[kt]= pyrObj[key];
+      });
     });
   });
-});
+  // print(outObj)
+  // Export output
+  getImagesLib.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform)
+}
 
-//Export output
-getImagesLib.exportToAssetWrapper2(ltOutStack,exportName,exportPath,outObj,studyArea,scale,crs,transform);
+// Export raw LandTrendr array image
+if(exportLTVertexArray){
+  var rawLTForExport = ltOutputs[0];
+  Map.addLayer(rawLTForExport,{},'Raw LT For Export '+indexName,false)
+  
+  rawLTForExport = rawLTForExport.set({'startYear':startYear,
+                                        'endYear':endYear,
+                                        'startJulian':startJulian,
+                                        'endJulian':endJulian,
+                                        'band':indexName});
+  rawLTForExport =rawLTForExport.set(run_params);
+  exportName = outputName+'_LT_Raw_'+indexName+'_'+startYear.toString()+'_'+endYear.toString()
+                  +'_'+startJulian.toString()+'_'+endJulian.toString()
+  exportPath = exportPathRoot + '/'+ exportName
+  getImagesLib.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
+  // Reverse for modeling
+  var decompressedC = simpleLTFit(rawLTForExport,startYear,endYear,indexName,true,run_params['maxSegments'])
+  Map.addLayer(decompressedC,{},'Decompressed LT Output '+indexName,false)
+}
 Map.setOptions('HYBRID');
