@@ -89,7 +89,7 @@ args.preComputedSentinel2CloudScoreOffset = preComputedCloudScoreOffset.select([
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
 var preComputedTDOMStats = getImagesLib.preComputedCloudScoreOffset;
-print("TDOM Stats:", preComputedTDOMStats)
+print("TDOM Stats:", preComputedTDOMStats);
 args.preComputedLandsatTDOMIRMean = preComputedTDOMStats.select(['.*_Landsat_nir_mean','.*_Landsat_swir1_mean']);
 args.preComputedLandsatTDOMIRStdDev = preComputedTDOMStats.select(['.*_Landsat_nir_stdDev','.*_Landsat_swir1_stdDev']);
 
