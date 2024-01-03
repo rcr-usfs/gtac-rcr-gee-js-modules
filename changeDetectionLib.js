@@ -2449,7 +2449,12 @@ var run_params = {
 //Whether to add outputs to map
 var addToMap = true;
 
-var exportLTStack = false;
+// Export params
+// Whether to export LANDTRENDR change detection (loss and gain) outputs
+var exportLTLossGain = true;
+
+// Whether to export LandTrendr vertex array raw output
+var exportLTVertexArray = true;
 
 //Set up Names for the export
 var outputName = 'LT_Test';
@@ -2481,7 +2486,6 @@ var composites = allImages.processedComposites;
 var ltOutputs = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,
                                                 gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,
                                                 chooseWhichGain,addToMap,howManyToPull,10000);
-var exportLTLossGain = true;
 
 if(exportLTLossGain){
   var lossGainStack = ltOutputs[1]
@@ -2515,7 +2519,7 @@ if(exportLTLossGain){
   // Export output
   getImagesLib.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform)
 }
-var exportLTVertexArray = true;
+
 // Export raw LandTrendr array image
 if(exportLTVertexArray){
   var rawLTForExport = ltOutputs[0]
