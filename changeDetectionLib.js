@@ -998,7 +998,7 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs,multB
   multBy = multBy || 1;
   // Separate years and fitted values of vertices
   if(arrayMode){
-    var zeros =ee.Image(ee.Array([0]).repeat(0,maxSegs+1));
+    var zeros =ee.Image(ee.Array([0]).repeat(0,maxSegs+2));
     var yrBns = [];
     var fitBns = [];
     var emptyArray = [];                              
@@ -1009,7 +1009,7 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs,multB
       fitBns.push('fit_'+iString);
                            
    }
-  
+    print(yrBns,fitBns)
     var yrs = ltStack.arraySlice(0,0,1).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([yrBns]).selfMask()
     var fit = ltStack.arraySlice(0,1,2).arrayProject([1]).arrayCat(zeros,0).arraySlice(0, 0, maxSegs+1).arrayFlatten([fitBns]).updateMask(yrs.mask())
     
