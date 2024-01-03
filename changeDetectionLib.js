@@ -2423,7 +2423,7 @@ print(lt_props);
 var lt_fit = batchSimpleLTFit(lt,startYear,endYear,bandNames,bandPropertyName,arrayMode,lt_props['maxSegments'],0.0001);
 // print(lt_fit.first().getInfo())
 // Vizualize image collection for charting (opacity set to 0 so it will chart but not be visible)
-Map.addLayer(lt_fit.select(['NBR_LT_fitted']),{},'LT Fit TS');
+Map.addLayer(lt_fit.select(['NBR_LT_fitted']),{},'LT Fit TS',false);
 
 // Visualize single year fitted landTrendr composite
 // Set to only run if no bandNames are specified
