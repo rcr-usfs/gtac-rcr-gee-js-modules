@@ -2440,7 +2440,7 @@ if(bandNames === null || bandNames === undefined){
             .filter(ee.Filter.calendarRange(endYear-1,endYear-1,'year')).first();
 
   // Visualize as you would a composite
-  Map.addLayer(lt_synth,vizParamsFalse,'Synthetic Composite');
+  Map.addLayer(lt_synth,getImagesLib.vizParamsFalse,'Synthetic Composite');
 
 }
 // Iterate across each band to look for areas of change
