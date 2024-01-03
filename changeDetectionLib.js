@@ -2536,7 +2536,7 @@ if(exportLTVertexArray){
   exportPath = exportPathRoot + '/'+ exportName
   getImagesLib.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
   // Reverse for modeling
-  decompressedC = simpleLTFit(rawLTForExport,startYear,endYear,indexName,true,run_params['maxSegments'])
+  var decompressedC = simpleLTFit(rawLTForExport,startYear,endYear,indexName,true,run_params['maxSegments'])
   Map.addLayer(decompressedC,{},'Decompressed LT Output '+indexName,false)
 }
 Map.setOptions('HYBRID');
