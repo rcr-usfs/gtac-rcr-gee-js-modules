@@ -12,10 +12,11 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+  Script to help with change detection
+  This is a close mirror of the Python script: 
+  https://github.com/gee-community/geeViz/blob/master/changeDetectionLib.py
 */
-// Script to help with change detection
-// This is a close mirror of the Python script: 
-// https://github.com/gee-community/geeViz/blob/master/changeDetectionLib.py
 //Module imports
 var exports = {};
 var getImagesLib = require('users/aaronkamoske/GTAC-Modules:getImagesLib.js');
