@@ -68,7 +68,7 @@ var chooseWhichGain = 'largest';
 
 //Define landtrendr params
 var run_params = { 
-  maxSegments:            6,
+  maxSegments:            9,
   spikeThreshold:         0.9,
   vertexCountOvershoot:   3,
   preventOneYearRecovery: false,
