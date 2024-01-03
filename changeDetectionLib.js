@@ -125,7 +125,7 @@ function getExistingChangeData(changeThresh,showLayers){
   
   
   
-  var hansen = ee.Image('UMD/hansen/global_forest_change_2018_v1_6').select(['lossyear']).add(2000).int16();
+  var hansen = ee.Image("UMD/hansen/global_forest_change_2022_v1_10").select(['lossyear']).add(2000).int16();
   hansen = hansen.updateMask(hansen.neq(2000).and(hansen.gte(startYear)).and(hansen.lte(endYear)));
   if(showLayers){
   Map.addLayer(hansen,{'min':startYear,'max':endYear,'palette':'FF0,F00'},'Hansen Change Year',false);
@@ -601,10 +601,21 @@ function LTLossGainExportPrep(lossGainDict,indexName,multBy){
 }
 /////////////////////////////////////////////////////
 // Pulled from simpleLANDTRENDR below to take prepped (must run LTLossGainExportPrep first) lossGain stack and view it
-function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin = -8000,lossMagMax=-2000,gainMagMin=1000,gainMagMax = 8000){
+function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin,lossMagMax,gainMagMin,gainMagMax){
+  lossMagMin = lossMagMin || -8000;
+  lossMagMax = lossMagMax || -2000;
+  gainMagMin = gainMagMin || 1000;
+  gainMagMax = gainMagMax || 8000;
+
   var bns = lossGainStack.bandNames().getInfo();
-  indexName = bns[0].split('_')[0]
-  howManyToPull = list(set([int(bn.split('_')[-1]) for bn in bns]))
+  var indexName = bns[0].split('_')[0];
+  var howManyToPull = [];
+  bns.map(function(bn){
+    var sep = bn.split('_');
+    var l = sep.length;
+    var last = parseInt(sep[l-1]);
+    if(howManyToPull.indexOf(last) == -1){howManyToPull.push(last)}
+  });
 
   // Set up viz params
   vizParamsLossYear = {'min':startYear,'max':endYear,'palette':lossYearPalette};
@@ -617,116 +628,60 @@ function addLossGainToMap(lossGainStack,startYear,endYear,lossMagMin = -8000,los
 
   for(var i = 1;i<= howManyToPull;i++){
     
-    lossStackI = lossGainStack.select(['.*_loss_.*_'+str(i)])
-    gainStackI = lossGainStack.select(['.*_gain_.*_'+str(i)])
-    # print(lossStackI.select(['loss_yr.*']).getInfo())
-    showLossYear = False
-    if(i == 1){ showLossYear = true
-    Map.addLayer(lossStackI.select(['.*_loss_yr.*']),vizParamsLossYear,str(i)+' '+indexName +' Loss Year',showLossYear);
-    Map.addLayer(lossStackI.select(['.*_loss_mag.*']),vizParamsLossMag,str(i)+' '+indexName +' Loss Magnitude',false);
-    Map.addLayer(lossStackI.select(['.*_loss_dur.*']),vizParamsDuration,str(i)+' '+indexName +' Loss Duration',false);
+    var lossStackI = lossGainStack.select(['.*_loss_.*_'+i.toString()]);
+    var gainStackI = lossGainStack.select(['.*_gain_.*_'+i.toString()])
+    var showLossYear = false
+    if(i == 1){ showLossYear = true};
+    Map.addLayer(lossStackI.select(['.*_loss_yr.*']),vizParamsLossYear,i.toString()+' '+indexName +' Loss Year',showLossYear);
+    Map.addLayer(lossStackI.select(['.*_loss_mag.*']),vizParamsLossMag,i.toString()+' '+indexName +' Loss Magnitude',false);
+    Map.addLayer(lossStackI.select(['.*_loss_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Loss Duration',false);
     
-    Map.addLayer(gainStackI.select(['.*_gain_yr.*']),vizParamsGainYear,str(i)+' '+indexName +' Gain Year',false);
-    Map.addLayer(gainStackI.select(['.*_gain_mag.*']),vizParamsGainMag,str(i)+' '+indexName +' Gain Magnitude',false);
-    Map.addLayer(gainStackI.select(['.*_gain_dur.*']),vizParamsDuration,str(i)+' '+indexName +' Gain Duration',false);
+    Map.addLayer(gainStackI.select(['.*_gain_yr.*']),vizParamsGainYear,i.toString()+' '+indexName +' Gain Year',false);
+    Map.addLayer(gainStackI.select(['.*_gain_mag.*']),vizParamsGainMag,i.toString()+' '+indexName +' Gain Magnitude',false);
+    Map.addLayer(gainStackI.select(['.*_gain_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Gain Duration',false);
   }
 }
 /////////////////////////////////////////////////////
 /////////////////////////////
 //Function for running LT, thresholding the segments for both loss and gain, sort them, and convert them to an image stack
 // July 2019 LSC: replaced some parts of workflow with functions in changeDetectionLib
-function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull){
+function simpleLANDTRENDR(ts,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,chooseWhichGain,addToMap,howManyToPull,multBy){
+  indexName = indexName || 'NBR';
+  run_params = run_params || default_lt_run_params;
+  lossMagThresh = lossMagThresh || -0.15;lossSlopeThresh = lossSlopeThresh || -0.1;gainMagThresh = gainMagThresh || 0.1;
+  gainSlopeThresh = gainSlopeThresh || 0.1;slowLossDurationThresh = slowLossDurationThresh || 3;chooseWhichLoss = chooseWhichLoss || 'largest';chooseWhichGain = chooseWhichGain || 'largest';addToMap = addToMap || true;
+  howManyToPull = howManyToPull || 2;
+  multBy= multBy || 10000;
   
-  if(indexName === undefined || indexName === null){indexName = 'NBR'}
-  if(run_params === undefined || run_params === null){
-    run_params = {'maxSegments':6,
-      'spikeThreshold':         0.9,
-      'vertexCountOvershoot':   3,
-      'preventOneYearRecovery': true,
-      'recoveryThreshold':      0.25,
-      'pvalThreshold':          0.05,
-      'bestModelProportion':    0.75,
-      'minObservationsNeeded':  6
-    };
-  }
-  if(lossMagThresh === undefined || lossMagThresh === null){lossMagThresh =-0.15}
-  if(lossSlopeThresh === undefined || lossSlopeThresh === null){lossSlopeThresh =-0.1}
-  if(gainMagThresh === undefined || gainMagThresh === null){gainMagThresh =0.1}
-  if(gainSlopeThresh === undefined || gainSlopeThresh === null){gainSlopeThresh =0.1}
-  if(slowLossDurationThresh === undefined || slowLossDurationThresh === null){slowLossDurationThresh =3}
-  if(chooseWhichLoss === undefined || chooseWhichLoss === null){chooseWhichLoss ='largest'}
-  if(chooseWhichGain === undefined || chooseWhichGain === null){chooseWhichGain ='largest'}
-  if(addToMap === undefined || addToMap === null){addToMap =true}
-  if(howManyToPull === undefined || howManyToPull === null){howManyToPull =2}
-  
-  var prepDict = prepTimeSeriesForLandTrendr(ts, indexName, run_params)
-  run_params = prepDict.run_params; // added composite time series prepped above
-  var countMask = prepDict.runMask; // count mask for pixels without enough data
-  var distDir = getImagesLib.changeDirDict[indexName];
+  ts = ts.select(indexName);
+  lt = runLANDTRENDR(ts,indexName,run_params);
 
-  //Run LANDTRENDR
-  var rawLt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
-  
-  var lt = rawLt.select([0]);
-  //Remask areas with insufficient data that were given dummy values
-  lt = lt.updateMask(countMask);
-  
-  //Get joined raw and fitted LANDTRENDR for viz
-  var joinedTS = getRawAndFittedLT(ts, lt, startYear, endYear, indexName, distDir);
-  
-  // Convert LandTrendr to Loss & Gain space
-  var lossGainDict = convertToLossGain(lt, 'rawLandTrendr', lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, 
-                                        slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull)
-  var lossStack = lossGainDict.lossStack;
-  var gainStack = lossGainDict.gainStack;
+  try{
+    distDir = getImagesLib.changeDirDict[indexName];
+  }catch(err){
+    distDir = -1;
 
-  //Convert to byte/int16 to save space
-  var lossThematic = lossStack.select(['.*_yr_.*']).int16().addBands(lossStack.select(['.*_dur_.*']).byte());
-  var lossContinuous = lossStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
-  lossStack = lossThematic.addBands(lossContinuous);
+  ltTS = simpleLTFit(lt,startYear,endYear,indexName,true,run_params['maxSegments']);
+  joinedTS = getImagesLib.joinCollections(ts,ltTS.select(['.*_LT_fitted']));
 
-  var gainThematic = gainStack.select(['.*_yr_.*']).int16().addBands(gainStack.select(['.*_dur_.*']).byte());
-  var gainContinuous = gainStack.select(['.*_mag_.*','.*_slope_.*']).multiply(10000).int16();
-  gainStack = gainThematic.addBands(gainContinuous);
-  
+  // Flip the output back around if needed to do change detection
+  ltRawPositiveForChange = multLT(lt,distDir);
+
+  // Take the LT output and detect change
+  lossGainDict = convertToLossGain(ltRawPositiveForChange, 'arrayLandTrendr',lossMagThresh,lossSlopeThresh,
+                                                  gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,\
+                                                  chooseWhichGain,howManyToPull)
+  // Prep loss gain dictionary into multi-band image ready for exporting
+  lossGainStack = LTLossGainExportPrep(lossGainDict,indexName,multBy)
+
+  // Add the change outputs to the map if specified to do so
   if(addToMap){
-    //Set up viz params
-    var vizParamsLossYear = {'min':startYear,'max':endYear,'palette':lossYearPalette};
-    var vizParamsLossMag = {'min':-0.8*10000 ,'max':lossMagThresh*10000,'palette':lossMagPalette};
-    
-    var vizParamsGainYear = {'min':startYear,'max':endYear,'palette':gainYearPalette};
-    var vizParamsGainMag = {'min':gainMagThresh*10000,'max':0.8*10000,'palette':gainMagPalette};
-    
-    var vizParamsDuration = {'min':1,'max':5,'palette':changeDurationPalette};
+    Map.addLayer(joinedTS,{'opacity':0},'Raw and Fitted Time Series',True)
+    addLossGainToMap(lossGainStack,startYear,endYear,(lossMagThresh-0.7)*multBy,lossMagThresh*multBy,gainMagThresh*multBy,(gainMagThresh+0.7)*multBy)
   
-    Map.addLayer(lt,{},'Raw LT',false);
-    Map.addLayer(joinedTS,{},'Time Series',false);
-  
-    ee.List.sequence(1,howManyToPull).getInfo().map(function(i){
-      var showLossYear = false;
-      if(i === 1){showLossYear = true}
-      var lossStackI = lossStack.select(['.*_'+i.toString()]);
-      var gainStackI = gainStack.select(['.*_'+i.toString()]);
-      
-      Map.addLayer(lossStackI.select(['loss_yr.*']),vizParamsLossYear,i.toString()+' '+indexName +' Loss Year',showLossYear);
-      Map.addLayer(lossStackI.select(['loss_mag.*']),vizParamsLossMag,i.toString()+' '+indexName +' Loss Magnitude',false);
-      Map.addLayer(lossStackI.select(['loss_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Loss Duration',false);
-      
-      Map.addLayer(gainStackI.select(['gain_yr.*']),vizParamsGainYear,i.toString()+' '+indexName +' Gain Year',false);
-      Map.addLayer(gainStackI.select(['gain_mag.*']),vizParamsGainMag,i.toString()+' '+indexName +' Gain Magnitude',false);
-      Map.addLayer(gainStackI.select(['gain_dur.*']),vizParamsDuration,i.toString()+' '+indexName +' Gain Duration',false);
-    });
   }
-  var outStack = lossStack.addBands(gainStack);
-  
-  //Add indexName to bandnames
-  var bns = outStack.bandNames();
-  var outBns = bns.map(function(bn){return ee.String(indexName).cat('_LT_').cat(bn)});
-  outStack = outStack.select(bns,outBns);
-  
-  return [rawLt,outStack];
+  return [multLT(lt,multBy),lossGainStack]
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Function to prep data following our workflows. Will have to run Landtrendr and convert to stack after.
