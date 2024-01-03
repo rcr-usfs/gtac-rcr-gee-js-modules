@@ -2448,7 +2448,7 @@ if(bandNames === null || bandNames === undefined){bandNames=['NBR']}
 bandNames.map(function(bandName){
   // Do basic change detection with raw LT output
   var ltt = lt.filter(ee.Filter.eq(bandPropertyName,bandName)).mosaic();
-  ltt = multLT(ltt,changeDirDict[bandName]*0.0001);
+  ltt = multLT(ltt,getImagesLib.changeDirDict[bandName]*0.0001);
  
   var lossMagThresh = -0.15;
   var lossSlopeThresh = -0.1;
