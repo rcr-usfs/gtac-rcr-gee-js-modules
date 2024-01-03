@@ -149,13 +149,13 @@ if(exportLTLossGain){
   });
   // print(outObj)
   // Export output
-  gil.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform)
+  gil.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform);
 }
 
 // Export raw LandTrendr array image
 if(exportLTVertexArray){
   var rawLTForExport = ltOutputs[0];
-  Map.addLayer(rawLTForExport,{},'Raw LT For Export '+indexName,false)
+  Map.addLayer(rawLTForExport,{},'Raw LT For Export '+indexName,false);
   
   rawLTForExport = rawLTForExport.set({'startYear':startYear,
                                         'endYear':endYear,
@@ -163,12 +163,12 @@ if(exportLTVertexArray){
                                         'endJulian':endJulian,
                                         'band':indexName});
   rawLTForExport =rawLTForExport.set(run_params);
-  exportName = outputName+'_LT_Raw_'+indexName+'_'+startYear.toString()+'_'+endYear.toString()
-                  +'_'+startJulian.toString()+'_'+endJulian.toString()
-  exportPath = exportPathRoot + '/'+ exportName
-  gil.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform)
+  exportName = outputName+'_LT_Raw_'+indexName+'_'+startYear.toString()+'_'+endYear.toString();
+                  +'_'+startJulian.toString()+'_'+endJulian.toString();
+  exportPath = exportPathRoot + '/'+ exportName;
+  gil.exportToAssetWrapper(rawLTForExport,exportName,exportPath,{'.default':'sample'},studyArea,scale,crs,transform);
   // Reverse for modeling
-  var decompressedC = cdl.simpleLTFit(rawLTForExport,startYear,endYear,indexName,true,run_params['maxSegments'])
-  Map.addLayer(decompressedC,{},'Decompressed LT Output '+indexName,false)
+  var decompressedC = cdl.simpleLTFit(rawLTForExport,startYear,endYear,indexName,true,run_params['maxSegments']);
+  Map.addLayer(decompressedC,{},'Decompressed LT Output '+indexName,false);
 }
 Map.setOptions('HYBRID');
