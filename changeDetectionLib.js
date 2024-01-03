@@ -1018,6 +1018,7 @@ function simpleLTFit(ltStack,startYear,endYear,indexName,arrayMode,maxSegs,multB
     var yrs = ltStack.select('yrs_.*').selfMask();
     var fit = ltStack.select('fit_.*').updateMask(yrs.mask());
   }
+  fit = fit.multiply(multBy)
   //Find the first and last vertex years
   var isStartYear = yrs.reduce(ee.Reducer.firstNonNull());
   var isEndYear = yrs.reduce(ee.Reducer.lastNonNull());
