@@ -2478,7 +2478,7 @@ var composites = allImages.processedComposites;
 
 
 //Run LT and get output stack
-var ltOut = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,
+var ltOutputs = simpleLANDTRENDR(composites,startYear,endYear,indexName, run_params,lossMagThresh,lossSlopeThresh,
                                                 gainMagThresh,gainSlopeThresh,slowLossDurationThresh,chooseWhichLoss,
                                                 chooseWhichGain,addToMap,howManyToPull,10000);
 var exportLTLossGain = true;
@@ -2487,10 +2487,11 @@ if(exportLTLossGain){
   var lossGainStack = ltOutputs[1]
   // Export  stack
   var exportName = outputName + '_LT_LossGain_Stack_'+indexName+'_'+startYear.toString()+'_'+endYear.toString()
-                  +'_'+startJulian.toString()+'_'+endJulian.toString()
+                  +'_'+startJulian.toString()+'_'+endJulian.toString();
+                  
   var exportPath = exportPathRoot + '/'+ exportName
 
-  var lossGainStack = lossGainStack.set({'startYear':startYear,
+// var lossGainStack = lossGainStack.set({'startYear':startYear,
                                         'endYear':endYear,
                                         'startJulian':startJulian,
                                         'endJulian':endJulian,
@@ -2513,9 +2514,9 @@ if(exportLTLossGain){
   print(outObj)
   // Export output
   getImagesLib.exportToAssetWrapper(lossGainStack,exportName,exportPath,outObj,studyArea,scale,crs,transform)
+}
 
-
-// # Export raw LandTrendr array image
+// Export raw LandTrendr array image
 // if exportLTVertexArray:
 //   rawLTForExport = ltOutputs[0]
 //   # Map.addLayer(rawLTForExport,{},'Raw LT For Export {}'.format(indexName),False)
