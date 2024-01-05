@@ -50,10 +50,7 @@ function getR2(collection, coefficients, dependent, independents) {
   // For each image in original collection
   var squaredErrors = collection.map(function (image) {
     // Evalute predicted linear model
-    var prediction = image
-      .select(independents)
-      .multiply(coefficients)
-      .reduce("sum");
+    var prediction = image.select(independents).multiply(coefficients).reduce("sum");
     var actual = image.select(dependent);
     // Find squared residual error, (actual-predict)^2
     // Find squared total error, (actual-mean)^2
@@ -91,12 +88,7 @@ function thresholdChange(changeCollection, changeThresh, changeDir) {
   });
   return change;
 }
-function thresholdSubtleChange(
-  changeCollection,
-  changeThreshLow,
-  changeThreshHigh,
-  changeDir
-) {
+function thresholdSubtleChange(changeCollection, changeThreshLow, changeThreshHigh, changeDir) {
   if (changeDir === undefined || changeDir === null) {
     changeDir = 1;
   }
@@ -106,10 +98,7 @@ function thresholdSubtleChange(
   });
   var change = changeCollection.map(function (img) {
     var yr = ee.Date(img.get("system:time_start")).get("year");
-    var changeYr = img
-      .multiply(changeDir)
-      .gt(changeThreshLow)
-      .and(img.multiply(changeDir).lt(changeThreshHigh));
+    var changeYr = img.multiply(changeDir).gt(changeThreshLow).and(img.multiply(changeDir).lt(changeThreshHigh));
     var yrImage = img.where(img.mask(), yr);
     changeYr = yrImage.updateMask(changeYr).rename(bandNames).int16();
     return img.mask(ee.Image(1)).addBands(changeYr);
@@ -139,21 +128,10 @@ function getExistingChangeData(changeThresh, showLayers) {
   // Map.addLayer(glri_lcms,{'min':startYear,'max':endYear,'palette':'FF0,F00'},'GLRI LCMS',false);
   // }
 
-  var hansen = ee
-    .Image("UMD/hansen/global_forest_change_2022_v1_10")
-    .select(["lossyear"])
-    .add(2000)
-    .int16();
-  hansen = hansen.updateMask(
-    hansen.neq(2000).and(hansen.gte(startYear)).and(hansen.lte(endYear))
-  );
+  var hansen = ee.Image("UMD/hansen/global_forest_change_2022_v1_10").select(["lossyear"]).add(2000).int16();
+  hansen = hansen.updateMask(hansen.neq(2000).and(hansen.gte(startYear)).and(hansen.lte(endYear)));
   if (showLayers) {
-    Map.addLayer(
-      hansen,
-      { min: startYear, max: endYear, palette: "FF0,F00" },
-      "Hansen Change Year",
-      false
-    );
+    Map.addLayer(hansen, { min: startYear, max: endYear, palette: "FF0,F00" }, "Hansen Change Year", false);
   }
   // return conusChangeOut;
   return hansen;
@@ -308,37 +286,20 @@ var extractDisturbance = function (lt, distDir, params, mmu) {
   var mag = endVal.subtract(startVal); // substract the segment start index value from the segment end index value to calculate the delta of segments
 
   // concatenate segment start year, delta, duration, and starting spectral index value to an array
-  var distImg = ee.Image.cat([
-    startYear.add(1),
-    mag,
-    dur,
-    startVal.multiply(-1),
-  ]).toArray(0); // make an image of segment attributes - multiply by the distDir parameter to re-orient the spectral index if it was flipped for segmentation - do it here so that the subtraction to calculate segment delta in the above line is consistent - add 1 to the detection year, because the vertex year is not the first year that change is detected, it is the following year
+  var distImg = ee.Image.cat([startYear.add(1), mag, dur, startVal.multiply(-1)]).toArray(0); // make an image of segment attributes - multiply by the distDir parameter to re-orient the spectral index if it was flipped for segmentation - do it here so that the subtraction to calculate segment delta in the above line is consistent - add 1 to the detection year, because the vertex year is not the first year that change is detected, it is the following year
 
   // sort the segments in the disturbance attribute image delta by spectral index change delta
   var distImgSorted = distImg.arraySort(mag.multiply(-1));
 
   // slice out the first (greatest) delta
-  var tempDistImg1 = distImgSorted
-    .arraySlice(1, 0, 1)
-    .unmask(ee.Image(ee.Array([[0], [0], [0], [0]])));
-  var tempDistImg2 = distImgSorted
-    .arraySlice(1, 1, 2)
-    .unmask(ee.Image(ee.Array([[0], [0], [0], [0]])));
-  var tempDistImg3 = distImgSorted
-    .arraySlice(1, 2, 3)
-    .unmask(ee.Image(ee.Array([[0], [0], [0], [0]])));
+  var tempDistImg1 = distImgSorted.arraySlice(1, 0, 1).unmask(ee.Image(ee.Array([[0], [0], [0], [0]])));
+  var tempDistImg2 = distImgSorted.arraySlice(1, 1, 2).unmask(ee.Image(ee.Array([[0], [0], [0], [0]])));
+  var tempDistImg3 = distImgSorted.arraySlice(1, 2, 3).unmask(ee.Image(ee.Array([[0], [0], [0], [0]])));
 
   // make an image from the array of attributes for the greatest disturbance
-  var finalDistImg1 = tempDistImg1
-    .arrayProject([0])
-    .arrayFlatten([["yod", "mag", "dur", "preval"]]);
-  var finalDistImg2 = tempDistImg2
-    .arrayProject([0])
-    .arrayFlatten([["yod", "mag", "dur", "preval"]]);
-  var finalDistImg3 = tempDistImg3
-    .arrayProject([0])
-    .arrayFlatten([["yod", "mag", "dur", "preval"]]);
+  var finalDistImg1 = tempDistImg1.arrayProject([0]).arrayFlatten([["yod", "mag", "dur", "preval"]]);
+  var finalDistImg2 = tempDistImg2.arrayProject([0]).arrayFlatten([["yod", "mag", "dur", "preval"]]);
+  var finalDistImg3 = tempDistImg3.arrayProject([0]).arrayFlatten([["yod", "mag", "dur", "preval"]]);
 
   // filter out disturbances based on user settings
   function filterDisturbances(finalDistImg) {
@@ -349,10 +310,7 @@ var extractDisturbance = function (lt, distDir, params, mmu) {
     //       .and(finalDistImg.select(['mag']).gt(0))                    // and is greater than 0
     //       .and(finalDistImg.select(['preval']).gt(params.pre_val));
     var longTermDisturbance = finalDistImg.select(["dur"]).gte(15);
-    var longTermThreshold = finalDistImg
-      .select(["mag"])
-      .gte(params.tree_loss20)
-      .and(longTermDisturbance);
+    var longTermThreshold = finalDistImg.select(["mag"]).gte(params.tree_loss20).and(longTermDisturbance);
     var threshold = finalDistImg.select(["mag"]).gte(params.tree_loss1);
 
     return finalDistImg.updateMask(threshold.or(longTermThreshold));
@@ -427,10 +385,7 @@ function arrayToTimeSeries(tsArray, yearsArray, possibleYears, bandName) {
     masked = masked.where(l.eq(0), dummyImage).arrayGet([-1]);
 
     //Remask nulls
-    masked = masked
-      .updateMask(masked.neq(noDateValue))
-      .rename([bandName])
-      .set("system:time_start", ee.Date.fromYMD(yr, 6, 1).millis());
+    masked = masked.updateMask(masked.neq(noDateValue)).rename([bandName]).set("system:time_start", ee.Date.fromYMD(yr, 6, 1).millis());
 
     return masked;
   });
@@ -438,16 +393,7 @@ function arrayToTimeSeries(tsArray, yearsArray, possibleYears, bandName) {
 }
 
 //Function to wrap landtrendr processing
-function landtrendrWrapper(
-  processedComposites,
-  startYear,
-  endYear,
-  indexName,
-  distDir,
-  run_params,
-  distParams,
-  mmu
-) {
+function landtrendrWrapper(processedComposites, startYear, endYear, indexName, distDir, run_params, distParams, mmu) {
   // var startYear = 1984;//ee.Date(ee.Image(processedComposites.first()).get('system:time_start')).get('year').getInfo();
   // var endYear = 2017;//ee.Date(ee.Image(processedComposites.sort('system:time_start',false).first()).get('system:time_start')).get('year').getInfo();
   var noDataValue = 32768;
@@ -455,11 +401,9 @@ function landtrendrWrapper(
     noDataValue = -noDataValue;
   }
   //----- RUN LANDTRENDR -----
-  var ltCollection = processedComposites
-    .select([indexName])
-    .map(function (img) {
-      return ee.Image(multBands(img, distDir, 1)); //.unmask(noDataValue);
-    });
+  var ltCollection = processedComposites.select([indexName]).map(function (img) {
+    return ee.Image(multBands(img, distDir, 1)); //.unmask(noDataValue);
+  });
   // Map.addLayer(ltCollection,{},'ltCollection',false);
   run_params.timeSeries = ltCollection; // add LT collection to the segmentation run parameter object
   var lt = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params); // run LandTrendr spectral temporal segmentation algorithm
@@ -471,12 +415,7 @@ function landtrendrWrapper(
   //assemble the disturbance extraction parameters
 
   // run the dist extract function
-  var distImg = extractDisturbance(
-    lt.select("LandTrendr"),
-    distDir,
-    distParams,
-    mmu
-  );
+  var distImg = extractDisturbance(lt.select("LandTrendr"), distDir, distParams, mmu);
   var distImgBandNames = distImg.bandNames();
   distImgBandNames = distImgBandNames.map(function (bn) {
     return ee.String(indexName).cat("_").cat(bn);
@@ -528,12 +467,7 @@ function landtrendrWrapper(
     ltFitted = ltFitted.multiply(-1);
   }
 
-  var fittedCollection = arrayToTimeSeries(
-    ltFitted,
-    ltYear,
-    ee.List.sequence(startYear, endYear),
-    "LT_Fitted_" + indexName
-  );
+  var fittedCollection = arrayToTimeSeries(ltFitted, ltYear, ee.List.sequence(startYear, endYear), "LT_Fitted_" + indexName);
 
   //Convert to single image
   var vertStack = getLTvertStack(rawLT, run_params);
@@ -562,12 +496,7 @@ function getRawAndFittedLT(rawTs, lt, startYear, endYear, indexName, distDir) {
   }
 
   //Convert array to an imageCollection
-  var fittedCollection = arrayToTimeSeries(
-    ltFitted,
-    ltYear,
-    ee.List.sequence(startYear, endYear),
-    "LT_Fitted_" + indexName
-  );
+  var fittedCollection = arrayToTimeSeries(ltFitted, ltYear, ee.List.sequence(startYear, endYear), "LT_Fitted_" + indexName);
 
   //Join raw time series with fitted
   var joinedTS = getImagesLib.joinCollections(rawTs, fittedCollection);
@@ -602,9 +531,7 @@ function simpleRawLTToVertices(rawLT) {
   ltArray = ltArray.arrayMask(vertices);
 
   // Mask out all but the year and vertex fited values (get rid of the raw and vertex rows)
-  return ltArray
-    .arrayMask(ee.Image(ee.Array([[1], [0], [1], [0]])))
-    .addBands(rmse);
+  return ltArray.arrayMask(ee.Image(ee.Array([[1], [0], [1], [0]]))).addBands(rmse);
 }
 /////////////////////////////////////////////////////
 // Function to multiply the LandTrendr RMSE and vertex array
@@ -652,9 +579,7 @@ function runLANDTRENDR(ts, bandName, run_params) {
   var rawLT = ee.Algorithms.TemporalSegmentation.LandTrendr(run_params);
 
   // Get vertex-only fitted values and multiply the fitted values
-  return LTExportPrep(rawLT, distDir)
-    .set("band", bandName)
-    .set("run_params", run_params);
+  return LTExportPrep(rawLT, distDir).set("band", bandName).set("run_params", run_params);
 }
 /////////////////////////////////////////////////////
 // Pulled from simpleLANDTRENDR below to take the lossGain dictionary and prep it for export
@@ -670,9 +595,7 @@ function LTLossGainExportPrep(lossGainDict, indexName, multBy) {
     .select([".*_yr_.*"])
     .int16()
     .addBands(lossStack.select([".*_dur_.*"]).byte());
-  var lossContinuous = lossStack
-    .select([".*_mag_.*", ".*_slope_.*"])
-    .multiply(multBy);
+  var lossContinuous = lossStack.select([".*_mag_.*", ".*_slope_.*"]).multiply(multBy);
   if (Math.abs(multBy) === 10000) {
     lossContinuous = lossContinuous.int16();
   }
@@ -682,9 +605,7 @@ function LTLossGainExportPrep(lossGainDict, indexName, multBy) {
     .select([".*_yr_.*"])
     .int16()
     .addBands(gainStack.select([".*_dur_.*"]).byte());
-  var gainContinuous = gainStack
-    .select([".*_mag_.*", ".*_slope_.*"])
-    .multiply(multBy);
+  var gainContinuous = gainStack.select([".*_mag_.*", ".*_slope_.*"]).multiply(multBy);
   if (Math.abs(multBy) === 10000) {
     gainContinuous = gainContinuous.int16();
   }
@@ -701,15 +622,7 @@ function LTLossGainExportPrep(lossGainDict, indexName, multBy) {
 }
 /////////////////////////////////////////////////////
 // Pulled from simpleLANDTRENDR below to take prepped (must run LTLossGainExportPrep first) lossGain stack and view it
-function addLossGainToMap(
-  lossGainStack,
-  startYear,
-  endYear,
-  lossMagMin,
-  lossMagMax,
-  gainMagMin,
-  gainMagMax
-) {
+function addLossGainToMap(lossGainStack, startYear, endYear, lossMagMin, lossMagMax, gainMagMin, gainMagMax) {
   lossMagMin = lossMagMin || -8000;
   lossMagMax = lossMagMax || -2000;
   gainMagMin = gainMagMin || 1000;
@@ -762,43 +675,13 @@ function addLossGainToMap(
     if (i == 1) {
       showLossYear = true;
     }
-    Map.addLayer(
-      lossStackI.select([".*_loss_yr.*"]),
-      vizParamsLossYear,
-      i.toString() + " " + indexName + " Loss Year",
-      showLossYear
-    );
-    Map.addLayer(
-      lossStackI.select([".*_loss_mag.*"]),
-      vizParamsLossMag,
-      i.toString() + " " + indexName + " Loss Magnitude",
-      false
-    );
-    Map.addLayer(
-      lossStackI.select([".*_loss_dur.*"]),
-      vizParamsDuration,
-      i.toString() + " " + indexName + " Loss Duration",
-      false
-    );
+    Map.addLayer(lossStackI.select([".*_loss_yr.*"]), vizParamsLossYear, i.toString() + " " + indexName + " Loss Year", showLossYear);
+    Map.addLayer(lossStackI.select([".*_loss_mag.*"]), vizParamsLossMag, i.toString() + " " + indexName + " Loss Magnitude", false);
+    Map.addLayer(lossStackI.select([".*_loss_dur.*"]), vizParamsDuration, i.toString() + " " + indexName + " Loss Duration", false);
 
-    Map.addLayer(
-      gainStackI.select([".*_gain_yr.*"]),
-      vizParamsGainYear,
-      i.toString() + " " + indexName + " Gain Year",
-      false
-    );
-    Map.addLayer(
-      gainStackI.select([".*_gain_mag.*"]),
-      vizParamsGainMag,
-      i.toString() + " " + indexName + " Gain Magnitude",
-      false
-    );
-    Map.addLayer(
-      gainStackI.select([".*_gain_dur.*"]),
-      vizParamsDuration,
-      i.toString() + " " + indexName + " Gain Duration",
-      false
-    );
+    Map.addLayer(gainStackI.select([".*_gain_yr.*"]), vizParamsGainYear, i.toString() + " " + indexName + " Gain Year", false);
+    Map.addLayer(gainStackI.select([".*_gain_mag.*"]), vizParamsGainMag, i.toString() + " " + indexName + " Gain Magnitude", false);
+    Map.addLayer(gainStackI.select([".*_gain_dur.*"]), vizParamsDuration, i.toString() + " " + indexName + " Gain Duration", false);
   });
 }
 /////////////////////////////////////////////////////
@@ -842,18 +725,8 @@ function simpleLANDTRENDR(
   } catch (err) {
     distDir = -1;
   }
-  var ltTS = simpleLTFit(
-    lt,
-    startYear,
-    endYear,
-    indexName,
-    true,
-    run_params["maxSegments"]
-  );
-  var joinedTS = getImagesLib.joinCollections(
-    ts,
-    ltTS.select([".*_LT_fitted"])
-  );
+  var ltTS = simpleLTFit(lt, startYear, endYear, indexName, true, run_params["maxSegments"]);
+  var joinedTS = getImagesLib.joinCollections(ts, ltTS.select([".*_LT_fitted"]));
 
   // Flip the output back around if needed to do change detection
   var ltRawPositiveForChange = multLT(lt, distDir);
@@ -877,15 +750,7 @@ function simpleLANDTRENDR(
   // Add the change outputs to the map if specified to do so
   if (addToMap) {
     // Map.addLayer(joinedTS,{},'Raw and Fitted Time Series',true);
-    addLossGainToMap(
-      lossGainStack,
-      startYear,
-      endYear,
-      (lossMagThresh - 0.7) * multBy,
-      lossMagThresh * multBy,
-      gainMagThresh * multBy,
-      (gainMagThresh + 0.7) * multBy
-    );
+    addLossGainToMap(lossGainStack, startYear, endYear, (lossMagThresh - 0.7) * multBy, lossMagThresh * multBy, gainMagThresh * multBy, (gainMagThresh + 0.7) * multBy);
   }
   return [multLT(lt, multBy), lossGainStack];
 }
@@ -924,13 +789,7 @@ function prepTimeSeriesForLandTrendr(ts, indexName, run_params) {
 }
 
 // Function to output LandTrendr as Vertical Stack to take up less space
-function LANDTRENDRVertStack(
-  composites,
-  indexName,
-  run_params,
-  startYear,
-  endYear
-) {
+function LANDTRENDRVertStack(composites, indexName, run_params, startYear, endYear) {
   var creationDate = ee.Date(Date.now()).format("YYYYMMdd");
 
   // Prep Time Series and put into run parameters
@@ -949,11 +808,7 @@ function LANDTRENDRVertStack(
   ltStack = ltStack.addBands(rmse);
 
   // Undo distDir change done in prepTimeSeriesForLandTrendr()
-  ltStack = applyDistDir_vertStack(
-    ltStack,
-    getImagesLib.changeDirDict[indexName],
-    "landtrendr"
-  );
+  ltStack = applyDistDir_vertStack(ltStack, getImagesLib.changeDirDict[indexName], "landtrendr");
 
   // Set Properties
   ltStack = ltStack.set({
@@ -978,18 +833,10 @@ function LANDTRENDRVertStack(
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 function LANDTRENDRFitMagSlopeDiffCollection(ts, indexName, run_params) {
   var startYear = ee.Date(ts.first().get("system:time_start")).get("year");
-  var endYear = ee
-    .Date(ts.sort("system:time_start", false).first().get("system:time_start"))
-    .get("year");
+  var endYear = ee.Date(ts.sort("system:time_start", false).first().get("system:time_start")).get("year");
 
   // Run LandTrendr and convert to VertStack format
-  var landtrendrOut = LANDTRENDRVertStack(
-    ts,
-    indexName,
-    run_params,
-    startYear,
-    endYear
-  );
+  var landtrendrOut = LANDTRENDRVertStack(ts, indexName, run_params, startYear, endYear);
   var ltStack = ee.Image(landtrendrOut.ltStack);
 
   // Convert to durFitMagSlope format
@@ -1008,15 +855,9 @@ function LANDTRENDRFitMagSlopeDiffCollection(ts, indexName, run_params) {
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Function for running LANDTRENDR across multiple bands and converting output to annual image collection
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
-function multiBandLANDTRENDRFitMagSlopeDiffCollection(
-  ts,
-  indexNames,
-  run_params
-) {
+function multiBandLANDTRENDRFitMagSlopeDiffCollection(ts, indexNames, run_params) {
   var startYear = ee.Date(ts.first().get("system:time_start")).get("year");
-  var endYear = ee
-    .Date(ts.sort("system:time_start", false).first().get("system:time_start"))
-    .get("year");
+  var endYear = ee.Date(ts.sort("system:time_start", false).first().get("system:time_start")).get("year");
 
   // Run LandTrendr and convert to VertStack format
   var landtrendrOut = ee.ImageCollection(
@@ -1063,11 +904,7 @@ function applyDistDir_vertStack(stack, distDir, verdet_or_landtrendr) {
   //   var rmse = stack.select('rmse');
   //   out = out.addBands(rmse);
   // }
-  out = ee.Algorithms.If(
-    ee.String(verdet_or_landtrendr).compareTo("landtrendr").eq(0),
-    out.addBands(stack.select("rmse")),
-    out
-  );
+  out = ee.Algorithms.If(ee.String(verdet_or_landtrendr).compareTo("landtrendr").eq(0), out.addBands(stack.select("rmse")), out);
   out = ee.Image(out);
   out = out.copyProperties(stack, ["system:time_start"]).copyProperties(stack);
   return ee.Image(out);
@@ -1136,11 +973,7 @@ function fitStackToCollection(stack, maxSegments, startYear, endYear) {
 
           //Find if the year is the first and include the left year if it is
           //Otherwise, do not include the left year
-          yrImage = ee.Algorithms.If(
-            yr.eq(startYear),
-            yrImage.updateMask(segYearsLeft.lte(yr).and(segYearsRight.gte(yr))),
-            yrImage.updateMask(segYearsLeft.lt(yr).and(segYearsRight.gte(yr)))
-          );
+          yrImage = ee.Algorithms.If(yr.eq(startYear), yrImage.updateMask(segYearsLeft.lte(yr).and(segYearsRight.gte(yr))), yrImage.updateMask(segYearsLeft.lt(yr).and(segYearsRight.gte(yr))));
 
           yrImage = ee.Image(yrImage).rename(["yr"]).int16();
 
@@ -1148,29 +981,17 @@ function fitStackToCollection(stack, maxSegments, startYear, endYear) {
           var yrDur = segDur.updateMask(yrImage);
           var yrMag = segMag.updateMask(yrImage);
           var yrSlope = segSlope.updateMask(yrImage);
-          var yrFit = segFitRight
-            .subtract(yrSlope.multiply(segYearsRight.subtract(yr)))
-            .updateMask(yrImage);
+          var yrFit = segFitRight.subtract(yrSlope.multiply(segYearsRight.subtract(yr))).updateMask(yrImage);
 
           //Get the difference from the
-          var diffFromLeft = yrFit
-            .subtract(segFitLeft)
-            .updateMask(yrImage)
-            .rename(["diff"]);
+          var diffFromLeft = yrFit.subtract(segFitLeft).updateMask(yrImage).rename(["diff"]);
           // var relativeDiffFromLeft = diffFromLeft.divide(segMag.abs()).updateMask(yrImage).rename(['rel_yr_diff_left']).multiply(10000);
 
           // var diffFromRight =yrFit.subtract(segFitRight).updateMask(yrImage).rename(['yr_diff_right']);
           // var relativeDiffFromRight = diffFromRight.divide(segMag.abs()).updateMask(yrImage).rename(['rel_yr_diff_right']).multiply(10000)
           //Stack it up
-          var out = yrDur
-            .addBands(yrFit)
-            .addBands(yrMag)
-            .addBands(yrSlope)
-            .addBands(diffFromLeft);
-          out = out.set(
-            "system:time_start",
-            ee.Date.fromYMD(yr, 6, 1).millis()
-          );
+          var out = yrDur.addBands(yrFit).addBands(yrMag).addBands(yrSlope).addBands(diffFromLeft);
+          out = out.set("system:time_start", ee.Date.fromYMD(yr, 6, 1).millis());
           return out;
         })
       );
@@ -1184,13 +1005,8 @@ function fitStackToCollection(stack, maxSegments, startYear, endYear) {
   //Collapse each given year to the single segment with data
   var yrDurMagSlopeCleaned = ee.ImageCollection.fromImages(
     ee.List.sequence(startYear, endYear).map(function (yr) {
-      var yrDurMagSlopeT = yrDurMagSlope
-        .filter(ee.Filter.calendarRange(yr, yr, "year"))
-        .mosaic();
-      return yrDurMagSlopeT.set(
-        "system:time_start",
-        ee.Date.fromYMD(yr, 6, 1).millis()
-      );
+      var yrDurMagSlopeT = yrDurMagSlope.filter(ee.Filter.calendarRange(yr, yr, "year")).mosaic();
+      return yrDurMagSlopeT.set("system:time_start", ee.Date.fromYMD(yr, 6, 1).millis());
     })
   );
   return yrDurMagSlopeCleaned;
@@ -1211,10 +1027,7 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT) {
   var maxSegments = stackCollection.first().get("maxSegments");
   var startYear = stackCollection.first().get("startYear");
   var endYear = stackCollection.first().get("endYear");
-  var indexList = ee
-    .Dictionary(stackCollection.aggregate_histogram("band"))
-    .keys()
-    .getInfo();
+  var indexList = ee.Dictionary(stackCollection.aggregate_histogram("band")).keys().getInfo();
 
   //Set up output collection to populate
   var outputCollection;
@@ -1224,12 +1037,7 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT) {
     stack = stackCollection.filter(ee.Filter.eq("band", indexName)).mosaic();
 
     //Convert to image collection
-    var yrDurMagSlopeCleaned = fitStackToCollection(
-      stack,
-      maxSegments,
-      startYear,
-      endYear
-    );
+    var yrDurMagSlopeCleaned = fitStackToCollection(stack, maxSegments, startYear, endYear);
 
     //Rename
     var bns = ee.Image(yrDurMagSlopeCleaned.first()).bandNames();
@@ -1244,11 +1052,7 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT) {
     if (outputCollection === undefined) {
       outputCollection = yrDurMagSlopeCleaned;
     } else {
-      outputCollection = getImagesLib.joinCollections(
-        outputCollection,
-        yrDurMagSlopeCleaned,
-        false
-      );
+      outputCollection = getImagesLib.joinCollections(outputCollection, yrDurMagSlopeCleaned, false);
     }
   });
   return outputCollection;
@@ -1258,15 +1062,7 @@ function convertStack_To_DurFitMagSlope(stackCollection, VTorLT) {
 //Simplified method to convert LANDTRENDR stack to annual collection of
 //Duration, fitted, magnitude, slope, and diff
 //Improved handling of start year delay found in older method
-function simpleLTFit(
-  ltStack,
-  startYear,
-  endYear,
-  indexName,
-  arrayMode,
-  maxSegs,
-  multBy
-) {
+function simpleLTFit(ltStack, startYear, endYear, indexName, arrayMode, maxSegs, multBy) {
   if (indexName === undefined || indexName === null) {
     indexName = "";
   }
@@ -1341,15 +1137,11 @@ function simpleLTFit(
       // var startYrMask =yrs.lt(yr);
       // var endYrMask = yrs.gte(yr)
       //Get fitted values for the vertices segment the year is within
-      var fitStart = fit
-        .updateMask(startYrMask)
-        .reduce(ee.Reducer.lastNonNull());
+      var fitStart = fit.updateMask(startYrMask).reduce(ee.Reducer.lastNonNull());
       var fitEnd = fit.updateMask(endYrMask).reduce(ee.Reducer.firstNonNull());
 
       //Get start and end year for the vertices segment the year is within
-      var yearStart = yrs
-        .updateMask(startYrMask)
-        .reduce(ee.Reducer.lastNonNull());
+      var yearStart = yrs.updateMask(startYrMask).reduce(ee.Reducer.lastNonNull());
       var yearEnd = yrs.updateMask(endYrMask).reduce(ee.Reducer.firstNonNull());
 
       //Get the difference and duration of the segment
@@ -1374,13 +1166,7 @@ function simpleLTFit(
         .addBands(segDiff)
         .addBands(segSlope)
         .addBands(fitDiff)
-        .rename([
-          indexName + "_LT_dur",
-          indexName + "_LT_fitted",
-          indexName + "_LT_mag",
-          indexName + "_LT_slope",
-          indexName + "_LT_diff",
-        ])
+        .rename([indexName + "_LT_dur", indexName + "_LT_fitted", indexName + "_LT_mag", indexName + "_LT_slope", indexName + "_LT_diff"])
         .set("system:time_start", ee.Date.fromYMD(yr, 6, 1).millis());
     })
   );
@@ -1388,25 +1174,13 @@ function simpleLTFit(
 }
 
 // Wrapper function to iterate across multiple LT band/index values
-function batchSimpleLTFit(
-  ltStacks,
-  startYear,
-  endYear,
-  indexNames,
-  bandPropertyName,
-  arrayMode,
-  maxSegs,
-  multBy
-) {
+function batchSimpleLTFit(ltStacks, startYear, endYear, indexNames, bandPropertyName, arrayMode, maxSegs, multBy) {
   if (bandPropertyName === null || bandPropertyName === undefined) {
     bandPropertyName = "band";
   }
   // Get band/index names if not provided
   if (indexNames === null || indexNames === undefined) {
-    indexNames = ltStacks
-      .aggregate_histogram(bandPropertyName)
-      .keys()
-      .getInfo();
+    indexNames = ltStacks.aggregate_histogram(bandPropertyName).keys().getInfo();
   }
   multBy = multBy || 1;
   // Iterate across each band/index and get the fitted, mag, slope, etc
@@ -1415,21 +1189,9 @@ function batchSimpleLTFit(
     var ltt = ltStacks.filter(ee.Filter.eq(bandPropertyName, bn)).max();
 
     if (lt_fit === undefined) {
-      lt_fit = simpleLTFit(
-        ltt,
-        startYear,
-        endYear,
-        bn,
-        arrayMode,
-        maxSegs,
-        multBy
-      );
+      lt_fit = simpleLTFit(ltt, startYear, endYear, bn, arrayMode, maxSegs, multBy);
     } else {
-      lt_fit = getImagesLib.joinCollections(
-        lt_fit,
-        simpleLTFit(ltt, startYear, endYear, bn, arrayMode, maxSegs, multBy),
-        false
-      );
+      lt_fit = getImagesLib.joinCollections(lt_fit, simpleLTFit(ltt, startYear, endYear, bn, arrayMode, maxSegs, multBy), false);
     }
   });
   return lt_fit;
@@ -1440,18 +1202,7 @@ function batchSimpleLTFit(
 // If using vertStack format, this will not work if there are masked values in the vertStack. Must use getImagesLib.setNoData prior to
 // calling this function
 // Have to apply LandTrendr changeDirection to both Verdet and Landtrendr before applying convertToLossGain()
-function convertToLossGain(
-  ltStack,
-  format,
-  lossMagThresh,
-  lossSlopeThresh,
-  gainMagThresh,
-  gainSlopeThresh,
-  slowLossDurationThresh,
-  chooseWhichLoss,
-  chooseWhichGain,
-  howManyToPull
-) {
+function convertToLossGain(ltStack, format, lossMagThresh, lossSlopeThresh, gainMagThresh, gainSlopeThresh, slowLossDurationThresh, chooseWhichLoss, chooseWhichGain, howManyToPull) {
   if (lossMagThresh === undefined || lossMagThresh === null) {
     lossMagThresh = -0.15;
   }
@@ -1490,22 +1241,13 @@ function convertToLossGain(
     var left = ltStack.arraySlice(1, 0, -1);
     var right = ltStack.arraySlice(1, 1, null);
     var diff = left.subtract(right);
-    var slopes = diff
-      .arraySlice(0, 1, 2)
-      .divide(diff.arraySlice(0, 0, 1))
-      .multiply(-1);
+    var slopes = diff.arraySlice(0, 1, 2).divide(diff.arraySlice(0, 0, 1)).multiply(-1);
     var duration = diff.arraySlice(0, 0, 1).multiply(-1);
     var fittedMag = diff.arraySlice(0, 1, 2);
     // Set up array for sorting
-    var forSorting = right
-      .arraySlice(0, 0, 1)
-      .arrayCat(duration, 0)
-      .arrayCat(fittedMag, 0)
-      .arrayCat(slopes, 0);
+    var forSorting = right.arraySlice(0, 0, 1).arrayCat(duration, 0).arrayCat(fittedMag, 0).arrayCat(slopes, 0);
   } else if (format == "vertStack") {
-    print(
-      "Converting LandTrendr OR Verdet from vertStack format to Gain & Loss"
-    );
+    print("Converting LandTrendr OR Verdet from vertStack format to Gain & Loss");
 
     var baseMask = ltStack.select([0]).mask(); //Will fail on completely masked pixels. Have to work around and then remask later.
     var ltStack = ltStack.unmask(255); // Set masked pixels to 255
@@ -1522,11 +1264,7 @@ function convertToLossGain(
     var fittedMag = diff.arraySlice(0, 1, 2);
     var duration = diff.arraySlice(0, 0, 1).multiply(-1);
     var slopes = fittedMag.divide(duration);
-    var forSorting = right
-      .arraySlice(0, 0, 1)
-      .arrayCat(duration, 0)
-      .arrayCat(fittedMag, 0)
-      .arrayCat(slopes, 0);
+    var forSorting = right.arraySlice(0, 0, 1).arrayCat(duration, 0).arrayCat(fittedMag, 0).arrayCat(slopes, 0);
     forSorting = forSorting.updateMask(baseMask);
   }
 
@@ -1569,30 +1307,16 @@ function convertToLossGain(
   var gainSortValue = gainColumnDict[chooseWhichGain];
 
   //Pull the sort column and multiply it
-  var lossSortBy = forLossSorting
-    .arraySlice(0, lossSortValue[0], lossSortValue[0] + 1)
-    .multiply(lossSortValue[1]);
-  var gainSortBy = forGainSorting
-    .arraySlice(0, gainSortValue[0], gainSortValue[0] + 1)
-    .multiply(gainSortValue[1]);
+  var lossSortBy = forLossSorting.arraySlice(0, lossSortValue[0], lossSortValue[0] + 1).multiply(lossSortValue[1]);
+  var gainSortBy = forGainSorting.arraySlice(0, gainSortValue[0], gainSortValue[0] + 1).multiply(gainSortValue[1]);
 
   //Sort the loss and gain and slice off the first column
   var lossAfterForSorting = forLossSorting.arraySort(lossSortBy);
   var gainAfterForSorting = forGainSorting.arraySort(gainSortBy);
 
   //Convert array to image stck
-  var lossStack = getLTStack(lossAfterForSorting, howManyToPull, [
-    "loss_yr_",
-    "loss_dur_",
-    "loss_mag_",
-    "loss_slope_",
-  ]);
-  var gainStack = getLTStack(gainAfterForSorting, howManyToPull, [
-    "gain_yr_",
-    "gain_dur_",
-    "gain_mag_",
-    "gain_slope_",
-  ]);
+  var lossStack = getLTStack(lossAfterForSorting, howManyToPull, ["loss_yr_", "loss_dur_", "loss_mag_", "loss_slope_"]);
+  var gainStack = getLTStack(gainAfterForSorting, howManyToPull, ["gain_yr_", "gain_dur_", "gain_mag_", "gain_slope_"]);
 
   var lossGainDict = { lossStack: lossStack, gainStack: gainStack };
 
@@ -1650,12 +1374,7 @@ function linearInterp(imgcol, frame, nodata) {
   imgcol = imgcol.map(addMillisecondsTimeBand);
 
   // We'll look for all images up to 32 days away from the current image.
-  var maxDiff = ee.Filter.maxDifference(
-    frame * (1000 * 60 * 60 * 24),
-    time,
-    null,
-    time
-  );
+  var maxDiff = ee.Filter.maxDifference(frame * (1000 * 60 * 60 * 24), time, null, time);
   var cond = { leftField: time, rightField: time };
 
   // Images after, sorted in descending order (so closest is last).
@@ -1686,12 +1405,8 @@ function linearInterp(imgcol, frame, nodata) {
     c2.map(function (img) {
       img = ee.Image(img);
 
-      var before = ee.ImageCollection.fromImages(
-        ee.List(img.get("before"))
-      ).mosaic();
-      var after = ee.ImageCollection.fromImages(
-        ee.List(img.get("after"))
-      ).mosaic();
+      var before = ee.ImageCollection.fromImages(ee.List(img.get("before"))).mosaic();
+      var after = ee.ImageCollection.fromImages(ee.List(img.get("after"))).mosaic();
 
       img = img.set("before", null).set("after", null);
       // constrain after or before no NA values, confirm linear Interp having result
@@ -1724,23 +1439,12 @@ function linearInterp(imgcol, frame, nodata) {
 //        Function to apply linear interpolation for Verdet
 function applyLinearInterp(composites, nYearsInterpolate) {
   // Start with just the basic bands
-  composites = composites.select([
-    "red",
-    "green",
-    "blue",
-    "nir",
-    "swir1",
-    "swir2",
-  ]);
+  composites = composites.select(["red", "green", "blue", "nir", "swir1", "swir2"]);
 
   // Find pixels/years with no data
   var masks = composites
     .map(function (img) {
-      return img
-        .mask()
-        .reduce(ee.Reducer.min())
-        .byte()
-        .copyProperties(img, img.propertyNames());
+      return img.mask().reduce(ee.Reducer.min()).byte().copyProperties(img, img.propertyNames());
     })
     .select([0]);
   masks = masks.map(function (img) {
@@ -1753,10 +1457,7 @@ function applyLinearInterp(composites, nYearsInterpolate) {
   var newNames = origNames.map(function (bandName) {
     return ee.String(bandName).replace("null", "mask");
   });
-  masks = masks
-    .select(origNames, newNames)
-    .set("creationDate", ee.Date(Date.now()).format("YYYYMMdd"))
-    .set("mask", true);
+  masks = masks.select(origNames, newNames).set("creationDate", ee.Date(Date.now()).format("YYYYMMdd")).set("mask", true);
 
   //Perform linear interpolation
   composites = linearInterp(composites, 365 * nYearsInterpolate, -32768)
@@ -1812,9 +1513,7 @@ function updateVerdetMasks(img, linearInterpMasks) {
 function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor) {
   //Get the start and end years
   var startYear = ee.Date(ts.first().get("system:time_start")).get("year");
-  var endYear = ee
-    .Date(ts.sort("system:time_start", false).first().get("system:time_start"))
-    .get("year");
+  var endYear = ee.Date(ts.sort("system:time_start", false).first().get("system:time_start")).get("year");
 
   //Get single band time series and set its direction so that a loss in veg is going up
   ts = ts.select([indexName]);
@@ -1842,14 +1541,7 @@ function prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor) {
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 // This step undoes the Verdet Scaling that is implemented in prepTimeSeriesForVerdet()
-function VERDETVertStack(
-  ts,
-  indexName,
-  run_params,
-  maxSegments,
-  correctionFactor,
-  doLinearInterp
-) {
+function VERDETVertStack(ts, indexName, run_params, maxSegments, correctionFactor, doLinearInterp) {
   if (!run_params) {
     run_params = { tolerance: 0.0001, alpha: 0.1 };
   }
@@ -1867,31 +1559,17 @@ function VERDETVertStack(
   var creationDate = ee.Date(Date.now()).format("YYYYMMdd");
 
   // Extract composite time series and apply relevant masking & scaling
-  var prepDict = prepTimeSeriesForVerdet(
-    ts,
-    indexName,
-    run_params,
-    correctionFactor
-  );
+  var prepDict = prepTimeSeriesForVerdet(ts, indexName, run_params, correctionFactor);
   run_params = prepDict.run_params;
   var countMask = prepDict.countMask;
   var startYear = prepDict.startYear;
   var endYear = prepDict.endYear;
 
   //Run VERDET
-  var verdet = ee.Algorithms.TemporalSegmentation.Verdet(run_params).arraySlice(
-    0,
-    1,
-    null
-  );
+  var verdet = ee.Algorithms.TemporalSegmentation.Verdet(run_params).arraySlice(0, 1, null);
 
   //Get all possible years
-  var tsYearRight = ee.Image(
-    ee.Array.cat([
-      ee.Array([startYear]),
-      ee.Array(ee.List.sequence(startYear.add(2), endYear)),
-    ])
-  );
+  var tsYearRight = ee.Image(ee.Array.cat([ee.Array([startYear]), ee.Array(ee.List.sequence(startYear.add(2), endYear))]));
 
   //Slice off right and left slopes
   var vLeft = verdet.arraySlice(0, 1, -1);
@@ -1911,9 +1589,7 @@ function VERDETVertStack(
   tsYearRight = tsYearRight.arrayMask(vVertices);
 
   //Find the duration of each segment
-  var dur = tsYearRight
-    .arraySlice(0, 1, null)
-    .subtract(tsYearRight.arraySlice(0, 0, -1));
+  var dur = tsYearRight.arraySlice(0, 1, null).subtract(tsYearRight.arraySlice(0, 0, -1));
   dur = ee.Image(ee.Array([0])).arrayCat(dur, 0);
 
   //Mask out vertex slopes
@@ -1923,10 +1599,7 @@ function VERDETVertStack(
   var mag = verdet.multiply(dur);
 
   //Get the fitted values
-  var fitted = ee
-    .Image(run_params.timeSeries.limit(3).mean())
-    .toArray()
-    .arrayCat(mag, 0);
+  var fitted = ee.Image(run_params.timeSeries.limit(3).mean()).toArray().arrayCat(mag, 0);
   fitted = fitted.arrayAccum(0, ee.Reducer.sum()).arraySlice(0, 1, null);
   // Undo scaling of fitted values
   fitted = undoVerdetScaling(fitted, indexName, correctionFactor);
@@ -1935,10 +1608,7 @@ function VERDETVertStack(
   var forStack = tsYearRight.addBands(fitted).toArray(1);
 
   //Convert to stack and mask out any pixels that didn't have an observation in every image
-  var stack = getLTStack(forStack.arrayTranspose(), maxSegments + 1, [
-    "yrs_",
-    "fit_",
-  ]).updateMask(countMask);
+  var stack = getLTStack(forStack.arrayTranspose(), maxSegments + 1, ["yrs_", "fit_"]).updateMask(countMask);
 
   // Set Properties
   stack = stack.set({
@@ -1960,28 +1630,13 @@ function VERDETVertStack(
 //with the fitted value, duration, magnitude, slope, and diff for the segment for each given year
 // July 2019 LSC: multiply(distDir) and multiply(10000) now take place outside of this function
 // Linear Interpolation has to be done beforehand, and the masks collection passed in to this function
-function VERDETFitMagSlopeDiffCollection(
-  composites,
-  indexName,
-  run_params,
-  maxSegments,
-  correctionFactor,
-  doLinearInterp,
-  masks
-) {
+function VERDETFitMagSlopeDiffCollection(composites, indexName, run_params, maxSegments, correctionFactor, doLinearInterp, masks) {
   if (doLinearInterp === null || doLinearInterp === undefined) {
     doLinearInterp = false;
   }
 
   // Run Verdet and convert to vertStack format
-  var vtStack = VERDETVertStack(
-    composites,
-    indexName,
-    run_params,
-    maxSegments,
-    correctionFactor,
-    doLinearInterp
-  );
+  var vtStack = VERDETVertStack(composites, indexName, run_params, maxSegments, correctionFactor, doLinearInterp);
 
   // Convert to durFitMagSlope format
   var durFitMagSlope = convertStack_To_DurFitMagSlope(vtStack, "VT");
@@ -2009,14 +1664,7 @@ function VERDETFitMagSlopeDiffCollection(
 //////////////////////////////////////////////////////////////////////////
 //Wrapper for applying VERDET slightly more simply
 //Returns annual collection of verdet slope
-function verdetAnnualSlope(
-  tsIndex,
-  indexName,
-  startYear,
-  endYear,
-  alpha,
-  tolerance
-) {
+function verdetAnnualSlope(tsIndex, indexName, startYear, endYear, alpha, tolerance) {
   //Apply VERDET
   var verdet = ee.Algorithms.TemporalSegmentation.Verdet({
     timeSeries: tsIndex,
@@ -2026,23 +1674,13 @@ function verdetAnnualSlope(
   print("indexName", indexName);
   print("verdet", verdet);
   Map.addLayer(verdet, {}, "verdet " + indexName);
-  var tsYear = tsIndex
-    .map(getImagesLib.addYearBand)
-    .select([1])
-    .toArray()
-    .arraySlice(0, 1, null)
-    .arrayProject([0]);
+  var tsYear = tsIndex.map(getImagesLib.addYearBand).select([1]).toArray().arraySlice(0, 1, null).arrayProject([0]);
 
   //Find possible years to convert back to collection with
   var possibleYears = ee.List.sequence(startYear, endYear);
   print("possibleYears", possibleYears);
   print("tsYear", tsYear);
-  var verdetC = arrayToTimeSeries(
-    verdet,
-    tsYear,
-    possibleYears,
-    "VERDET_fitted_" + indexName + "_slope"
-  );
+  var verdetC = arrayToTimeSeries(verdet, tsYear, possibleYears, "VERDET_fitted_" + indexName + "_slope");
 
   return verdetC;
 }
@@ -2068,15 +1706,7 @@ function getEWMA(lsIndex, trainingStartYear, trainingEndYear, harmonicCount) {
 }
 
 //Function for converting EWMA values to annual collection
-function annualizeEWMA(
-  ewma,
-  indexName,
-  lsYear,
-  startYear,
-  endYear,
-  annualReducer,
-  remove2012
-) {
+function annualizeEWMA(ewma, indexName, lsYear, startYear, endYear, annualReducer, remove2012) {
   //Fill null parameters
   if (annualReducer === null || annualReducer === undefined) {
     annualReducer = ee.Reducer.min();
@@ -2090,11 +1720,7 @@ function annualizeEWMA(
 
   //Find if 2012 needs replaced
   var replace2012 = ee
-    .Number(
-      ee
-        .List([years.indexOf(2011), years.indexOf(2012), years.indexOf(2013)])
-        .reduce(ee.Reducer.min())
-    )
+    .Number(ee.List([years.indexOf(2011), years.indexOf(2012), years.indexOf(2013)]).reduce(ee.Reducer.min()))
     .neq(-1)
     .getInfo();
   print("2012 needs replaced:", replace2012);
@@ -2139,12 +1765,8 @@ function annualizeEWMA(
   // print(remove2012,replace2012 ==1)
   if (remove2012 && replace2012 == 1) {
     print("Replacing EWMA 2012 with mean of 2011 and 2013");
-    var value2011 = ee.Image(
-      annualEWMA.filter(ee.Filter.calendarRange(2011, 2011, "year")).first()
-    );
-    var value2013 = ee.Image(
-      annualEWMA.filter(ee.Filter.calendarRange(2013, 2013, "year")).first()
-    );
+    var value2011 = ee.Image(annualEWMA.filter(ee.Filter.calendarRange(2011, 2011, "year")).first());
+    var value2013 = ee.Image(annualEWMA.filter(ee.Filter.calendarRange(2013, 2013, "year")).first());
     var value2012 = value2013.add(value2011);
     value2012 = value2012
       .divide(2)
@@ -2152,36 +1774,15 @@ function annualizeEWMA(
       .set("system:time_start", ee.Date.fromYMD(2012, 6, 1).millis())
       .int16();
 
-    annualEWMA = ee
-      .ImageCollection(
-        ee
-          .FeatureCollection([annualEWMA, ee.ImageCollection([value2012])])
-          .flatten()
-      )
-      .sort("system:time_start");
+    annualEWMA = ee.ImageCollection(ee.FeatureCollection([annualEWMA, ee.ImageCollection([value2012])]).flatten()).sort("system:time_start");
   }
   return annualEWMA;
 }
 //
-function runEWMACD(
-  lsIndex,
-  indexName,
-  startYear,
-  endYear,
-  trainingStartYear,
-  trainingEndYear,
-  harmonicCount,
-  annualReducer,
-  remove2012
-) {
+function runEWMACD(lsIndex, indexName, startYear, endYear, trainingStartYear, trainingEndYear, harmonicCount, annualReducer, remove2012) {
   // var bandName = ee.String(ee.Image(lsIndex.first()).bandNames().get(0));
 
-  var ewma = getEWMA(
-    lsIndex,
-    trainingStartYear,
-    trainingEndYear,
-    harmonicCount
-  );
+  var ewma = getEWMA(lsIndex, trainingStartYear, trainingEndYear, harmonicCount);
 
   //Get dates for later reference
   var lsYear = lsIndex
@@ -2192,15 +1793,7 @@ function runEWMACD(
     .toArray()
     .arrayProject([0]);
 
-  var annualEWMA = annualizeEWMA(
-    ewma,
-    indexName,
-    lsYear,
-    startYear,
-    endYear,
-    annualReducer,
-    remove2012
-  );
+  var annualEWMA = annualizeEWMA(ewma, indexName, lsYear, startYear, endYear, annualReducer, remove2012);
 
   return [ewma.arrayCat(lsYear, 1), annualEWMA];
 }
@@ -2216,15 +1809,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea) {
   var create_date = ccdc_output.first().get("create_date");
 
   // order of bands so we can pull them out by number frow raw CCDC output
-  var bandNames = ee.List([
-    "blue",
-    "green",
-    "red",
-    "nir",
-    "swir1",
-    "temp",
-    "swir2",
-  ]);
+  var bandNames = ee.List(["blue", "green", "red", "nir", "swir1", "temp", "swir2"]);
 
   // Mosaic CCDC tiles and clip to study area.
   var ccdc_raw = ccdc_output.filterBounds(studyArea).mosaic().clip(studyArea);
@@ -2239,41 +1824,23 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea) {
       var segAll = ccdc_raw.select([stringSelect.cat("_.*")]);
 
       // Start and end times for the segment. Time format is days from 0000-01-01
-      var segStartDay = segAll
-        .select([stringSelect.cat("_tStart")])
-        .rename(["startDay"]);
-      var segEndDay = segAll
-        .select([stringSelect.cat("_tEnd")])
-        .rename(["endDay"]);
-      var segBreakDay = segAll
-        .select([stringSelect.cat("_tBreak")])
-        .rename(["breakDay"]);
+      var segStartDay = segAll.select([stringSelect.cat("_tStart")]).rename(["startDay"]);
+      var segEndDay = segAll.select([stringSelect.cat("_tEnd")]).rename(["endDay"]);
+      var segBreakDay = segAll.select([stringSelect.cat("_tBreak")]).rename(["breakDay"]);
       var effEndDay = segEndDay.max(segBreakDay).rename(["effEndDay"]); // effective end day - latest time between tEnd and tBreak
-      var segDur = effEndDay
-        .subtract(segStartDay)
-        .divide(365)
-        .rename(["CCDC_dur"]);
+      var segDur = effEndDay.subtract(segStartDay).divide(365).rename(["CCDC_dur"]);
 
       // Grab the linear fit information for each band for this segment
-      var segChangeProb = segAll
-        .select([stringSelect.cat("_changeProb")])
-        .rename(["changeProb"]);
+      var segChangeProb = segAll.select([stringSelect.cat("_changeProb")]).rename(["changeProb"]);
       var segBands = ee.ImageCollection(
         ee.List.sequence(1, 7).map(function (bandNum) {
           bandNum = ee.Number(bandNum).int();
           var thisBand = ee.String(bandNames.get(bandNum.subtract(1)));
           var bandString = ee.String("_B").cat(bandNum.format());
-          var segSlope = segAll
-            .select([stringSelect.cat(bandString.cat("_coef_SLP"))])
-            .rename(["slope"]);
-          var segIntp = segAll
-            .select([stringSelect.cat(bandString.cat("_coef_INTP"))])
-            .rename(["intercept"]);
+          var segSlope = segAll.select([stringSelect.cat(bandString.cat("_coef_SLP"))]).rename(["slope"]);
+          var segIntp = segAll.select([stringSelect.cat(bandString.cat("_coef_INTP"))]).rename(["intercept"]);
           var segMag = segSlope.multiply(segDur).rename(["mag"]);
-          return segSlope
-            .addBands(segIntp)
-            .addBands(segMag)
-            .set("system:index", thisBand);
+          return segSlope.addBands(segIntp).addBands(segMag).set("system:index", thisBand);
         })
       );
 
@@ -2283,49 +1850,24 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea) {
           yr = ee.Number(yr).int();
 
           // We have to assign a year based on whether the start and end times are before or after Julian day 250 of that year
-          var cutoffday = ee.Date.parse(
-            "yyyy-D",
-            yr.format().cat("-250")
-          ).difference(ee.Date.fromYMD(0, 1, 1), "day");
-          var lastYrCutoffday = ee.Date.parse(
-            "yyyy-D",
-            yr.subtract(1).format().cat("-250")
-          ).difference(ee.Date.fromYMD(0, 1, 1), "day");
-          var yearDay = ee.Date.fromYMD(yr, 6, 1).difference(
-            ee.Date.fromYMD(0, 1, 1),
-            "day"
-          ); // this will be the date/year assigned to the output timeseries
+          var cutoffday = ee.Date.parse("yyyy-D", yr.format().cat("-250")).difference(ee.Date.fromYMD(0, 1, 1), "day");
+          var lastYrCutoffday = ee.Date.parse("yyyy-D", yr.subtract(1).format().cat("-250")).difference(ee.Date.fromYMD(0, 1, 1), "day");
+          var yearDay = ee.Date.fromYMD(yr, 6, 1).difference(ee.Date.fromYMD(0, 1, 1), "day"); // this will be the date/year assigned to the output timeseries
 
           // Year mask to pull out appropriate values for each year
           var yrImage = ee.Image(yr).rename(["yr"]).int16();
-          var yrMask = segStartDay
-            .lt(cutoffday)
-            .and(segEndDay.gte(lastYrCutoffday));
+          var yrMask = segStartDay.lt(cutoffday).and(segEndDay.gte(lastYrCutoffday));
 
           // Loop through the values for each band and apply year mask
           var yrBands = ee
             .ImageCollection(
               segBands.map(function (band) {
-                var yrSlope = ee
-                  .Image(band.select([".*slope"]))
-                  .rename(["CCDC_slope"]);
-                var yrIntp = ee
-                  .Image(band.select([".*intercept"]))
-                  .rename(["CCDC_intercept"]);
-                var yrMag = ee
-                  .Image(band.select([".*mag"]))
-                  .rename(["CCDC_mag"]);
-                var yrFit = yrSlope
-                  .multiply(yearDay)
-                  .add(yrIntp)
-                  .rename(["CCDC_fitted"]);
+                var yrSlope = ee.Image(band.select([".*slope"])).rename(["CCDC_slope"]);
+                var yrIntp = ee.Image(band.select([".*intercept"])).rename(["CCDC_intercept"]);
+                var yrMag = ee.Image(band.select([".*mag"])).rename(["CCDC_mag"]);
+                var yrFit = yrSlope.multiply(yearDay).add(yrIntp).rename(["CCDC_fitted"]);
                 var yrDur = segDur.rename(["CCDC_dur"]);
-                return yrSlope
-                  .addBands(yrIntp)
-                  .addBands(yrMag)
-                  .addBands(yrFit)
-                  .addBands(yrDur)
-                  .updateMask(yrMask);
+                return yrSlope.addBands(yrIntp).addBands(yrMag).addBands(yrFit).addBands(yrDur).updateMask(yrMask);
               })
             )
             .toBands();
@@ -2341,9 +1883,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea) {
           var out = yrBands; //.addBands(yrDur).addBands(yrProb).addBands(yrSegStart)
           //.addBands(yrSegEnd).addBands(yrSegBreak).addBands(yrEffEnd);
 
-          return out
-            .set("system:time_start", ee.Date.fromYMD(yr, 6, 1).millis())
-            .set("year", yr);
+          return out.set("system:time_start", ee.Date.fromYMD(yr, 6, 1).millis()).set("year", yr);
         })
       );
 
@@ -2354,9 +1894,7 @@ function CCDCFitMagSlopeCollection(ccdc_output, studyArea) {
   yrDurMagSlope = ee.ImageCollection(yrDurMagSlope.flatten());
   var ccdc = ee.ImageCollection.fromImages(
     ee.List.sequence(startYear, endYear).map(function (yr) {
-      var yrDurMagSlopeT = yrDurMagSlope
-        .filter(ee.Filter.calendarRange(yr, yr, "year"))
-        .mosaic();
+      var yrDurMagSlopeT = yrDurMagSlope.filter(ee.Filter.calendarRange(yr, yr, "year")).mosaic();
       return yrDurMagSlopeT
         .set("system:time_start", ee.Date.fromYMD(yr, 6, 1).millis())
         .set("create_date", create_date)
@@ -2392,9 +1930,7 @@ function pairwiseSlope(c) {
     var yl = ee.Number(yp.get(0));
     var yr = ee.Number(yp.get(1));
     var yd = yr.subtract(yl);
-    var l = ee
-      .Image(c.filter(ee.Filter.calendarRange(yl, yl, "year")).first())
-      .add(0.000001);
+    var l = ee.Image(c.filter(ee.Filter.calendarRange(yl, yl, "year")).first()).add(0.000001);
     var r = ee.Image(c.filter(ee.Filter.calendarRange(yr, yr, "year")).first());
 
     var slope = r.subtract(l).rename(bandNames);
@@ -2469,15 +2005,10 @@ function getLinearFit(c, bandNames) {
   var selectOrder = ee.List([["constant", "year"], bandNames]).flatten();
 
   //Fit model
-  var model = c
-    .select(selectOrder)
-    .reduce(ee.Reducer.linearRegression(2, bandNames.length()))
-    .select([0]);
+  var model = c.select(selectOrder).reduce(ee.Reducer.linearRegression(2, bandNames.length())).select([0]);
 
   //Convert model to image
-  model = model
-    .arrayTranspose()
-    .arrayFlatten([bandNames, ["intercept", "slope"]]);
+  model = model.arrayTranspose().arrayFlatten([bandNames, ["intercept", "slope"]]);
 
   //Apply model
   var predicted = predictModel(c, model, bandNames);
@@ -2509,10 +2040,7 @@ function zAndTrendChangeDetection(
   transform,
   minBaselineObservationsNeeded
 ) {
-  if (
-    minBaselineObservationsNeeded === null ||
-    minBaselineObservationsNeeded === undefined
-  ) {
+  if (minBaselineObservationsNeeded === null || minBaselineObservationsNeeded === undefined) {
     minBaselineObservationsNeeded = 30;
   }
   //House-keeping
@@ -2521,17 +2049,10 @@ function zAndTrendChangeDetection(
   var outNames = indexNames.map(function (bn) {
     return ee.String(bn).cat("_Z");
   });
-  var analysisStartYear = Math.max(
-    startYear + baselineLength + baselineGap,
-    startYear + epochLength - 1
-  );
+  var analysisStartYear = Math.max(startYear + baselineLength + baselineGap, startYear + epochLength - 1);
 
   var years = ee.List.sequence(analysisStartYear, endYear, 1).getInfo();
-  var julians = ee.List.sequence(
-    startJulian,
-    endJulian - nDays,
-    nDays
-  ).getInfo();
+  var julians = ee.List.sequence(startJulian, endJulian - nDays, nDays).getInfo();
 
   //Iterate across each year and perform analysis
   var zAndTrendCollection = years.map(function (yr) {
@@ -2554,9 +2075,7 @@ function zAndTrendChangeDetection(
         var jdEnd = jd.add(nDays);
 
         //Get the baseline images
-        var blImages = allScenes
-          .filter(ee.Filter.calendarRange(blStartYear, blEndYear, "year"))
-          .filter(ee.Filter.calendarRange(jdStart, jdEnd));
+        var blImages = allScenes.filter(ee.Filter.calendarRange(blStartYear, blEndYear, "year")).filter(ee.Filter.calendarRange(jdStart, jdEnd));
         blImages = getImagesLib.fillEmptyCollections(blImages, dummyScene);
 
         //Mask out where not enough observations
@@ -2566,22 +2085,12 @@ function zAndTrendChangeDetection(
         });
 
         //Get the z analysis images
-        var analysisImages = allScenes
-          .filter(ee.Filter.calendarRange(yr, yr, "year"))
-          .filter(ee.Filter.calendarRange(jdStart, jdEnd));
-        analysisImages = getImagesLib.fillEmptyCollections(
-          analysisImages,
-          dummyScene
-        );
+        var analysisImages = allScenes.filter(ee.Filter.calendarRange(yr, yr, "year")).filter(ee.Filter.calendarRange(jdStart, jdEnd));
+        analysisImages = getImagesLib.fillEmptyCollections(analysisImages, dummyScene);
 
         //Get the images for the trend analysis
-        var trendImages = allScenes
-          .filter(ee.Filter.calendarRange(trendStartYear, yr, "year"))
-          .filter(ee.Filter.calendarRange(jdStart, jdEnd));
-        trendImages = getImagesLib.fillEmptyCollections(
-          trendImages,
-          dummyScene
-        );
+        var trendImages = allScenes.filter(ee.Filter.calendarRange(trendStartYear, yr, "year")).filter(ee.Filter.calendarRange(jdStart, jdEnd));
+        trendImages = getImagesLib.fillEmptyCollections(trendImages, dummyScene);
 
         //Convert to annual stack if selected
         if (useAnnualMedianForTrend) {
@@ -2590,10 +2099,7 @@ function zAndTrendChangeDetection(
 
         //Perform the linear trend analysis
         var linearTrend = getLinearFit(trendImages, indexNames);
-        var linearTrendModel = ee
-          .Image(linearTrend[0])
-          .select([".*_slope"])
-          .multiply(10000);
+        var linearTrendModel = ee.Image(linearTrend[0]).select([".*_slope"]).multiply(10000);
 
         //Perform the z analysis
         var blMean = blImages.mean();
@@ -2621,18 +2127,14 @@ function zAndTrendChangeDetection(
           .cat(ee.String(jdStart.int16()))
           .cat(ee.String("_"))
           .cat(ee.String(jdEnd.int16()));
-        var imageStartDate = ee.Date.fromYMD(yr, 1, 1)
-          .advance(jdStart, "day")
-          .millis();
+        var imageStartDate = ee.Date.fromYMD(yr, 1, 1).advance(jdStart, "day").millis();
 
         var out = analysisImagesZ
           .addBands(linearTrendModel)
           .int16()
           .set({
             "system:time_start": imageStartDate,
-            "system:time_end": ee.Date.fromYMD(yr, 1, 1)
-              .advance(jdEnd, "day")
-              .millis(),
+            "system:time_end": ee.Date.fromYMD(yr, 1, 1).advance(jdEnd, "day").millis(),
             baselineYrs: baselineLength,
             baselineStartYear: blStartYear,
             baselineEndYear: blEndYear,
@@ -2647,40 +2149,19 @@ function zAndTrendChangeDetection(
         if (exportImages) {
           outName = outName.getInfo();
           var outPath = exportPathRoot + "/" + outName;
-          getImagesLib.exportToAssetWrapper(
-            out.clip(studyArea),
-            outName,
-            outPath,
-            "mean",
-            studyArea.bounds(),
-            scale,
-            crs,
-            transform
-          );
+          getImagesLib.exportToAssetWrapper(out.clip(studyArea), outName, outPath, "mean", studyArea.bounds(), scale, crs, transform);
         }
         return out;
       })
     );
   });
-  zAndTrendCollection = ee.ImageCollection(
-    ee.FeatureCollection(zAndTrendCollection).flatten()
-  );
+  zAndTrendCollection = ee.ImageCollection(ee.FeatureCollection(zAndTrendCollection).flatten());
 
   return zAndTrendCollection;
 }
 
-function thresholdZAndTrend(
-  zAndTrendCollection,
-  zThresh,
-  slopeThresh,
-  startYear,
-  endYear,
-  negativeOrPositiveChange
-) {
-  if (
-    negativeOrPositiveChange === null ||
-    negativeOrPositiveChange === undefined
-  ) {
+function thresholdZAndTrend(zAndTrendCollection, zThresh, slopeThresh, startYear, endYear, negativeOrPositiveChange) {
+  if (negativeOrPositiveChange === null || negativeOrPositiveChange === undefined) {
     negativeOrPositiveChange = "negative";
   }
   var dir;
@@ -2690,46 +2171,20 @@ function thresholdZAndTrend(
     dir = 1;
   }
 
-  zAndTrendCollection = zAndTrendCollection.filter(
-    ee.Filter.calendarRange(startYear, endYear, "year")
-  );
+  zAndTrendCollection = zAndTrendCollection.filter(ee.Filter.calendarRange(startYear, endYear, "year"));
   var zCollection = zAndTrendCollection.select(".*_Z");
   var trendCollection = zAndTrendCollection.select(".*_slope");
 
   var zChange = thresholdChange(zCollection, -zThresh, dir).select(".*_change");
-  var trendChange = thresholdChange(trendCollection, -slopeThresh, dir).select(
-    ".*_change"
-  );
+  var trendChange = thresholdChange(trendCollection, -slopeThresh, dir).select(".*_change");
 
-  Map.addLayer(
-    zChange.max().select([0]),
-    { min: startYear, max: endYear, palette: "FF0,F00" },
-    "Z Most Recent Change Year " + negativeOrPositiveChange,
-    true
-  );
-  Map.addLayer(
-    trendChange.max().select([0]),
-    { min: startYear, max: endYear, palette: "FF0,F00" },
-    "Trend Most Recent Change Year " + negativeOrPositiveChange,
-    false
-  );
+  Map.addLayer(zChange.max().select([0]), { min: startYear, max: endYear, palette: "FF0,F00" }, "Z Most Recent Change Year " + negativeOrPositiveChange, true);
+  Map.addLayer(trendChange.max().select([0]), { min: startYear, max: endYear, palette: "FF0,F00" }, "Trend Most Recent Change Year " + negativeOrPositiveChange, false);
   return { zChange: zChange, trendChange: trendChange };
 }
 
-function thresholdZAndTrendSubtle(
-  zAndTrendCollection,
-  zThreshLow,
-  zThreshHigh,
-  slopeThreshLow,
-  slopeThreshHigh,
-  startYear,
-  endYear,
-  negativeOrPositiveChange
-) {
-  if (
-    negativeOrPositiveChange === null ||
-    negativeOrPositiveChange === undefined
-  ) {
+function thresholdZAndTrendSubtle(zAndTrendCollection, zThreshLow, zThreshHigh, slopeThreshLow, slopeThreshHigh, startYear, endYear, negativeOrPositiveChange) {
+  if (negativeOrPositiveChange === null || negativeOrPositiveChange === undefined) {
     negativeOrPositiveChange = "negative";
   }
   var dir;
@@ -2744,31 +2199,11 @@ function thresholdZAndTrendSubtle(
   var zCollection = zAndTrendCollection.select(".*_Z");
   var trendCollection = zAndTrendCollection.select(".*_slope");
 
-  var zChange = thresholdSubtleChange(
-    zCollection,
-    -zThreshLow,
-    -zThreshHigh,
-    dir
-  ).select(".*_change");
-  var trendChange = thresholdSubtleChange(
-    trendCollection,
-    -slopeThreshLow,
-    -slopeThreshHigh,
-    dir
-  ).select(".*_change");
+  var zChange = thresholdSubtleChange(zCollection, -zThreshLow, -zThreshHigh, dir).select(".*_change");
+  var trendChange = thresholdSubtleChange(trendCollection, -slopeThreshLow, -slopeThreshHigh, dir).select(".*_change");
 
-  Map.addLayer(
-    zChange.max().select([0]),
-    { min: startYear, max: endYear, palette: colorRamp },
-    "Z Most Recent Change Year " + negativeOrPositiveChange,
-    false
-  );
-  Map.addLayer(
-    trendChange.max().select([0]),
-    { min: startYear, max: endYear, palette: colorRamp },
-    "Trend Most Recent Change Year " + negativeOrPositiveChange,
-    false
-  );
+  Map.addLayer(zChange.max().select([0]), { min: startYear, max: endYear, palette: colorRamp }, "Z Most Recent Change Year " + negativeOrPositiveChange, false);
+  Map.addLayer(trendChange.max().select([0]), { min: startYear, max: endYear, palette: colorRamp }, "Trend Most Recent Change Year " + negativeOrPositiveChange, false);
 }
 /////////////////////////////////////////////////////////////////////////////
 //-------------------- BEGIN CCDC Helper Functions -------------------//
@@ -2814,12 +2249,7 @@ function simpleCCDCPrediction(img, timeBandName, whichHarmonics, whichBands) {
       whichBands.map(function (bn) {
         bn = ee.String(bn);
         return ee
-          .Image([
-            intercepts.select(bn.cat("_.*")),
-            slopes.select(bn.cat("_.*")),
-            sins.select(bn.cat("_.*")).multiply(sinHarm),
-            coss.select(bn.cat("_.*")).multiply(cosHarm),
-          ])
+          .Image([intercepts.select(bn.cat("_.*")), slopes.select(bn.cat("_.*")), sins.select(bn.cat("_.*")).multiply(sinHarm), coss.select(bn.cat("_.*")).multiply(cosHarm)])
           .reduce(ee.Reducer.sum());
       })
     )
@@ -2839,10 +2269,7 @@ function simpleCCDCPredictionWrapper(c, timeBandName, whichHarmonics) {
     .map(function (bn) {
       return ee.String(bn).split("_").get(0);
     });
-  whichBands = ee
-    .Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram()))
-    .keys()
-    .getInfo();
+  whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys().getInfo();
   var out = c.map(function (img) {
     return simpleCCDCPrediction(img, timeBandName, whichHarmonics, whichBands);
   });
@@ -2863,16 +2290,7 @@ function getCCDCSegCoeffs(timeImg, ccdcImg, fillGaps) {
   var coeffs = ccdcImg.select(coeffKeys);
   var bns = coeffs.bandNames();
   var nBns = bns.length();
-  var harmonicTag = ee.List([
-    "INTP",
-    "SLP",
-    "COS1",
-    "SIN1",
-    "COS2",
-    "SIN2",
-    "COS3",
-    "SIN3",
-  ]);
+  var harmonicTag = ee.List(["INTP", "SLP", "COS1", "SIN1", "COS2", "SIN2", "COS3", "SIN3"]);
 
   //Get coeffs, start and end times
   coeffs = coeffs.toArray(2);
@@ -2881,32 +2299,12 @@ function getCCDCSegCoeffs(timeImg, ccdcImg, fillGaps) {
   var tBreaks = ccdcImg.select(tBreakKeys);
 
   //If filling to the tBreak, use this
-  tStarts = ee.Image(
-    ee.Algorithms.If(
-      fillGaps,
-      tStarts.arraySlice(0, 0, 1).arrayCat(tBreaks.arraySlice(0, 0, -1), 0),
-      tStarts
-    )
-  );
-  tEnds = ee.Image(
-    ee.Algorithms.If(
-      fillGaps,
-      tBreaks.arraySlice(0, 0, -1).arrayCat(tEnds.arraySlice(0, -1, null), 0),
-      tEnds
-    )
-  );
+  tStarts = ee.Image(ee.Algorithms.If(fillGaps, tStarts.arraySlice(0, 0, 1).arrayCat(tBreaks.arraySlice(0, 0, -1), 0), tStarts));
+  tEnds = ee.Image(ee.Algorithms.If(fillGaps, tBreaks.arraySlice(0, 0, -1).arrayCat(tEnds.arraySlice(0, -1, null), 0), tEnds));
 
   //Set up a mask for segments that the time band intersects
-  var tMask = tStarts
-    .lt(timeImg)
-    .and(tEnds.gte(timeImg))
-    .arrayRepeat(1, 1)
-    .arrayRepeat(2, 1);
-  coeffs = coeffs
-    .arrayMask(tMask)
-    .arrayProject([2, 1])
-    .arrayTranspose(1, 0)
-    .arrayFlatten([bns, harmonicTag]);
+  var tMask = tStarts.lt(timeImg).and(tEnds.gte(timeImg)).arrayRepeat(1, 1).arrayRepeat(2, 1);
+  coeffs = coeffs.arrayMask(tMask).arrayProject([2, 1]).arrayTranspose(1, 0).arrayFlatten([bns, harmonicTag]);
 
   //If time band doesn't intersect any segments, set it to null
   coeffs = coeffs.updateMask(coeffs.reduce(ee.Reducer.max()).neq(0));
@@ -2921,53 +2319,22 @@ function getCCDCSegCoeffs(timeImg, ccdcImg, fillGaps) {
 // will be counted in the following year.
 // 10/21 LSC modified to allow for using pixel-wise composite dates instead of one date for each year.
 // To do this, set annualizeWithCompositeDates == true and provide a composite image collection with a 'year' and 'julianDay' band.
-function annualizeCCDC(
-  ccdcImg,
-  startYear,
-  endYear,
-  startJulian,
-  endJulian,
-  tEndExtrapolationPeriod,
-  yearStartMonth,
-  yearStartDay,
-  annualizeWithCompositeDates,
-  compositeCollection
-) {
-  if (
-    annualizeWithCompositeDates === undefined ||
-    annualizeWithCompositeDates === null
-  ) {
+function annualizeCCDC(ccdcImg, startYear, endYear, startJulian, endJulian, tEndExtrapolationPeriod, yearStartMonth, yearStartDay, annualizeWithCompositeDates, compositeCollection) {
+  if (annualizeWithCompositeDates === undefined || annualizeWithCompositeDates === null) {
     annualizeWithCompositeDates = false;
   }
 
   var timeImgs;
   if (annualizeWithCompositeDates === true) {
-    timeImgs = getTimeImageCollectionFromComposites(
-      startJulian,
-      endJulian,
-      compositeCollection
-    );
+    timeImgs = getTimeImageCollectionFromComposites(startJulian, endJulian, compositeCollection);
   } else {
-    timeImgs = getTimeImageCollection(
-      startYear,
-      endYear,
-      startJulian,
-      endJulian,
-      1,
-      yearStartMonth,
-      yearStartDay
-    );
+    timeImgs = getTimeImageCollection(startYear, endYear, startJulian, endJulian, 1, yearStartMonth, yearStartDay);
   }
 
   // If selected, add a constant amount of time to last end segment to make sure the last year is annualized correctly.
   // tEndExtrapolationPeriod should be a fraction of a year.
   var finalTEnd = ccdcImg.select("tEnd");
-  finalTEnd = finalTEnd
-    .arraySlice(0, -1, null)
-    .rename("tEnd")
-    .arrayGet(0)
-    .add(tEndExtrapolationPeriod)
-    .toArray(0);
+  finalTEnd = finalTEnd.arraySlice(0, -1, null).rename("tEnd").arrayGet(0).add(tEndExtrapolationPeriod).toArray(0);
   var tEnds = ccdcImg.select("tEnd");
   tEnds = tEnds.arraySlice(0, 0, -1).arrayCat(finalTEnd, 0).rename("tEnd");
   var keepBands = ccdcImg.bandNames().remove("tEnd");
@@ -2989,37 +2356,22 @@ function getFitSlopeCCDC(annualSegCoeffs, startYear, endYear) {
     .map(function (bn) {
       return ee.String(bn).split("_").get(0);
     });
-  whichBands = ee
-    .Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram()))
-    .keys()
-    .getInfo();
+  whichBands = ee.Dictionary(whichBands.reduce(ee.Reducer.frequencyHistogram())).keys().getInfo();
   var fitted = annualSegCoeffs.map(function (img) {
     return simpleCCDCPredictionAnnualized(img, "year", whichBands);
   });
 
   // Get back-casted slope using the fitted values
   var diff = ee.ImageCollection(
-    ee.List.sequence(ee.Number(startYear).add(1), endYear).map(function (
-      rightYear
-    ) {
+    ee.List.sequence(ee.Number(startYear).add(1), endYear).map(function (rightYear) {
       var leftYear = ee.Number(rightYear).subtract(1);
-      var rightFitted = ee.Image(
-        fitted
-          .filter(ee.Filter.calendarRange(rightYear, rightYear, "year"))
-          .first()
-      );
-      var leftFitted = ee.Image(
-        fitted
-          .filter(ee.Filter.calendarRange(leftYear, leftYear, "year"))
-          .first()
-      );
+      var rightFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(rightYear, rightYear, "year")).first());
+      var leftFitted = ee.Image(fitted.filter(ee.Filter.calendarRange(leftYear, leftYear, "year")).first());
       var slopeNames = rightFitted
         .select([".*_predicted"])
         .bandNames()
         .map(function (name) {
-          return ee
-            .String(ee.String(name).split("_predicted").get(0))
-            .cat(ee.String("_fitSlope"));
+          return ee.String(ee.String(name).split("_predicted").get(0)).cat(ee.String("_fitSlope"));
         });
       var slope = rightFitted
         .select([".*_predicted"])
@@ -3059,12 +2411,7 @@ function simpleCCDCPredictionAnnualized(img, timeBandName, whichBands) {
     .ImageCollection(
       whichBands.map(function (bn) {
         bn = ee.String(bn);
-        return ee
-          .Image([
-            intercepts.select(bn.cat("_.*")),
-            slopes.select(bn.cat("_.*")),
-          ])
-          .reduce(ee.Reducer.sum());
+        return ee.Image([intercepts.select(bn.cat("_.*")), slopes.select(bn.cat("_.*"))]).reduce(ee.Reducer.sum());
       })
     )
     .toBands()
@@ -3090,15 +2437,7 @@ function predictCCDC(ccdcImg, timeImgs, fillGaps, whichHarmonics) {
 // yearStartMonth and yearStartDay are the date that you want the CCDC "year" to start at. This is mostly important for Annualized CCDC.
 // For LCMS, this is Sept. 1. So any change that occurs before Sept 1 in that year will be counted in that year, and Sept. 1 and after
 // will be counted in the following year.
-function getTimeImageCollection(
-  startYear,
-  endYear,
-  startJulian,
-  endJulian,
-  step,
-  yearStartMonth,
-  yearStartDay
-) {
+function getTimeImageCollection(startYear, endYear, startJulian, endJulian, step, yearStartMonth, yearStartDay) {
   if (startJulian === undefined || startJulian === null) {
     startJulian = 1;
   }
@@ -3114,15 +2453,9 @@ function getTimeImageCollection(
   if (yearStartDay === undefined || yearStartDay === null) {
     yearStartDay = 1;
   }
-  var monthDayFraction = ee.Number.parse(
-    ee.Date.fromYMD(startYear, yearStartMonth, yearStartDay).format("DDD")
-  ).divide(365);
+  var monthDayFraction = ee.Number.parse(ee.Date.fromYMD(startYear, yearStartMonth, yearStartDay).format("DDD")).divide(365);
   var yearImages = ee.ImageCollection(
-    ee.List.sequence(
-      ee.Number(startYear).add(monthDayFraction),
-      ee.Number(endYear).add(monthDayFraction),
-      step
-    ).map(function (n) {
+    ee.List.sequence(ee.Number(startYear).add(monthDayFraction), ee.Number(endYear).add(monthDayFraction), step).map(function (n) {
       n = ee.Number(n);
       var img = ee.Image(n).float().rename(["year"]);
       var y = n.int16();
@@ -3133,18 +2466,12 @@ function getTimeImageCollection(
       return img.set("system:time_start", d);
     })
   );
-  return yearImages
-    .filter(ee.Filter.calendarRange(startYear, endYear, "year"))
-    .filter(ee.Filter.calendarRange(startJulian, endJulian));
+  return yearImages.filter(ee.Filter.calendarRange(startYear, endYear, "year")).filter(ee.Filter.calendarRange(startJulian, endJulian));
 }
 
 // This creates an image collection in the same format as getTimeImageCollection(), but gets the pixel-wise dates from a composite collection
 // Composite collection should be an imported and prepped image collection with 'julianDay' and 'year' bands
-function getTimeImageCollectionFromComposites(
-  startJulian,
-  endJulian,
-  compositeCollection
-) {
+function getTimeImageCollectionFromComposites(startJulian, endJulian, compositeCollection) {
   // Account for date wrapping. If julian day is less than startJulian, add one year.
   // For PRUSVI CCDC, Year 2020 is day 152 2020 to day 151 2021
   // For CONUS CCDC, Year 2020 is day 1 2020 to day 365 2020, so it will never be less.
@@ -3156,36 +2483,22 @@ function getTimeImageCollectionFromComposites(
       var thisYearMask = nextYearMask.not();
       var nextYearFraction = fraction.updateMask(nextYearMask).add(1);
       var thisYearFraction = fraction.updateMask(thisYearMask);
-      fraction = nextYearFraction
-        .addBands(thisYearFraction)
-        .reduce(ee.Reducer.max());
+      fraction = nextYearFraction.addBands(thisYearFraction).reduce(ee.Reducer.max());
       return fraction;
     })
     .reduce(ee.Reducer.median());
 
   var yearImages = compositeCollection.map(function (dateImg) {
     // Get Unmasked values
-    var newDateImg = ee
-      .Image(
-        dateImg.select("year").add(dateImg.select("julianDay").divide(365))
-      )
-      .copyProperties(dateImg, ["system:time_start"]);
+    var newDateImg = ee.Image(dateImg.select("year").add(dateImg.select("julianDay").divide(365))).copyProperties(dateImg, ["system:time_start"]);
 
     // Create values for masked pixels
     var imgYear = dateImg.date().get("year");
-    var medianValues = ee.Image.constant(imgYear)
-      .float()
-      .add(ee.Image(medianFraction))
-      .rename("median_values");
+    var medianValues = ee.Image.constant(imgYear).float().add(ee.Image(medianFraction)).rename("median_values");
 
     // Fill masked Values with median fraction
     var compositeMask = ee.Image(newDateImg).mask();
-    var out = ee
-      .Image(newDateImg)
-      .addBands(medianValues.updateMask(compositeMask.not()))
-      .reduce(ee.Reducer.max())
-      .rename("year")
-      .copyProperties(dateImg, ["system:time_start"]);
+    var out = ee.Image(newDateImg).addBands(medianValues.updateMask(compositeMask.not())).reduce(ee.Reducer.max()).rename("year").copyProperties(dateImg, ["system:time_start"]);
 
     return out;
   });
@@ -3220,39 +2533,19 @@ function ccdcChangeDetection(ccdcImg, bandName) {
   var changeMaskSortedByYear = changeMask.arraySort(breaks);
 
   //Get the loss and gain years and magnitudes for each sorting method
-  var highestMagLossYear = breaksSortedByMag
-    .arraySlice(0, 0, 1)
-    .arrayFlatten([["loss_year"]]);
-  var highestMagLossMag = magnitudesSortedByMag
-    .arraySlice(0, 0, 1)
-    .arrayFlatten([["loss_mag"]]);
-  var highestMagLossMask = changeMaskSortedByMag
-    .arraySlice(0, 0, 1)
-    .arrayFlatten([["loss_mask"]]);
+  var highestMagLossYear = breaksSortedByMag.arraySlice(0, 0, 1).arrayFlatten([["loss_year"]]);
+  var highestMagLossMag = magnitudesSortedByMag.arraySlice(0, 0, 1).arrayFlatten([["loss_mag"]]);
+  var highestMagLossMask = changeMaskSortedByMag.arraySlice(0, 0, 1).arrayFlatten([["loss_mask"]]);
 
-  highestMagLossYear = highestMagLossYear.updateMask(
-    highestMagLossMag.lt(0).and(highestMagLossMask)
-  );
-  highestMagLossMag = highestMagLossMag.updateMask(
-    highestMagLossMag.lt(0).and(highestMagLossMask)
-  );
+  highestMagLossYear = highestMagLossYear.updateMask(highestMagLossMag.lt(0).and(highestMagLossMask));
+  highestMagLossMag = highestMagLossMag.updateMask(highestMagLossMag.lt(0).and(highestMagLossMask));
 
-  var highestMagGainYear = breaksSortedByMag
-    .arraySlice(0, -1, null)
-    .arrayFlatten([["gain_year"]]);
-  var highestMagGainMag = magnitudesSortedByMag
-    .arraySlice(0, -1, null)
-    .arrayFlatten([["gain_mag"]]);
-  var highestMagGainMask = changeMaskSortedByMag
-    .arraySlice(0, -1, null)
-    .arrayFlatten([["gain_mask"]]);
+  var highestMagGainYear = breaksSortedByMag.arraySlice(0, -1, null).arrayFlatten([["gain_year"]]);
+  var highestMagGainMag = magnitudesSortedByMag.arraySlice(0, -1, null).arrayFlatten([["gain_mag"]]);
+  var highestMagGainMask = changeMaskSortedByMag.arraySlice(0, -1, null).arrayFlatten([["gain_mask"]]);
 
-  highestMagGainYear = highestMagGainYear.updateMask(
-    highestMagGainMag.gt(0).and(highestMagGainMask)
-  );
-  highestMagGainMag = highestMagGainMag.updateMask(
-    highestMagGainMag.gt(0).and(highestMagGainMask)
-  );
+  highestMagGainYear = highestMagGainYear.updateMask(highestMagGainMag.gt(0).and(highestMagGainMask));
+  highestMagGainMag = highestMagGainMag.updateMask(highestMagGainMag.gt(0).and(highestMagGainMask));
 
   var mostRecentLossYear = breaksSortedByYear
     .arrayMask(magnitudesSortedByYear.lt(0))
@@ -3269,12 +2562,8 @@ function ccdcChangeDetection(ccdcImg, bandName) {
     .arrayPad([1])
     .arraySlice(0, -1, null)
     .arrayFlatten([["loss_mask"]]);
-  mostRecentLossYear = mostRecentLossYear.updateMask(
-    mostRecentLossMag.lt(0).and(mostRecentLossMask)
-  );
-  mostRecentLossMag = mostRecentLossMag.updateMask(
-    mostRecentLossMag.lt(0).and(mostRecentLossMask)
-  );
+  mostRecentLossYear = mostRecentLossYear.updateMask(mostRecentLossMag.lt(0).and(mostRecentLossMask));
+  mostRecentLossMag = mostRecentLossMag.updateMask(mostRecentLossMag.lt(0).and(mostRecentLossMask));
 
   var mostRecentGainYear = breaksSortedByYear
     .arrayMask(magnitudesSortedByYear.gt(0))
@@ -3292,12 +2581,8 @@ function ccdcChangeDetection(ccdcImg, bandName) {
     .arraySlice(0, -1, null)
     .arrayFlatten([["gain_mask"]]);
 
-  mostRecentGainYear = mostRecentGainYear.updateMask(
-    mostRecentGainMag.gt(0).and(mostRecentGainMask)
-  );
-  mostRecentGainMag = mostRecentGainMag.updateMask(
-    mostRecentGainMag.gt(0).and(mostRecentGainMask)
-  );
+  mostRecentGainYear = mostRecentGainYear.updateMask(mostRecentGainMag.gt(0).and(mostRecentGainMask));
+  mostRecentGainMag = mostRecentGainMag.updateMask(mostRecentGainMag.gt(0).and(mostRecentGainMask));
 
   return {
     mostRecent: {
@@ -3340,10 +2625,8 @@ exports.applyDistDir_vertStack = applyDistDir_vertStack;
 exports.LT_VT_vertStack_multBands = LT_VT_vertStack_multBands;
 exports.fitStackToCollection = fitStackToCollection;
 exports.convertStack_To_DurFitMagSlope = convertStack_To_DurFitMagSlope;
-exports.LANDTRENDRFitMagSlopeDiffCollection =
-  LANDTRENDRFitMagSlopeDiffCollection;
-exports.multiBandLANDTRENDRFitMagSlopeDiffCollection =
-  multiBandLANDTRENDRFitMagSlopeDiffCollection;
+exports.LANDTRENDRFitMagSlopeDiffCollection = LANDTRENDRFitMagSlopeDiffCollection;
+exports.multiBandLANDTRENDRFitMagSlopeDiffCollection = multiBandLANDTRENDRFitMagSlopeDiffCollection;
 exports.applyLinearInterp = applyLinearInterp;
 exports.updateVerdetMasks = updateVerdetMasks;
 exports.VERDETVertStack = VERDETVertStack;
@@ -3377,6 +2660,5 @@ exports.getFitSlopeCCDC = getFitSlopeCCDC;
 exports.simpleCCDCPredictionAnnualized = simpleCCDCPredictionAnnualized;
 exports.predictCCDC = predictCCDC;
 exports.getTimeImageCollection = getTimeImageCollection;
-exports.getTimeImageCollectionFromComposites =
-  getTimeImageCollectionFromComposites;
+exports.getTimeImageCollectionFromComposites = getTimeImageCollectionFromComposites;
 exports.ccdcChangeDetection = ccdcChangeDetection;
