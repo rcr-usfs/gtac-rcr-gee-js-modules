@@ -93,7 +93,7 @@ var outputName = 'LT_Test';
 
 //Provide location LT stack will be exported to
 //This should be an asset folder or an asset imageCollection
-var exportPathRoot = 'users/usfs-ihousman/test2';//users/username/someCollection';
+var exportPathRoot = 'users/username/someCollection';
 
 //CRS- must be provided.  
 //Common crs codes: Web mercator is EPSG:4326, USGS Albers is EPSG:5070, 
