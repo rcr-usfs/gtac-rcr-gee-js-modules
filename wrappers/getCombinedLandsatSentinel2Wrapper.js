@@ -87,7 +87,7 @@ args.applyCloudScoreLandsat = true;
 args.applyCloudScoreSentinel2 = false;
 
 args.applyTDOMLandsat = true;
-args.applyTDOMSentinel2 = true;
+args.applyTDOMSentinel2 = false;
 
 //S2 only cloud/cloud shadow masking methods switches- generally do not use these
 //QA band method is fast but is generally awful- don't use if you like good composites
@@ -101,13 +101,12 @@ args.cloudHeights = ee.List.sequence(500,10000,500);
 //Whether to use the pre-computed cloud probabilities to mask
 //clouds for Sentinel 2
 //This method works really well
-args.applyCloudProbability = true;
+args.applyCloudProbability = false;
 
 // Whether to use the pre-computed cloudScore+ to mask
 // clouds and cloud shadows for Sentinel 2
-// This method works really well and should be used instead of all other methods once it finishes
-//running for the S2 archive (~ early 2024????)
-args.applyCloudScorePlusSentinel2 = false;
+// This method works really well and should be used instead of all other methods
+args.applyCloudScorePlusSentinel2 = true;
 
 
 //If cloudProbability is chosen, choose a threshold 
