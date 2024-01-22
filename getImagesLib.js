@@ -118,9 +118,7 @@ var changeDirDict = {
 //The cloudScore offset is generally some lower percentile of cloudScores on a pixel-wise basis
 //The TDOM stats are the mean and standard deviations of the two bands used in TDOM
 //By default, TDOM uses the nir and swir1 bands
-var preComputedCloudScoreOffset = ee
-  .ImageCollection("projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore")
-  .mosaic();
+var preComputedCloudScoreOffset = ee.ImageCollection("projects/lcms-tcc-shared/assets/CS-TDOM-Stats/cloudScore").mosaic();
 //var preComputedCloudScoreOffsetAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/cloudScore_stats').mosaic();
 //var preComputedCloudScoreOffsetHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/cloudScore').mosaic();
 
@@ -129,10 +127,7 @@ var preComputedCloudScoreOffset = ee
 //                                                                 preComputedCloudScoreOffsetAK,
 //                                                                 preComputedCloudScoreOffsetHI]).mosaic();
 
-var preComputedTDOMStats = ee
-  .ImageCollection("projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM")
-  .mosaic()
-  .divide(10000);
+var preComputedTDOMStats = ee.ImageCollection("projects/lcms-tcc-shared/assets/CS-TDOM-Stats/TDOM").mosaic().divide(10000);
 //var preComputedTDOMStatsAK = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Alaska/TDOM_stats').mosaic().divide(10000);
 //var preComputedTDOMStatsHI = ee.ImageCollection('projects/lcms-tcc-shared/assets/CS-TDOM-Stats/Hawaii/TDOM').mosaic().divide(10000);
 
@@ -146,36 +141,20 @@ exports.preComputedTDOMStats = preComputedTDOMStats;
 
 exports.getPrecomputedCloudScoreOffsets = function (cloudScorePctl) {
   return {
-    landsat: preComputedCloudScoreOffset.select([
-      "Landsat_CloudScore_p" + cloudScorePctl.toString(),
-    ]),
-    sentinel2: preComputedCloudScoreOffset.select([
-      "Sentinel2_CloudScore_p" + cloudScorePctl.toString(),
-    ]),
+    landsat: preComputedCloudScoreOffset.select(["Landsat_CloudScore_p" + cloudScorePctl.toString()]),
+    sentinel2: preComputedCloudScoreOffset.select(["Sentinel2_CloudScore_p" + cloudScorePctl.toString()]),
   };
 };
 
 exports.getPrecomputedTDOMStats = function (cloudScorePctl) {
   return {
     landsat: {
-      mean: preComputedTDOMStats.select([
-        "Landsat_nir_mean",
-        "Landsat_swir1_mean",
-      ]),
-      stdDev: preComputedTDOMStats.select([
-        "Landsat_nir_stdDev",
-        "Landsat_swir1_stdDev",
-      ]),
+      mean: preComputedTDOMStats.select(["Landsat_nir_mean", "Landsat_swir1_mean"]),
+      stdDev: preComputedTDOMStats.select(["Landsat_nir_stdDev", "Landsat_swir1_stdDev"]),
     },
     sentinel2: {
-      mean: preComputedTDOMStats.select([
-        "Sentinel2_nir_mean",
-        "Sentinel2_swir1_mean",
-      ]),
-      stdDev: preComputedTDOMStats.select([
-        "Sentinel2_nir_stdDev",
-        "Sentinel2_swir1_stdDev",
-      ]),
+      mean: preComputedTDOMStats.select(["Sentinel2_nir_mean", "Sentinel2_swir1_mean"]),
+      stdDev: preComputedTDOMStats.select(["Sentinel2_nir_stdDev", "Sentinel2_swir1_stdDev"]),
     },
   };
 };
@@ -183,24 +162,12 @@ exports.getPrecomputedTDOMStats = function (cloudScorePctl) {
 exports.getPrecomputedTDOMStatsAK = function (cloudScorePctl) {
   return {
     landsat: {
-      mean: preComputedTDOMStatsAK.select([
-        "Landsat_nir_mean",
-        "Landsat_swir1_mean",
-      ]),
-      stdDev: preComputedTDOMStatsAK.select([
-        "Landsat_nir_stdDev",
-        "Landsat_swir1_stdDev",
-      ]),
+      mean: preComputedTDOMStatsAK.select(["Landsat_nir_mean", "Landsat_swir1_mean"]),
+      stdDev: preComputedTDOMStatsAK.select(["Landsat_nir_stdDev", "Landsat_swir1_stdDev"]),
     },
     sentinel2: {
-      mean: preComputedTDOMStatsAK.select([
-        "Sentinel2_nir_mean",
-        "Sentinel2_swir1_mean",
-      ]),
-      stdDev: preComputedTDOMStatsAK.select([
-        "Sentinel2_nir_stdDev",
-        "Sentinel2_swir1_stdDev",
-      ]),
+      mean: preComputedTDOMStatsAK.select(["Sentinel2_nir_mean", "Sentinel2_swir1_mean"]),
+      stdDev: preComputedTDOMStatsAK.select(["Sentinel2_nir_stdDev", "Sentinel2_swir1_stdDev"]),
     },
   };
 };
@@ -213,14 +180,8 @@ exports.getPrecomputedTDOMStatsHI = function (cloudScorePctl) {
     //           'stdDev':preComputedTDOMStatsHI.select(['Landsat_nir_stdDev','Landsat_swir1_stdDev'])
     //            },
     sentinel2: {
-      mean: preComputedTDOMStatsHI.select([
-        "Sentinel2_nir_mean",
-        "Sentinel2_swir1_mean",
-      ]),
-      stdDev: preComputedTDOMStatsHI.select([
-        "Sentinel2_nir_stdDev",
-        "Sentinel2_swir1_stdDev",
-      ]),
+      mean: preComputedTDOMStatsHI.select(["Sentinel2_nir_mean", "Sentinel2_swir1_mean"]),
+      stdDev: preComputedTDOMStatsHI.select(["Sentinel2_nir_stdDev", "Sentinel2_swir1_stdDev"]),
     },
   };
 };
@@ -244,11 +205,7 @@ function prepArgumentsObject(args, defaultArgs) {
     firstArgumentIsEEObj = true;
   } catch (err) {}
 
-  if (
-    typeof argList[0] === "object" &&
-    argList.length === 1 &&
-    !firstArgumentIsEEObj
-  ) {
+  if (typeof argList[0] === "object" && argList.length === 1 && !firstArgumentIsEEObj) {
     argsAreObject = true;
     outArgs = argList[0];
   }
@@ -325,12 +282,8 @@ function sieve() {
 //------ L8 to L7 HARMONIZATION FUNCTION -----
 // slope and intercept citation: Roy, D.P., Kovalskyy, V., Zhang, H.K., Vermote, E.F., Yan, L., Kumar, S.S, Egorov, A., 2016, Characterization of Landsat-7 to Landsat-8 reflective wavelength and normalized difference vegetation index continuity, Remote Sensing of Environment, 185, 57-70.(http://dx.doi.org/10.1016/j.rse.2015.12.024); Table 2 - reduced major axis (RMA) regression coefficients
 var harmonizationRoy = function (oli) {
-  var slopes = ee.Image.constant([
-    0.9785, 0.9542, 0.9825, 1.0073, 1.0171, 0.9949,
-  ]); // create an image of slopes per band for L8 TO L7 regression line - David Roy
-  var itcp = ee.Image.constant([
-    -0.0095, -0.0016, -0.0022, -0.0021, -0.003, 0.0029,
-  ]);
+  var slopes = ee.Image.constant([0.9785, 0.9542, 0.9825, 1.0073, 1.0171, 0.9949]); // create an image of slopes per band for L8 TO L7 regression line - David Roy
+  var itcp = ee.Image.constant([-0.0095, -0.0016, -0.0022, -0.0021, -0.003, 0.0029]);
   var bns = oli.bandNames();
   var includeBns = ["blue", "green", "red", "nir", "swir1", "swir2"];
   var otherBns = bns.removeAll(includeBns);
@@ -389,10 +342,7 @@ function dir0Regression(img, slopes, intercepts) {
   var bns = img.bandNames();
   var nonCorrectBands = bns.removeAll(chastainBandNames);
   var nonCorrectedBands = img.select(nonCorrectBands);
-  var corrected = img
-    .select(chastainBandNames)
-    .multiply(slopes)
-    .add(intercepts);
+  var corrected = img.select(chastainBandNames).multiply(slopes).add(intercepts);
   var out = corrected.addBands(nonCorrectedBands).select(bns);
   return out;
 }
@@ -401,10 +351,7 @@ function dir1Regression(img, slopes, intercepts) {
   var bns = img.bandNames();
   var nonCorrectBands = bns.removeAll(chastainBandNames);
   var nonCorrectedBands = img.select(nonCorrectBands);
-  var corrected = img
-    .select(chastainBandNames)
-    .subtract(intercepts)
-    .divide(slopes);
+  var corrected = img.select(chastainBandNames).subtract(intercepts).divide(slopes);
   var out = corrected.addBands(nonCorrectedBands).select(bns);
   return out;
 }
@@ -433,15 +380,8 @@ function harmonizationChastain() {
   var direction = ee.Number(args.coeffList[2]);
 
   //Apply the model in the respective direction
-  var out = ee.Algorithms.If(
-    direction.eq(0),
-    dir0Regression(args.image, slopes, intercepts),
-    dir1Regression(args.image, slopes, intercepts)
-  );
-  out = ee
-    .Image(out)
-    .copyProperties(args.image)
-    .copyProperties(args.image, ["system:time_start"]);
+  var out = ee.Algorithms.If(direction.eq(0), dir0Regression(args.image, slopes, intercepts), dir1Regression(args.image, slopes, intercepts));
+  out = ee.Image(out).copyProperties(args.image).copyProperties(args.image, ["system:time_start"]);
   out = out.set(args);
   return ee.Image(out);
 }
@@ -455,9 +395,7 @@ function collectionToImage(collection) {
     }, ee.Image(1))
   );
 
-  stack = stack.select(
-    ee.List.sequence(1, stack.bandNames().size().subtract(1))
-  );
+  stack = stack.select(ee.List.sequence(1, stack.bandNames().size().subtract(1)));
   return stack;
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -496,9 +434,7 @@ function compositeDates(images, composite, bandNames) {
   //Iterate across each band and find the corresponding date to the composite
   var out = bandNames.map(function (bn) {
     bn = ee.String(bn);
-    var t = images
-      .select([bn, bn.cat("_diff"), "year"])
-      .qualityMosaic(bn.cat("_diff"));
+    var t = images.select([bn, bn.cat("_diff"), "year"]).qualityMosaic(bn.cat("_diff"));
     return t.select(["year"]).rename(["YYYYDD"]);
   });
   //Convert to an image and rename
@@ -515,9 +451,7 @@ function compositeDates(images, composite, bandNames) {
 function fillEmptyCollections(inCollection, dummyImage) {
   var dummyCollection = ee.ImageCollection([dummyImage.mask(ee.Image(0))]);
   var imageCount = inCollection.toList(1).length();
-  return ee.ImageCollection(
-    ee.Algorithms.If(imageCount.gt(0), inCollection, dummyCollection)
-  );
+  return ee.ImageCollection(ee.Algorithms.If(imageCount.gt(0), inCollection, dummyCollection));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -542,11 +476,7 @@ function addSensorBand(img, whichProgram, toaOrSR) {
   toaOrSR = toaOrSR.toUpperCase();
   var sensorProp = ee.Dictionary(sensorPropDict.get(whichProgram)).get(toaOrSR);
   var sensorName = img.get(sensorProp);
-  img = img
-    .addBands(
-      ee.Image.constant(sensorDict.get(sensorName)).rename(["sensor"]).byte()
-    )
-    .set("sensor", sensorName);
+  img = img.addBands(ee.Image.constant(sensorDict.get(sensorName)).rename(["sensor"]).byte()).set("sensor", sensorName);
   return img;
 }
 /////////////////////////////////////////////////////////////////
@@ -580,10 +510,7 @@ function addYearYearFractionBand(img) {
   var y = d.get("year");
   // d = y.add(d.getFraction('year'));
   d = d.getFraction("year");
-  var db = ee.Image.constant(y)
-    .add(ee.Image.constant(d))
-    .rename(["year"])
-    .float();
+  var db = ee.Image.constant(y).add(ee.Image.constant(d)).rename(["year"]).float();
   db = db; //.updateMask(img.select([0]).mask())
   return img.addBands(db);
 }
@@ -629,170 +556,47 @@ var fringeCountThreshold = 279; //Define number of non null observations for pix
 ///////////////////////////////////////////////////
 //Kernel used for defringing
 var k = ee.Kernel.fixed(41, 41, [
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ]);
 /////////////////////////////////////////////
 //Algorithm to defringe Landsat scenes
@@ -815,13 +619,7 @@ function defringeLandsat(img) {
 //////////////////////////////////////////////////////
 //Function to find unique values of a field in a collection
 function uniqueValues(collection, field) {
-  var values = ee
-    .Dictionary(
-      collection
-        .reduceColumns(ee.Reducer.frequencyHistogram(), [field])
-        .get("histogram")
-    )
-    .keys();
+  var values = ee.Dictionary(collection.reduceColumns(ee.Reducer.frequencyHistogram(), [field]).get("histogram")).keys();
 
   return values;
 }
@@ -844,9 +642,7 @@ function dailyMosaics(imgs) {
     var date = ee.Date(ee.String(d).split("_").get(0));
     var orbit = ee.Number.parse(ee.String(d).split("_").get(1));
 
-    var t = imgs
-      .filterDate(date, date.advance(1, "day"))
-      .filter(ee.Filter.eq("SENSING_ORBIT_NUMBER", orbit));
+    var t = imgs.filterDate(date, date.advance(1, "day")).filter(ee.Filter.eq("SENSING_ORBIT_NUMBER", orbit));
 
     var f = ee.Image(t.first());
     t = t.mosaic();
@@ -905,15 +701,9 @@ function RefinedLee(img) {
 
   // Determine the 4 gradients for the sampled windows
   var gradients = sample_mean.select(1).subtract(sample_mean.select(7)).abs();
-  gradients = gradients.addBands(
-    sample_mean.select(6).subtract(sample_mean.select(2)).abs()
-  );
-  gradients = gradients.addBands(
-    sample_mean.select(3).subtract(sample_mean.select(5)).abs()
-  );
-  gradients = gradients.addBands(
-    sample_mean.select(0).subtract(sample_mean.select(8)).abs()
-  );
+  gradients = gradients.addBands(sample_mean.select(6).subtract(sample_mean.select(2)).abs());
+  gradients = gradients.addBands(sample_mean.select(3).subtract(sample_mean.select(5)).abs());
+  gradients = gradients.addBands(sample_mean.select(0).subtract(sample_mean.select(8)).abs());
 
   // And find the maximum gradient amongst gradient bands
   var max_gradient = gradients.reduce(ee.Reducer.max());
@@ -970,16 +760,10 @@ function RefinedLee(img) {
   var sample_stats = sample_var.divide(sample_mean.multiply(sample_mean));
 
   // Calculate localNoiseVariance
-  var sigmaV = sample_stats
-    .toArray()
-    .arraySort()
-    .arraySlice(0, 0, 5)
-    .arrayReduce(ee.Reducer.mean(), [0]);
+  var sigmaV = sample_stats.toArray().arraySort().arraySlice(0, 0, 5).arrayReduce(ee.Reducer.mean(), [0]);
 
   // Set up the 7*7 kernels for directional statistics
-  var rect_weights = ee.List.repeat(ee.List.repeat(0, 7), 3).cat(
-    ee.List.repeat(ee.List.repeat(1, 7), 4)
-  );
+  var rect_weights = ee.List.repeat(ee.List.repeat(0, 7), 3).cat(ee.List.repeat(ee.List.repeat(1, 7), 4));
 
   var diag_weights = ee.List([
     [1, 0, 0, 0, 0, 0, 0],
@@ -995,46 +779,18 @@ function RefinedLee(img) {
   var diag_kernel = ee.Kernel.fixed(7, 7, diag_weights, 3, 3, false);
 
   // Create stacks for mean and variance using the original kernels. Mask with relevant direction.
-  var dir_mean = img
-    .reduceNeighborhood(ee.Reducer.mean(), rect_kernel)
-    .updateMask(directions.eq(1));
-  var dir_var = img
-    .reduceNeighborhood(ee.Reducer.variance(), rect_kernel)
-    .updateMask(directions.eq(1));
+  var dir_mean = img.reduceNeighborhood(ee.Reducer.mean(), rect_kernel).updateMask(directions.eq(1));
+  var dir_var = img.reduceNeighborhood(ee.Reducer.variance(), rect_kernel).updateMask(directions.eq(1));
 
-  dir_mean = dir_mean.addBands(
-    img
-      .reduceNeighborhood(ee.Reducer.mean(), diag_kernel)
-      .updateMask(directions.eq(2))
-  );
-  dir_var = dir_var.addBands(
-    img
-      .reduceNeighborhood(ee.Reducer.variance(), diag_kernel)
-      .updateMask(directions.eq(2))
-  );
+  dir_mean = dir_mean.addBands(img.reduceNeighborhood(ee.Reducer.mean(), diag_kernel).updateMask(directions.eq(2)));
+  dir_var = dir_var.addBands(img.reduceNeighborhood(ee.Reducer.variance(), diag_kernel).updateMask(directions.eq(2)));
 
   // and add the bands for rotated kernels
   for (var i = 1; i < 4; i++) {
-    dir_mean = dir_mean.addBands(
-      img
-        .reduceNeighborhood(ee.Reducer.mean(), rect_kernel.rotate(i))
-        .updateMask(directions.eq(2 * i + 1))
-    );
-    dir_var = dir_var.addBands(
-      img
-        .reduceNeighborhood(ee.Reducer.variance(), rect_kernel.rotate(i))
-        .updateMask(directions.eq(2 * i + 1))
-    );
-    dir_mean = dir_mean.addBands(
-      img
-        .reduceNeighborhood(ee.Reducer.mean(), diag_kernel.rotate(i))
-        .updateMask(directions.eq(2 * i + 2))
-    );
-    dir_var = dir_var.addBands(
-      img
-        .reduceNeighborhood(ee.Reducer.variance(), diag_kernel.rotate(i))
-        .updateMask(directions.eq(2 * i + 2))
-    );
+    dir_mean = dir_mean.addBands(img.reduceNeighborhood(ee.Reducer.mean(), rect_kernel.rotate(i)).updateMask(directions.eq(2 * i + 1)));
+    dir_var = dir_var.addBands(img.reduceNeighborhood(ee.Reducer.variance(), rect_kernel.rotate(i)).updateMask(directions.eq(2 * i + 1)));
+    dir_mean = dir_mean.addBands(img.reduceNeighborhood(ee.Reducer.mean(), diag_kernel.rotate(i)).updateMask(directions.eq(2 * i + 2)));
+    dir_var = dir_var.addBands(img.reduceNeighborhood(ee.Reducer.variance(), diag_kernel.rotate(i)).updateMask(directions.eq(2 * i + 2)));
   }
 
   // "collapse" the stack into a single band image (due to masking, each pixel has just one value in it's directional band, and is otherwise masked)
@@ -1042,9 +798,7 @@ function RefinedLee(img) {
   dir_var = dir_var.reduce(ee.Reducer.sum());
 
   // A finally generate the filtered value
-  var varX = dir_var
-    .subtract(dir_mean.multiply(dir_mean).multiply(sigmaV))
-    .divide(sigmaV.add(1.0));
+  var varX = dir_var.subtract(dir_mean.multiply(dir_mean).multiply(sigmaV)).divide(sigmaV.add(1.0));
 
   var b = varX.divide(dir_var);
 
@@ -1053,15 +807,7 @@ function RefinedLee(img) {
 }
 //////////////////////////////////////////////////////
 // Load and filter Sentinel-1 GRD data by predefined parameters
-function getS1(
-  studyArea,
-  startYear,
-  endYear,
-  startJulian,
-  endJulian,
-  polarization,
-  pass_direction
-) {
+function getS1(studyArea, startYear, endYear, startJulian, endJulian, polarization, pass_direction) {
   if (polarization === undefined || polarization === null) {
     polarization = "VV";
   }
@@ -1074,9 +820,7 @@ function getS1(
     .filter(ee.Filter.calendarRange(startYear, endYear, "year"))
     .filter(ee.Filter.calendarRange(startJulian, endJulian))
     .filter(ee.Filter.eq("instrumentMode", "IW"))
-    .filter(
-      ee.Filter.listContains("transmitterReceiverPolarisation", polarization)
-    )
+    .filter(ee.Filter.listContains("transmitterReceiverPolarisation", polarization))
     .filter(ee.Filter.eq("orbitProperties_pass", pass_direction))
     .filter(ee.Filter.eq("resolution_meters", 10))
     .filterBounds(studyArea)
@@ -1099,8 +843,8 @@ function getS2() {
     resampleMethod: "aggregate",
     toaOrSR: "TOA",
     convertToDailyMosaics: true,
-    addCloudProbability: true, //LSC
-    addCloudScorePlus: false,
+    addCloudProbability: false, //LSC
+    addCloudScorePlus: true,
   };
 
   var args = prepArgumentsObject(arguments, defaultArgs);
@@ -1112,66 +856,12 @@ function getS2() {
   };
 
   var sensorBandDict = {
-    SR: [
-      "B1",
-      "B2",
-      "B3",
-      "B4",
-      "B5",
-      "B6",
-      "B7",
-      "B8",
-      "B8A",
-      "B9",
-      "B11",
-      "B12",
-    ],
-    TOA: [
-      "B1",
-      "B2",
-      "B3",
-      "B4",
-      "B5",
-      "B6",
-      "B7",
-      "B8",
-      "B8A",
-      "B9",
-      "B10",
-      "B11",
-      "B12",
-    ],
+    SR: ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B8A", "B9", "B11", "B12"],
+    TOA: ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B8A", "B9", "B10", "B11", "B12"],
   };
   var sensorBandNameDict = {
-    SR: [
-      "cb",
-      "blue",
-      "green",
-      "red",
-      "re1",
-      "re2",
-      "re3",
-      "nir",
-      "nir2",
-      "waterVapor",
-      "swir1",
-      "swir2",
-    ],
-    TOA: [
-      "cb",
-      "blue",
-      "green",
-      "red",
-      "re1",
-      "re2",
-      "re3",
-      "nir",
-      "nir2",
-      "waterVapor",
-      "cirrus",
-      "swir1",
-      "swir2",
-    ],
+    SR: ["cb", "blue", "green", "red", "re1", "re2", "re3", "nir", "nir2", "waterVapor", "swir1", "swir2"],
+    TOA: ["cb", "blue", "green", "red", "re1", "re2", "re3", "nir", "nir2", "waterVapor", "cirrus", "swir1", "swir2"],
   };
 
   // Specify S2 continuous bands if resampling is set to something other than near
@@ -1188,16 +878,11 @@ function getS2() {
       // var out = t.copyProperties(img).copyProperties(img,['system:time_start','system:footprint']);
       return img.addBands(t, null, true);
     })
-    .select(
-      ["QA60"].concat(sensorBandDict[args.toaOrSR]),
-      ["QA60"].concat(sensorBandNameDict[args.toaOrSR])
-    );
+    .select(["QA60"].concat(sensorBandDict[args.toaOrSR]), ["QA60"].concat(sensorBandNameDict[args.toaOrSR]));
   // .map(function(img){return img.resample('bicubic') }) ;
 
   if (args.addCloudProbability) {
-    print(
-      "Joining pre-computed cloud probabilities from: COPERNICUS/S2_CLOUD_PROBABILITY"
-    );
+    print("Joining pre-computed cloud probabilities from: COPERNICUS/S2_CLOUD_PROBABILITY");
     var cloudProbabilities = ee
       .ImageCollection("COPERNICUS/S2_CLOUD_PROBABILITY")
       .filterDate(args.startDate, args.endDate.advance(1, "day"))
@@ -1205,14 +890,8 @@ function getS2() {
       .filterBounds(args.studyArea)
       .select(["probability"], ["cloud_probability"]);
 
-    var cloudProbabilitiesIds = ee.List(
-      ee
-        .Dictionary(cloudProbabilities.aggregate_histogram("system:index"))
-        .keys()
-    );
-    var s2sIds = ee.List(
-      ee.Dictionary(s2s.aggregate_histogram("system:index")).keys()
-    );
+    var cloudProbabilitiesIds = ee.List(ee.Dictionary(cloudProbabilities.aggregate_histogram("system:index")).keys());
+    var s2sIds = ee.List(ee.Dictionary(s2s.aggregate_histogram("system:index")).keys());
     var missing = s2sIds.removeAll(cloudProbabilitiesIds);
     print("Missing cloud probability ids:", missing);
     print("N s2 images before joining with cloud prob:", s2s.size());
@@ -1221,9 +900,7 @@ function getS2() {
   }
 
   if (args.addCloudScorePlus) {
-    print(
-      "Joining pre-computed cloudScore+ from: GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED"
-    );
+    print("Joining pre-computed cloudScore+ from: GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED");
     var cloudScorePlus = ee
       .ImageCollection("GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED")
       .filterDate(args.startDate, args.endDate.advance(1, "day"))
@@ -1231,13 +908,9 @@ function getS2() {
       .filterBounds(args.studyArea)
       .select(["cs"], ["cloudScorePlus"]);
 
-    var cloudScorePlusIds = ee.List(
-      ee.Dictionary(cloudScorePlus.aggregate_histogram("system:index")).keys()
-    );
+    var cloudScorePlusIds = ee.List(ee.Dictionary(cloudScorePlus.aggregate_histogram("system:index")).keys());
 
-    var s2sIds = ee.List(
-      ee.Dictionary(s2s.aggregate_histogram("system:index")).keys()
-    );
+    var s2sIds = ee.List(ee.Dictionary(s2s.aggregate_histogram("system:index")).keys());
     var missing = s2sIds.removeAll(cloudScorePlusIds);
     print("Missing cloud probability ids:", missing);
     print("N s2 images before joining with cloudScore+:", s2s.size());
@@ -1249,22 +922,12 @@ function getS2() {
   if (["bilinear", "bicubic"].indexOf(args.resampleMethod) > -1) {
     print("Setting resample method to ", args.resampleMethod);
     s2s = s2s.map(function (img) {
-      return img.addBands(
-        img.select(s2_continuous_bands).resample(args.resampleMethod),
-        null,
-        true
-      );
+      return img.addBands(img.select(s2_continuous_bands).resample(args.resampleMethod), null, true);
     });
   } else if (args.resampleMethod === "aggregate") {
     print("Setting to aggregate instead of resample ");
     s2s = s2s.map(function (img) {
-      return img.addBands(
-        img
-          .select(s2_continuous_bands)
-          .reduceResolution(ee.Reducer.mean(), true, 64),
-        null,
-        true
-      );
+      return img.addBands(img.select(s2_continuous_bands).reduceResolution(ee.Reducer.mean(), true, 64), null, true);
     });
   }
 
@@ -1295,15 +958,7 @@ var landsat_C2_L2_rescale_dict = {
 };
 
 // Specify Landsat continuous bands if resampling is set to something other than near
-var landsat_continuous_bands = [
-  "blue",
-  "green",
-  "red",
-  "nir",
-  "swir1",
-  "temp",
-  "swir2",
-];
+var landsat_continuous_bands = ["blue", "green", "red", "nir", "swir1", "temp", "swir2"];
 
 // Set up bands and corresponding band names
 var landsatSensorBandDict = {
@@ -1317,59 +972,14 @@ var landsatSensorBandDict = {
   C2_L8_TOA: ["B2", "B3", "B4", "B5", "B6", "B10", "B7", "QA_PIXEL"],
   C2_L9_TOA: ["B2", "B3", "B4", "B5", "B6", "B10", "B7", "QA_PIXEL"],
   C1_L4_SR: ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "pixel_qa"],
-  C2_L4_SR: [
-    "SR_B1",
-    "SR_B2",
-    "SR_B3",
-    "SR_B4",
-    "SR_B5",
-    "ST_B6",
-    "SR_B7",
-    "QA_PIXEL",
-  ],
+  C2_L4_SR: ["SR_B1", "SR_B2", "SR_B3", "SR_B4", "SR_B5", "ST_B6", "SR_B7", "QA_PIXEL"],
   C1_L5_SR: ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "pixel_qa"],
-  C2_L5_SR: [
-    "SR_B1",
-    "SR_B2",
-    "SR_B3",
-    "SR_B4",
-    "SR_B5",
-    "ST_B6",
-    "SR_B7",
-    "QA_PIXEL",
-  ],
+  C2_L5_SR: ["SR_B1", "SR_B2", "SR_B3", "SR_B4", "SR_B5", "ST_B6", "SR_B7", "QA_PIXEL"],
   C1_L7_SR: ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "pixel_qa"],
-  C2_L7_SR: [
-    "SR_B1",
-    "SR_B2",
-    "SR_B3",
-    "SR_B4",
-    "SR_B5",
-    "ST_B6",
-    "SR_B7",
-    "QA_PIXEL",
-  ],
+  C2_L7_SR: ["SR_B1", "SR_B2", "SR_B3", "SR_B4", "SR_B5", "ST_B6", "SR_B7", "QA_PIXEL"],
   C1_L8_SR: ["B2", "B3", "B4", "B5", "B6", "B10", "B7", "pixel_qa"],
-  C2_L8_SR: [
-    "SR_B2",
-    "SR_B3",
-    "SR_B4",
-    "SR_B5",
-    "SR_B6",
-    "ST_B10",
-    "SR_B7",
-    "QA_PIXEL",
-  ],
-  C2_L9_SR: [
-    "SR_B2",
-    "SR_B3",
-    "SR_B4",
-    "SR_B5",
-    "SR_B6",
-    "ST_B10",
-    "SR_B7",
-    "QA_PIXEL",
-  ],
+  C2_L8_SR: ["SR_B2", "SR_B3", "SR_B4", "SR_B5", "SR_B6", "ST_B10", "SR_B7", "QA_PIXEL"],
+  C2_L9_SR: ["SR_B2", "SR_B3", "SR_B4", "SR_B5", "SR_B6", "ST_B10", "SR_B7", "QA_PIXEL"],
 };
 
 // Provide common band names
@@ -1411,19 +1021,9 @@ var landsatFmaskBandNameDict = { C1: "pixel_qa", C2: "QA_PIXEL" };
 // https://code.earthengine.google.com/?scriptPath=Examples%3ADatasets%2FLANDSAT_LC08_C02_T1_L2
 function applyScaleFactors(image, landsatCollectionVersion) {
   var factor_dict = landsat_C2_L2_rescale_dict[landsatCollectionVersion];
-  var opticalBands = image
-    .select("blue", "green", "red", "nir", "swir1", "swir2")
-    .multiply(factor_dict["refl_mult"])
-    .add(factor_dict["refl_add"])
-    .float();
-  var thermalBands = image
-    .select("temp")
-    .multiply(factor_dict["temp_mult"])
-    .add(factor_dict["temp_add"])
-    .float();
-  return image
-    .addBands(opticalBands, null, true)
-    .addBands(thermalBands, null, true);
+  var opticalBands = image.select("blue", "green", "red", "nir", "swir1", "swir2").multiply(factor_dict["refl_mult"]).add(factor_dict["refl_add"]).float();
+  var thermalBands = image.select("temp").multiply(factor_dict["temp_mult"]).add(factor_dict["temp_add"]).float();
+  return image.addBands(opticalBands, null, true).addBands(thermalBands, null, true);
 }
 //////////////////////////////////////////////////////////////////
 // Function for acquiring Landsat image collections
@@ -1450,11 +1050,7 @@ function getLandsat() {
 
   function getLandsatCollection(landsatCollectionVersion, whichC, toaOrSR) {
     var c = ee
-      .ImageCollection(
-        landsatCollectionDict[
-          landsatCollectionVersion + "_" + whichC + "_" + toaOrSR
-        ]
-      )
+      .ImageCollection(landsatCollectionDict[landsatCollectionVersion + "_" + whichC + "_" + toaOrSR])
       .filterDate(args.startDate, args.endDate.advance(1, "day"))
       .filter(ee.Filter.calendarRange(args.startJulian, args.endJulian))
       .filterBounds(args.studyArea)
@@ -1462,12 +1058,7 @@ function getLandsat() {
     if (args.toaOrSR.toLowerCase() === "toa") {
       c = c.map(ee.Algorithms.Landsat.TOA);
     }
-    c = c.select(
-      landsatSensorBandDict[
-        landsatCollectionVersion + "_" + whichC + "_" + toaOrSR
-      ],
-      landsatSensorBandNameDict[landsatCollectionVersion + "_" + toaOrSR]
-    );
+    c = c.select(landsatSensorBandDict[landsatCollectionVersion + "_" + whichC + "_" + toaOrSR], landsatSensorBandNameDict[landsatCollectionVersion + "_" + toaOrSR]);
 
     if (args.toaOrSR.toLowerCase() === "sr") {
       c = c.map(function (image) {
@@ -1494,14 +1085,7 @@ function getLandsat() {
       l7s = getLandsatCollection(landsatCollectionVersion, "L7", toaOrSR);
     } else {
       print("Only including SLC On Landsat 7");
-      l7s = getLandsatCollection(
-        landsatCollectionVersion,
-        "L7",
-        toaOrSR
-      ).filterDate(
-        ee.Date.fromYMD(1998, 1, 1),
-        ee.Date.fromYMD(2003, 5, 31).advance(1, "day")
-      );
+      l7s = getLandsatCollection(landsatCollectionVersion, "L7", toaOrSR).filterDate(ee.Date.fromYMD(1998, 1, 1), ee.Date.fromYMD(2003, 5, 31).advance(1, "day"));
     }
     // Merge collections
     ls = ee.ImageCollection(l4s.merge(l5s).merge(l7s).merge(l8s));
@@ -1517,11 +1101,7 @@ function getLandsat() {
   var ls = getLandsatCollections(args.toaOrSR, args.landsatCollectionVersion);
 
   //If TOA and Fmask need to merge Fmask qa bits with toa- this gets the qa band from the sr collections
-  if (
-    args.toaOrSR.toLowerCase() === "toa" &&
-    args.addPixelQA === true &&
-    args.landsatCollectionVersion.toLowerCase() == "c1"
-  ) {
+  if (args.toaOrSR.toLowerCase() === "toa" && args.addPixelQA === true && args.landsatCollectionVersion.toLowerCase() == "c1") {
     print("Acquiring SR qa bands for applying Fmask to TOA data");
     var l4sTOAFMASK = ee
       .ImageCollection(landsatCollectionDict["C1_L4_SR"])
@@ -1560,10 +1140,7 @@ function getLandsat() {
       print("Only including SLC On Landsat 7 for TOA QA");
       var l7sTOAFMASK = ee
         .ImageCollection(landsatCollectionDict["C1_L7_SR"])
-        .filterDate(
-          ee.Date.fromYMD(1998, 1, 1),
-          ee.Date.fromYMD(2003, 5, 31).advance(1, "day")
-        )
+        .filterDate(ee.Date.fromYMD(1998, 1, 1), ee.Date.fromYMD(2003, 5, 31).advance(1, "day"))
         .filterDate(args.startDate, args.endDate.advance(1, "day"))
         .filter(ee.Filter.calendarRange(args.startJulian, args.endJulian))
         .filterBounds(args.studyArea)
@@ -1571,29 +1148,17 @@ function getLandsat() {
         .select(landsatSensorBandNameDict["C1_SRFMASK"]);
     }
 
-    lsTOAFMASK = ee.ImageCollection(
-      l4sTOAFMASK.merge(l5sTOAFMASK).merge(l7sTOAFMASK).merge(l8sTOAFMASK)
-    );
+    lsTOAFMASK = ee.ImageCollection(l4sTOAFMASK.merge(l5sTOAFMASK).merge(l7sTOAFMASK).merge(l8sTOAFMASK));
     //Join the TOA with SR QA bands
     print("Joining TOA with SR QA bands");
     print(ls.size(), lsTOAFMASK.size());
-    ls = joinCollections(
-      ls.select([0, 1, 2, 3, 4, 5, 6]),
-      lsTOAFMASK,
-      false,
-      "system:index"
-    );
+    ls = joinCollections(ls.select([0, 1, 2, 3, 4, 5, 6]), lsTOAFMASK, false, "system:index");
     print("ls images:", ls);
   }
 
   // Make sure all bands have data
   ls = ls.map(function (img) {
-    img = img.updateMask(
-      img
-        .select(["blue", "green", "red", "nir", "swir1", "swir2"])
-        .mask()
-        .reduce(ee.Reducer.min())
-    );
+    img = img.updateMask(img.select(["blue", "green", "red", "nir", "swir1", "swir2"]).mask().reduce(ee.Reducer.min()));
     return img; //.multiply(multImageDict[args.toaOrSR]).float()
     //.copyProperties(img,['system:time_start','system:footprint']).copyProperties(img);
   });
@@ -1601,22 +1166,12 @@ function getLandsat() {
   if (["bilinear", "bicubic"].indexOf(args.resampleMethod) > -1) {
     print("Setting resample method to ", args.resampleMethod);
     ls = ls.map(function (img) {
-      return img.addBands(
-        img.select(landsat_continuous_bands).resample(args.resampleMethod),
-        null,
-        true
-      );
+      return img.addBands(img.select(landsat_continuous_bands).resample(args.resampleMethod), null, true);
     });
   } else if (args.resampleMethod === "aggregate") {
     print("Setting to aggregate instead of resample ");
     ls = ls.map(function (img) {
-      return img.addBands(
-        img
-          .select(landsat_continuous_bands)
-          .reduceResolution(ee.Reducer.mean(), true, 64),
-        null,
-        true
-      );
+      return img.addBands(img.select(landsat_continuous_bands).reduceResolution(ee.Reducer.mean(), true, 64), null, true);
     });
   }
 
@@ -1644,24 +1199,9 @@ function rescale(img, exp, thresholds) {
  */
 //Cloud heights added by Ian Housman
 //yMult bug fix adapted from code written by Noel Gorelick by Ian Housman
-function projectShadows(
-  cloudMask,
-  image,
-  irSumThresh,
-  contractPixels,
-  dilatePixels,
-  cloudHeights,
-  yMult
-) {
+function projectShadows(cloudMask, image, irSumThresh, contractPixels, dilatePixels, cloudHeights, yMult) {
   if (yMult === undefined || yMult === null) {
-    yMult = ee.Algorithms.If(
-      ee.Algorithms.IsEqual(
-        image.select([3]).projection(),
-        ee.Projection("EPSG:4326")
-      ),
-      1,
-      -1
-    );
+    yMult = ee.Algorithms.If(ee.Algorithms.IsEqual(image.select([3]).projection(), ee.Projection("EPSG:4326")), 1, -1);
   }
   var meanAzimuth = image.get("MEAN_SOLAR_AZIMUTH_ANGLE");
   var meanZenith = image.get("MEAN_SOLAR_ZENITH_ANGLE");
@@ -1670,12 +1210,7 @@ function projectShadows(
   // print('z',meanZenith)
 
   //Find dark pixels
-  var darkPixels = image
-    .select(["nir", "swir1", "swir2"])
-    .reduce(ee.Reducer.sum())
-    .lt(irSumThresh)
-    .focal_min(contractPixels)
-    .focal_max(dilatePixels); //.gte(1);
+  var darkPixels = image.select(["nir", "swir1", "swir2"]).reduce(ee.Reducer.sum()).lt(irSumThresh).focal_min(contractPixels).focal_max(dilatePixels); //.gte(1);
   //Get scale of image
   var nominalScale = cloudMask.projection().nominalScale();
   //Find where cloud shadows should be based on solar geometry
@@ -1689,35 +1224,23 @@ function projectShadows(
 
     var shadowCastedDistance = zenR.tan().multiply(cloudHeight); //Distance shadow is cast
     var x = azR.sin().multiply(shadowCastedDistance).divide(nominalScale); //X distance of shadow
-    var y = azR
-      .cos()
-      .multiply(shadowCastedDistance)
-      .divide(nominalScale)
-      .multiply(yMult); //Y distance of shadow
+    var y = azR.cos().multiply(shadowCastedDistance).divide(nominalScale).multiply(yMult); //Y distance of shadow
     // print(x,y)
 
-    return cloudMask.changeProj(
-      cloudMask.projection(),
-      cloudMask.projection().translate(x, y)
-    );
+    return cloudMask.changeProj(cloudMask.projection(), cloudMask.projection().translate(x, y));
   });
 
   var shadowMask = ee.ImageCollection.fromImages(shadows).max();
 
   //Create shadow mask
   shadowMask = shadowMask.and(cloudMask.not());
-  shadowMask = shadowMask
-    .and(darkPixels)
-    .focal_min(contractPixels)
-    .focal_max(dilatePixels);
+  shadowMask = shadowMask.and(darkPixels).focal_min(contractPixels).focal_max(dilatePixels);
   // Map.addLayer(cloudMask.updateMask(cloudMask),{'min':1,'max':1,'palette':'88F'},'Cloud mask');
   // Map.addLayer(shadowMask.updateMask(shadowMask),{'min':1,'max':1,'palette':'880'},'Shadow mask');
 
   var cloudShadowMask = shadowMask.or(cloudMask);
 
-  image = image
-    .updateMask(cloudShadowMask.not())
-    .addBands(shadowMask.rename(["cloudShadowMask"]));
+  image = image.updateMask(cloudShadowMask.not()).addBands(shadowMask.rename(["cloudShadowMask"]));
   return image;
 }
 //See defaultArgs for list of params
@@ -1735,19 +1258,9 @@ function projectShadowsWrapper() {
 
   var args = prepArgumentsObject(arguments, defaultArgs);
 
-  var cloudMask = sentinel2CloudScore(args.img)
-    .gt(args.cloudThresh)
-    .focal_min(args.contractPixels)
-    .focal_max(args.dilatePixels);
+  var cloudMask = sentinel2CloudScore(args.img).gt(args.cloudThresh).focal_min(args.contractPixels).focal_max(args.dilatePixels);
 
-  var img = projectShadows(
-    cloudMask,
-    args.img,
-    args.irSumThresh,
-    args.contractPixels,
-    args.dilatePixels,
-    args.cloudHeights
-  );
+  var img = projectShadows(cloudMask, args.img, args.irSumThresh, args.contractPixels, args.dilatePixels, args.cloudHeights);
 
   return img.set(args);
 }
@@ -1762,10 +1275,7 @@ function maskS2clouds(image) {
   var cirrusBitMask = Math.pow(2, 11);
 
   // Both flags should be set to zero, indicating clear conditions.
-  var mask = qa
-    .bitwiseAnd(cloudBitMask)
-    .eq(0)
-    .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+  var mask = qa.bitwiseAnd(cloudBitMask).eq(0).and(qa.bitwiseAnd(cirrusBitMask).eq(0));
 
   // Return the masked and scaled data.
   return image.updateMask(mask);
@@ -1786,9 +1296,7 @@ function landsatCloudScore(img) {
   score = score.min(rescale(img, "img.red + img.green + img.blue", [0.2, 0.8]));
 
   // Clouds are reasonably bright in all infrared bands.
-  score = score.min(
-    rescale(img, "img.nir + img.swir1 + img.swir2", [0.3, 0.8])
-  );
+  score = score.min(rescale(img, "img.nir + img.swir1 + img.swir2", [0.3, 0.8]));
 
   // Clouds are reasonably cool in temperature.
   // Unmask temperature to a cold cold temp so it doesn't exclude the pixels entirely
@@ -1807,16 +1315,7 @@ function landsatCloudScore(img) {
 ////////////////////////////////////////////////////////////////////////////////
 //Wrapper for applying cloudScore function
 //Required params: collection,cloudScoreFunction
-function applyCloudScoreAlgorithm(
-  collection,
-  cloudScoreFunction,
-  cloudScoreThresh,
-  cloudScorePctl,
-  contractPixels,
-  dilatePixels,
-  performCloudScoreOffset,
-  preComputedCloudScoreOffset
-) {
+function applyCloudScoreAlgorithm(collection, cloudScoreFunction, cloudScoreThresh, cloudScorePctl, contractPixels, dilatePixels, performCloudScoreOffset, preComputedCloudScoreOffset) {
   // var defaultArgs = {
   //   'collection':null,
   //   'cloudScoreFunction':null,
@@ -1830,16 +1329,10 @@ function applyCloudScoreAlgorithm(
 
   // var args = prepArgumentsObject(arguments,defaultArgs);
 
-  if (
-    performCloudScoreOffset === undefined ||
-    performCloudScoreOffset === null
-  ) {
+  if (performCloudScoreOffset === undefined || performCloudScoreOffset === null) {
     performCloudScoreOffset = true;
   }
-  if (
-    preComputedCloudScoreOffset === undefined ||
-    preComputedCloudScoreOffset === null
-  ) {
+  if (preComputedCloudScoreOffset === undefined || preComputedCloudScoreOffset === null) {
     preComputedCloudScoreOffset = null;
   }
   // Add cloudScore
@@ -1853,9 +1346,7 @@ function applyCloudScoreAlgorithm(
     if (preComputedCloudScoreOffset === null) {
       print("Computing cloudScore offset");
       // Find low cloud score pctl for each pixel to avoid comission errors
-      minCloudScore = collection
-        .select(["cloudScore"])
-        .reduce(ee.Reducer.percentile([cloudScorePctl]));
+      minCloudScore = collection.select(["cloudScore"]).reduce(ee.Reducer.percentile([cloudScorePctl]));
       // Map.addLayer(minCloudScore,{'min':0,'max':30},'minCloudScore',false);
     } else {
       print("Using pre-computed cloudScore offset");
@@ -1868,13 +1359,7 @@ function applyCloudScoreAlgorithm(
 
   // Apply cloudScore
   var collection = collection.map(function (img) {
-    var cloudMask = img
-      .select(["cloudScore"])
-      .subtract(minCloudScore)
-      .lt(cloudScoreThresh)
-      .focal_max(contractPixels)
-      .focal_min(dilatePixels)
-      .rename("cloudMask");
+    var cloudMask = img.select(["cloudScore"]).subtract(minCloudScore).lt(cloudScoreThresh).focal_max(contractPixels).focal_min(dilatePixels).rename("cloudMask");
     return img.updateMask(cloudMask);
   });
 
@@ -1928,21 +1413,13 @@ function cFmaskCloud(img, landsatCollectionVersion, bitMaskBandName) {
   if (bitMaskBandName === undefined || bitMaskBandName === null) {
     bitMaskBandName = "QA_PIXEL";
   }
-  return applyBitMask(
-    img,
-    fmaskBitDict[landsatCollectionVersion]["cloud"],
-    bitMaskBandName
-  );
+  return applyBitMask(img, fmaskBitDict[landsatCollectionVersion]["cloud"], bitMaskBandName);
 }
 function cFmaskCloudShadow(img, landsatCollectionVersion, bitMaskBandName) {
   if (bitMaskBandName === undefined || bitMaskBandName === null) {
     bitMaskBandName = "QA_PIXEL";
   }
-  return applyBitMask(
-    img,
-    fmaskBitDict[landsatCollectionVersion]["shadow"],
-    bitMaskBandName
-  );
+  return applyBitMask(img, fmaskBitDict[landsatCollectionVersion]["shadow"], bitMaskBandName);
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Function for finding dark outliers in time series.
@@ -1967,24 +1444,16 @@ function simpleTDOM2() {
   // Get some pixel-wise stats for the time series
   var irMean;
   var irStdDev;
-  if (
-    args.preComputedTDOMIRMean === null ||
-    args.preComputedTDOMIRMean === undefined
-  ) {
+  if (args.preComputedTDOMIRMean === null || args.preComputedTDOMIRMean === undefined) {
     print("Computing irMean for TDOM");
     irMean = args.collection.select(args.shadowSumBands).mean();
   } else {
     print("Using pre-computed irMean for TDOM");
     irMean = args.preComputedTDOMIRMean;
   }
-  if (
-    args.preComputedTDOMIRStdDev === null ||
-    args.preComputedTDOMIRStdDev === undefined
-  ) {
+  if (args.preComputedTDOMIRStdDev === null || args.preComputedTDOMIRStdDev === undefined) {
     print("Computing irStdDev for TDOM");
-    irStdDev = args.collection
-      .select(args.shadowSumBands)
-      .reduce(ee.Reducer.stdDev());
+    irStdDev = args.collection.select(args.shadowSumBands).reduce(ee.Reducer.stdDev());
   } else {
     print("Using pre-computed irStdDev for TDOM");
     irStdDev = args.preComputedTDOMIRStdDev;
@@ -1992,19 +1461,10 @@ function simpleTDOM2() {
 
   // Mask out dark dark outliers
   var collection = args.collection.map(function (img) {
-    var zScore = img
-      .select(args.shadowSumBands)
-      .subtract(irMean)
-      .divide(irStdDev);
+    var zScore = img.select(args.shadowSumBands).subtract(irMean).divide(irStdDev);
     var irSum = img.select(args.shadowSumBands).reduce(ee.Reducer.sum());
-    var TDOMMask = zScore
-      .lt(args.zScoreThresh)
-      .reduce(ee.Reducer.sum())
-      .eq(args.shadowSumBands.length)
-      .and(irSum.lt(args.shadowSumThresh));
-    TDOMMask = TDOMMask.focal_min(args.contractPixels).focal_max(
-      args.dilatePixels
-    );
+    var TDOMMask = zScore.lt(args.zScoreThresh).reduce(ee.Reducer.sum()).eq(args.shadowSumBands.length).and(irSum.lt(args.shadowSumThresh));
+    TDOMMask = TDOMMask.focal_min(args.contractPixels).focal_max(args.dilatePixels);
     return img.updateMask(TDOMMask.not());
   });
 
@@ -2016,63 +1476,29 @@ function simpleTDOM2() {
 // Includes the Normalized Difference Spectral Vector from (Angiuli and Trianni, 2014)
 function addIndices(img) {
   // Add Normalized Difference Spectral Vector (NDSV)
-  img = img.addBands(
-    img.normalizedDifference(["blue", "green"]).rename("ND_blue_green")
-  );
-  img = img.addBands(
-    img.normalizedDifference(["blue", "red"]).rename("ND_blue_red")
-  );
-  img = img.addBands(
-    img.normalizedDifference(["blue", "nir"]).rename("ND_blue_nir")
-  );
-  img = img.addBands(
-    img.normalizedDifference(["blue", "swir1"]).rename("ND_blue_swir1")
-  );
-  img = img.addBands(
-    img.normalizedDifference(["blue", "swir2"]).rename("ND_blue_swir2")
-  );
+  img = img.addBands(img.normalizedDifference(["blue", "green"]).rename("ND_blue_green"));
+  img = img.addBands(img.normalizedDifference(["blue", "red"]).rename("ND_blue_red"));
+  img = img.addBands(img.normalizedDifference(["blue", "nir"]).rename("ND_blue_nir"));
+  img = img.addBands(img.normalizedDifference(["blue", "swir1"]).rename("ND_blue_swir1"));
+  img = img.addBands(img.normalizedDifference(["blue", "swir2"]).rename("ND_blue_swir2"));
 
-  img = img.addBands(
-    img.normalizedDifference(["green", "red"]).rename("ND_green_red")
-  );
-  img = img.addBands(
-    img.normalizedDifference(["green", "nir"]).rename("ND_green_nir")
-  ); //NDWBI
-  img = img.addBands(
-    img.normalizedDifference(["green", "swir1"]).rename("ND_green_swir1")
-  ); //NDSI, MNDWI
-  img = img.addBands(
-    img.normalizedDifference(["green", "swir2"]).rename("ND_green_swir2")
-  );
+  img = img.addBands(img.normalizedDifference(["green", "red"]).rename("ND_green_red"));
+  img = img.addBands(img.normalizedDifference(["green", "nir"]).rename("ND_green_nir")); //NDWBI
+  img = img.addBands(img.normalizedDifference(["green", "swir1"]).rename("ND_green_swir1")); //NDSI, MNDWI
+  img = img.addBands(img.normalizedDifference(["green", "swir2"]).rename("ND_green_swir2"));
 
-  img = img.addBands(
-    img.normalizedDifference(["red", "swir1"]).rename("ND_red_swir1")
-  );
-  img = img.addBands(
-    img.normalizedDifference(["red", "swir2"]).rename("ND_red_swir2")
-  );
+  img = img.addBands(img.normalizedDifference(["red", "swir1"]).rename("ND_red_swir1"));
+  img = img.addBands(img.normalizedDifference(["red", "swir2"]).rename("ND_red_swir2"));
 
-  img = img.addBands(
-    img.normalizedDifference(["nir", "red"]).rename("ND_nir_red")
-  ); //NDVI
-  img = img.addBands(
-    img.normalizedDifference(["nir", "swir1"]).rename("ND_nir_swir1")
-  ); //NDWI, LSWI, -NDBI
-  img = img.addBands(
-    img.normalizedDifference(["nir", "swir2"]).rename("ND_nir_swir2")
-  ); //NBR, MNDVI
+  img = img.addBands(img.normalizedDifference(["nir", "red"]).rename("ND_nir_red")); //NDVI
+  img = img.addBands(img.normalizedDifference(["nir", "swir1"]).rename("ND_nir_swir1")); //NDWI, LSWI, -NDBI
+  img = img.addBands(img.normalizedDifference(["nir", "swir2"]).rename("ND_nir_swir2")); //NBR, MNDVI
 
-  img = img.addBands(
-    img.normalizedDifference(["swir1", "swir2"]).rename("ND_swir1_swir2")
-  );
+  img = img.addBands(img.normalizedDifference(["swir1", "swir2"]).rename("ND_swir1_swir2"));
 
   // Add ratios
-  img = img.addBands(
-    img.select("swir1").divide(img.select("nir")).rename("R_swir1_nir")
-  ); //ratio 5/4
-  img = img.addBands(
-    img.select("red").divide(img.select("swir1")).rename("R_red_swir1")
-  ); // ratio 3/5
+  img = img.addBands(img.select("swir1").divide(img.select("nir")).rename("R_swir1_nir")); //ratio 5/4
+  img = img.addBands(img.select("red").divide(img.select("swir1")).rename("R_red_swir1")); // ratio 3/5
 
   // Add Enhanced Vegetation Index (EVI)
   var evi = img
@@ -2153,18 +1579,10 @@ function addSAVIandEVI(img) {
 /////////////////////////////////////////////////////////////////
 //Function for only adding common indices
 function simpleAddIndices(in_image) {
-  in_image = in_image.addBands(
-    in_image.normalizedDifference(["nir", "red"]).select([0], ["NDVI"])
-  );
-  in_image = in_image.addBands(
-    in_image.normalizedDifference(["nir", "swir2"]).select([0], ["NBR"])
-  );
-  in_image = in_image.addBands(
-    in_image.normalizedDifference(["nir", "swir1"]).select([0], ["NDMI"])
-  );
-  in_image = in_image.addBands(
-    in_image.normalizedDifference(["green", "swir1"]).select([0], ["NDSI"])
-  );
+  in_image = in_image.addBands(in_image.normalizedDifference(["nir", "red"]).select([0], ["NDVI"]));
+  in_image = in_image.addBands(in_image.normalizedDifference(["nir", "swir2"]).select([0], ["NBR"]));
+  in_image = in_image.addBands(in_image.normalizedDifference(["nir", "swir1"]).select([0], ["NDMI"]));
+  in_image = in_image.addBands(in_image.normalizedDifference(["green", "swir1"]).select([0], ["NDSI"]));
 
   return in_image;
 }
@@ -2178,15 +1596,12 @@ function addSoilIndices(img) {
   img = img.addBands(img.normalizedDifference(["swir1", "nir"]).rename("NDFI"));
 
   var bsi = img
-    .expression(
-      "((SWIR1 + RED) - (NIR + BLUE)) / ((SWIR1 + RED) + (NIR + BLUE))",
-      {
-        BLUE: img.select("blue"),
-        RED: img.select("red"),
-        NIR: img.select("nir"),
-        SWIR1: img.select("swir1"),
-      }
-    )
+    .expression("((SWIR1 + RED) - (NIR + BLUE)) / ((SWIR1 + RED) + (NIR + BLUE))", {
+      BLUE: img.select("blue"),
+      RED: img.select("red"),
+      NIR: img.select("nir"),
+      SWIR1: img.select("swir1"),
+    })
     .float();
   img = img.addBands(bsi.rename("BSI"));
 
@@ -2237,9 +1652,7 @@ function getTasseledCap(image) {
     // Get rid of the extra dimensions.
     .arrayProject([0])
     // Get a multi-band image with TC-named bands.
-    .arrayFlatten([
-      ["brightness", "greenness", "wetness", "fourth", "fifth", "sixth"],
-    ])
+    .arrayFlatten([["brightness", "greenness", "wetness", "fourth", "fifth", "sixth"]])
     .float();
 
   return image.addBands(componentsImage);
@@ -2289,22 +1702,13 @@ function addTCAngles(image) {
   var wetness = image.select(["wetness"]);
 
   // Calculate Tasseled Cap angles and distances
-  var tcAngleBG = brightness
-    .atan2(greenness)
-    .divide(Math.PI)
-    .rename("tcAngleBG");
+  var tcAngleBG = brightness.atan2(greenness).divide(Math.PI).rename("tcAngleBG");
   var tcAngleGW = greenness.atan2(wetness).divide(Math.PI).rename("tcAngleGW");
   var tcAngleBW = brightness.atan2(wetness).divide(Math.PI).rename("tcAngleBW");
   var tcDistBG = brightness.hypot(greenness).rename("tcDistBG");
   var tcDistGW = greenness.hypot(wetness).rename("tcDistGW");
   var tcDistBW = brightness.hypot(wetness).rename("tcDistBW");
-  image = image
-    .addBands(tcAngleBG)
-    .addBands(tcAngleGW)
-    .addBands(tcAngleBW)
-    .addBands(tcDistBG)
-    .addBands(tcDistGW)
-    .addBands(tcDistBW);
+  image = image.addBands(tcAngleBG).addBands(tcAngleGW).addBands(tcAngleBW).addBands(tcDistBG).addBands(tcDistGW).addBands(tcDistBW);
   return image;
 }
 ////////////////////////////////////////////////////
@@ -2317,10 +1721,7 @@ function simpleAddTCAngles(image) {
   var wetness = image.select(["wetness"]);
 
   // Calculate Tasseled Cap angles and distances
-  var tcAngleBG = brightness
-    .atan2(greenness)
-    .divide(Math.PI)
-    .rename("tcAngleBG");
+  var tcAngleBG = brightness.atan2(greenness).divide(Math.PI).rename("tcAngleBG");
 
   return image.addBands(tcAngleBG);
 }
@@ -2341,17 +1742,9 @@ function addZenithAzimuth(img, toaOrSR, zenithDict, azimuthDict) {
     };
   }
 
-  var zenith = ee.Image.constant(img.get(zenithDict[toaOrSR]))
-    .multiply(Math.PI)
-    .divide(180)
-    .float()
-    .rename("zenith");
+  var zenith = ee.Image.constant(img.get(zenithDict[toaOrSR])).multiply(Math.PI).divide(180).float().rename("zenith");
 
-  var azimuth = ee.Image.constant(img.get(azimuthDict[toaOrSR]))
-    .multiply(Math.PI)
-    .divide(180)
-    .float()
-    .rename("azimuth");
+  var azimuth = ee.Image.constant(img.get(azimuthDict[toaOrSR])).multiply(Math.PI).divide(180).float().rename("azimuth");
 
   return img.addBands(zenith).addBands(azimuth);
 }
@@ -2383,16 +1776,7 @@ function medoidMosaicMSD(inCollection, medoidIncludeBands) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Function to export a provided image to an EE asset
-function exportToAssetWrapper(
-  imageForExport,
-  assetName,
-  assetPath,
-  pyramidingPolicyObject,
-  roi,
-  scale,
-  crs,
-  transform
-) {
+function exportToAssetWrapper(imageForExport, assetName, assetPath, pyramidingPolicyObject, roi, scale, crs, transform) {
   //Make sure image is clipped to roi in case it's a multi-part polygon
   imageForExport = imageForExport.clip(roi);
   assetName = assetName.replace(/\s+/g, "-"); //Get rid of any spaces
@@ -2403,32 +1787,12 @@ function exportToAssetWrapper(
     pyramidingPolicyObject = { ".default": pyramidingPolicyObject };
   }
   print("Exporting:", assetName);
-  Export.image.toAsset(
-    imageForExport,
-    assetName,
-    assetPath,
-    pyramidingPolicyObject,
-    null,
-    roi,
-    scale,
-    crs,
-    transform,
-    1e13
-  );
+  Export.image.toAsset(imageForExport, assetName, assetPath, pyramidingPolicyObject, null, roi, scale, crs, transform, 1e13);
 }
 var exportToAssetWrapper2 = exportToAssetWrapper;
 var exportToAssetWrapper3 = exportToAssetWrapper;
 //Function to export to Drive and properly take care of clipping/no data
-function exportToDriveWrapper(
-  imageForExport,
-  outputName,
-  driveFolderName,
-  roi,
-  scale,
-  crs,
-  transform,
-  outputNoData
-) {
+function exportToDriveWrapper(imageForExport, outputName, driveFolderName, roi, scale, crs, transform, outputNoData) {
   if (outputNoData === null || outputNoData === undefined) {
     outputNoData = -32768;
   }
@@ -2444,29 +1808,9 @@ function exportToDriveWrapper(
   //Ensure bounds are in web mercator
   var outRegion = roi.bounds(100, crs);
   print("Exporting:", outputName);
-  Export.image.toDrive(
-    imageForExport,
-    outputName,
-    driveFolderName,
-    outputName,
-    null,
-    outRegion,
-    scale,
-    crs,
-    transform,
-    1e13
-  );
+  Export.image.toDrive(imageForExport, outputName, driveFolderName, outputName, null, outRegion, scale, crs, transform, 1e13);
 }
-function exportToCloudStorageWrapper(
-  imageForExport,
-  outputName,
-  bucketName,
-  roi,
-  scale,
-  crs,
-  transform,
-  outputNoData
-) {
+function exportToCloudStorageWrapper(imageForExport, outputName, bucketName, roi, scale, crs, transform, outputNoData) {
   if (outputNoData === null || outputNoData === undefined) {
     outputNoData = -32768;
   }
@@ -2482,18 +1826,7 @@ function exportToCloudStorageWrapper(
   //Ensure bounds are in web mercator
   var outRegion = roi.bounds(100, crs);
   print("Exporting:", outputName);
-  Export.image.toCloudStorage(
-    imageForExport,
-    outputName,
-    bucketName,
-    outputName,
-    null,
-    outRegion,
-    scale,
-    crs,
-    transform,
-    1e13
-  );
+  Export.image.toCloudStorage(imageForExport, outputName, bucketName, outputName, null, outRegion, scale, crs, transform, 1e13);
 }
 // exportToDriveWrapper(ee.Image(1),'jsTest1','jsTest',geometry,30,'EPSG:5070')
 //////////////////////////////////////////////////
@@ -2539,23 +1872,14 @@ function compositeTimeSeries() {
   args.yearWithMajority = args.dateWrapping[1];
 
   //Iterate across each year
-  var ts = ee.List.sequence(
-    args.startYear + args.timebuffer,
-    args.endYear - args.timebuffer
-  )
+  var ts = ee.List.sequence(args.startYear + args.timebuffer, args.endYear - args.timebuffer)
     .getInfo()
     .map(function (year) {
       // Set up dates
       var startYearT = year - args.timebuffer;
       var endYearT = year + args.timebuffer;
-      var startDateT = ee.Date.fromYMD(startYearT, 1, 1).advance(
-        args.startJulian - 1,
-        "day"
-      );
-      var endDateT = ee.Date.fromYMD(endYearT, 1, 1).advance(
-        args.endJulian - 1 + args.wrapOffset,
-        "day"
-      );
+      var startDateT = ee.Date.fromYMD(startYearT, 1, 1).advance(args.startJulian - 1, "day");
+      var endDateT = ee.Date.fromYMD(endYearT, 1, 1).advance(args.endJulian - 1 + args.wrapOffset, "day");
 
       // print(year,startDateT,endDateT);
 
@@ -2575,14 +1899,8 @@ function compositeTimeSeries() {
       var images = yearsTT.map(function (yr) {
         // Set up dates
 
-        var startDateT = ee.Date.fromYMD(yr, 1, 1).advance(
-          args.startJulian - 1,
-          "day"
-        );
-        var endDateT = ee.Date.fromYMD(yr, 1, 1).advance(
-          args.endJulian - 1 + args.wrapOffset,
-          "day"
-        );
+        var startDateT = ee.Date.fromYMD(yr, 1, 1).advance(args.startJulian - 1, "day");
+        var endDateT = ee.Date.fromYMD(yr, 1, 1).advance(args.endJulian - 1 + args.wrapOffset, "day");
 
         // Filter images for given date range
         var lsT = args.ls.filterDate(startDateT, endDateT.advance(1, "day"));
@@ -2594,29 +1912,16 @@ function compositeTimeSeries() {
       var count = lsT.select([0]).count().rename(["compositeObsCount"]);
       // Compute median or medoid or apply reducer
       var composite;
-      if (
-        args.compositingReducer !== undefined &&
-        args.compositingReducer !== null
-      ) {
+      if (args.compositingReducer !== undefined && args.compositingReducer !== null) {
         composite = lsT.reduce(args.compositingReducer);
       } else if (args.compositingMethod.toLowerCase() === "median") {
         composite = lsT.median();
       } else {
-        composite = medoidMosaicMSD(lsT, [
-          "green",
-          "red",
-          "nir",
-          "swir1",
-          "swir2",
-        ]);
+        composite = medoidMosaicMSD(lsT, ["green", "red", "nir", "swir1", "swir2"]);
       }
       composite = composite.addBands(count).float();
       return composite.set({
-        "system:time_start": ee.Date.fromYMD(
-          year + args.yearWithMajority,
-          6,
-          1
-        ).millis(),
+        "system:time_start": ee.Date.fromYMD(year + args.yearWithMajority, 6, 1).millis(),
         startDate: startDateT.millis(),
         endDate: endDateT.millis(),
         startJulian: args.startJulian,
@@ -2667,11 +1972,7 @@ function illuminationCondition(img) {
   var ic = slope_illumination.add(aspect_illumination);
 
   // Add IC to original image
-  return img
-    .addBands(ic.rename("IC"))
-    .addBands(cosZ.rename("cosZ"))
-    .addBands(cosS.rename("cosS"))
-    .addBands(slp.rename("slope"));
+  return img.addBands(ic.rename("IC")).addBands(cosZ.rename("cosZ")).addBands(cosS.rename("cosS")).addBands(slp.rename("slope"));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2686,11 +1987,7 @@ function illuminationCorrection(img, scale, studyArea, bandList) {
   var props = img.toDictionary();
   var st = img.get("system:time_start");
   var img_plus_ic = img;
-  var mask2 = img_plus_ic
-    .select("slope")
-    .gte(5)
-    .and(img_plus_ic.select("IC").gte(0))
-    .and(img_plus_ic.select("nir").gt(-0.1));
+  var mask2 = img_plus_ic.select("slope").gte(5).and(img_plus_ic.select("IC").gte(0)).and(img_plus_ic.select("nir").gt(-0.1));
   var img_plus_ic_mask2 = ee.Image(img_plus_ic.updateMask(mask2));
 
   // Specify Bands to topographically correct
@@ -2709,32 +2006,22 @@ function illuminationCorrection(img, scale, studyArea, bandList) {
     var out_b = ee.Number(out.get("offset"));
     var out_c = out_b.divide(out_a);
     // Apply the SCSc correction
-    var SCSc_output = img_plus_ic_mask2.expression(
-      "((image * (cosB * cosZ + cvalue)) / (ic + cvalue))",
-      {
-        image: img_plus_ic_mask2.select(bandList),
-        ic: img_plus_ic_mask2.select("IC"),
-        cosB: img_plus_ic_mask2.select("cosS"),
-        cosZ: img_plus_ic_mask2.select("cosZ"),
-        cvalue: out_c,
-      }
-    );
+    var SCSc_output = img_plus_ic_mask2.expression("((image * (cosB * cosZ + cvalue)) / (ic + cvalue))", {
+      image: img_plus_ic_mask2.select(bandList),
+      ic: img_plus_ic_mask2.select("IC"),
+      cosB: img_plus_ic_mask2.select("cosS"),
+      cosZ: img_plus_ic_mask2.select("cosZ"),
+      cvalue: out_c,
+    });
 
     return SCSc_output;
   }
 
-  var img_SCSccorr = ee
-    .Image(bandList.map(apply_SCSccorr))
-    .addBands(img_plus_ic.select("IC"));
+  var img_SCSccorr = ee.Image(bandList.map(apply_SCSccorr)).addBands(img_plus_ic.select("IC"));
   var bandList_IC = ee.List([bandList, "IC"]).flatten();
-  img_SCSccorr = img_SCSccorr
-    .unmask(img_plus_ic.select(bandList_IC))
-    .select(bandList);
+  img_SCSccorr = img_SCSccorr.unmask(img_plus_ic.select(bandList_IC)).select(bandList);
 
-  return img_SCSccorr
-    .addBands(nonCorrectBands)
-    .setMulti(props)
-    .set("system:time_start", st);
+  return img_SCSccorr.addBands(nonCorrectBands).setMulti(props).set("system:time_start", st);
 }
 //Function for converting an array to a string delimited by the space parameter
 function listToString(list, space) {
@@ -2865,9 +2152,7 @@ function sentinel2CloudScore(img) {
   score = score.min(rescale(img, "img.red + img.green + img.blue", [0.2, 0.8]));
 
   // Clouds are reasonably bright in all infrared bands.
-  score = score.min(
-    rescale(img, "img.nir + img.swir1 + img.swir2", [0.3, 0.8])
-  );
+  score = score.min(rescale(img, "img.nir + img.swir1 + img.swir2", [0.3, 0.8]));
 
   // However, clouds are not snow.
   var ndsi = img.normalizedDifference(["green", "swir1"]);
@@ -2925,27 +2210,13 @@ function sentinel2SnowMask(img, dilatePixels) {
 var modis250SelectBands = ["sur_refl_b01", "sur_refl_b02"];
 var modis250BandNames = ["red", "nir"];
 
-var modis500SelectBands = [
-  "sur_refl_b03",
-  "sur_refl_b04",
-  "sur_refl_b06",
-  "sur_refl_b07",
-];
+var modis500SelectBands = ["sur_refl_b03", "sur_refl_b04", "sur_refl_b06", "sur_refl_b07"];
 var modis500BandNames = ["blue", "green", "swir1", "swir2"];
 
 var combinedModisBandNames = ["red", "nir", "blue", "green", "swir1", "swir2"];
 
-var dailyViewAngleBandNames = [
-  "SensorZenith",
-  "SensorAzimuth",
-  "SolarZenith",
-  "SolarAzimuth",
-];
-var compositeViewAngleBandNames = [
-  "SolarZenith",
-  "ViewZenith",
-  "RelativeAzimuth",
-];
+var dailyViewAngleBandNames = ["SensorZenith", "SensorAzimuth", "SolarZenith", "SolarAzimuth"];
+var compositeViewAngleBandNames = ["SolarZenith", "ViewZenith", "RelativeAzimuth"];
 //Dictionary of MODIS collections
 var modisCDict = {
   eightDayNDVIA: "MODIS/006/MYD13Q1",
@@ -2973,123 +2244,30 @@ var modisCDict = {
   dailyLST1000T: "MODIS/006/MOD11A1",
 };
 var multModisDict = {
-  tempNoAngleDaily: [
-    ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.02, 1, 1]),
-    [
-      "blue",
-      "green",
-      "red",
-      "nir",
-      "swir1",
-      "temp",
-      "swir2",
-      "Emis_31",
-      "Emis_32",
-    ],
-  ],
-  tempNoAngleComposite: [
-    ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.02, 1, 1]),
-    [
-      "blue",
-      "green",
-      "red",
-      "nir",
-      "swir1",
-      "temp",
-      "swir2",
-      "Emis_31",
-      "Emis_32",
-    ],
-  ],
+  tempNoAngleDaily: [ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.02, 1, 1]), ["blue", "green", "red", "nir", "swir1", "temp", "swir2", "Emis_31", "Emis_32"]],
+  tempNoAngleComposite: [ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.02, 1, 1]), ["blue", "green", "red", "nir", "swir1", "temp", "swir2", "Emis_31", "Emis_32"]],
 
   tempAngleDaily: [
-    ee.Image([
-      0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1, 1, 1, 1, 0.02, 1, 1,
-    ]),
-    [
-      "blue",
-      "green",
-      "red",
-      "nir",
-      "swir1",
-      "temp",
-      "swir2",
-      "SensorZenith",
-      "SensorAzimuth",
-      "SolarZenith",
-      "SolarAzimuth",
-      "Emis_31",
-      "Emis_32",
-    ],
+    ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1, 1, 1, 1, 0.02, 1, 1]),
+    ["blue", "green", "red", "nir", "swir1", "temp", "swir2", "SensorZenith", "SensorAzimuth", "SolarZenith", "SolarAzimuth", "Emis_31", "Emis_32"],
   ],
   tempAngleComposite: [
-    ee.Image([
-      0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1, 1, 1, 0.02, 1, 1,
-    ]),
-    [
-      "blue",
-      "green",
-      "red",
-      "nir",
-      "swir1",
-      "temp",
-      "swir2",
-      "SolarZenith",
-      "ViewZenith",
-      "RelativeAzimuth",
-      "Emis_31",
-      "Emis_32",
-    ],
+    ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1, 1, 1, 0.02, 1, 1]),
+    ["blue", "green", "red", "nir", "swir1", "temp", "swir2", "SolarZenith", "ViewZenith", "RelativeAzimuth", "Emis_31", "Emis_32"],
   ],
 
-  noTempNoAngleDaily: [
-    ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001]),
-    ["blue", "green", "red", "nir", "swir1", "swir2"],
-  ],
-  noTempNoAngleComposite: [
-    ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001]),
-    ["blue", "green", "red", "nir", "swir1", "swir2"],
-  ],
+  noTempNoAngleDaily: [ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001]), ["blue", "green", "red", "nir", "swir1", "swir2"]],
+  noTempNoAngleComposite: [ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001]), ["blue", "green", "red", "nir", "swir1", "swir2"]],
 
   noTempAngleDaily: [
     ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1, 1, 1, 1]),
-    [
-      "blue",
-      "green",
-      "red",
-      "nir",
-      "swir1",
-      "swir2",
-      "SensorZenith",
-      "SensorAzimuth",
-      "SolarZenith",
-      "SolarAzimuth",
-    ],
+    ["blue", "green", "red", "nir", "swir1", "swir2", "SensorZenith", "SensorAzimuth", "SolarZenith", "SolarAzimuth"],
   ],
-  noTempAngleComposite: [
-    ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1, 1, 1]),
-    [
-      "blue",
-      "green",
-      "red",
-      "nir",
-      "swir1",
-      "swir2",
-      "SolarZenith",
-      "ViewZenith",
-      "RelativeAzimuth",
-    ],
-  ],
+  noTempAngleComposite: [ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1, 1, 1]), ["blue", "green", "red", "nir", "swir1", "swir2", "SolarZenith", "ViewZenith", "RelativeAzimuth"]],
 };
 /////////////////////////////////////////////////
 //Helper function to join two collections. Adapted from: code.earthengine.google.com
-function joinCollections(
-  c1,
-  c2,
-  maskAnyNullValues,
-  property,
-  propertySecondary
-) {
+function joinCollections(c1, c2, maskAnyNullValues, property, propertySecondary) {
   if (maskAnyNullValues === undefined || maskAnyNullValues === null) {
     maskAnyNullValues = true;
   }
@@ -3198,12 +2376,7 @@ function spatioTemporalJoin(primary, secondary, hourDiff, outKey) {
 //Simple inner join function for featureCollections
 //Matches features based on an exact match of the fieldName parameter
 //Retains the geometry of the primary, but copies the properties of the secondary collection
-function joinFeatureCollections(
-  primary,
-  secondary,
-  fieldName,
-  fieldNameSecondary
-) {
+function joinFeatureCollections(primary, secondary, fieldName, fieldNameSecondary) {
   if (fieldNameSecondary === undefined || fieldNameSecondary === null) {
     fieldNameSecondary = fieldName;
   }
@@ -3274,10 +2447,7 @@ function despikeCollection(c, absoluteSpike, bandNo) {
     lrMean = lrMean.divide(2);
     // var out = ct.mask(doNotMask.not().and(ct.mask()))
     var out = ct.where(BinarySpike.eq(1).and(doNotMask.not()), lrMean);
-    return out
-      .set("system:index", si)
-      .set("system:time_start", time_start)
-      .set("system:time_end", time_end);
+    return out.set("system:index", si).set("system:time_start", time_start).set("system:time_end", time_end);
   });
   //Add the bookends back on
   outCollection = ee.List([first, outCollection, last]).flatten();
@@ -3366,10 +2536,7 @@ function getModisData(args) {
   // Map.addLayer(a250.select(modis250SelectBands,modis250BandNames),{},'a')
   // Map.addLayer(t250.select(modis250SelectBands,modis250BandNames),{},'t')
   function get500(c) {
-    var images = ee
-      .ImageCollection(c)
-      .filter(ee.Filter.calendarRange(args.startYear, args.endYear, "year"))
-      .filter(ee.Filter.calendarRange(args.startJulian, args.endJulian));
+    var images = ee.ImageCollection(c).filter(ee.Filter.calendarRange(args.startYear, args.endYear, "year")).filter(ee.Filter.calendarRange(args.startJulian, args.endJulian));
 
     //Mask pixels above a certain zenith
     if (args.daily === true) {
@@ -3377,11 +2544,7 @@ function getModisData(args) {
         print("Masking with QA band:", c);
       }
       images = images.map(function (img) {
-        img = img.mask(
-          img
-            .mask()
-            .and(img.select(["SolarZenith"]).lt(args.zenithThresh * 100))
-        );
+        img = img.mask(img.mask().and(img.select(["SolarZenith"]).lt(args.zenithThresh * 100)));
         if (args.maskWQA === true) {
           img = maskCloudsWQA(img);
         }
@@ -3389,10 +2552,7 @@ function getModisData(args) {
       });
     }
     if (args.addLookAngleBands) {
-      images = images.select(
-        ee.List(modis500SelectBands).cat(viewAngleBandNames),
-        ee.List(modis500BandNames).cat(viewAngleBandNames)
-      );
+      images = images.select(ee.List(modis500SelectBands).cat(viewAngleBandNames), ee.List(modis500BandNames).cat(viewAngleBandNames));
     } else {
       images = images.select(modis500SelectBands, modis500BandNames);
     }
@@ -3478,16 +2638,7 @@ function getModisData(args) {
   // print(multKey,multImage,multNames);
 
   joined = joined.map(function (img) {
-    return img
-      .multiply(multImage)
-      .float()
-      .select(multNames)
-      .copyProperties(img, [
-        "system:time_start",
-        "system:time_end",
-        "system:index",
-      ])
-      .copyProperties(img);
+    return img.multiply(multImage).float().select(multNames).copyProperties(img, ["system:time_start", "system:time_end", "system:index"]).copyProperties(img);
   });
   if (["bilinear", "bicubic"].indexOf(args.resampleMethod) > -1) {
     print("Setting resampling method", args.resampleMethod);
@@ -3545,11 +2696,7 @@ function getProcessedModis(args) {
   var modisImages = getModisData(args);
 
   if (args.addToMap) {
-    Map.addLayer(
-      modisImages.median().reproject(args.crs, args.transform, args.scale),
-      vizParamsFalse,
-      "Raw Median"
-    );
+    Map.addLayer(modisImages.median().reproject(args.crs, args.transform, args.scale), vizParamsFalse, "Raw Median");
   }
 
   if (args.applyCloudScore) {
@@ -3566,18 +2713,8 @@ function getProcessedModis(args) {
     );
 
     if (args.addToMap) {
-      Map.addLayer(
-        modisImages.median().reproject(args.crs, args.transform, args.scale),
-        vizParamsFalse,
-        "Cloud Masked Median",
-        false
-      );
-      Map.addLayer(
-        modisImages.min().reproject(args.crs, args.transform, args.scale),
-        vizParamsFalse,
-        "Cloud Masked Min",
-        false
-      );
+      Map.addLayer(modisImages.median().reproject(args.crs, args.transform, args.scale), vizParamsFalse, "Cloud Masked Median", false);
+      Map.addLayer(modisImages.min().reproject(args.crs, args.transform, args.scale), vizParamsFalse, "Cloud Masked Min", false);
     }
   }
   if (args.applyTDOM) {
@@ -3595,18 +2732,8 @@ function getProcessedModis(args) {
     );
 
     if (args.addToMap) {
-      Map.addLayer(
-        modisImages.median().reproject(args.crs, args.transform, args.scale),
-        vizParamsFalse,
-        "Cloud/Cloud Shadow Masked Median",
-        false
-      );
-      Map.addLayer(
-        modisImages.min().reproject(args.crs, args.transform, args.scale),
-        vizParamsFalse,
-        "Cloud/Cloud Shadow Masked Min",
-        false
-      );
+      Map.addLayer(modisImages.median().reproject(args.crs, args.transform, args.scale), vizParamsFalse, "Cloud/Cloud Shadow Masked Median", false);
+      Map.addLayer(modisImages.min().reproject(args.crs, args.transform, args.scale), vizParamsFalse, "Cloud/Cloud Shadow Masked Min", false);
     }
   }
   modisImages = modisImages.map(simpleAddIndices);
@@ -3617,14 +2744,7 @@ function getProcessedModis(args) {
 }
 //////////////////////////////////////////////////////////////////
 ///Function to take images and create a median composite every n days
-function nDayComposites(
-  images,
-  startYear,
-  endYear,
-  startJulian,
-  endJulian,
-  compositePeriod
-) {
+function nDayComposites(images, startYear, endYear, startJulian, endJulian, compositePeriod) {
   //create dummy image for with no values
   var dummyImage = ee.Image(images.first());
 
@@ -3657,9 +2777,7 @@ function nDayComposites(
   //Set up wrappers
   function jdWrapper(yr, yrImages) {
     return ee.FeatureCollection(
-      ee.List.sequence(startJulian, endJulian, compositePeriod).map(function (
-        start
-      ) {
+      ee.List.sequence(startJulian, endJulian, compositePeriod).map(function (start) {
         return getJdImages(yr, yrImages, start);
       })
     );
@@ -3681,22 +2799,7 @@ function nDayComposites(
 //////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
-function exportCollection(
-  exportPathRoot,
-  outputName,
-  studyArea,
-  crs,
-  transform,
-  scale,
-  collection,
-  startYear,
-  endYear,
-  startJulian,
-  endJulian,
-  compositingReducer,
-  timebuffer,
-  exportBands
-) {
+function exportCollection(exportPathRoot, outputName, studyArea, crs, transform, scale, collection, startYear, endYear, startJulian, endJulian, compositingReducer, timebuffer, exportBands) {
   //Take care of date wrapping
   var dateWrapping = wrapDates(startJulian, endJulian);
   var wrapOffset = dateWrapping[0];
@@ -3719,13 +2822,7 @@ function exportCollection(
       var endYearT = year + timebuffer + yearWithMajority;
 
       // Get yearly composite
-      var composite = collection.filter(
-        ee.Filter.calendarRange(
-          year + yearWithMajority,
-          year + yearWithMajority,
-          "year"
-        )
-      );
+      var composite = collection.filter(ee.Filter.calendarRange(year + yearWithMajority, year + yearWithMajority, "year"));
       composite = ee.Image(composite.first()).clip(studyArea);
 
       // Display the Landsat composite
@@ -3733,40 +2830,18 @@ function exportCollection(
       // Map.addLayer(composite.reproject(crs,transform,scale), vizParamsFalse, year.toString() + ' False Color ', false);
       // Add metadata, cast to integer, and export composite
       composite = composite.set({
-        "system:time_start": ee.Date.fromYMD(
-          year + yearWithMajority,
-          6,
-          1
-        ).millis(),
+        "system:time_start": ee.Date.fromYMD(year + yearWithMajority, 6, 1).millis(),
         yearBuffer: timebuffer,
       });
 
       // Export the composite
       // Set up export name and path
-      var exportName =
-        outputName +
-        "_" +
-        startYearT +
-        "_" +
-        endYearT +
-        "_" +
-        startJulian +
-        "_" +
-        endJulian;
+      var exportName = outputName + "_" + startYearT + "_" + endYearT + "_" + startJulian + "_" + endJulian;
 
       var exportPath = exportPathRoot + "/" + exportName;
       // print('Write down the Asset ID:', exportPath);
 
-      exportToAssetWrapper(
-        composite,
-        exportName,
-        exportPath,
-        "mean",
-        studyArea,
-        null,
-        crs,
-        transform
-      );
+      exportToAssetWrapper(composite, exportName, exportPath, "mean", studyArea, null, crs, transform);
     });
 }
 /////////////////////////////////////////////////////////////
@@ -3820,10 +2895,7 @@ function exportCompositeCollection() {
   args.outputName = args.outputName.replace(/\s+/g, "-");
   args.outputName = args.outputName.replace(/\//g, "-");
 
-  var years = ee.List.sequence(
-    args.startYear + args.timebuffer,
-    args.endYear - args.timebuffer
-  )
+  var years = ee.List.sequence(args.startYear + args.timebuffer, args.endYear - args.timebuffer)
     .getInfo()
     .map(function (year) {
       // Set up dates
@@ -3831,25 +2903,14 @@ function exportCompositeCollection() {
       var endYearT = year + args.timebuffer + args.yearWithMajority;
 
       // Get yearly composite
-      var composite = args.collection.filter(
-        ee.Filter.calendarRange(
-          year + args.yearWithMajority,
-          year + args.yearWithMajority,
-          "year"
-        )
-      );
+      var composite = args.collection.filter(ee.Filter.calendarRange(year + args.yearWithMajority, year + args.yearWithMajority, "year"));
       composite = ee.Image(composite.first());
 
       // Reformat data for export
       var compositeBands = composite.bandNames();
       if (args.nonDivideBands !== null) {
-        var composite10k = composite
-          .select(compositeBands.removeAll(args.nonDivideBands))
-          .multiply(10000);
-        composite = composite10k
-          .addBands(composite.select(args.nonDivideBands))
-          .select(compositeBands)
-          .int16();
+        var composite10k = composite.select(compositeBands.removeAll(args.nonDivideBands)).multiply(10000);
+        composite = composite10k.addBands(composite.select(args.nonDivideBands)).select(compositeBands).int16();
       } else {
         composite = composite.multiply(10000).int16();
       }
@@ -3859,28 +2920,11 @@ function exportCompositeCollection() {
       args.systemTimeStartYear = year + args.yearWithMajority;
       args.yearOriginal = year;
       args.yearUsed = args.systemTimeStartYear;
-      args["system:time_start"] = ee.Date.fromYMD(
-        args.systemTimeStartYear,
-        6,
-        1
-      ).millis();
+      args["system:time_start"] = ee.Date.fromYMD(args.systemTimeStartYear, 6, 1).millis();
 
       // Export the composite
       // Set up export name and path
-      args.exportName =
-        args.outputName +
-        "_" +
-        args.toaOrSR +
-        "_" +
-        args.compositingMethod +
-        "_" +
-        startYearT +
-        "_" +
-        endYearT +
-        "_" +
-        args.startJulian +
-        "_" +
-        args.endJulian;
+      args.exportName = args.outputName + "_" + args.toaOrSR + "_" + args.compositingMethod + "_" + startYearT + "_" + endYearT + "_" + args.startJulian + "_" + args.endJulian;
 
       args.exportPath = args.exportPathRoot + "/" + args.exportName;
 
@@ -3888,30 +2932,11 @@ function exportCompositeCollection() {
       composite = composite.set(args);
 
       // Display the Landsat composite
-      Map.addLayer(
-        composite,
-        vizParamsTrue10k,
-        args.yearUsed.toString() + " True Color " + args.toaOrSR,
-        false
-      );
-      Map.addLayer(
-        composite,
-        vizParamsFalse10k,
-        args.yearUsed.toString() + " False Color " + args.toaOrSR,
-        false
-      );
+      Map.addLayer(composite, vizParamsTrue10k, args.yearUsed.toString() + " True Color " + args.toaOrSR, false);
+      Map.addLayer(composite, vizParamsFalse10k, args.yearUsed.toString() + " False Color " + args.toaOrSR, false);
 
       print("Exporting:", composite);
-      exportToAssetWrapper(
-        composite,
-        args.exportName,
-        args.exportPath,
-        args.pyramidingPolicy,
-        args.studyArea,
-        args.scale,
-        args.crs,
-        args.transform
-      );
+      exportToAssetWrapper(composite, args.exportName, args.exportPath, args.pyramidingPolicy, args.studyArea, args.scale, args.crs, args.transform);
     });
 }
 /////////////////////////////////////////////////////////////////////
@@ -3971,14 +2996,8 @@ function getLandsatWrapper() {
     args.wrapOffset = 365;
   }
 
-  args.startDate = ee.Date.fromYMD(args.startYear, 1, 1).advance(
-    args.startJulian - 1,
-    "day"
-  );
-  args.endDate = ee.Date.fromYMD(args.endYear, 1, 1).advance(
-    args.endJulian - 1 + args.wrapOffset,
-    "day"
-  );
+  args.startDate = ee.Date.fromYMD(args.startYear, 1, 1).advance(args.startJulian - 1, "day");
+  args.endDate = ee.Date.fromYMD(args.endYear, 1, 1).advance(args.endJulian - 1 + args.wrapOffset, "day");
   print("Start and end dates:", args.startDate, args.endDate);
 
   //Get processed Landsat scenes
@@ -4014,37 +3033,10 @@ function getLandsatWrapper() {
   if (args.exportComposites) {
     // Export composite collection
     if (args.compositingMethod == "medoid") {
-      args.exportBands = [
-        "blue",
-        "green",
-        "red",
-        "nir",
-        "swir1",
-        "swir2",
-        "temp",
-        "compositeObsCount",
-        "sensor",
-        "year",
-        "julianDay",
-      ];
-      args.nonDivideBands = [
-        "temp",
-        "compositeObsCount",
-        "sensor",
-        "year",
-        "julianDay",
-      ];
+      args.exportBands = ["blue", "green", "red", "nir", "swir1", "swir2", "temp", "compositeObsCount", "sensor", "year", "julianDay"];
+      args.nonDivideBands = ["temp", "compositeObsCount", "sensor", "year", "julianDay"];
     } else {
-      args.exportBands = [
-        "blue",
-        "green",
-        "red",
-        "nir",
-        "swir1",
-        "swir2",
-        "temp",
-        "compositeObsCount",
-      ];
+      args.exportBands = ["blue", "green", "red", "nir", "swir1", "swir2", "temp", "compositeObsCount"];
       args.nonDivideBands = ["temp", "compositeObsCount"];
     }
     print("Args:", args);
@@ -4097,23 +3089,15 @@ function getProcessedLandsatScenes() {
   if (args.startJulian > args.endJulian) {
     args.wrapOffset = 365;
   }
-  args.startDate = ee.Date.fromYMD(args.startYear, 1, 1).advance(
-    args.startJulian - 1,
-    "day"
-  );
-  args.endDate = ee.Date.fromYMD(args.endYear, 1, 1).advance(
-    args.endJulian - 1 + args.wrapOffset,
-    "day"
-  );
+  args.startDate = ee.Date.fromYMD(args.startYear, 1, 1).advance(args.startJulian - 1, "day");
+  args.endDate = ee.Date.fromYMD(args.endYear, 1, 1).advance(args.endJulian - 1 + args.wrapOffset, "day");
   print("Start and end dates:", args.startDate, args.endDate);
 
   args.addPixelQA;
   if (
     args.toaOrSR.toLowerCase() === "toa" &&
     args.landsatCollectionVersion.toLowerCase() == "c1" &&
-    (args.applyFmaskCloudMask === true ||
-      args.applyFmaskCloudShadowMask === true ||
-      args.applyFmaskSnowMask === true)
+    (args.applyFmaskCloudMask === true || args.applyFmaskCloudShadowMask === true || args.applyFmaskSnowMask === true)
   ) {
     args.addPixelQA = true;
     // applyFmaskCloudMask = false;
@@ -4156,11 +3140,7 @@ function getProcessedLandsatScenes() {
   if (args.applyFmaskCloudMask) {
     print("Applying Fmask cloud mask");
     ls = ls.map(function (img) {
-      return applyBitMask(
-        img,
-        fmaskBitDict[args.landsatCollectionVersion]["cloud"],
-        landsatFmaskBandNameDict[args.landsatCollectionVersion]
-      );
+      return applyBitMask(img, fmaskBitDict[args.landsatCollectionVersion]["cloud"], landsatFmaskBandNameDict[args.landsatCollectionVersion]);
     });
   }
 
@@ -4173,21 +3153,13 @@ function getProcessedLandsatScenes() {
   if (args.applyFmaskCloudShadowMask) {
     print("Applying Fmask shadow mask");
     ls = ls.map(function (img) {
-      return applyBitMask(
-        img,
-        fmaskBitDict[args.landsatCollectionVersion]["shadow"],
-        landsatFmaskBandNameDict[args.landsatCollectionVersion]
-      );
+      return applyBitMask(img, fmaskBitDict[args.landsatCollectionVersion]["shadow"], landsatFmaskBandNameDict[args.landsatCollectionVersion]);
     });
   }
   if (args.applyFmaskSnowMask) {
     print("Applying Fmask snow mask");
     ls = ls.map(function (img) {
-      return applyBitMask(
-        img,
-        fmaskBitDict[args.landsatCollectionVersion]["snow"],
-        landsatFmaskBandNameDict[args.landsatCollectionVersion]
-      );
+      return applyBitMask(img, fmaskBitDict[args.landsatCollectionVersion]["snow"], landsatFmaskBandNameDict[args.landsatCollectionVersion]);
     });
   }
 
@@ -4197,11 +3169,7 @@ function getProcessedLandsatScenes() {
 
   //Add sensor band
   ls = ls.map(function (img) {
-    return addSensorBand(
-      img,
-      args.landsatCollectionVersion + "_landsat",
-      args.toaOrSR
-    );
+    return addSensorBand(img, args.landsatCollectionVersion + "_landsat", args.toaOrSR);
   });
 
   return ls.set(args);
@@ -4218,7 +3186,7 @@ function getProcessedSentinel2Scenes() {
     applyQABand: false,
     applyCloudScore: false,
     applyShadowShift: false,
-    applyTDOM: true,
+    applyTDOM: false,
     cloudScoreThresh: 20,
     performCloudScoreOffset: false,
     cloudScorePctl: 10,
@@ -4230,12 +3198,12 @@ function getProcessedSentinel2Scenes() {
     resampleMethod: "aggregate",
     toaOrSR: "TOA",
     convertToDailyMosaics: true,
-    applyCloudProbability: true,
+    applyCloudProbability: false,
     preComputedCloudScoreOffset: null,
     preComputedTDOMIRMean: null,
     preComputedTDOMIRStdDev: null,
     cloudProbThresh: 40,
-    applyCloudScorePlus: false,
+    applyCloudScorePlus: true,
     cloudScorePlusThresh: 0.6,
   };
 
@@ -4252,14 +3220,8 @@ function getProcessedSentinel2Scenes() {
   if (args.startJulian > args.endJulian) {
     args.wrapOffset = 365;
   }
-  args.startDate = ee.Date.fromYMD(args.startYear, 1, 1).advance(
-    args.startJulian - 1,
-    "day"
-  );
-  args.endDate = ee.Date.fromYMD(args.endYear, 1, 1).advance(
-    args.endJulian - 1 + args.wrapOffset,
-    "day"
-  );
+  args.startDate = ee.Date.fromYMD(args.startYear, 1, 1).advance(args.startJulian - 1, "day");
+  args.endDate = ee.Date.fromYMD(args.endYear, 1, 1).advance(args.endJulian - 1 + args.wrapOffset, "day");
   print("Start and end dates:", args.startDate, args.endDate);
 
   // Get Sentinel2 image collection
@@ -4288,31 +3250,20 @@ function getProcessedSentinel2Scenes() {
   if (args.applyCloudProbability) {
     print("Applying cloud probability");
     s2s = s2s.map(function (img) {
-      return img.updateMask(
-        img.select(["cloud_probability"]).lte(args.cloudProbThresh)
-      );
+      return img.updateMask(img.select(["cloud_probability"]).lte(args.cloudProbThresh));
     });
   }
 
   if (args.applyCloudScorePlus) {
     print("Applying cloudScore+");
     s2s = s2s.map(function (img) {
-      return img.updateMask(
-        img.select(["cloudScorePlus"]).gte(args.cloudScorePlusThresh)
-      );
+      return img.updateMask(img.select(["cloudScorePlus"]).gte(args.cloudScorePlusThresh));
     });
   }
   if (args.applyShadowShift) {
     print("Applying shadow shift");
     s2s = s2s.map(function (img) {
-      return projectShadowsWrapper(
-        img,
-        cloudScoreThresh,
-        shadowSumThresh,
-        contractPixels,
-        dilatePixels,
-        cloudHeights
-      );
+      return projectShadowsWrapper(img, cloudScoreThresh, shadowSumThresh, contractPixels, dilatePixels, cloudHeights);
     });
     // Map.addLayer(s2s.mosaic(),{min:0.05,max:0.4,bands:'swir1,nir,red'},'shadow shift shadow masked');
   }
@@ -4350,7 +3301,7 @@ function getSentinel2Wrapper() {
     applyQABand: false,
     applyCloudScore: false,
     applyShadowShift: false,
-    applyTDOM: true,
+    applyTDOM: false,
     cloudScoreThresh: 20,
     performCloudScoreOffset: true,
     cloudScorePctl: 10,
@@ -4370,12 +3321,12 @@ function getSentinel2Wrapper() {
     resampleMethod: "aggregate",
     toaOrSR: "TOA",
     convertToDailyMosaics: true,
-    applyCloudProbability: true,
+    applyCloudProbability: false,
     preComputedCloudScoreOffset: null,
     preComputedTDOMIRMean: null,
     preComputedTDOMIRStdDev: null,
     cloudProbThresh: 40,
-    applyCloudScorePlus: false,
+    applyCloudScorePlus: true,
     cloudScorePlusThresh: 0.6,
   };
 
@@ -4417,81 +3368,16 @@ function getSentinel2Wrapper() {
     // Export composite collection
 
     var exportBandDict = {
-      SR_medoid: [
-        "cb",
-        "blue",
-        "green",
-        "red",
-        "re1",
-        "re2",
-        "re3",
-        "nir",
-        "nir2",
-        "waterVapor",
-        "swir1",
-        "swir2",
-        "compositeObsCount",
-        "sensor",
-        "year",
-        "julianDay",
-      ],
-      SR_median: [
-        "cb",
-        "blue",
-        "green",
-        "red",
-        "re1",
-        "re2",
-        "re3",
-        "nir",
-        "nir2",
-        "waterVapor",
-        "swir1",
-        "swir2",
-        "compositeObsCount",
-      ],
-      TOA_medoid: [
-        "cb",
-        "blue",
-        "green",
-        "red",
-        "re1",
-        "re2",
-        "re3",
-        "nir",
-        "nir2",
-        "waterVapor",
-        "cirrus",
-        "swir1",
-        "swir2",
-        "compositeObsCount",
-        "sensor",
-        "year",
-        "julianDay",
-      ],
-      TOA_median: [
-        "cb",
-        "blue",
-        "green",
-        "red",
-        "re1",
-        "re2",
-        "re3",
-        "nir",
-        "nir2",
-        "waterVapor",
-        "cirrus",
-        "swir1",
-        "swir2",
-        "compositeObsCount",
-      ],
+      SR_medoid: ["cb", "blue", "green", "red", "re1", "re2", "re3", "nir", "nir2", "waterVapor", "swir1", "swir2", "compositeObsCount", "sensor", "year", "julianDay"],
+      SR_median: ["cb", "blue", "green", "red", "re1", "re2", "re3", "nir", "nir2", "waterVapor", "swir1", "swir2", "compositeObsCount"],
+      TOA_medoid: ["cb", "blue", "green", "red", "re1", "re2", "re3", "nir", "nir2", "waterVapor", "cirrus", "swir1", "swir2", "compositeObsCount", "sensor", "year", "julianDay"],
+      TOA_median: ["cb", "blue", "green", "red", "re1", "re2", "re3", "nir", "nir2", "waterVapor", "cirrus", "swir1", "swir2", "compositeObsCount"],
     };
     var nonDivideBandDict = {
       medoid: ["compositeObsCount", "sensor", "year", "julianDay"],
       median: ["compositeObsCount"],
     };
-    args.exportBands =
-      exportBandDict[args.toaOrSR + "_" + args.compositingMethod];
+    args.exportBands = exportBandDict[args.toaOrSR + "_" + args.compositingMethod];
     args.nonDivideBands = nonDivideBandDict[args.compositingMethod];
     exportCompositeCollection(args);
   }
@@ -4515,12 +3401,12 @@ function getProcessedLandsatAndSentinel2Scenes() {
     includeSLCOffL7: false,
     defringeL5: false,
     applyQABand: false,
-    applyCloudProbability: true,
+    applyCloudProbability: false,
     applyShadowShift: false,
     applyCloudScoreLandsat: false,
     applyCloudScoreSentinel2: false,
     applyTDOMLandsat: true,
-    applyTDOMSentinel2: true,
+    applyTDOMSentinel2: false,
     applyFmaskCloudMask: true,
     applyFmaskCloudShadowMask: true,
     applyFmaskSnowMask: false,
@@ -4546,7 +3432,7 @@ function getProcessedLandsatAndSentinel2Scenes() {
     preComputedSentinel2TDOMIRStdDev: null,
     cloudProbThresh: 40,
     landsatCollectionVersion: "C2",
-    applyCloudScorePlus: false,
+    applyCloudScorePlus: true,
     cloudScorePlusThresh: 0.6,
   };
 
@@ -4587,11 +3473,7 @@ function getProcessedLandsatAndSentinel2Scenes() {
 
   //Fill in any empty collections
   //If they're both empty, this will not work
-  var dummyImage = ee.Image(
-    ee
-      .ImageCollection(ee.Algorithms.If(ls.toList(1).length().gt(0), ls, s2s))
-      .first()
-  );
+  var dummyImage = ee.Image(ee.ImageCollection(ee.Algorithms.If(ls.toList(1).length().gt(0), ls, s2s)).first());
   ls = fillEmptyCollections(ls, dummyImage);
   s2s = fillEmptyCollections(s2s, dummyImage);
 
@@ -4637,10 +3519,7 @@ function getProcessedLandsatAndSentinel2Scenes() {
 
   // Merge Landsat and S2
   var merged = ls.merge(s2s);
-  merged = merged
-    .map(simpleAddIndices)
-    .map(getTasseledCap)
-    .map(simpleAddTCAngles);
+  merged = merged.map(simpleAddIndices).map(getTasseledCap).map(simpleAddTCAngles);
   args.origin = "Landsat-Sentinel2-Hybrid";
   merged = merged.set(args);
   print("Total s2s:", s2s.size());
@@ -4657,9 +3536,7 @@ function coRegisterCollection(images, referenceBands) {
     referenceBands = ["nir"];
   }
   var referenceImageIndex = 0;
-  var referenceImage = ee
-    .Image(images.toList(referenceImageIndex + 1).get(referenceImageIndex))
-    .select(referenceBands);
+  var referenceImage = ee.Image(images.toList(referenceImageIndex + 1).get(referenceImageIndex)).select(referenceBands);
 
   function registerImage(image) {
     //Determine the displacement by matching only the referenceBand bands.
@@ -4670,14 +3547,10 @@ function coRegisterCollection(images, referenceBands) {
       patchWidth: 20.0,
       stiffness: 5,
     };
-    var displacement = image
-      .select(referenceBands)
-      .displacement(displacement_params);
+    var displacement = image.select(referenceBands).displacement(displacement_params);
     return image.displace(displacement);
   }
-  var out = ee.ImageCollection(
-    ee.ImageCollection(images.toList(10000, 1)).map(registerImage)
-  );
+  var out = ee.ImageCollection(ee.ImageCollection(images.toList(10000, 1)).map(registerImage));
   out = ee.ImageCollection(images.limit(1).merge(out));
 
   return out;
@@ -4703,9 +3576,7 @@ function coRegisterGroups(imgs, fieldName, fieldIsNumeric) {
     ee
       .FeatureCollection(
         groups.map(function (group) {
-          return coRegisterCollection(
-            imgs.filter(ee.Filter.eq(fieldName, group))
-          );
+          return coRegisterCollection(imgs.filter(ee.Filter.eq(fieldName, group)));
         })
       )
       .flatten()
@@ -4731,12 +3602,12 @@ function getLandsatAndSentinel2HybridWrapper() {
     includeSLCOffL7: false,
     defringeL5: false,
     applyQABand: false,
-    applyCloudProbability: true,
+    applyCloudProbability: false,
     applyShadowShift: false,
     applyCloudScoreLandsat: false,
     applyCloudScoreSentinel2: false,
     applyTDOMLandsat: true,
-    applyTDOMSentinel2: true,
+    applyTDOMSentinel2: false,
     applyFmaskCloudMask: true,
     applyFmaskCloudShadowMask: true,
     applyFmaskSnowMask: false,
@@ -4768,7 +3639,7 @@ function getLandsatAndSentinel2HybridWrapper() {
     preComputedSentinel2TDOMIRStdDev: null,
     cloudProbThresh: 40,
     landsatCollectionVersion: "C2",
-    applyCloudScorePlusSentinel2: false,
+    applyCloudScorePlusSentinel2: true,
     cloudScorePlusThresh: 0.6,
   };
 
@@ -4789,27 +3660,8 @@ function getLandsatAndSentinel2HybridWrapper() {
     // Export composite collection
 
     var exportBandDict = {
-      medoid: [
-        "blue",
-        "green",
-        "red",
-        "nir",
-        "swir1",
-        "swir2",
-        "compositeObsCount",
-        "sensor",
-        "year",
-        "julianDay",
-      ],
-      median: [
-        "blue",
-        "green",
-        "red",
-        "nir",
-        "swir1",
-        "swir2",
-        "compositeObsCount",
-      ],
+      medoid: ["blue", "green", "red", "nir", "swir1", "swir2", "compositeObsCount", "sensor", "year", "julianDay"],
+      median: ["blue", "green", "red", "nir", "swir1", "swir2", "compositeObsCount"],
     };
     var nonDivideBandDict = {
       medoid: ["compositeObsCount", "sensor", "year", "julianDay"],
@@ -4852,16 +3704,8 @@ function getHarmonicList(yearDateImg, transformBandName, harmonicList) {
   // })
 
   var multipliers = ee.Image(harmonicList).multiply(ee.Number(Math.PI).float());
-  var sinInd = t
-    .multiply(ee.Image(multipliers))
-    .sin()
-    .select(selectBands, sinNames)
-    .float();
-  var cosInd = t
-    .multiply(ee.Image(multipliers))
-    .cos()
-    .select(selectBands, cosNames)
-    .float();
+  var sinInd = t.multiply(ee.Image(multipliers)).sin().select(selectBands, sinNames).float();
+  var cosInd = t.multiply(ee.Image(multipliers)).cos().select(selectBands, cosNames).float();
   // var sinCosInd = sinInd.multiply(cosInd).select(selectBands,sinCosNames);
 
   return yearDateImg.addBands(sinInd.addBands(cosInd)); //.addBands(sinCosInd)
@@ -4875,20 +3719,13 @@ function getHarmonics2(collection, transformBandName, harmonicList, detrend) {
     detrend = false;
   }
 
-  var depBandNames = ee
-    .Image(collection.first())
-    .bandNames()
-    .remove(transformBandName);
+  var depBandNames = ee.Image(collection.first()).bandNames().remove(transformBandName);
   var depBandNumbers = depBandNames.map(function (dbn) {
     return depBandNames.indexOf(dbn);
   });
 
   var out = collection.map(function (img) {
-    var outT = getHarmonicList(
-      img,
-      transformBandName,
-      harmonicList
-    ).copyProperties(img, ["system:time_start", "system:time_end"]);
+    var outT = getHarmonicList(img, transformBandName, harmonicList).copyProperties(img, ["system:time_start", "system:time_end"]);
     return outT;
   });
 
@@ -4942,9 +3779,7 @@ function newRobustMultipleLinear2(dependentsIndependents) {
   });
 
   //Apply reducer, and convert back to image with respective bandNames
-  var reducerOut = forFit.reduce(
-    ee.Reducer.linearRegression(noIndependents, noDependents)
-  );
+  var reducerOut = forFit.reduce(ee.Reducer.linearRegression(noIndependents, noDependents));
   // var test = forFit.reduce(ee.Reducer.robustLinearRegression(noIndependents,noDependents,0.2))
   // var resids = test
   // .select([1],['residuals']).arrayFlatten([dependents]);
@@ -4952,10 +3787,7 @@ function newRobustMultipleLinear2(dependentsIndependents) {
   // Map.addLayer(reducerOut.select([0]),{},'coefficients');
   // Map.addLayer(test.select([1]),{},'tresiduals');
   // Map.addLayer(reducerOut.select([1]),{},'roresiduals');
-  reducerOut = reducerOut
-    .select([0], ["coefficients"])
-    .arrayTranspose()
-    .arrayFlatten([dependents, outNames]);
+  reducerOut = reducerOut.select([0], ["coefficients"]).arrayTranspose().arrayFlatten([dependents, outNames]);
   reducerOut = reducerOut.set({
     noDependents: ee.Number(noDependents),
     modelLength: ee.Number(noIndependents),
@@ -4968,67 +3800,32 @@ function newRobustMultipleLinear2(dependentsIndependents) {
 //Code for finding the date of peak of green
 //Also converts it to Julian day, month, and day of month
 var monthRemap = [
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-  5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6,
-  6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7,
-  7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-  7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-  8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
-  9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-  10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-  10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
-  11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12,
-  12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
-  12, 12, 12, 12, 12, 12,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3,
+  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+  5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+  7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
+  9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
+  11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
 ];
 var monthDayRemap = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-  23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-  14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 1, 2, 3, 4, 5, 6,
-  7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-  27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-  18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
-  29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-  20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-  12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-  31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-  22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-  13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2,
-  3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-  24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5,
-  6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
-  26, 27, 28, 29, 30, 31,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+  24, 25, 26, 27, 28, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+  19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+  12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2,
+  3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+  25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+  18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
 ];
 var julianDay = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-  23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
-  42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
-  61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
-  80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98,
-  99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114,
-  115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129,
-  130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144,
-  145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159,
-  160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174,
-  175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189,
-  190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204,
-  205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
-  220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234,
-  235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249,
-  250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264,
-  265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279,
-  280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294,
-  295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309,
-  310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324,
-  325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339,
-  340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354,
-  355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
+  53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+  102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140,
+  141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179,
+  180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218,
+  219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257,
+  258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296,
+  297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335,
+  336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365,
 ];
 
 //Function for getting the date of the peak of veg vigor- can handle bands negatively correlated to veg in
@@ -5063,24 +3860,13 @@ function getPeakDate(coeffs, peakDirection) {
     .rename("predicted")
     .multiply(ee.Image.constant(peakDirection))
     .addBands(greenDateLater);
-  var finalGreenDate = ee
-    .ImageCollection([predicted1, predicted2])
-    .qualityMosaic("predicted")
-    .select(["peakDate"])
-    .rename(["peakJulianDay"]);
+  var finalGreenDate = ee.ImageCollection([predicted1, predicted2]).qualityMosaic("predicted").select(["peakDate"]).rename(["peakJulianDay"]);
 
-  finalGreenDate = finalGreenDate
-    .where(finalGreenDate.lt(0), greenDate.add(1))
-    .multiply(365)
-    .int16();
+  finalGreenDate = finalGreenDate.where(finalGreenDate.lt(0), greenDate.add(1)).multiply(365).int16();
 
   //Convert to month and day of month
-  var greenMonth = finalGreenDate
-    .remap(julianDay, monthRemap)
-    .rename(["peakMonth"]);
-  var greenMonthDay = finalGreenDate
-    .remap(julianDay, monthDayRemap)
-    .rename(["peakDayOfMonth"]);
+  var greenMonth = finalGreenDate.remap(julianDay, monthRemap).rename(["peakMonth"]);
+  var greenMonthDay = finalGreenDate.remap(julianDay, monthDayRemap).rename(["peakDayOfMonth"]);
   var greenStack = finalGreenDate.addBands(greenMonth).addBands(greenMonthDay);
   return greenStack;
   // Map.addLayer(greenStack,{'min':1,'max':12},'greenMonth',false);
@@ -5141,10 +3927,7 @@ function getPhaseAmplitudePeak(coeffs, t0, t1) {
 
   var parsedModel = models.map(function (mn) {
     mn = ee.Number(mn);
-    return bandNames.slice(
-      mn.multiply(modelLength),
-      mn.multiply(modelLength).add(modelLength)
-    );
+    return bandNames.slice(mn.multiply(modelLength), mn.multiply(modelLength).add(modelLength));
   });
 
   // print('Parsed harmonic regression model',parsedModel);
@@ -5157,9 +3940,7 @@ function getPhaseAmplitudePeak(coeffs, t0, t1) {
     var intercept = modelCoeffs.select(".*_intercept");
     var harmCoeffs = modelCoeffs.select(".*_200_year");
     var outName = ee.String(ee.String(pm.get(1)).split("_").get(0));
-    var sign = ee
-      .Number(ee.Dictionary(changeDirDict).get(outName))
-      .multiply(-1);
+    var sign = ee.Number(ee.Dictionary(changeDirDict).get(outName)).multiply(-1);
 
     var amplitude = harmCoeffs
       .select([1])
@@ -5186,19 +3967,13 @@ function getPhaseAmplitudePeak(coeffs, t0, t1) {
       return outName.cat(ee.String("_").cat(ee.String(bn)));
     });
 
-    return amplitude
-      .addBands(phase)
-      .addBands(peakDate.rename(peakDateBandNames))
-      .addBands(leftSum.rename(leftSumBandNames));
+    return amplitude.addBands(phase).addBands(peakDate.rename(peakDateBandNames)).addBands(leftSum.rename(leftSumBandNames));
   });
 
   //Convert to an image
   phaseAmplitude = ee.ImageCollection.fromImages(phaseAmplitude);
 
-  phaseAmplitude = ee
-    .Image(collectionToImage(phaseAmplitude))
-    .float()
-    .copyProperties(coeffs, ["system:time_start"]);
+  phaseAmplitude = ee.Image(collectionToImage(phaseAmplitude)).float().copyProperties(coeffs, ["system:time_start"]);
   // print('pa',phaseAmplitude);
   return phaseAmplitude;
 }
@@ -5219,18 +3994,12 @@ function newPredict(coeffs, harmonics) {
   var predictedBandNames = depBandNames.map(function (depbnms) {
     return ee.String(depbnms).cat("_predicted");
   });
-  var predictedBandNumbers = ee.List.sequence(
-    0,
-    predictedBandNames.length().subtract(1)
-  );
+  var predictedBandNumbers = ee.List.sequence(0, predictedBandNames.length().subtract(1));
 
   var models = ee.List.sequence(0, noDependents.subtract(1));
   var parsedModel = models.map(function (mn) {
     mn = ee.Number(mn);
-    return bandNames.slice(
-      mn.multiply(modelLength),
-      mn.multiply(modelLength).add(modelLength)
-    );
+    return bandNames.slice(mn.multiply(modelLength), mn.multiply(modelLength).add(modelLength));
   });
   // print('Parsed harmonic regression model',parsedModel,predictedBandNames);
 
@@ -5248,24 +4017,15 @@ function newPredict(coeffs, harmonics) {
       var intercept = modelCoeffs.select(modelCoeffs.bandNames().slice(0, 1));
       var others = modelCoeffs.select(modelCoeffs.bandNames().slice(1, null));
 
-      predicted = predictorBands
-        .multiply(others)
-        .reduce(ee.Reducer.sum())
-        .add(intercept)
-        .float();
+      predicted = predictorBands.multiply(others).reduce(ee.Reducer.sum()).add(intercept).float();
       return predicted.float();
     });
     //Convert to an image
     predictedList = ee.ImageCollection.fromImages(predictedList);
-    var predictedImage = collectionToImage(predictedList).select(
-      predictedBandNumbers,
-      predictedBandNames
-    );
+    var predictedImage = collectionToImage(predictedList).select(predictedBandNumbers, predictedBandNames);
 
     //Set some metadata
-    var out = actual
-      .addBands(predictedImage.float())
-      .copyProperties(img, ["system:time_start", "system:time_end"]);
+    var out = actual.addBands(predictedImage.float()).copyProperties(img, ["system:time_start", "system:time_end"]);
     return out;
   });
   predicted = ee.ImageCollection(predicted);
@@ -5301,11 +4061,7 @@ function getDateStack(startYear, endYear, startJulian, endJulian, frequency) {
     var d = dt.getFraction("year");
     var i = ee.Image(y.add(d)).float().select([0], ["year"]);
 
-    i = c
-      .addBands(i)
-      .float()
-      .set("system:time_start", dt.millis())
-      .set("system:time_end", dt.advance(frequency, "day").millis());
+    i = c.addBands(i).float().set("system:time_start", dt.millis()).set("system:time_end", dt.advance(frequency, "day").millis());
     return i;
   });
   stack = ee.ImageCollection.fromImages(stack);
@@ -5313,12 +4069,7 @@ function getDateStack(startYear, endYear, startJulian, endJulian, frequency) {
 }
 
 ////////////////////////////////////////////////////////////////////
-function getHarmonicCoefficientsAndFit(
-  allImages,
-  indexNames,
-  whichHarmonics,
-  detrend
-) {
+function getHarmonicCoefficientsAndFit(allImages, indexNames, whichHarmonics, detrend) {
   if (detrend === undefined || detrend === null) {
     detrend = false;
   }
@@ -5337,12 +4088,7 @@ function getHarmonicCoefficientsAndFit(
   }
 
   //Add independent predictors (harmonics)
-  var withHarmonics = getHarmonics2(
-    allIndices,
-    "year",
-    whichHarmonics,
-    detrend
-  );
+  var withHarmonics = getHarmonics2(allIndices, "year", whichHarmonics, detrend);
   var withHarmonicsBns = ee
     .Image(withHarmonics.first())
     .bandNames()
@@ -5379,9 +4125,7 @@ function synthImage(coeffs, dateImage, indexNames, harmonics, detrend) {
     constImage = constImage.addBands(dateImage);
   }
   harmonics.map(function (harm) {
-    constImage = constImage
-      .addBands(ee.Image([dateImage.multiply(harm * Math.PI).sin()]))
-      .addBands(ee.Image([dateImage.multiply(harm * Math.PI).cos()]));
+    constImage = constImage.addBands(ee.Image([dateImage.multiply(harm * Math.PI).sin()])).addBands(ee.Image([dateImage.multiply(harm * Math.PI).cos()]));
   });
 
   //Predict values for each band
@@ -5479,14 +4223,8 @@ function getClimateWrapper(
   if (args.startJulian > args.endJulian) {
     args.wrapOffset = 365;
   }
-  args.startDate = ee.Date.fromYMD(args.startYear, 1, 1).advance(
-    args.startJulian - 1,
-    "day"
-  );
-  args.endDate = ee.Date.fromYMD(args.endYear, 1, 1).advance(
-    args.endJulian - 1 + args.wrapOffset,
-    "day"
-  );
+  args.startDate = ee.Date.fromYMD(args.startYear, 1, 1).advance(args.startJulian - 1, "day");
+  args.endDate = ee.Date.fromYMD(args.endYear, 1, 1).advance(args.endJulian - 1 + args.wrapOffset, "day");
   print("Start and end dates:", args.startDate, args.endDate);
   print("Julian days are:", args.startJulian, args.endJulian);
   //Get climate data
@@ -5501,17 +4239,7 @@ function getClimateWrapper(
   });
 
   // Create composite time series
-  var ts = compositeTimeSeries(
-    c,
-    args.startYear,
-    args.endYear,
-    args.startJulian,
-    args.endJulian,
-    args.timebuffer,
-    args.weights,
-    null,
-    args.compositingReducer
-  );
+  var ts = compositeTimeSeries(c, args.startYear, args.endYear, args.startJulian, args.endJulian, args.timebuffer, args.weights, null, args.compositingReducer);
 
   if (args.exportComposites) {
     //Set up export bands if not specified
@@ -5545,15 +4273,9 @@ function getClimateWrapper(
 //Adds absolute difference from a specified band summarized by a provided percentile
 //Intended for custom sorting across collections
 var addAbsDiff = function (inCollection, qualityBand, percentile, sign) {
-  var bestQuality = inCollection
-    .select([qualityBand])
-    .reduce(ee.Reducer.percentile([percentile]));
+  var bestQuality = inCollection.select([qualityBand]).reduce(ee.Reducer.percentile([percentile]));
   var out = inCollection.map(function (image) {
-    var delta = image
-      .select([qualityBand])
-      .subtract(bestQuality)
-      .abs()
-      .multiply(sign);
+    var delta = image.select([qualityBand]).subtract(bestQuality).abs().multiply(sign);
     return image.addBands(delta.select([0], ["delta"]));
   });
   return out;
@@ -5576,13 +4298,7 @@ var customQualityMosaic = function (inCollection, qualityBand, percentile) {
 //This method tends to work well if there is no wet snow present
 //Wet snow over flat areas can result in false positives
 //Designed to work with TOA data. SR data will result in false negatives (omission)
-function simpleWaterMask(
-  img,
-  contractPixels,
-  slope_thresh,
-  elevationImagePath,
-  elevationFocalMeanRadius
-) {
+function simpleWaterMask(img, contractPixels, slope_thresh, elevationImagePath, elevationFocalMeanRadius) {
   if (contractPixels === null || contractPixels === undefined) {
     contractPixels = 0;
   }
@@ -5592,10 +4308,7 @@ function simpleWaterMask(
   if (elevationImagePath === null || elevationImagePath === undefined) {
     elevationImagePath = "USGS/NED";
   }
-  if (
-    elevationFocalMeanRadius === null ||
-    elevationFocalMeanRadius === undefined
-  ) {
+  if (elevationFocalMeanRadius === null || elevationFocalMeanRadius === undefined) {
     elevationFocalMeanRadius = 5.5;
   }
 
@@ -5674,16 +4387,10 @@ exports.HoCalcAlgorithm1 = function (image) {
   image = image.addBands(HoCalcGreenness(image));
 
   // Apply algorithm 1: B4 - 1.03*B5
-  var bloom1 = image
-    .select("nir")
-    .subtract(image.select("swir1").multiply(1.03))
-    .rename("bloom1");
+  var bloom1 = image.select("nir").subtract(image.select("swir1").multiply(1.03)).rename("bloom1");
 
   // Get binary image by applying the threshold
-  var bloom1_mask = image
-    .select("H")
-    .lte(greenessThreshold)
-    .rename(["bloom1_mask"]);
+  var bloom1_mask = image.select("H").lte(greenessThreshold).rename(["bloom1_mask"]);
 
   //return original image + bloom, bloom_thresh
   return image.addBands(bloom1).addBands(bloom1_mask);
@@ -5698,10 +4405,7 @@ exports.HoCalcAlgorithm2 = function (image) {
   //  6855-6899, DOI: 10.1080/01431161.2010.512947
 
   // Apply algorithm 2: B2/B1
-  var bloom2 = image
-    .select("green")
-    .divide(image.select("blue"))
-    .rename(["bloom2"]);
+  var bloom2 = image.select("green").divide(image.select("blue")).rename(["bloom2"]);
 
   //return original image + bloom, bloom_thresh
   return image.addBands(bloom2);
@@ -5758,8 +4462,7 @@ exports.exportCompositeCollection = exportCompositeCollection;
 
 exports.getProcessedLandsatScenes = getProcessedLandsatScenes;
 exports.getProcessedSentinel2Scenes = getProcessedSentinel2Scenes;
-exports.getProcessedLandsatAndSentinel2Scenes =
-  getProcessedLandsatAndSentinel2Scenes;
+exports.getProcessedLandsatAndSentinel2Scenes = getProcessedLandsatAndSentinel2Scenes;
 
 exports.coRegisterCollection = coRegisterCollection;
 exports.coRegisterGroups = coRegisterGroups;
@@ -5767,8 +4470,7 @@ exports.coRegisterGroups = coRegisterGroups;
 exports.getLandsatWrapper = getLandsatWrapper;
 exports.getSentinel2Wrapper = getSentinel2Wrapper;
 
-exports.getLandsatAndSentinel2HybridWrapper =
-  getLandsatAndSentinel2HybridWrapper;
+exports.getLandsatAndSentinel2HybridWrapper = getLandsatAndSentinel2HybridWrapper;
 
 exports.getModisData = getModisData;
 exports.modisCloudScore = modisCloudScore;
