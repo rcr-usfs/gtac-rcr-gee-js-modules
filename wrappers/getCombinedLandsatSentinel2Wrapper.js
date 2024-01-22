@@ -105,7 +105,7 @@ args.applyCloudProbability = false;
 
 // Whether to use the pre-computed cloudScore+ to mask
 // clouds and cloud shadows for Sentinel 2
-// This method works really well and should be used instead of all other methods
+// This method works really well and should be used instead of all other methods for Sentinel-2
 args.applyCloudScorePlusSentinel2 = true;
 
 
