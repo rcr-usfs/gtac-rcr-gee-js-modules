@@ -2437,6 +2437,20 @@ function predictCCDC(ccdcImg, timeImgs, fillGaps, whichHarmonics) {
 // yearStartMonth and yearStartDay are the date that you want the CCDC "year" to start at. This is mostly important for Annualized CCDC.
 // For LCMS, this is Sept. 1. So any change that occurs before Sept 1 in that year will be counted in that year, and Sept. 1 and after
 // will be counted in the following year.
+////////////////////////////////////////////////////////////////////////////////////////
+function simpleGetTimeImageCollection(startYear, endYear, step) {
+  var yearImages = ee.ImageCollection(
+    ee.List.sequence(startYear, endYear, step).map(function (n) {
+      n = ee.Number(n);
+      var img = ee.Image(n).float().rename(["year"]);
+      var y = n.int16();
+      var fraction = n.subtract(y);
+      var d = ee.Date.fromYMD(y, 1, 1).advance(fraction, "year").millis();
+      return img.set("system:time_start", d);
+    })
+  );
+  return yearImages;
+}
 function getTimeImageCollection(startYear, endYear, startJulian, endJulian, step, yearStartMonth, yearStartDay) {
   if (startJulian === undefined || startJulian === null) {
     startJulian = 1;
@@ -2661,5 +2675,6 @@ exports.getFitSlopeCCDC = getFitSlopeCCDC;
 exports.simpleCCDCPredictionAnnualized = simpleCCDCPredictionAnnualized;
 exports.predictCCDC = predictCCDC;
 exports.getTimeImageCollection = getTimeImageCollection;
+exports.simpleGetTimeImageCollection = simpleGetTimeImageCollection;
 exports.getTimeImageCollectionFromComposites = getTimeImageCollectionFromComposites;
 exports.ccdcChangeDetection = ccdcChangeDetection;
