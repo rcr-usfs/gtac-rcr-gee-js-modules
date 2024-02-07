@@ -1174,7 +1174,7 @@ function simpleLTFit(ltStack, startYear, endYear, indexName, arrayMode, maxSegs,
 }
 
 // Wrapper function to iterate across multiple LT band/index values
-function batchSimpleLTFit(ltStacks, startYear, endYear, indexNames, bandPropertyName, arrayMode, maxSegs, multBy) {
+function batchSimpleLTFit(ltStacks, startYear, endYear, indexNames, bandPropertyName, arrayMode, maxSegs, multBy, mosaicReducer) {
   if (bandPropertyName === null || bandPropertyName === undefined) {
     bandPropertyName = "band";
   }
@@ -1182,11 +1182,17 @@ function batchSimpleLTFit(ltStacks, startYear, endYear, indexNames, bandProperty
   if (indexNames === null || indexNames === undefined) {
     indexNames = ltStacks.aggregate_histogram(bandPropertyName).keys().getInfo();
   }
+
+  arrayMode = arrayMode || true;
+  maxSegs = maxSegs || 6;
   multBy = multBy || 1;
+  mosaicReducer = mosaicReducer || ee.Reducer.lastNonNull();
   // Iterate across each band/index and get the fitted, mag, slope, etc
   var lt_fit;
   indexNames.map(function (bn) {
-    var ltt = ltStacks.filter(ee.Filter.eq(bandPropertyName, bn)).max();
+    var ltt = ltStacks.filter(ee.Filter.eq(bandPropertyName, bn));
+    var bns = ltt.first().bandNames();
+    ltt = ltt.reduce(mosaicReducer).rename(bns);
 
     if (lt_fit === undefined) {
       lt_fit = simpleLTFit(ltt, startYear, endYear, bn, arrayMode, maxSegs, multBy);
