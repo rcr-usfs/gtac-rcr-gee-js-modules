@@ -77,18 +77,17 @@ args.applyQABand = false;
 
 args.applyCloudScore = false;
 args.applyShadowShift = false;
-args.applyTDOM = true;
+args.applyTDOM = false;
 
 // Whether to use the pre-computed cloud probabilities to mask
 // clouds for Sentinel 2
 // This method works really well and should be used instead of cloudScore (applyCloudScore)
-args.applyCloudProbability = true;
+args.applyCloudProbability = false;
 
 // Whether to use the pre-computed cloudScore+ to mask
 // clouds and cloud shadows for Sentinel 2
-// This method works really well and should be used instead of all other methods once it finishes
-// running for the S2 archive (~ spring 2024????)
-args.applyCloudScorePlus = false;
+// This method works really well and should be used instead of all other methods 
+args.applyCloudScorePlus = true;
 
 //If cloudProbability is chosen, choose a threshold 
 //(generally somewhere around 40-60 works well)
