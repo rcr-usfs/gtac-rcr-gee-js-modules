@@ -304,7 +304,7 @@ function eeObjServerSide(obj, refKeys) {
     refKeys = ["I", "args", "U", "Bl"]
   }
   var objKeys = Object.keys(obj);
-  var i = refKeys.map((k) => objKeys.indexOf(k));
+  var i = refKeys.map(function(k){return objKeys.indexOf(k)});
   i = i.min();
   return i > -1;
 }
