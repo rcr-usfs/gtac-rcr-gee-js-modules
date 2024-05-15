@@ -243,6 +243,69 @@ function copyObj(obj) {
   return out;
 }
 //////////////////////////////////////////////////
+// Function to get promie for useful eeObject properties
+function eeObjInfo(eeObj, objType, addTime, timeFormat, timePropNameIn, timePropNameOut) {
+  objType = objType || ee.Algorithms.ObjectType(eeObj).getInfo();
+  addTime = addTime || false; //addTime !== undefined && addTime !== null ? addTime : objType == "ImageCollection" || objType === "Image" ? true : false;
+
+  timeFormat = timeFormat || "YYYY";
+  timePropNameIn = timePropNameIn || "system:time_start";
+  timePropNameOut = timePropNameOut || objType == "ImageCollection" || objType === "FeatureCollection" ? "dates" : "date";
+
+  eeObj = objType === "Geometry" ? ee.Feature(eeObj) : eeObj;
+  var size;
+  var props = ee.Dictionary();
+  var bandNames;
+  // var allProps;
+  // console.log(objType);
+  if (objType.indexOf("Collection") > -1) {
+    // allProps = eeObj.toDictionary();
+    size = eeObj.size();
+
+    if (objType === "ImageCollection") {
+      bandNames = ee.Image(ee.ImageCollection(eeObj).first()).bandNames();
+      props = ee.Image(ee.ImageCollection(eeObj).first()).toDictionary();
+    }
+
+    if (addTime) {
+      eeObj = eeObj.map(function (img) {
+        return img.set(timePropNameOut, ee.Date(img.get(timePropNameIn)).format(timeFormat));
+      });
+      var dates = eeObj.aggregate_histogram(timePropNameOut).keys();
+    }
+  } else {
+    if (objType === "Image") {
+      bandNames = ee.Image(eeObj).bandNames();
+      props = ee.Image(eeObj).toDictionary();
+    }
+
+    if (addTime) {
+      print("here");
+      var dates = ee.Date(eeObj.get(timePropNameIn)).format(timeFormat);
+      print("here");
+    }
+  }
+  props = props.set("layerType", objType);
+  props = bandNames !== undefined ? props.set("bandNames", bandNames) : props;
+  props = size !== undefined ? props.set("size", size) : props;
+
+  if (addTime) {
+    props = props.set(timePropNameOut, dates);
+  }
+  // props = props.getInfo();
+  // props.layerType = objType;
+
+  return props;
+}
+//////////////////////////////////////////////////
+// Companion function to see if an object is on the server or client
+function eeObjServerSide(obj, refKeys = ["I", "args", "U", "Bl"]) {
+  let objKeys = Object.keys(obj);
+  let i = refKeys.map((k) => objKeys.indexOf(k));
+  i = i.min();
+  return i > -1;
+}
+//////////////////////////////////////////////////
 //Function to set null value for export or conversion to arrays
 //See default args below
 //Must provide image and noDataValue - there are no defaults
@@ -938,8 +1001,9 @@ function getS2() {
   }
 
   // This needs to happen AFTER the mosaicking step or else we still have edge artifacts
+  // Update on 15 May 2024 to only include spectral bands since qa bands are null after ~Feb 2024
   s2s = s2s.map(function (img) {
-    return img.updateMask(img.mask().reduce(ee.Reducer.min()));
+    return img.updateMask(img.select(sensorBandNameDict[args.toaOrSR]).mask().reduce(ee.Reducer.min()));
   });
 
   return s2s.set(args);
@@ -1021,7 +1085,11 @@ var landsatFmaskBandNameDict = { C1: "pixel_qa", C2: "QA_PIXEL" };
 // https://code.earthengine.google.com/?scriptPath=Examples%3ADatasets%2FLANDSAT_LC08_C02_T1_L2
 function applyScaleFactors(image, landsatCollectionVersion) {
   var factor_dict = landsat_C2_L2_rescale_dict[landsatCollectionVersion];
-  var opticalBands = image.select("blue", "green", "red", "nir", "swir1", "swir2").multiply(factor_dict["refl_mult"]).add(factor_dict["refl_add"]).float();
+  var opticalBands = image
+    .select("blue", "green", "red", "nir", "swir1", "swir2")
+    .multiply(factor_dict["refl_mult"])
+    .add(factor_dict["refl_add"])
+    .float();
   var thermalBands = image.select("temp").multiply(factor_dict["temp_mult"]).add(factor_dict["temp_add"]).float();
   return image.addBands(opticalBands, null, true).addBands(thermalBands, null, true);
 }
@@ -1058,7 +1126,10 @@ function getLandsat() {
     if (args.toaOrSR.toLowerCase() === "toa") {
       c = c.map(ee.Algorithms.Landsat.TOA);
     }
-    c = c.select(landsatSensorBandDict[landsatCollectionVersion + "_" + whichC + "_" + toaOrSR], landsatSensorBandNameDict[landsatCollectionVersion + "_" + toaOrSR]);
+    c = c.select(
+      landsatSensorBandDict[landsatCollectionVersion + "_" + whichC + "_" + toaOrSR],
+      landsatSensorBandNameDict[landsatCollectionVersion + "_" + toaOrSR]
+    );
 
     if (args.toaOrSR.toLowerCase() === "sr") {
       c = c.map(function (image) {
@@ -1085,7 +1156,10 @@ function getLandsat() {
       l7s = getLandsatCollection(landsatCollectionVersion, "L7", toaOrSR);
     } else {
       print("Only including SLC On Landsat 7");
-      l7s = getLandsatCollection(landsatCollectionVersion, "L7", toaOrSR).filterDate(ee.Date.fromYMD(1998, 1, 1), ee.Date.fromYMD(2003, 5, 31).advance(1, "day"));
+      l7s = getLandsatCollection(landsatCollectionVersion, "L7", toaOrSR).filterDate(
+        ee.Date.fromYMD(1998, 1, 1),
+        ee.Date.fromYMD(2003, 5, 31).advance(1, "day")
+      );
     }
     // Merge collections
     ls = ee.ImageCollection(l4s.merge(l5s).merge(l7s).merge(l8s));
@@ -1315,7 +1389,16 @@ function landsatCloudScore(img) {
 ////////////////////////////////////////////////////////////////////////////////
 //Wrapper for applying cloudScore function
 //Required params: collection,cloudScoreFunction
-function applyCloudScoreAlgorithm(collection, cloudScoreFunction, cloudScoreThresh, cloudScorePctl, contractPixels, dilatePixels, performCloudScoreOffset, preComputedCloudScoreOffset) {
+function applyCloudScoreAlgorithm(
+  collection,
+  cloudScoreFunction,
+  cloudScoreThresh,
+  cloudScorePctl,
+  contractPixels,
+  dilatePixels,
+  performCloudScoreOffset,
+  preComputedCloudScoreOffset
+) {
   // var defaultArgs = {
   //   'collection':null,
   //   'cloudScoreFunction':null,
@@ -1359,7 +1442,13 @@ function applyCloudScoreAlgorithm(collection, cloudScoreFunction, cloudScoreThre
 
   // Apply cloudScore
   var collection = collection.map(function (img) {
-    var cloudMask = img.select(["cloudScore"]).subtract(minCloudScore).lt(cloudScoreThresh).focal_max(contractPixels).focal_min(dilatePixels).rename("cloudMask");
+    var cloudMask = img
+      .select(["cloudScore"])
+      .subtract(minCloudScore)
+      .lt(cloudScoreThresh)
+      .focal_max(contractPixels)
+      .focal_min(dilatePixels)
+      .rename("cloudMask");
     return img.updateMask(cloudMask);
   });
 
@@ -2244,8 +2333,14 @@ var modisCDict = {
   dailyLST1000T: "MODIS/006/MOD11A1",
 };
 var multModisDict = {
-  tempNoAngleDaily: [ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.02, 1, 1]), ["blue", "green", "red", "nir", "swir1", "temp", "swir2", "Emis_31", "Emis_32"]],
-  tempNoAngleComposite: [ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.02, 1, 1]), ["blue", "green", "red", "nir", "swir1", "temp", "swir2", "Emis_31", "Emis_32"]],
+  tempNoAngleDaily: [
+    ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.02, 1, 1]),
+    ["blue", "green", "red", "nir", "swir1", "temp", "swir2", "Emis_31", "Emis_32"],
+  ],
+  tempNoAngleComposite: [
+    ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.02, 1, 1]),
+    ["blue", "green", "red", "nir", "swir1", "temp", "swir2", "Emis_31", "Emis_32"],
+  ],
 
   tempAngleDaily: [
     ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1, 1, 1, 1, 0.02, 1, 1]),
@@ -2263,7 +2358,10 @@ var multModisDict = {
     ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1, 1, 1, 1]),
     ["blue", "green", "red", "nir", "swir1", "swir2", "SensorZenith", "SensorAzimuth", "SolarZenith", "SolarAzimuth"],
   ],
-  noTempAngleComposite: [ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1, 1, 1]), ["blue", "green", "red", "nir", "swir1", "swir2", "SolarZenith", "ViewZenith", "RelativeAzimuth"]],
+  noTempAngleComposite: [
+    ee.Image([0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1, 1, 1]),
+    ["blue", "green", "red", "nir", "swir1", "swir2", "SolarZenith", "ViewZenith", "RelativeAzimuth"],
+  ],
 };
 /////////////////////////////////////////////////
 //Helper function to join two collections. Adapted from: code.earthengine.google.com
@@ -2536,7 +2634,10 @@ function getModisData(args) {
   // Map.addLayer(a250.select(modis250SelectBands,modis250BandNames),{},'a')
   // Map.addLayer(t250.select(modis250SelectBands,modis250BandNames),{},'t')
   function get500(c) {
-    var images = ee.ImageCollection(c).filter(ee.Filter.calendarRange(args.startYear, args.endYear, "year")).filter(ee.Filter.calendarRange(args.startJulian, args.endJulian));
+    var images = ee
+      .ImageCollection(c)
+      .filter(ee.Filter.calendarRange(args.startYear, args.endYear, "year"))
+      .filter(ee.Filter.calendarRange(args.startJulian, args.endJulian));
 
     //Mask pixels above a certain zenith
     if (args.daily === true) {
@@ -2638,7 +2739,12 @@ function getModisData(args) {
   // print(multKey,multImage,multNames);
 
   joined = joined.map(function (img) {
-    return img.multiply(multImage).float().select(multNames).copyProperties(img, ["system:time_start", "system:time_end", "system:index"]).copyProperties(img);
+    return img
+      .multiply(multImage)
+      .float()
+      .select(multNames)
+      .copyProperties(img, ["system:time_start", "system:time_end", "system:index"])
+      .copyProperties(img);
   });
   if (["bilinear", "bicubic"].indexOf(args.resampleMethod) > -1) {
     print("Setting resampling method", args.resampleMethod);
@@ -2799,7 +2905,22 @@ function nDayComposites(images, startYear, endYear, startJulian, endJulian, comp
 //////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
-function exportCollection(exportPathRoot, outputName, studyArea, crs, transform, scale, collection, startYear, endYear, startJulian, endJulian, compositingReducer, timebuffer, exportBands) {
+function exportCollection(
+  exportPathRoot,
+  outputName,
+  studyArea,
+  crs,
+  transform,
+  scale,
+  collection,
+  startYear,
+  endYear,
+  startJulian,
+  endJulian,
+  compositingReducer,
+  timebuffer,
+  exportBands
+) {
   //Take care of date wrapping
   var dateWrapping = wrapDates(startJulian, endJulian);
   var wrapOffset = dateWrapping[0];
@@ -2924,7 +3045,20 @@ function exportCompositeCollection() {
 
       // Export the composite
       // Set up export name and path
-      args.exportName = args.outputName + "_" + args.toaOrSR + "_" + args.compositingMethod + "_" + startYearT + "_" + endYearT + "_" + args.startJulian + "_" + args.endJulian;
+      args.exportName =
+        args.outputName +
+        "_" +
+        args.toaOrSR +
+        "_" +
+        args.compositingMethod +
+        "_" +
+        startYearT +
+        "_" +
+        endYearT +
+        "_" +
+        args.startJulian +
+        "_" +
+        args.endJulian;
 
       args.exportPath = args.exportPathRoot + "/" + args.exportName;
 
@@ -3368,9 +3502,44 @@ function getSentinel2Wrapper() {
     // Export composite collection
 
     var exportBandDict = {
-      SR_medoid: ["cb", "blue", "green", "red", "re1", "re2", "re3", "nir", "nir2", "waterVapor", "swir1", "swir2", "compositeObsCount", "sensor", "year", "julianDay"],
+      SR_medoid: [
+        "cb",
+        "blue",
+        "green",
+        "red",
+        "re1",
+        "re2",
+        "re3",
+        "nir",
+        "nir2",
+        "waterVapor",
+        "swir1",
+        "swir2",
+        "compositeObsCount",
+        "sensor",
+        "year",
+        "julianDay",
+      ],
       SR_median: ["cb", "blue", "green", "red", "re1", "re2", "re3", "nir", "nir2", "waterVapor", "swir1", "swir2", "compositeObsCount"],
-      TOA_medoid: ["cb", "blue", "green", "red", "re1", "re2", "re3", "nir", "nir2", "waterVapor", "cirrus", "swir1", "swir2", "compositeObsCount", "sensor", "year", "julianDay"],
+      TOA_medoid: [
+        "cb",
+        "blue",
+        "green",
+        "red",
+        "re1",
+        "re2",
+        "re3",
+        "nir",
+        "nir2",
+        "waterVapor",
+        "cirrus",
+        "swir1",
+        "swir2",
+        "compositeObsCount",
+        "sensor",
+        "year",
+        "julianDay",
+      ],
       TOA_median: ["cb", "blue", "green", "red", "re1", "re2", "re3", "nir", "nir2", "waterVapor", "cirrus", "swir1", "swir2", "compositeObsCount"],
     };
     var nonDivideBandDict = {
@@ -3800,32 +3969,41 @@ function newRobustMultipleLinear2(dependentsIndependents) {
 //Code for finding the date of peak of green
 //Also converts it to Julian day, month, and day of month
 var monthRemap = [
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3,
-  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-  5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-  7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
-  9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
-  11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
+  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+  5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+  7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9,
+  9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+  10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
+  11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+  12, 12,
 ];
 var monthDayRemap = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-  24, 25, 26, 27, 28, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-  19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-  12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2,
-  3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-  25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-  18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+  11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+  22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+  30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+  19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+  27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6,
+  7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+  25, 26, 27, 28, 29, 30, 31,
 ];
 var julianDay = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
-  53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-  102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140,
-  141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179,
-  180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218,
-  219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257,
-  258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296,
-  297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335,
-  336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+  40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76,
+  77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
+  111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139,
+  140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168,
+  169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197,
+  198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226,
+  227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255,
+  256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284,
+  285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313,
+  314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342,
+  343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365,
 ];
 
 //Function for getting the date of the peak of veg vigor- can handle bands negatively correlated to veg in
@@ -4125,7 +4303,9 @@ function synthImage(coeffs, dateImage, indexNames, harmonics, detrend) {
     constImage = constImage.addBands(dateImage);
   }
   harmonics.map(function (harm) {
-    constImage = constImage.addBands(ee.Image([dateImage.multiply(harm * Math.PI).sin()])).addBands(ee.Image([dateImage.multiply(harm * Math.PI).cos()]));
+    constImage = constImage
+      .addBands(ee.Image([dateImage.multiply(harm * Math.PI).sin()]))
+      .addBands(ee.Image([dateImage.multiply(harm * Math.PI).cos()]));
   });
 
   //Predict values for each band
@@ -4239,7 +4419,17 @@ function getClimateWrapper(
   });
 
   // Create composite time series
-  var ts = compositeTimeSeries(c, args.startYear, args.endYear, args.startJulian, args.endJulian, args.timebuffer, args.weights, null, args.compositingReducer);
+  var ts = compositeTimeSeries(
+    c,
+    args.startYear,
+    args.endYear,
+    args.startJulian,
+    args.endJulian,
+    args.timebuffer,
+    args.weights,
+    null,
+    args.compositingReducer
+  );
 
   if (args.exportComposites) {
     //Set up export bands if not specified
@@ -4414,6 +4604,8 @@ exports.HoCalcAlgorithm2 = function (image) {
 //////////////////////////////////////////////////////////////////////////
 // END FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
+exports.eeObjInfo = eeObjInfo;
+exports.eeObjServerSide = eeObjServerSide;
 exports.sieve = sieve;
 exports.setNoData = setNoData;
 exports.addSensorBand = addSensorBand;
