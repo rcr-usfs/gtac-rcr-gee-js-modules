@@ -301,7 +301,7 @@ function eeObjInfo(eeObj, objType, addTime, timeFormat, timePropNameIn, timeProp
 // Companion function to see if an object is on the server or client
 function eeObjServerSide(obj, refKeys) {
   if(refKeys === undefined || refKeys === null){
-    refKeys = ["I", "args", "U", "Bl"]
+    refKeys = ["I", "args", "U", "Bl"];
   }
   var objKeys = Object.keys(obj);
   var i = refKeys.map(function(k){return objKeys.indexOf(k)});
